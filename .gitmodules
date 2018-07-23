@@ -1,3 +1,0 @@
-[submodule "wradlib"]
-	path = wradlib
-	url = https://github.com/wradlib/wradlib.git
