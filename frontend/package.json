@@ -1,0 +1,17 @@
+{
+  "name": "meteocool",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html",
+    "build": "parcel build --public-url . index.html"
+  },
+  "dependencies": {
+    "ol": "^5.1.3"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.9.7"
+  }
+}
