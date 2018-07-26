@@ -34,48 +34,48 @@ def destination_point_coords(point, brng, dist):
 
 start = (46.9526, 3.5889)
 
-img = Image.new( 'RGB', (900,1100), "black") # Create a new black image
+img = Image.new( 'RGBA', (900,1100)) # Create a new black image
 pixels = img.load() # Create the pixel map
 
 data = wradlib.io.radolan.read_radolan_composite(sys.argv[1])
 
 def dbz2color(dbz):
     if dbz >= 170:
-        return (0, 0, 0)
+        return (0, 0, 0, 0)
     if dbz >= 75:
-        return (0xFE, 0xFC, 0xFD)
+        return (0xFE, 0xFC, 0xFD, 255)
     if dbz >= 70:
-        return (0x98, 0x58, 0xC4)
+        return (0x98, 0x58, 0xC4, 255)
     if dbz >= 65:
-        return (0xF6, 0x28, 0xF6)
+        return (0xF6, 0x28, 0xF6, 255)
     if dbz >= 60:
-        return (0xB8, 0x07, 0x11)
+        return (0xB8, 0x07, 0x11, 255)
     if dbz >= 55:
-        return (0xC9, 0x0B, 0x13)
+        return (0xC9, 0x0B, 0x13, 255)
     if dbz >= 50:
-        return (0xFA, 0x0D, 0x1C)
+        return (0xFA, 0x0D, 0x1C, 255)
     if dbz >= 45:
-        return (0xFA, 0x93, 0x26)
+        return (0xFA, 0x93, 0x26, 255)
     if dbz >= 40:
-        return (0xE3, 0xBB, 0x2A)
+        return (0xE3, 0xBB, 0x2A, 255)
     if dbz >= 35:
-        return (0xFC, 0xF3, 0x36)
+        return (0xFC, 0xF3, 0x36, 255)
     if dbz >= 30:
-        return (0x12, 0x8C, 0x15)
+        return (0x12, 0x8C, 0x15, 255)
     if dbz >= 25:
-        return (0x1E, 0xC4, 0x22)
+        return (0x1E, 0xC4, 0x22, 255)
     if dbz >= 20:
-        return (0x2A, 0xFC, 0x30)
+        return (0x2A, 0xFC, 0x30, 255)
     if dbz >= 15:
-        return (0x0E, 0x22, 0xEE)
+        return (0x0E, 0x22, 0xEE, 255)
     if dbz >= 10:
-        return (0x1B, 0xA0, 0xF0)
+        return (0x1B, 0xA0, 0xF0, 255)
     if dbz >= 5:
-        return (0x1B, 0xA0, 0xF2)
+        return (0x1B, 0xA0, 0xF2, 255)
     if dbz >= 0:
-        return (0x00, 0xE7, 0xE7)
+        return (0x00, 0xE7, 0xE7, 255)
     if dbz < 0:
-        return (0x00, 0x00, 0x00)
+        return (0x00, 0x00, 0x00, 0)
 
 cursor = tuple(start)
 feature_list = []
