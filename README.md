@@ -14,4 +14,4 @@ Makefile targets:
 
 # Linux
 
-```apt-get install gdal-dev && ???????```
+```apt-get install gdal-bin npm```
