@@ -10,8 +10,14 @@ Makefile targets:
 
 # Mac OS
 
-```brew install gdal --HEAD && brew install hdf5 netcdf4 && pip3 install wradlib gdal geojson```
+```brew install gdal --HEAD && brew install hdf5 netcdf4```
 
 # Linux
 
-```apt-get install gdal-bin npm```
+```apt-get install gdal-bin libgdal-dev npm libvips```
+
+# Both
+
+```cd frontend && npm install```
+
+```pip3 install wradlib gdal geojson pillow gdal2mbtiles```
