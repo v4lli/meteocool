@@ -89,7 +89,7 @@ for row in reversed(data[0]):
         if pixel > 172.6:
             continue
         try:
-            pixels[cols-1,rows] = dbz2color(pixel)
+            pixels[cols-1,rows] = dbz2color(pixel/2)
         except IndexError:
             print("okay but why wtf IndexError cols=%d rows=%d" % (cols, rows))
             continue
