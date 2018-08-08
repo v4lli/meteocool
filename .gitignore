@@ -76,3 +76,7 @@ typings/
 
 # Serverless directories
 .serverless
+
+backend/__pycache__/*
+
+.DS_Store
