@@ -5,6 +5,4 @@ RUN apt-get update && apt-get install -y gdal-bin libgdal-dev libvips python3 py
 WORKDIR /usr/src/app
 ADD . /usr/src/app
 RUN pip3 install -r requirements.txt
-RUN mkdir temp
 CMD make update mbtiles
-

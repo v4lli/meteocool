@@ -1,7 +1,7 @@
 .PHONY: all
 
 GDALTOMBTILES := gdal2mbtiles
-OUT := temp
+OUT := tmp
 
 mbtiles:
 	python3 backend/dwd2geojson.py tmp/raa01-wx_10000-latest-dwd---bin tmp/raa01-wx_10000-latest-dwd.png
@@ -19,7 +19,7 @@ docker:
 	docker build -t meteocool .
 	@# docker volume create dwd
 	@# docker run -d --name meteocool-tile -v dwd:/data -p 8080:80 klokantech/tileserver-gl
-	docker run -it --rm -v dwd:/usr/src/app/temp meteocool && docker exec -it meteocool-tile /bin/sh -c 'kill -HUP $$(pidof node)'
+	docker run -it --rm -v dwd:/usr/src/app/tmp meteocool && docker exec -it meteocool-tile /bin/sh -c 'kill -HUP $$(pidof node)'
 
 clean:
 	rm -rf tmp/
