@@ -21,3 +21,10 @@ Makefile targets:
 ```cd frontend && npm install```
 
 ```pip3 install wradlib gdal geojson pillow gdal2mbtiles```
+
+# docker
+
+```
+docker build -t meteocool .
+docker run -it --rm dwd:/usr/src/app/temp meteocool
+```
