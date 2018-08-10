@@ -14,3 +14,9 @@ all: mbtiles
 update:
 	mkdir -p tmp/
 	wget https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin -O tmp/raa01-wx_10000-latest-dwd---bin
+
+docker:
+	docker build -t meteocool .
+	@# docker volume create dwd
+	@# docker run -d --name meteocool-tile -v dwd:/data -p 8080:80 klokantech/tileserver-gl
+	docker run -it --rm -v dwd:/usr/src/app/temp meteocool && docker exec -it meteocool-tile /bin/sh -c 'kill -HUP $$(pidof node)'
