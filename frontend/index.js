@@ -31,5 +31,20 @@ var currentLayer = new TileLayer({
 				crossOrigin: 'anonymous'
 			})
 		});
+// we can now later call removeLayer(currentLayer), then update it with the new
+// tilesource and then call addLayer again.
 
-map.addLayer(currentLayer);
+var socket = require('socket.io-client')('http://localhost:8080/');
+socket.on('event', function(data){
+	var newLayer = new TileLayer({
+			source: new TileJSON({
+				url: data["newTileUrl"],
+				crossOrigin: 'anonymous'
+			})
+		});
+	// first add & fetch the new layer, then remove the old one to avoid
+	// having no layer at all at some point.
+	map.addLayer(newLayer);
+	map.removeLayer(currentLayer);
+	currentLayer = newLayer;
+});
