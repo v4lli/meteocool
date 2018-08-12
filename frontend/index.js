@@ -38,7 +38,7 @@ var socket = require('socket.io-client')('http://localhost:8080/');
 socket.on('event', function(data){
 	var newLayer = new TileLayer({
 			source: new TileJSON({
-				url: data["newTileUrl"],
+				tileJSON: data,
 				crossOrigin: 'anonymous'
 			})
 		});
