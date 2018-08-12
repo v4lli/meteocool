@@ -31,6 +31,7 @@ var currentLayer = new TileLayer({
 				crossOrigin: 'anonymous'
 			})
 		});
+map.addLayer(currentLayer);
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
 
