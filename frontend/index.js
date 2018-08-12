@@ -8,6 +8,7 @@ import TileLayer from 'ol/layer/Tile.js';
 import VectorTileLayer from 'ol/layer/VectorTile';
 import VectorTileSource from 'ol/source/VectorTile.js';
 import {Map, View,LonLat,Projection} from 'ol';
+import io from 'socket.io-client';
 
 const map = new Map({
 	target: 'map',
@@ -15,12 +16,6 @@ const map = new Map({
 		new TileLayer({
 			source: new OSM()
 		}),
-		new TileLayer({
-			source: new TileJSON({
-				url: 'https://unimplemented.org/meteocool/tileserver/raa01-wx_10000-latest-dwd-wgs84_transformed.json',
-				crossOrigin: 'anonymous'
-			})
-		})
 
 	],
 	view: new View({
@@ -29,3 +24,12 @@ const map = new Map({
 		minzoom: 5
 	})
 });
+
+var currentLayer = new TileLayer({
+			source: new TileJSON({
+				url: 'http://tileserver.maptiler.com/faa.json',
+				crossOrigin: 'anonymous'
+			})
+		});
+
+map.addLayer(currentLayer);
