@@ -14,13 +14,13 @@ thread_lock = Lock()
 def background_thread():
     """Example of how to send server generated events to clients."""
     count = 0
+    url = "https://www.monster.com/"
     while True:
-        print(count)
         socketio.sleep(2)
         count += 1
         socketio.emit(
-            "update",
-            {"data": "Server generated event", "count": count},
+            "map_update",
+            {"data": "this could be map tile url", "count": count, "url": url},
             namespace="/tile",
         )
 
@@ -36,7 +36,7 @@ def test_connect():
     with thread_lock:
         if thread is None:
             thread = socketio.start_background_task(target=background_thread)
-    emit("update", {"data": "Connected", "count": 0})
+    emit("map_update", {"data": "Connected", "count": 0})
 
 
 if __name__ == "__main__":

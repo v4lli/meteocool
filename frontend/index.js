@@ -34,7 +34,7 @@ map.addLayer(currentLayer);
 const socket = io.connect('http://localhost:5000/tile');
 
 socket.on('connect', () => console.log('user connected'));
-socket.on('update', (msg) => console.log(msg))
+socket.on('map_update', (msg) => console.log(msg))
 
 socket.on('message', function(data){
 	var newLayer = new TileLayer({
