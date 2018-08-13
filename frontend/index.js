@@ -1,13 +1,10 @@
 import 'ol/ol.css';
 
-import MVT from 'ol/format/MVT.js';
 import OSM from 'ol/source/OSM';
 import {fromLonLat} from 'ol/proj.js';
 import TileJSON from 'ol/source/TileJSON.js';
 import TileLayer from 'ol/layer/Tile.js';
-import VectorTileLayer from 'ol/layer/VectorTile';
-import VectorTileSource from 'ol/source/VectorTile.js';
-import {Map, View,LonLat,Projection} from 'ol';
+import {Map, View} from 'ol';
 import io from 'socket.io-client';
 
 const map = new Map({
@@ -34,9 +31,12 @@ var currentLayer = new TileLayer({
 map.addLayer(currentLayer);
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
+const socket = io.connect('http://localhost:5000/tile');
 
-var socket = require('socket.io-client')('http://localhost:8080/');
-socket.on('event', function(data){
+socket.on('connect', () => console.log('user connected'));
+socket.on('update', (msg) => console.log(msg))
+
+socket.on('message', function(data){
 	var newLayer = new TileLayer({
 			source: new TileJSON({
 				tileJSON: data,
