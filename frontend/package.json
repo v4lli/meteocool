@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "ol": "^5.1.3",
+    "rbush": "^2.0.2",
     "socket.io-client": "^2.1.1"
   },
   "devDependencies": {

@@ -22,21 +22,30 @@ const map = new Map({
 	})
 });
 
+
+if (process.env.NODE_ENV === 'production') {
+	// XXX das ist nicht die production url. dieser layer ist ueber californien, irgendeine flugzeugmap...
+	const tileUrl = 'http://tileserver.maptiler.com/faa.json';
+	const websocketUrl = 'http://localhost:8071/';
+} else {
+	const tileUrl = 'http://localhost:8070/';
+	const websocketUrl = 'http://localhost:8071/';
+}
+
 var currentLayer = new TileLayer({
 			source: new TileJSON({
-				url: 'http://tileserver.maptiler.com/faa.json',
+				url: tileUrl,
 				crossOrigin: 'anonymous'
 			})
 		});
 map.addLayer(currentLayer);
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
-const socket = io.connect('http://localhost:5000/tile');
+const socket = io.connect(websocketUrl);
 
 socket.on('connect', () => console.log('user connected'));
-socket.on('map_update', (msg) => console.log(msg))
-
-socket.on('message', function(data){
+socket.on('map_update', function(data){
+	console.log(data);
 	var newLayer = new TileLayer({
 			source: new TileJSON({
 				tileJSON: data,
