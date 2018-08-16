@@ -1,5 +1,7 @@
 # meteocool
 
+![UML Component Diagram](/doc/meteocool_component.png?raw=true "Component diagram")
+
 ## Backend
 
 Makefile targets in ```backend/```:
