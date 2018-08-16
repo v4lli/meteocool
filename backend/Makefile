@@ -18,7 +18,7 @@ update:
 docker:
 	docker build -t meteocool .
 	@# docker volume create dwd
-	@# docker run -d --name meteocool-tile -v dwd:/data -p 8080:80 klokantech/tileserver-gl
+	@# docker run -d --name meteocool-tile -v dwd:/data -p 8080:5000 klokantech/tileserver-gl
 	docker run -it --rm -v dwd:/usr/src/app/tmp meteocool && docker exec -it meteocool-tile /bin/sh -c 'kill -HUP $$(pidof node)'
 
 clean:
