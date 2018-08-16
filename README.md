@@ -2,6 +2,10 @@
 
 ![UML Component Diagram](/doc/meteocool_component.png?raw=true "Component diagram")
 
+# Development
+
+Use dev.sh to run all relevant docker containers in tmux.
+
 ## Backend
 
 Makefile targets in ```backend/```:
