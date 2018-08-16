@@ -52,4 +52,5 @@ def test_connect():
 
 
 if __name__ == "__main__":
-    socketio.run(app)
+    print("Started app.py on port=80")
+    socketio.run(app, port=80)
