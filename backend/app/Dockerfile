@@ -6,4 +6,4 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 RUN pip3 install -r requirements.txt
 EXPOSE 5000
-CMD ["python3", "app.py"]
+CMD env LC_ALL=C.UTF-8 LANG=C.UTF-8 FLASK_APP=app.py flask run -h 0.0.0.0
