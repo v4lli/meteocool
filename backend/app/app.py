@@ -24,7 +24,7 @@ def update_all_clients(newTileJson):
 @app.route("/internal/publish_new_tileset", methods = ['POST'])
 def publish_tileset():
     data = request.get_json()
-    thread = socketio.start_background_task(target=update_all_clients, args=(data))
+    thread = socketio.start_background_task(update_all_clients, data)
     return "OK: %s" % (json.dumps(data))
 
 @app.route("/")
@@ -32,13 +32,13 @@ def index():
     return "OK"
 
 @app.route("/test1")
-def index():
-    thread = socketio.start_background_task(target=update_all_clients, args=(json.loads(fz)))
+def index_test():
+    thread = socketio.start_background_task(update_all_clients, json.loads(fz))
     return "OK"
 
 @app.route("/test2")
-def index():
-    thread = socketio.start_background_task(target=update_all_clients, args=(json.loads(weather)))
+def index_test2():
+    thread = socketio.start_background_task(update_all_clients, json.loads(weather))
     return "OK"
 
 @socketio.on("connect", namespace="/tile")
