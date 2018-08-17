@@ -1,0 +1,8 @@
+{
+  "options": {
+    "domains": [
+      "a.tileserver.unimplemented.org",
+      "b.tileserver.unimplemented.org"
+    ]
+  }
+}
