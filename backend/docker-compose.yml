@@ -1,0 +1,21 @@
+version: '3.5'
+
+services:
+  app:
+    build: ./app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "5000"]
+    environment:
+      MC_TOKEN: loldude22changeMe
+
+  dwd:
+    build: ./dwd
+    restart: unless-stopped
+    volumes:
+      - dwd:/data
+    depends_on:
+      - app
+
+volumes:
+  dwd:
