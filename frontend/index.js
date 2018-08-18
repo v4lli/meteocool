@@ -25,8 +25,8 @@ const map = new Map({
 
 if (process.env.NODE_ENV === 'production') {
 	// XXX das ist nicht die production url. dieser layer ist ueber californien, irgendeine flugzeugmap...
-	var tileUrl = 'http://tileserver.maptiler.com/faa.json';
-	var websocketUrl = 'http://localhost:8071/tile';
+	var tileUrl = 'https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
+	var websocketUrl = 'https://unimplemented.org/tile';
 } else {
 	var tileUrl = 'http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
 	var websocketUrl = 'http://localhost:8071/tile';
