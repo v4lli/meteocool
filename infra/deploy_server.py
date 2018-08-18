@@ -12,7 +12,7 @@ app.debug = False
 @app.route('/', methods = ['GET', 'POST'])
 def trigger():
 	syslog.syslog(syslog.LOG_ERR, "Deploying meteocool by request")
-	if os.system("cd /home/meteocool/git && git pull && cd frontend && npm run-script build && rm -rf /home/meteocool/dist && mv dist /home/meteocool/dist && cd /home/meteocool/git/ && make mbtiles GDALTOMBTILES=/home/meteocool/.local/bin/gdal2mbtiles OUT=/home/meteocool/mbtiles/ &") == 0:
+	if os.system("cd /home/meteocool/git && git pull && cd frontend && npm run-script build && rm -rf /home/meteocool/dist && mv dist /home/meteocool/dist") == 0:
 		return "OK\n"
 	else:
 		abort(500)
