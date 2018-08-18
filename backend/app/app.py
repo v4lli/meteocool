@@ -4,18 +4,14 @@ import os
 
 from flask import Flask, request
 from flask_socketio import SocketIO
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("MC_KEY", "plxRemoveMe!")
 socketio = SocketIO(app)
 
-publish_token = os.getenv(
-    "MC_TOKEN",
-    "pbkdf2:sha256:50000$eAuUuzl0$34791a46e2f147db0a71471279c5fdc2ddfba01165c01e76e5f52bf780d5a024",
-)
+publish_token = generate_password_hash(os.getenv("MC_TOKEN"))
 
 # flugzeug tilejson
 fz = '{"name":"Aeronautical chart FAA","description":"","attribution":"","type":"overlay","version":"1","format":"png","minzoom":5,"maxzoom":11,"bounds":[-124.111656,32.028685,-116.924543,40.448629],"scale":"1","basename":"faa","profile":"mercator","tiles":["http://tileserver.maptiler.com/faa/{z}/{x}/{y}.png"],"tilejson":"2.0.0","scheme":"xyz","grids":["http://tileserver.maptiler.com/faa/{z}/{x}/{y}.grid.json"]}'
@@ -36,9 +32,11 @@ def publish_tileset():
         return "GIEV TOKEN", 400
 
     if not check_password_hash(publish_token, token):
+        logging.info("authentication fail")
         return "BYE", 401
 
     socketio.start_background_task(update_all_clients, data)
+    logging.info("authentication success")
     return "THANKS"
 
 
