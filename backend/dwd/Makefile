@@ -1,6 +1,6 @@
 .PHONY: all
 
-GDALTOMBTILES := gdal2mbtiles
+GDALTOMBTILES := /usr/local/bin/gdal2mbtiles
 OUT := tmp
 
 mbtiles:
