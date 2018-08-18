@@ -8,6 +8,8 @@ services:
       test: ["CMD", "nc", "-z", "localhost", "5000"]
     environment:
       MC_TOKEN: loldude22changeMe
+    ports:
+      - "8071:5000"
 
   dwd:
     build: ./dwd
