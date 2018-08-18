@@ -1,9 +1,10 @@
-FROM ubuntu:latest
+FROM python:3-alpine
 
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y python3 python3-dev python3-pip
+ADD requirements.txt /usr/src/app/requirements.txt
 WORKDIR /usr/src/app
+RUN apk --update add --virtual build-dependencies build-base \
+    && pip install -r requirements.txt \
+    && apk del build-dependencies
 COPY . /usr/src/app
-RUN pip3 install -r requirements.txt
 EXPOSE 5000
-CMD ["python3", "app.py"]
+CMD ["python", "app.py"]
