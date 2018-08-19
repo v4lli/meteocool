@@ -13,6 +13,7 @@ socketio = SocketIO(app)
 
 publish_token = generate_password_hash(os.getenv("MC_TOKEN"))
 
+
 def update_all_clients(newTileJson):
     socketio.emit("map_update", newTileJson, namespace="/tile")
 
@@ -22,8 +23,7 @@ def publish_tileset():
     data = request.get_json()
 
     try:
-        token = request.args.get('token')
-        # XXX ist der key error mit args.get auch noch okay?
+        token = request.args.get("token", "")
     except KeyError:
         return "GIEV TOKEN", 400
 
