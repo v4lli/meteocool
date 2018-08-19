@@ -6,7 +6,7 @@ from flask import Flask, request
 from flask_socketio import SocketIO
 from werkzeug.security import check_password_hash, generate_password_hash
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARN)
 
 app = Flask(__name__)
 socketio = SocketIO(app)
