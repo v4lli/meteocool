@@ -97,7 +97,7 @@ for row in reversed(data[0]):
         # z= reflectivity
         # r = mm/h
         try:
-            pixels[cols-1,rows] = dbz2color(pixel**(1.42)*256)
+            pixels[cols-1,rows] = dbz2color((pixel/100)**(1.42)*256)
         except IndexError:
             print("okay but why wtf IndexError cols=%d rows=%d" % (cols, rows))
             continue
