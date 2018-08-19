@@ -18,22 +18,18 @@ services:
       - dwd:/data
     depends_on:
       - app
-      - tileserver
 
   tileserver:
     build: tileserver-gl-meteocool
     restart: unless-stopped
     volumes:
       - dwd:/data
-
-  tileserver:
-    build: tileserver-gl-meteocool
-    restart: unless-stopped
-    volumes:
-      - dwd:/data
-      - ${PWD}/config.json:/etc/config.json
+      - ${PWD}/tileserver-gl-meteocool/config.json:/etc/config.json
     depends_on:
-      - app
+      - dwd
+    ports:
+      - "8070:80"
+
 
 volumes:
   dwd:
