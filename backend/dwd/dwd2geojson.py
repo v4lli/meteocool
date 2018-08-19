@@ -38,6 +38,8 @@ img = Image.new( 'RGBA', (900,1100)) # Create a new black image
 pixels = img.load() # Create the pixel map
 
 data = wradlib.io.radolan.read_radolan_composite(sys.argv[1])
+# data is mm/5m, we convert it to dbz here: https://plot.ly/~ToniBois/1783.embed
+# https://www.dwd.de/DE/leistungen/radarniederschlag/rn_info/download_niederschlagsbestimmung.pdf?__blob=publicationFile&v=4
 
 def dbz2color(dbz):
     if dbz >= 170:
@@ -84,12 +86,18 @@ for row in reversed(data[0]):
     cols = 0
     for pixel in row:
         cols = cols + 1
+        if pixel == -9999:
+            continue
         if pixel < -31.9:
             continue
         if pixel > 172.6:
             continue
+
+        # Z = 256 * r^(1.42)
+        # z= reflectivity
+        # r = mm/h
         try:
-            pixels[cols-1,rows] = dbz2color(pixel/2-20)
+            pixels[cols-1,rows] = dbz2color(pixel**(1.42)*256)
         except IndexError:
             print("okay but why wtf IndexError cols=%d rows=%d" % (cols, rows))
             continue
