@@ -36,7 +36,8 @@ var currentLayer = new TileLayer({
 			source: new TileJSON({
 				url: tileUrl,
 				crossOrigin: 'anonymous'
-			})
+			}),
+			opacity: 0.6
 		});
 map.addLayer(currentLayer);
 // we can now later call removeLayer(currentLayer), then update it with the new
