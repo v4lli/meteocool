@@ -16,15 +16,13 @@ const map = new Map({
 
 	],
 	view: new View({
-		center: fromLonLat([8.23, 46.86]),
-		zoom: 7,
+		center: fromLonLat([13.38, 52.53]),
+		zoom: 5,
 		minzoom: 5
 	})
 });
 
-
 if (process.env.NODE_ENV === 'production') {
-	// XXX das ist nicht die production url. dieser layer ist ueber californien, irgendeine flugzeugmap...
 	var tileUrl = 'https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
 	var websocketUrl = 'https://unimplemented.org/tile';
 } else {
@@ -44,7 +42,7 @@ map.addLayer(currentLayer);
 // tilesource and then call addLayer again.
 const socket = io.connect(websocketUrl);
 
-socket.on('connect', () => console.log('user connected'));
+socket.on('connect', () => console.log('websocket connected'));
 socket.on('map_update', function(data){
 	console.log(data);
 	var newLayer = new TileLayer({
