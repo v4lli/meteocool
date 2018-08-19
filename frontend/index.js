@@ -30,12 +30,14 @@ if (process.env.NODE_ENV === 'production') {
 	var websocketUrl = 'http://localhost:8071/tile';
 }
 
+var reflectivityOpacity = 0.7;
+
 var currentLayer = new TileLayer({
 			source: new TileJSON({
 				url: tileUrl,
 				crossOrigin: 'anonymous'
 			}),
-			opacity: 0.7
+			opacity: reflectivityOpacity
 		});
 map.addLayer(currentLayer);
 // we can now later call removeLayer(currentLayer), then update it with the new
@@ -49,7 +51,8 @@ socket.on('map_update', function(data){
 			source: new TileJSON({
 				tileJSON: data,
 				crossOrigin: 'anonymous'
-			})
+			}),
+			opacity: reflectivityOpacity
 		});
 	// first add & fetch the new layer, then remove the old one to avoid
 	// having no layer at all at some point.
