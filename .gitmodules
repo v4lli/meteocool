@@ -1,0 +1,3 @@
+[submodule "tileserver-gl-meteocool"]
+	path = tileserver-gl-meteocool
+	url = git@github.com:v4lli/tileserver-gl-meteocool.git

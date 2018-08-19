@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   app:
-    build: ./app
+    build: backend/app
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "5000"]
@@ -12,7 +12,7 @@ services:
       - "8071:5000"
 
   dwd:
-    build: ./dwd
+    build: backend/dwd
     restart: unless-stopped
     volumes:
       - dwd:/data
