@@ -1,2 +1,2 @@
- */5 * * * * root sh -c 'cd /usr/src/app && make update mbtiles' > /proc/1/fd/1 2>/proc/1/fd/2
+ */5 * * * * root sh -c 'cd /usr/src/app && make update api' > /proc/1/fd/1 2>/proc/1/fd/2
 
