@@ -18,6 +18,13 @@ services:
       - dwd:/data
     depends_on:
       - app
+      - tileserver
+
+  tileserver:
+    build: tileserver-gl-meteocool
+    restart: unless-stopped
+    volumes:
+      - dwd:/data
 
 volumes:
   dwd:

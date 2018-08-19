@@ -27,6 +27,17 @@ passiert sollte die produktive url genommen werden.
 
 ## Install
 
+# docker-compose
+
+the way to go. 2018.
+
+install `docker-compose` and do this:
+
+* `docker-compose build`
+* `docker-compose up` (debug)
+* `docker-compose up -d` (background)
+
+
 # docker
 
 Initially, create the dwd volume, which is used to transfer date between the tileserver container and the backend container, then launch the
