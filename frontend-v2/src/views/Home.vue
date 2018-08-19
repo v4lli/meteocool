@@ -1,18 +1,63 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+      sup
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import 'ol/ol.css';
+import OSM from 'ol/source/OSM';
+import {fromLonLat} from 'ol/proj.js';
+import TileJSON from 'ol/source/TileJSON.js';
+import TileLayer from 'ol/layer/Tile.js';
+import {Map, View} from 'ol';
+import io from 'socket.io-client';
 
+const map = new Map({
+	target: 'map',
+	layers: [
+		new TileLayer({
+			source: new OSM()
+		}),
+	],
+	view: new View({
+		center: fromLonLat([8.23, 46.86]),
+		zoom: 7,
+		minzoom: 5
+	})
+});
+
+var tileUrl = 'https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
+var websocketUrl = 'https://unimplemented.org/tile';
+
+var currentLayer = new TileLayer({
+			source: new TileJSON({
+				url: tileUrl,
+				crossOrigin: 'anonymous'
+			}),
+			opacity: 0.7
+		});
+map.addLayer(currentLayer);
+// we can now later call removeLayer(currentLayer), then update it with the new
+// tilesource and then call addLayer again.
+const socket = io.connect(websocketUrl);
+
+socket.on('connect', () => console.log('user connected'));
+socket.on('map_update', function(data){
+	console.log(data);
+	var newLayer = new TileLayer({
+			source: new TileJSON({
+				tileJSON: data,
+				crossOrigin: 'anonymous'
+			})
+		});
+	// first add & fetch the new layer, then remove the old one to avoid
+	// having no layer at all at some point.
+	map.addLayer(newLayer);
+	map.removeLayer(currentLayer);
+	currentLayer = newLayer;
+});
 export default {
-    name: "home",
-    components: {
-        HelloWorld
-    }
+    name: "home"
 };
 </script>
