@@ -13,7 +13,7 @@ all: mbtiles
 
 api: mbtiles
 	# First signal the tileserver
-	# XXX
+	nc -z tileserver 10001
 	# Then download the new tilejson (will be broadcasted to all clients)
 	wget https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json -O /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
 	# Then broadcast it
