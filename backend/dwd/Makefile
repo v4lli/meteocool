@@ -15,7 +15,7 @@ api: mbtiles
 	# First signal the tileserver
 	# XXX
 	# Then download the new tilejson (will be broadcasted to all clients)
-	wget https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json -o /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
+	wget https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json -O /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
 	# Then broadcast it
 	curl -X POST -d @/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json http://app:5000/internal/publish_new_tileset?token=loldude22changeMe \
 	  -H 'Cache-Control: no-cache' \
