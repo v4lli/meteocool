@@ -22,7 +22,7 @@ def publish_tileset():
     data = request.get_json()
 
     try:
-        token = requests.args.get('token')
+        token = request.args.get('token')
         # XXX ist der key error mit args.get auch noch okay?
     except KeyError:
         return "GIEV TOKEN", 400
