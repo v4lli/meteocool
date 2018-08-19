@@ -11,6 +11,17 @@ mbtiles:
 
 all: mbtiles
 
+api: mbtiles
+	# First signal the tileserver
+	# XXX
+	# Then download the new tilejson (will be broadcasted to all clients)
+	wget https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json -o /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
+	# Then broadcast it
+	curl -X POST -d @/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json http://app:5000/internal/publish_new_tileset?token=loldude22changeMe \
+	  -H 'Cache-Control: no-cache' \
+	  -H 'Content-Type: application/json'
+	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
+
 update:
 	mkdir -p tmp/
 	wget https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin -O tmp/raa01-wx_10000-latest-dwd---bin

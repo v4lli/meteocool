@@ -13,11 +13,6 @@ socketio = SocketIO(app)
 
 publish_token = generate_password_hash(os.getenv("MC_TOKEN"))
 
-# flugzeug tilejson
-fz = '{"name":"Aeronautical chart FAA","description":"","attribution":"","type":"overlay","version":"1","format":"png","minzoom":5,"maxzoom":11,"bounds":[-124.111656,32.028685,-116.924543,40.448629],"scale":"1","basename":"faa","profile":"mercator","tiles":["http://tileserver.maptiler.com/faa/{z}/{x}/{y}.png"],"tilejson":"2.0.0","scheme":"xyz","grids":["http://tileserver.maptiler.com/faa/{z}/{x}/{y}.grid.json"]}'
-weather = '{"name":"Weather Underground","description":"","attribution":"","type":"overlay","version":"1","format":"png","minzoom":0,"maxzoom":6,"bounds":[-179.999941,-60.010742,179.993412,59.982],"scale":"1","basename":"weather","profile":"mercator","tiles":["http://tileserver.maptiler.com/weather/{z}/{x}/{y}.png"],"tilejson":"2.0.0","scheme":"xyz","grids":["http://tileserver.maptiler.com/weather/{z}/{x}/{y}.grid.json"]}'
-
-
 def update_all_clients(newTileJson):
     socketio.emit("map_update", newTileJson, namespace="/tile")
 
@@ -27,7 +22,8 @@ def publish_tileset():
     data = request.get_json()
 
     try:
-        token = data["token"]
+        token = requests.args.get('token')
+        # XXX ist der key error mit args.get auch noch okay?
     except KeyError:
         return "GIEV TOKEN", 400
 
@@ -42,18 +38,6 @@ def publish_tileset():
 
 @app.route("/")
 def index():
-    return "OK"
-
-
-@app.route("/test1")
-def index_test():
-    socketio.start_background_task(update_all_clients, json.loads(fz))
-    return "OK"
-
-
-@app.route("/test2")
-def index_test2():
-    socketio.start_background_task(update_all_clients, json.loads(weather))
     return "OK"
 
 
