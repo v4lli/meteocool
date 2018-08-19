@@ -16,22 +16,17 @@ api: mbtiles
 	nc -z tileserver 10001
 	sleep 3
 	# Then download the new tilejson (will be broadcasted to all clients)
-	wget https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json -O /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
+	wget -q https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json -O /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
 	# Then broadcast it
-	curl -X POST -d @/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json http://app:5000/internal/publish_new_tileset?token=loldude22changeMe \
+	# XXX remove token from logging... @ might not work when the command fails
+	@curl -X POST -d @/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json http://app:5000/internal/publish_new_tileset?token=loldude22changeMe \
 	  -H 'Cache-Control: no-cache' \
 	  -H 'Content-Type: application/json'
 	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
 
 update:
 	mkdir -p tmp/
-	wget https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin -O tmp/raa01-wx_10000-latest-dwd---bin
-
-docker:
-	docker build -t meteocool .
-	@# docker volume create dwd
-	@# docker run -d --name meteocool-tile -v dwd:/data -p 8080:5000 klokantech/tileserver-gl
-	docker run -it --rm -v dwd:/usr/src/app/tmp meteocool && docker exec -it meteocool-tile /bin/sh -c 'kill -HUP $$(pidof node)'
+	wget -q https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin -O tmp/raa01-wx_10000-latest-dwd---bin
 
 clean:
 	rm -rf tmp/

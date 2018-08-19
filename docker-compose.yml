@@ -23,6 +23,11 @@ services:
       - dwd:/data
     depends_on:
       - app
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://logs7.papertrailapp.com:44195"
+        tag: "{{.Name}}/{{.ID}}"
 
   tileserver:
     build: tileserver-gl-meteocool
