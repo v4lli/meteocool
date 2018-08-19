@@ -1,2 +1,2 @@
- */5 * * * * root sh -c 'cd /usr/src/app && make update api OUT=/data/' > /proc/1/fd/1 2>/proc/1/fd/2
+ 3-58/5 * * * * root sh -c 'cd /usr/src/app && make update api OUT=/data/' > /proc/1/fd/1 2>/proc/1/fd/2
 
