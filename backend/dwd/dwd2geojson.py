@@ -42,40 +42,44 @@ data = wradlib.io.radolan.read_radolan_composite(sys.argv[1])
 # https://www.dwd.de/DE/leistungen/radarniederschlag/rn_info/download_niederschlagsbestimmung.pdf?__blob=publicationFile&v=4
 
 def dbz2color(dbz):
+    return rel(dbz)
+
+def rel(dbz):
+    factor = (dbz % 5) + 1
     if dbz >= 170:
         return (0, 0, 0, 0)
     if dbz >= 75:
-        return (0xFE, 0xFC, 0xFD, 255)
+        return (0xFE, 0xFC, 0xFD, int(255/5*factor))
     if dbz >= 70:
-        return (0x98, 0x58, 0xC4, 255)
+        return (0x98, 0x58, 0xC4, int(255/5*factor))
     if dbz >= 65:
-        return (0xF6, 0x28, 0xF6, 255)
+        return (0xF6, 0x28, 0xF6, int(255/5*factor))
     if dbz >= 60:
-        return (0xB8, 0x07, 0x11, 255)
+        return (0xB8, 0x07, 0x11, int(255/5*factor))
     if dbz >= 55:
-        return (0xC9, 0x0B, 0x13, 255)
+        return (0xC9, 0x0B, 0x13, int(255/5*factor))
     if dbz >= 50:
-        return (0xFA, 0x0D, 0x1C, 255)
+        return (0xFA, 0x0D, 0x1C, int(255/5*factor))
     if dbz >= 45:
-        return (0xFA, 0x93, 0x26, 255)
+        return (0xFA, 0x93, 0x26, int(255/5*factor))
     if dbz >= 40:
-        return (0xE3, 0xBB, 0x2A, 255)
+        return (0xE3, 0xBB, 0x2A, int(255/5*factor))
     if dbz >= 35:
-        return (0xFC, 0xF3, 0x36, 255)
+        return (0xFC, 0xF3, 0x36, int(255/5*factor))
     if dbz >= 30:
-        return (0x12, 0x8C, 0x15, 255)
+        return (0x12, 0x8C, 0x15, int(255/5*factor))
     if dbz >= 25:
-        return (0x1E, 0xC4, 0x22, 255)
+        return (0x1E, 0xC4, 0x22, int(255/5*factor))
     if dbz >= 20:
-        return (0x2A, 0xFC, 0x30, 255)
+        return (0x2A, 0xFC, 0x30, int(255/5*factor))
     if dbz >= 15:
-        return (0x0E, 0x22, 0xEE, 255)
+        return (0x0E, 0x22, 0xEE, int(255/5*factor))
     if dbz >= 10:
-        return (0x1B, 0xA0, 0xF0, 255)
+        return (0x1B, 0xA0, 0xF0, int(129/5*factor))
     if dbz >= 5:
-        return (0x1B, 0xA0, 0xF2, 255)
+        return (0x1B, 0xA0, 0xF2, int(129/5*factor))
     if dbz >= 0:
-        return (0x00, 0xE7, 0xE7, 255)
+        return (0x00, 0xE7, 0xE7, int(129/5*factor))
     if dbz < 0:
         return (0x00, 0x00, 0x00, 0)
 
@@ -93,9 +97,6 @@ for row in reversed(data[0]):
         if pixel > 172.6:
             continue
 
-        # Z = 256 * r^(1.42)
-        # z= reflectivity
-        # r = mm/h
         try:
             pixels[cols-1,rows] = dbz2color(pixel/2.0-32.5)
         except IndexError:
