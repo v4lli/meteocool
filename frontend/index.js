@@ -72,6 +72,7 @@ geolocation.on('change:position', function() {
   var coordinates = geolocation.getPosition();
   positionFeature.setGeometry(coordinates ?
     new Point(coordinates) : null);
+  map.getView().animate({center: coordinates, zoom: 10});
 });
 
 new VectorLayer({
