@@ -7,7 +7,8 @@ services:
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "5000"]
     environment:
-      MC_TOKEN: loldude22changeMe
+      - TZ="Europe/Berlin"
+      - MC_TOKEN="loldude22changeMe"
     ports:
       - "8071:5000"
     logging:
@@ -19,6 +20,8 @@ services:
   dwd:
     build: backend/dwd
     restart: unless-stopped
+    environment:
+      - TZ="Europe/Berlin"
     volumes:
       - dwd:/data
     depends_on:
@@ -32,6 +35,8 @@ services:
   tileserver:
     build: tileserver-gl-meteocool
     restart: unless-stopped
+    environment:
+      - TZ="Europe/Berlin"
     volumes:
       - dwd:/data
       - ${PWD}/tileserver-gl-meteocool/config.json:/etc/config.json
