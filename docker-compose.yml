@@ -22,6 +22,7 @@ services:
     restart: unless-stopped
     environment:
       - TZ="Europe/Berlin"
+      - MC_TOKEN="loldude22changeMe"
     volumes:
       - dwd:/data
     depends_on:
