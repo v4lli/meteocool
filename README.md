@@ -1,7 +1,5 @@
 # meteocool
 
-![Logo](frontend/assets/android-chrome-192x192.png?raw=true "Meteocool logo")
-
 ![UML Component Diagram](/doc/meteocool_component.png?raw=true "Component diagram")
 
 # Development
