@@ -39,11 +39,6 @@ var geolocation = new Geolocation({
 
 geolocation.setTracking(true);
 
-// update the HTML page when the position changes.
-geolocation.on('change', function() {
-  console.log('/dev/null');
-});
-
 // handle geolocation error.
 geolocation.on('error', function(error) {
   console.log('could not get location data, doing nothing like it\'s 1990');
@@ -52,6 +47,8 @@ geolocation.on('error', function(error) {
 var accuracyFeature = new Feature();
 geolocation.on('change:accuracyGeometry', function() {
   accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+  // stop annoying the user after a short time
+  //setTimeout(function() {geolocation.on('change:accuracyGeometry', null);}, 1500);
 });
 
 var positionFeature = new Feature();
@@ -68,11 +65,14 @@ positionFeature.setStyle(new Style({
   })
 }));
 
+var haveZoomed = false;
 geolocation.on('change:position', function() {
-  var coordinates = geolocation.getPosition();
-  positionFeature.setGeometry(coordinates ?
-    new Point(coordinates) : null);
-  map.getView().animate({center: coordinates, zoom: 10});
+	var coordinates = geolocation.getPosition();
+	positionFeature.setGeometry(coordinates ?  new Point(coordinates) : null);
+	if (!haveZoomed) {
+		map.getView().animate({center: coordinates, zoom: 10});
+		haveZoomed = true;
+	}
 });
 
 new VectorLayer({
