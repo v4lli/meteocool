@@ -1,10 +1,15 @@
 # meteocool
 
+![Logo](frontend/assets/android-chrome-192x192.png?raw=true "Meteocool logo")
+
 ![UML Component Diagram](/doc/meteocool_component.png?raw=true "Component diagram")
 
 # Development
 
-Use dev.sh to run all relevant docker containers in tmux.
+Use docker-compose (see below) for the backend. Run ```npm start``` inside ```frontend\``` to start developing on the frontend. When using
+docker-compose, note the following:
+
+* remove all 'logging' substructures from docker-compose.yml in order to use the default docker logging facility
 
 ## Backend
 
@@ -38,7 +43,9 @@ install `docker-compose` and do this:
 * `docker-compose up -d` (background)
 
 
-# docker
+# Manual docker setup
+
+DON'T USE; USE DOCKER-COMPOSE INSTEAD!
 
 Initially, create the dwd volume, which is used to transfer date between the tileserver container and the backend container, then launch the
 upstream tileserver:
@@ -58,21 +65,3 @@ docker run -it --rm -v dwd:/usr/src/app/tmp meteocool && docker exec -it meteoco
 
 The last line rebuilds the mbtiles file and signals the tileserver to reload the tiledatabase. This will be replaced soon by a backend
 process which will handle notifying websocket clients.
-
-## Old
-
-Old installation stuff, better use docker instead:
-
-### Mac OS
-
-```brew install gdal --HEAD && brew install hdf5 netcdf4```
-
-### Linux
-
-```apt-get install gdal-bin libgdal-dev npm libvips```
-
-### Both
-
-```cd frontend && npm install```
-
-```pip3 install wradlib gdal geojson pillow gdal2mbtiles```
