@@ -1,21 +1,26 @@
 import 'ol/ol.css';
 
+import CircleStyle from 'ol/style/Circle';
 import OSM from 'ol/source/OSM';
-import {fromLonLat} from 'ol/proj.js';
+import Point from 'ol/geom/Point';
 import TileJSON from 'ol/source/TileJSON.js';
 import TileLayer from 'ol/layer/Tile.js';
-import {Style, Fill, Stroke} from 'ol/style';
-import CircleStyle from 'ol/style/Circle';
-import {Map, View, Geolocation, Feature} from 'ol';
-import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import io from 'socket.io-client';
+import {Map, View, Geolocation, Feature} from 'ol';
+import {Style, Fill, Stroke} from 'ol/style';
+import {defaults as defaultControls, Attribution} from 'ol/control.js';
+import {fromLonLat} from 'ol/proj.js';
 
 var view = new View({
   center: fromLonLat([10.447683, 51.163375]),
   zoom: 6,
   minzoom: 5
+});
+
+var attribution = new Attribution({
+	collapsible: false
 });
 
 const map = new Map({
@@ -26,7 +31,8 @@ const map = new Map({
 		}),
 
 	],
-	view: view
+	view: view,
+	controls: defaultControls({attribution: false}).extend([attribution])
 });
 
 var geolocation = new Geolocation({
@@ -96,7 +102,8 @@ var reflectivityOpacity = 0.7;
 var currentLayer = new TileLayer({
 			source: new TileJSON({
 				url: tileUrl,
-				crossOrigin: 'anonymous'
+				crossOrigin: 'anonymous',
+				attributions: [new Attribution({html: "© DWD"})]
 			}),
 			opacity: reflectivityOpacity
 		});
@@ -111,7 +118,8 @@ socket.on('map_update', function(data){
 	var newLayer = new TileLayer({
 			source: new TileJSON({
 				tileJSON: data,
-				crossOrigin: 'anonymous'
+				crossOrigin: 'anonymous',
+				attributions: [new ol.Attribution({html: "© DWD"})]
 			}),
 			opacity: reflectivityOpacity
 		});
@@ -121,3 +129,12 @@ socket.on('map_update', function(data){
 	map.removeLayer(currentLayer);
 	currentLayer = newLayer;
 });
+
+function checkSize() {
+	var small = map.getSize()[0] < 600;
+	attribution.setCollapsible(small);
+	attribution.setCollapsed(small);
+}
+
+window.addEventListener('resize', checkSize);
+checkSize();
