@@ -9,6 +9,8 @@ services:
     environment:
       - TZ="Europe/Berlin"
       - MC_TOKEN="loldude22changeMe"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - "8071:5000"
     logging:
@@ -25,6 +27,7 @@ services:
       - MC_TOKEN="loldude22changeMe"
     volumes:
       - dwd:/data
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
       - app
     logging:
@@ -41,6 +44,7 @@ services:
     volumes:
       - dwd:/data
       - ${PWD}/tileserver-gl-meteocool/config:/etc/ts
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
       - dwd
     ports:
