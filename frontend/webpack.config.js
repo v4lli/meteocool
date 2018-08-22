@@ -4,6 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
   context: __dirname,
@@ -39,6 +40,11 @@ module.exports = {
     ]),
     new MiniCssExtractPlugin({
       filename: "main.css"
+    }),
+    new WorkboxPlugin.InjectManifest({
+      importWorkboxFrom: 'local',
+      swSrc: './src/sw.js',
+      swDest: 'sw.js'
     })
   ]
 };
