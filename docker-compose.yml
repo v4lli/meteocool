@@ -40,7 +40,7 @@ services:
       - TZ="Europe/Berlin"
     volumes:
       - dwd:/data
-      - ${PWD}/tileserver-gl-meteocool/config.json:/etc/config.json
+      - ${PWD}/tileserver-gl-meteocool/config:/etc/ts
     depends_on:
       - dwd
     ports:
