@@ -5,8 +5,10 @@
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel index.html",
-    "build": "parcel build --public-url . index.html"
+    "build": "webpack --config webpack.config.js --mode production",
+    "start": "webpack-dev-server --config webpack.config.js --mode development",
+    "start-pub": "webpack-dev-server --config webpack.config.js --mode development --disable-host-check --host 0.0.0.0",
+    "serve-release": "npm run build && http-server dist"
   },
   "dependencies": {
     "ol": "^5.1.3",
@@ -16,7 +18,14 @@
   "devDependencies": {
     "autoprefixer": "^9.1.2",
     "babel-preset-env": "^1.7.0",
-    "parcel-bundler": "^1.9.7",
-    "postcss-modules": "^1.3.2"
+    "copy-webpack-plugin": "^4.5.2",
+    "css-loader": "^1.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "http-server": "^0.11.1",
+    "style-loader": "^0.22.1",
+    "url-loader": "^1.1.1",
+    "webpack": "^4.17.1",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5"
   }
 }
