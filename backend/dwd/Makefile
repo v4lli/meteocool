@@ -11,6 +11,9 @@ mbtiles:
 	time $(GDALTOMBTILES) --version "$$(date +%s)" --max-resolution=10 tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 	mv -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles $(OUT)/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 
+debug:
+	time python3 dwd2geojson.py tmp/raa01-wx_10000-latest-dwd---bin tmp/raa01-wx_10000-latest-dwd.png
+
 all: mbtiles
 
 api: mbtiles
