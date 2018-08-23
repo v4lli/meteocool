@@ -10,7 +10,6 @@ import VectorSource from 'ol/source/Vector';
 import io from 'socket.io-client';
 import {Map, View, Geolocation, Feature} from 'ol';
 import {Style, Fill, Stroke} from 'ol/style';
-import {defaults as defaultControls, Attribution} from 'ol/control.js';
 import {fromLonLat} from 'ol/proj.js';
 
 var view = new View({
@@ -19,20 +18,14 @@ var view = new View({
   minzoom: 5
 });
 
-var attribution = new Attribution({
-	collapsible: false
-});
-
 const map = new Map({
 	target: 'map',
 	layers: [
 		new TileLayer({
 			source: new OSM()
-		}),
-
+		})
 	],
 	view: view,
-	controls: defaultControls({attribution: false}).extend([attribution])
 });
 
 var geolocation = new Geolocation({
@@ -89,21 +82,20 @@ new VectorLayer({
 });
 
 
-if (process.env.NODE_ENV === 'production') {
+//if (process.env.NODE_ENV === 'production') {
 	var tileUrl = 'https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
 	var websocketUrl = 'https://unimplemented.org/tile';
-} else {
+/*} else {
 	var tileUrl = 'http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
 	var websocketUrl = 'http://localhost:8071/tile';
-}
+}*/
 
 var reflectivityOpacity = 0.85;
 
 var currentLayer = new TileLayer({
 			source: new TileJSON({
 				url: tileUrl,
-				crossOrigin: 'anonymous',
-				attributions: [new Attribution({html: "© DWD"})]
+				crossOrigin: 'anonymous'
 			}),
 			opacity: reflectivityOpacity
 		});
@@ -118,8 +110,7 @@ socket.on('map_update', function(data){
 	var newLayer = new TileLayer({
 			source: new TileJSON({
 				tileJSON: data,
-				crossOrigin: 'anonymous',
-				attributions: [new ol.Attribution({html: "© DWD"})]
+				crossOrigin: 'anonymous'
 			}),
 			opacity: reflectivityOpacity
 		});
@@ -129,12 +120,3 @@ socket.on('map_update', function(data){
 	map.removeLayer(currentLayer);
 	currentLayer = newLayer;
 });
-
-function checkSize() {
-	var small = map.getSize()[0] < 600;
-	attribution.setCollapsible(small);
-	attribution.setCollapsed(small);
-}
-
-window.addEventListener('resize', checkSize);
-checkSize();
