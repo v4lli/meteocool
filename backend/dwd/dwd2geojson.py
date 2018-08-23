@@ -20,11 +20,11 @@ data = wradlib.io.radolan.read_radolan_composite(sys.argv[1])
 # data is mm/5m, we convert it to dbz here: https://plot.ly/~ToniBois/1783.embed
 # https://www.dwd.de/DE/leistungen/radarniederschlag/rn_info/download_niederschlagsbestimmung.pdf?__blob=publicationFile&v=4
 
-def scale(r, g, b, num, idx):
+def scale(r, g, b, num, idx, a=0xFF):
     threshold = 0.2
     hls = colorsys.rgb_to_hls(r/255, g/255, b/255)
     result = colorsys.hls_to_rgb(hls[0], hls[1]+(1-hls[1]-threshold)*(1/num)*idx, hls[2])
-    return (int(result[0]*255), int(result[1]*255), int(result[2]*255))
+    return (int(result[0]*255), int(result[1]*255), int(result[2]*255), a)
 
 def dbz2color(dbz):
     factor = (dbz % 5) + 1
@@ -57,7 +57,7 @@ def dbz2color(dbz):
     if dbz >= 15:
         return scale(0x0E, 0x22, 0xEE, 5, dbz % 15)
     if dbz >= 5:
-        return scale(0x1B, 0xA0, 0xF0, 10, dbz % 5)
+        return scale(0x1B, 0xA0, 0xF0, 10, dbz % 5, int(255/7*(factor+2)))
     if dbz >= 0:
         return (64, 64, 64, int(50/5*factor))
     if dbz < 0:
