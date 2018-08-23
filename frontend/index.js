@@ -9,6 +9,8 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import io from 'socket.io-client';
 import {Map, View, Geolocation, Feature} from 'ol';
+import {defaults as defaultControls, OverviewMap} from 'ol/control.js';
+import Control from 'ol/control/Control';
 import {Style, Fill, Stroke} from 'ol/style';
 import {fromLonLat} from 'ol/proj.js';
 
@@ -24,7 +26,10 @@ const map = new Map({
 		new TileLayer({
 			source: new OSM()
 		})
-	],
+  ],
+  controls: defaultControls().extend([
+    new OverviewMap()
+  ]),
 	view: view,
 });
 
@@ -82,13 +87,13 @@ new VectorLayer({
 });
 
 
-//if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
 	var tileUrl = 'https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
 	var websocketUrl = 'https://unimplemented.org/tile';
-/*} else {
+} else {
 	var tileUrl = 'http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
 	var websocketUrl = 'http://localhost:8071/tile';
-}*/
+}
 
 var reflectivityOpacity = 0.85;
 
@@ -120,3 +125,19 @@ socket.on('map_update', function(data){
 	map.removeLayer(currentLayer);
 	currentLayer = newLayer;
 });
+
+// locate me button
+var button = document.createElement('button');
+button.innerHTML = 'L';
+var locateMe = function(e) {
+    var coordinates = geolocation.getPosition();
+    map.getView().animate({center: coordinates, zoom: 10});
+};
+button.addEventListener('click', locateMe, false);
+var element = document.createElement('div');
+element.className = 'locate-me ol-unselectable ol-control';
+element.appendChild(button);
+var locateControl = new Control({
+    element: element
+});
+map.addControl(locateControl);
