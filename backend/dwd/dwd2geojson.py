@@ -83,5 +83,5 @@ for row in reversed(data[0]):
 
 print("biggest index row=%d col=%d" % (rows, cols))
 
-img.show()
+#img.show()
 img.save(sys.argv[2])
