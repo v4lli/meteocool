@@ -97,7 +97,7 @@ if (process.env.NODE_ENV === 'production') {
 	var websocketUrl = 'http://localhost:8071/tile';
 }
 
-var reflectivityOpacity = 0.7;
+var reflectivityOpacity = 0.85;
 
 var currentLayer = new TileLayer({
 			source: new TileJSON({
