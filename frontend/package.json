@@ -11,7 +11,10 @@
     "serve-release": "npm run build && http-server dist"
   },
   "dependencies": {
+    "bootstrap": "^4.1.3",
+    "jquery": "^3.3.1",
     "ol": "^5.1.3",
+    "popper.js": "^1.14.4",
     "rbush": "^2.0.2",
     "socket.io-client": "^2.1.1"
   },
