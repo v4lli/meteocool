@@ -1,6 +1,9 @@
 import './main.css';
 import 'ol/ol.css';
 
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import CircleStyle from 'ol/style/Circle';
 import OSM from 'ol/source/OSM';
 import Point from 'ol/geom/Point';
