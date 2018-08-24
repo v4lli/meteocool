@@ -18,6 +18,17 @@ import Control from 'ol/control/Control';
 import {Style, Fill, Stroke} from 'ol/style';
 import {fromLonLat} from 'ol/proj.js';
 
+// Register service worker if available
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(registration => {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}
+
 var view = new View({
   center: fromLonLat([10.447683, 51.163375]),
   zoom: 6,
