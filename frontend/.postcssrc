@@ -3,7 +3,14 @@
   "plugins": {
     "autoprefixer": {
       "grid": true
+    },
+    "cssnano": {
+      preset: ['default', {
+        calc: false,
+        discardComments: {
+          removeAll: true,
+        }
+        }]
     }
   }
 }
-
