@@ -4,17 +4,12 @@ GDALTOMBTILES := /usr/local/bin/gdal2mbtiles
 OUT := tmp
 
 mbtiles:
-	rm -f tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png tmp/raa01-wx_10000-latest-dwd_transformed.png
+	rm -f tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png
 	time python3 dwd2geojson.py tmp/raa01-wx_10000-latest-dwd---bin tmp/raa01-wx_10000-latest-dwd.png
-	gdal_translate -of gtiff -a_srs '+proj=stere +lat_0=90 +lat_ts=90 +lon_0=10 +k=0.93301270189 +x_0=0 +y_0=0 +a=6370040 +b=6370040 +to_meter=1000 +no_defs' tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd_gdal.tif
-	cp worldfile tmp/raa01-wx_10000-latest-dwd_gdal.wld
-	cd tmp && gdalwarp -of gtiff -t_srs EPSG:3857 raa01-wx_10000-latest-dwd_gdal.tif raa01-wx_10000-latest-dwd-wgs84_transformed.tif
-	convert tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.tif tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png
-	gdal_translate -a_srs EPSG:3785 tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png tmp/raa01-wx_10000-latest-dwd-wgs84_retagged.png
-	gdal_translate -of gtiff -A_ullr 343854.78 7468995.80 1723236.85 5809675.52 tmp/raa01-wx_10000-latest-dwd-wgs84_retagged.png tmp/raa01-wx_10000-latest-dwd-final.png
+	time gdal_translate -of GTiff -a_srs '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +a=6370040 +b=6370040 +to_meter=1000' -A_ullr 3.0889 55.5482 15.4801 46.1827 tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png
 	# time gdal_translate -of GTiff -a_srs '+proj=stere +ellps=WGS84 +datum=WGS84 +lat_0=90 +lat_ts=90 +lon_0=10 +k=0.93301270189 +x_0=0 +y_0=0 +a=6370040 +b=6370040 +to_meter=1000 +no_defs' -A_ullr 3.0889 55.5482 15.4801 46.1827 tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png
 	#env MINZOOM=0 MAXZOOM=20 gdal_polygonize.py -f mvt tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mvt
-	time $(GDALTOMBTILES) --version "$$(date +%s)" --max-resolution 10 tmp/raa01-wx_10000-latest-dwd-final.png /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
+	time $(GDALTOMBTILES) --version "$$(date +%s)" --max-resolution=10 tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 	mv -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles $(OUT)/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 
 debug:
