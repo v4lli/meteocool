@@ -1,4 +1,8 @@
+import './main.css';
 import 'ol/ol.css';
+
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import CircleStyle from 'ol/style/Circle';
 import OSM from 'ol/source/OSM';
@@ -9,8 +13,9 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import io from 'socket.io-client';
 import {Map, View, Geolocation, Feature} from 'ol';
+import {defaults as defaultControls, OverviewMap} from 'ol/control.js';
+import Control from 'ol/control/Control';
 import {Style, Fill, Stroke} from 'ol/style';
-import {defaults as defaultControls, Attribution} from 'ol/control.js';
 import {fromLonLat} from 'ol/proj.js';
 
 var view = new View({
@@ -19,20 +24,17 @@ var view = new View({
   minzoom: 5
 });
 
-var attribution = new Attribution({
-	collapsible: false
-});
-
 const map = new Map({
 	target: 'map',
 	layers: [
 		new TileLayer({
 			source: new OSM()
-		}),
-
-	],
+		})
+  ],
+  controls: defaultControls().extend([
+    new OverviewMap()
+  ]),
 	view: view,
-	controls: defaultControls({attribution: false}).extend([attribution])
 });
 
 var geolocation = new Geolocation({
@@ -102,8 +104,7 @@ var reflectivityOpacity = 0.85;
 var currentLayer = new TileLayer({
 			source: new TileJSON({
 				url: tileUrl,
-				crossOrigin: 'anonymous',
-				attributions: [new Attribution({html: "© DWD"})]
+				crossOrigin: 'anonymous'
 			}),
 			opacity: reflectivityOpacity
 		});
@@ -118,8 +119,7 @@ socket.on('map_update', function(data){
 	var newLayer = new TileLayer({
 			source: new TileJSON({
 				tileJSON: data,
-				crossOrigin: 'anonymous',
-				attributions: [new ol.Attribution({html: "© DWD"})]
+				crossOrigin: 'anonymous'
 			}),
 			opacity: reflectivityOpacity
 		});
@@ -130,11 +130,18 @@ socket.on('map_update', function(data){
 	currentLayer = newLayer;
 });
 
-function checkSize() {
-	var small = map.getSize()[0] < 600;
-	attribution.setCollapsible(small);
-	attribution.setCollapsed(small);
-}
-
-window.addEventListener('resize', checkSize);
-checkSize();
+// locate me button
+var button = document.createElement('button');
+button.innerHTML = 'L';
+var locateMe = function(e) {
+    var coordinates = geolocation.getPosition();
+    map.getView().animate({center: coordinates, zoom: 10});
+};
+button.addEventListener('click', locateMe, false);
+var element = document.createElement('div');
+element.className = 'locate-me ol-unselectable ol-control';
+element.appendChild(button);
+var locateControl = new Control({
+    element: element
+});
+map.addControl(locateControl);
