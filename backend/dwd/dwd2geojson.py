@@ -65,7 +65,7 @@ def dbz2color(dbz):
 
 feature_list = []
 rows = 0
-for row in reversed(data[0]):
+for row in data[0]:
     cols = 0
     for pixel in row:
         cols = cols + 1
