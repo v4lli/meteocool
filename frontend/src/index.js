@@ -1,3 +1,4 @@
+import './main.css';
 import 'ol/ol.css';
 
 import CircleStyle from 'ol/style/Circle';
