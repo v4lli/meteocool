@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.js --mode production",
-    "start": "webpack-dev-server --config webpack.config.js --mode development",
-    "start-pub": "webpack-dev-server --config webpack.config.js --mode development --disable-host-check --host 0.0.0.0",
+    "start": "webpack-dev-server --config webpack.config.js --mode development --content-base dist",
+    "start-pub": "webpack-dev-server --config webpack.config.js --mode development --content-base dist --disable-host-check --host 0.0.0.0",
     "serve-release": "npm run build && http-server dist"
   },
   "dependencies": {
