@@ -1,19 +1,11 @@
 workbox.skipWaiting();
 workbox.clientsClaim();
 
-// Cache js and css files
+// Cache map tiles
 workbox.routing.registerRoute(
-  /\.(?:js|css)$/,
-  workbox.strategies.staleWhileRevalidate({
-    cacheName: 'static-resources',
-  }),
-);
-
-// Cache image files
-workbox.routing.registerRoute(
-  /.*\.(?:png|jpg|jpeg|svg|gif)/,
+  new RegExp('https://(?:a|b|c).tile.openstreetmap.org/.*\.png'),
   workbox.strategies.cacheFirst({
-    cacheName: 'image-cache',
+    cacheName: 'tile-cache',
     plugins: [
       new workbox.expiration.Plugin({
         maxEntries: 20000,
