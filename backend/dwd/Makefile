@@ -8,10 +8,13 @@ mbtiles:
 	time python3 dwd2geojson.py tmp/raa01-wx_10000-latest-dwd---bin tmp/raa01-wx_10000-latest-dwd.png
 	cp worldfile tmp/raa01-wx_10000-latest-dwd.wld
 	gdal_translate -a_srs EPSG:3857 tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd-3857.png
-	cd tmp && time gdalwarp -overwrite -of GTiff -s_srs "+proj=stere +lon_0=10.0 +lat_0=90.0 +lat_ts=60.0 +a=6370040 +b=6370040 +units=m" -t_srs "EPSG:3857" -te_srs "+proj=stere +lon_0=10.0 +lat_0=90.0 +lat_ts=60.0 +a=6370040 +b=6370040 +units=m" -r near raa01-wx_10000-latest-dwd-3857.png raa01-wx_10000-latest-dwd-srs.tif
+	cd tmp && time gdalwarp -of gpkg -overwrite -of GTiff -s_srs "+proj=stere +lon_0=10.0 +lat_0=90.0 +lat_ts=60.0 +a=6370040 +b=6370040 +units=m" -t_srs "EPSG:3857" -te_srs "+proj=stere +lon_0=10.0 +lat_0=90.0 +lat_ts=60.0 +a=6370040 +b=6370040 +units=m" -r near raa01-wx_10000-latest-dwd-3857.png raa01-wx_10000-latest-dwd-srs.gpkb
+	gdal_translate -of png tmp/raa01-wx_10000-latest-dwd-srs.gpkb tmp/raa01-wx_10000-latest-dwd-srs.png
+	convert tmp/raa01-wx_10000-latest-dwd-srs.png tmp/raa01-wx_10000-latest-dwd-3857-srs-clean.png
+	gdal_translate -of GTiff -a_srs EPSG:3857 -A_ullr 6183597.34 344021.46 1723236.85 5809675.52 tmp/raa01-wx_10000-latest-dwd-3857-srs-clean.png tmp/raa01-wx_10000-latest-dwd-3857-clean.bmp
 	# time gdal_translate -of GTiff -a_srs '+proj=stere +ellps=WGS84 +datum=WGS84 +lat_0=90 +lat_ts=90 +lon_0=10 +k=0.93301270189 +x_0=0 +y_0=0 +a=6370040 +b=6370040 +to_meter=1000 +no_defs' -A_ullr 3.0889 55.5482 15.4801 46.1827 tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png
 	#env MINZOOM=0 MAXZOOM=20 gdal_polygonize.py -f mvt tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.png tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mvt
-	time $(GDALTOMBTILES) --version "$$(date +%s)" --min-resolution=5 --max-resolution=10 tmp/raa01-wx_10000-latest-dwd-srs.tif /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
+	time $(GDALTOMBTILES) --version "$$(date +%s)" --max-resolution=10 tmp/raa01-wx_10000-latest-dwd-3857-clean.bmp /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 	mv -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles $(OUT)/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 
 debug:
