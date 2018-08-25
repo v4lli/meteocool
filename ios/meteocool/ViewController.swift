@@ -14,11 +14,16 @@ class ViewController: UIViewController, WKUIDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        UIApplication.shared.statusBarView?.backgroundColor = UIColor.black
 
         if let url = URL(string: "https://unimplemented.org/meteocool/") {
             let request = URLRequest(url: url)
             webView.load(request)
         }
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
 
     override func loadView() {
