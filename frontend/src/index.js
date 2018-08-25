@@ -18,6 +18,11 @@ import Control from 'ol/control/Control';
 import {Style, Fill, Stroke} from 'ol/style';
 import {fromLonLat} from 'ol/proj.js';
 
+// get browser height
+let browserHeight = window.innerHeight;
+var mapEl = document.getElementById("map");
+mapEl.style.height = browserHeight-60 + 'px';
+
 // Register service worker if available
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
