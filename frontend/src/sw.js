@@ -1,5 +1,10 @@
-workbox.skipWaiting();
-workbox.clientsClaim();
+// Update service worker on page refresh
+addEventListener('message', event => {
+  if (event.data === 'skipWaiting') {
+    skipWaiting();
+  }
+});
+//workbox.setConfig({ debug: true });
 
 // Cache map tiles
 workbox.routing.registerRoute(
@@ -16,4 +21,4 @@ workbox.routing.registerRoute(
   })
 );
 
-workbox.precaching.precacheAndRoute(self.__precacheManifest);
+workbox.precaching.precacheAndRoute(self.__precacheManifest || []);

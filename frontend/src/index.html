@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title>meteocool :D</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
-    <link rel="manifest" href="./assets/site.webmanifest">
-    <link rel="mask-icon" href="./assets/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="manifest" href="./site.webmanifest">
+    <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
     <meta name="apple-mobile-web-app-title" content="Meteocool">
     <meta name="application-name" content="Meteocool">
     <meta name="theme-color" content="#ffffff">
@@ -15,31 +15,44 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="aboutModalTitle">About Meteocool</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Meteocool was created by a few cool dudes*. one of them is just complaining and wants to make money off of this. so here go the credits:</p>
+                <ul>
+                    <li>dwd</li>
+                    <li>bootstrap</li>
+                    <li>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> are licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></li>
+                </ul>
+                <p>* we're hip and think <em>dudes</em> is gender neutral</p>
+                <p><a href="https://github.com/v4lli/meteocool/issues" target="_blank">Report an issue</a></p>
+                <p>the text above was not yet approved by PR</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand mr-auto mt-2 mt-lg-0" href="/meteocool/"><img src="./android-chrome-512x512.png" width="30" height="30" class="d-inline-block align-top" alt="meteocool logo"> meteocool</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                <li class="nav-item"><a id="toggleMode" class="nav-link">dark mode</a></li>
+                <li class="nav-item"><a class="nav-link" href="javascript:void();" data-toggle="modal" data-target="#aboutModal">About</a></li>
             </ul>
         </div>
     </nav>
-    <div style="height:100vh;" class="row no-gutters">
-        <div class="col">
-            <div id="map" style="height:100%"></div>
-        </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col col-auto mr-auto">
-                <div id="infobar">Update: 4min 2sec ago | <a href="https://github.com/v4lli/meteocool/issues" target="_blank">Report an issue</a></div>
-            </div>
-            <div class="col">
-                <span>hier koennte dein footer stehen - Wetterdaten (c) DWD</span>
-            </div>
-        </div>
-    </div>
+    <div id="map"></div>
   </body>
 </html>
