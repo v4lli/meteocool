@@ -9,6 +9,13 @@ docker-compose, note the following:
 
 * remove all 'logging' substructures from docker-compose.yml in order to use the default docker logging facility
 
+## Development workflow
+
+Some random notes:
+
+* Deploy frontend to production: ```cd frontend/ && npm install && npm run-script build```
+* Use feature branches
+
 ## Backend
 
 Makefile targets in ```backend/```:
