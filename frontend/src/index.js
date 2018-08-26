@@ -18,10 +18,23 @@ import Control from 'ol/control/Control';
 import {Style, Fill, Stroke} from 'ol/style';
 import {fromLonLat} from 'ol/proj.js';
 
-// get browser height
-let browserHeight = window.innerHeight;
-var mapEl = document.getElementById("map");
-mapEl.style.height = browserHeight-60 + 'px';
+
+// poor man's resizer
+let browserHeight;
+let navEl;
+let mapEl;
+var dimensions = () => {
+  browserHeight = window.innerHeight;
+  navEl = document.getElementById("navbar").clientHeight;
+  mapEl = document.getElementById("map");
+};
+dimensions();
+mapEl.style.height = browserHeight-navEl + 'px';
+
+window.addEventListener('resize', () => {
+  dimensions();
+  mapEl.style.height = browserHeight-navEl + 'px';
+ });
 
 // Register service worker if available
 if ('serviceWorker' in navigator) {
