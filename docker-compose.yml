@@ -1,5 +1,8 @@
 version: '3.5'
 
+# XXX TODO:
+# - set time to localtime/host time inside the containers.
+
 services:
   app:
     build: backend/app
