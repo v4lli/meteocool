@@ -148,7 +148,8 @@ socket.on('map_update', function(data){
 
 // locate me button
 var button = document.createElement('button');
-button.innerHTML = 'L';
+button.classList.add('locate-me-btn')
+button.innerHTML = '<img src="./baseline_location_searching_white_48dp.png">';
 var locateMe = function(e) {
     var coordinates = geolocation.getPosition();
     map.getView().animate({center: coordinates, zoom: 10});
