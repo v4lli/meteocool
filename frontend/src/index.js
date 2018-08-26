@@ -18,8 +18,19 @@ import Control from 'ol/control/Control';
 import {Style, Fill, Stroke} from 'ol/style';
 import {fromLonLat} from 'ol/proj.js';
 
-// prep for dark mode
-let mode = 'osm';
+// mo
+var defaultOsmMapView = true;
+var toggleMode = document.getElementById("toggleMode")
+toggleMode.onclick = () => {
+	var newLayer = new TileLayer({
+    source: new OSM({
+      url: defaultOsmMapView ? 'https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png' : 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    })
+  })
+  map.getLayers().setAt(0, newLayer)
+  defaultOsmMapView = !defaultOsmMapView
+  toggleMode.innerHTML = defaultOsmMapView ? 'dark mode' : 'light mode';
+}
 
 // poor man's resizer
 let browserHeight;
@@ -59,9 +70,7 @@ const map = new Map({
 	target: 'map',
 	layers: [
 		new TileLayer({
-			source: new OSM({
-        url: mode === 'osm' ? 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png' : 'https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
-      })
+			source: new OSM()
 		})
   ],
   controls: defaultControls().extend([
@@ -178,3 +187,5 @@ var locateControl = new Control({
     element: element
 });
 map.addControl(locateControl);
+
+console.log(map.getLayers())
