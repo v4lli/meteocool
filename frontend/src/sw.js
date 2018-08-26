@@ -1,14 +1,15 @@
+//workbox.setConfig({ debug: true });
+
 // Update service worker on page refresh
 addEventListener('message', event => {
   if (event.data === 'skipWaiting') {
     skipWaiting();
   }
 });
-//workbox.setConfig({ debug: true });
 
 // Cache map tiles
 workbox.routing.registerRoute(
-  new RegExp('https://(?:a|b|c).tile.openstreetmap.org/.*\.png'),
+  new RegExp('https://(?:a|b|c).(?:tile.openstreetmap.org|basemaps.cartocdn.com)/.*\.png'),
   workbox.strategies.cacheFirst({
     cacheName: 'tile-cache',
     plugins: [
