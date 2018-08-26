@@ -1,16 +1,6 @@
 // Update service worker on page refresh
-// https://redfin.engineering/how-to-fix-the-refresh-button-when-using-service-workers-a8e27af6df68
-addEventListener('fetch', event => {
-  event.respondWith((async () => {
-    if (event.request.mode === "navigate" && event.request.method === "GET" && registration.waiting && (await clients.matchAll()).length < 2) {
-      registration.waiting.postMessage('skipWaiting');
-      return new Response("", {headers: {"Refresh": "0"}});
-    }
-    return await caches.match(event.request) || fetch(event.request);
-  })());
-});
-addEventListener('message', e => {
-  if (e.data === 'skipWaiting') {
+addEventListener('message', event => {
+  if (event.data === 'skipWaiting') {
     skipWaiting();
   }
 });

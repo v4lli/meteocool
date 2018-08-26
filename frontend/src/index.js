@@ -18,6 +18,48 @@ import Control from 'ol/control/Control';
 import {Style, Fill, Stroke} from 'ol/style';
 import {fromLonLat} from 'ol/proj.js';
 
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      console.log('SW registered: ', reg);
+
+      // Update service worker on page refresh
+      // https://redfin.engineering/how-to-fix-the-refresh-button-when-using-service-workers-a8e27af6df68
+      function listenForWaitingServiceWorker(reg, callback) {
+        function awaitStateChange() {
+          reg.installing.addEventListener('statechange', function() {
+            if (this.state === 'installed') callback(reg);
+          });
+        }
+        if (!reg) return;
+        if (reg.waiting) return callback(reg);
+        if (reg.installing) awaitStateChange();
+        reg.addEventListener('updatefound', awaitStateChange);
+      }
+
+      // Reload once when the new Service Worker starts activating
+      var refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', function() {
+        console.log('Reloading page for latest content')
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+      function promptUserToRefresh(reg) {
+        // Immediately load service worker
+        reg.waiting.postMessage('skipWaiting');
+        //if (window.confirm("New version available! OK to refresh?")) {
+        //  reg.waiting.postMessage('skipWaiting');
+        //}
+      }
+      listenForWaitingServiceWorker(reg, promptUserToRefresh);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}
+
 // mo
 var defaultOsmMapView = true;
 var toggleMode = document.getElementById("toggleMode")
@@ -48,17 +90,6 @@ window.addEventListener('resize', () => {
   dimensions();
   mapEl.style.height = browserHeight-navEl + 'px';
  });
-
-// Register service worker if available
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').then(registration => {
-      console.log('SW registered: ', registration);
-    }).catch(registrationError => {
-      console.log('SW registration failed: ', registrationError);
-    });
-  });
-}
 
 var view = new View({
   center: fromLonLat([10.447683, 51.163375]),
