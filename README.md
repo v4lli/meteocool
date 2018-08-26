@@ -18,7 +18,7 @@ Some random notes:
 
 ## Backend
 
-Makefile targets in ```backend/```:
+Makefile targets in ```backend/dwd/```:
 
  - ```make mbtiles```: PNG + tiles erstellen in tmp/
  - ```make update```: aktuelle Wettermap vom DWD holen nach tmp/
@@ -29,11 +29,8 @@ Makefile targets in ```backend/```:
 All changes in ```frontend/``` are automatically deployed on https://unimplemented.org/meteocool/ as soon as they are pushed into the master
 branch (See ```infra/deploy_server.py``` for the webhook server).
 
-For development, use ```npm start``` inside the ```frontend/``` directory. This will compile the index.js application and start a development
+For development, use ```npm install && npm start``` inside the ```frontend/``` directory. This will compile the index.js application and start a development
 webserver on localhost.
-
-XXX wenn man npm start verwendet sollte in der app automatisch localhost fuer websockets verwendet werden. wenn der build ueber parcel
-passiert sollte die produktive url genommen werden.
 
 ## Install
 
