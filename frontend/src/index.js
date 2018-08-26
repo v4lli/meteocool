@@ -18,6 +18,8 @@ import Control from 'ol/control/Control';
 import {Style, Fill, Stroke} from 'ol/style';
 import {fromLonLat} from 'ol/proj.js';
 
+// prep for dark mode
+let mode = 'osm';
 
 // poor man's resizer
 let browserHeight;
@@ -57,7 +59,9 @@ const map = new Map({
 	target: 'map',
 	layers: [
 		new TileLayer({
-			source: new OSM()
+			source: new OSM({
+        url: mode === 'osm' ? 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png' : 'https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+      })
 		})
   ],
   controls: defaultControls().extend([
@@ -120,13 +124,13 @@ new VectorLayer({
 });
 
 
-if (process.env.NODE_ENV === 'production') {
+//if (process.env.NODE_ENV === 'production') {
 	var tileUrl = 'https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
 	var websocketUrl = 'https://unimplemented.org/tile';
-} else {
-	var tileUrl = 'http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
-	var websocketUrl = 'http://localhost:8071/tile';
-}
+//} else {
+//	var tileUrl = 'http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json';
+//	var websocketUrl = 'http://localhost:8071/tile';
+//}
 
 var reflectivityOpacity = 0.85;
 
