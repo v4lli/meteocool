@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.js --mode production",
     "start": "webpack-dev-server --config webpack.config.js --mode development --content-base dist",
-    "start-pub": "webpack-dev-server --config webpack.config.js --mode development --content-base dist --disable-host-check --host 0.0.0.0",
-    "serve-release": "npm run build && http-server -c0 dist"
+    "start-dev": "webpack-dev-server --config webpack.config.js --mode development --content-base dist --disable-host-check --host 0.0.0.0",
+    "start-prod": "webpack-dev-server --config webpack.config.js --mode production --content-base dist --disable-host-check --host 0.0.0.0",
+    "serve-release": "npm run build && http-server -g -c0 dist"
   },
   "dependencies": {
     "bootstrap": "^4.1.3",
