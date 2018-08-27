@@ -1,0 +1,5 @@
+import wradlib
+radolan_grid_xy = wradlib.georef.get_radolan_grid(1100,900)
+x_rad = radolan_grid_xy[:, :, 0]
+y_rad = radolan_grid_xy[:, :, 1]
+print("ul: {:10.4f} {:10.3f} ".format(x_rad[-1, 0], y_rad[-1, 0]))
