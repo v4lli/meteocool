@@ -9,7 +9,8 @@
     "start": "webpack-dev-server --config webpack.config.js --mode development --content-base dist",
     "start-dev": "webpack-dev-server --config webpack.config.js --mode development --content-base dist --disable-host-check --host 0.0.0.0",
     "start-prod": "webpack-dev-server --config webpack.config.js --mode production --content-base dist --disable-host-check --host 0.0.0.0",
-    "serve-release": "npm run build && http-server -g -c0 dist"
+    "serve-release": "npm run build && http-server -g -c0 dist",
+    "lint": "eslint src/*.js"
   },
   "dependencies": {
     "bootstrap": "^4.1.3",
@@ -26,6 +27,12 @@
     "copy-webpack-plugin": "^4.5.2",
     "css-loader": "^1.0.0",
     "cssnano": "^4.0.5",
+    "eslint": "^5.4.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.0",
+    "eslint-plugin-standard": "^3.1.0",
     "html-webpack-plugin": "^3.2.0",
     "http-server": "^0.11.1",
     "mini-css-extract-plugin": "^0.4.2",
