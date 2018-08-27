@@ -2,7 +2,16 @@
     top: 60px;
     left: .5em;
 }
+
 .locate-me-btn img {
     width: 15px;
     height: 15px;
+}
+
+#navbar #clockbg {
+	display: none;
+	background-color: black;
+	width: 100px;
+	height: 40px;
+	margin: 30px;
 }
