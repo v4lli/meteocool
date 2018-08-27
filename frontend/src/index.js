@@ -91,9 +91,28 @@ window.addEventListener("resize", () => {
   mapEl.style.height = browserHeight - navEl + "px";
 });
 
+// default zoom, center and rotation
+var zoom = 6;
+var center = fromLonLat([10.447683, 51.163375]);
+var rotation = 0;
+
+if (window.location.hash !== '') {
+  // try to restore center, zoom-level and rotation from the URL
+  var hash = window.location.hash.replace('#map=', '');
+  var parts = hash.split('/');
+  if (parts.length === 4) {
+    zoom = parseInt(parts[0], 10);
+    center = [
+      parseFloat(parts[1]),
+      parseFloat(parts[2])
+    ];
+    rotation = parseFloat(parts[3]);
+  }
+}
+
 var view = new View({
-  center: fromLonLat([10.447683, 51.163375]),
-  zoom: 6,
+  center: center,
+  zoom: zoom,
   minzoom: 5
 });
 
@@ -109,6 +128,44 @@ const map = new Map({
   ]),
   view: view
 });
+
+var shouldUpdate = true;
+var view = map.getView();
+var updatePermalink = function() {
+  if (!shouldUpdate) {
+    // do not update the URL when the view was changed in the 'popstate' handler
+    shouldUpdate = true;
+    return;
+  }
+
+  var center = view.getCenter();
+  var hash = '#map=' +
+      view.getZoom() + '/' +
+      Math.round(center[0] * 100) / 100 + '/' +
+      Math.round(center[1] * 100) / 100 + '/' +
+      view.getRotation();
+  var state = {
+    zoom: view.getZoom(),
+    center: view.getCenter(),
+    rotation: view.getRotation()
+  };
+  window.history.pushState(state, 'map', hash);
+};
+
+map.on('moveend', updatePermalink);
+
+// restore the view state when navigating through the history, see
+// https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
+window.addEventListener('popstate', function(event) {
+  if (event.state === null) {
+    return;
+  }
+  map.getView().setCenter(event.state.center);
+  map.getView().setZoom(event.state.zoom);
+  map.getView().setRotation(event.state.rotation);
+  shouldUpdate = false;
+});
+
 
 var geolocation = new Geolocation({
   // enableHighAccuracy must be set to true to have the heading value.
@@ -150,7 +207,7 @@ var haveZoomed = false;
 geolocation.on("change:position", function () {
   var coordinates = geolocation.getPosition();
   positionFeature.setGeometry(coordinates ? new Point(coordinates) : null);
-  if (!haveZoomed) {
+  if (window.location.hash !== '' && !haveZoomed) {
     map.getView().animate({center: coordinates, zoom: 10});
     haveZoomed = true;
   }
