@@ -1,11 +1,11 @@
-//workbox.setConfig({ debug: true });
+// workbox.setConfig({ debug: true });
 
 // Update service worker on page refresh
 addEventListener('message', event => {
   if (event.data === 'skipWaiting') {
-    skipWaiting();
+    skipWaiting()
   }
-});
+})
 
 // Cache map tiles
 workbox.routing.registerRoute(
@@ -16,10 +16,10 @@ workbox.routing.registerRoute(
       new workbox.expiration.Plugin({
         maxEntries: 20000,
         maxAgeSeconds: 7 * 24 * 60 * 60,
-        purgeOnQuotaError: true,
+        purgeOnQuotaError: true
       })
-    ],
+    ]
   })
-);
+)
 
-workbox.precaching.precacheAndRoute(self.__precacheManifest || []);
+workbox.precaching.precacheAndRoute(self.__precacheManifest || [])
