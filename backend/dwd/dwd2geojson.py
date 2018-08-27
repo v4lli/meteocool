@@ -20,46 +20,57 @@ data = wradlib.io.radolan.read_radolan_composite(sys.argv[1])
 # data is mm/5m, we convert it to dbz here: https://plot.ly/~ToniBois/1783.embed
 # https://www.dwd.de/DE/leistungen/radarniederschlag/rn_info/download_niederschlagsbestimmung.pdf?__blob=publicationFile&v=4
 
-def scale(r, g, b, num, idx, a=0xFF):
+def scale(r, g, b, num, idx, alpha=False):
     threshold = 0.2
     hls = colorsys.rgb_to_hls(r/255, g/255, b/255)
     result = colorsys.hls_to_rgb(hls[0], hls[1]+(1-hls[1]-threshold)*(1/num)*idx, hls[2])
+
+    if alpha:
+        a = 150 + int(105/(num+2)*(idx+1))
+    else:
+        a = 255
     return (int(result[0]*255), int(result[1]*255), int(result[2]*255), a)
 
 def dbz2color(dbz):
     factor = (dbz % 5) + 1
-    if dbz >= 170:
+    s = 0
+    if dbz >= 170-s:
         return (0, 0, 0, 0)
-    if dbz >= 75:
-        return scale(0xFE, 0xFC, 0xFD, 95, dbz % 75)
-    if dbz >= 70:
-        return scale(0x98, 0x58, 0xC4, 5, dbz % 70)
-    if dbz >= 65:
-        return scale(0xF6, 0x28, 0xF6, 5, dbz % 65)
-    if dbz >= 60:
-        return scale(0xB8, 0x07, 0x11, 5, dbz % 60)
-    if dbz >= 55:
-        return scale(0xC9, 0x0B, 0x13, 5, dbz % 55)
-    if dbz >= 50:
-        return scale(0xFA, 0x0D, 0x1C, 5, dbz % 50)
-    if dbz >= 45:
-        return scale(0xFA, 0x93, 0x26, 5, dbz % 45)
-    if dbz >= 40:
-        return scale(0xE3, 0xBB, 0x2A, 5, dbz % 40)
-    if dbz >= 35:
-        return scale(0xFC, 0xF3, 0x36, 5, dbz % 35)
-    if dbz >= 30:
-        return scale(0x12, 0x8C, 0x15, 5, dbz % 30)
-    if dbz >= 25:
-        return scale(0x1E, 0xC4, 0x22, 5, dbz % 25)
+    if dbz >= 75-s:
+        return scale(0xFE, 0xFC, 0xFD, 95-s, dbz % (75-s))
+    if dbz >= 70-s:
+        return scale(0x98, 0x58, 0xC4, 5-s, dbz % (70-s))
+    if dbz >= 60-s:
+        return scale(0xF6, 0x28, 0xF6, 10-s, dbz % (60-s))
+    #if dbz >= 60-s:
+    #    return scale(0xB8, 0x07, 0x11, 5-s, dbz % (60-s))
+    # redundant color
+    #if dbz >= 55-s:
+    #    return scale(0xC9, 0x0B, 0x13, 5-s, dbz % (55-s))
+    if dbz >= 45-s:
+        return scale(0xFA, 0x0D, 0x1C, 15-s, dbz % (45-s))
+    #if dbz >= 45-s:
+    #    return scale(0xFA, 0x93, 0x26, 5-s, dbz % (45-s))
+    # ugly color
+    #if dbz >= 40-s:
+    #    return scale(0xE3, 0xBB, 0x2A, 5-s, dbz % (40-s))
+    if dbz >= 35-s:
+        return scale(0xFC, 0xF3, 0x36, 10-s, dbz % (35-s))
+    if dbz >= 30-s:
+        return scale(0x12, 0x8C, 0x15, 5-s, dbz % (30-s))
+    # also redundant
+    #if dbz >= 25-s:
+    #    return scale(0x1E, 0xC4, 0x22, 5-s, dbz % (25-s))
+    if dbz >= 25-s:
+        #return scale(0x2A, 0xFC, 0x30, 5-s, dbz % (20-s))
+        # the redundant color looks nicer though...
+        return scale(0x1E, 0xC4, 0x22, 5-s, dbz % (25-s))
     if dbz >= 20:
-        return scale(0x2A, 0xFC, 0x30, 5, dbz % 20)
-    if dbz >= 15:
-        return scale(0x0E, 0x22, 0xEE, 5, dbz % 15)
-    if dbz >= 5:
-        return scale(0x1B, 0xA0, 0xF0, 10, dbz % 5, int(255/7*(factor+2)))
+        return scale(0x0E, 0x22, 0xEE, 10+s, dbz % 20)
+    if dbz >= 10:
+        return scale(0x0E, 0x22, 0xEE, 10, dbz % 10, True)
     if dbz >= 0:
-        return (64, 64, 64, int(50/5*factor))
+        return (64, 64, 64, int(164/5*factor))
     if dbz < 0:
         return (0x00, 0x00, 0x00, 0)
 
