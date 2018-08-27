@@ -188,6 +188,8 @@ const socket = io.connect(websocketUrl);
 socket.on("connect", () => console.log("websocket connected"));
 socket.on("map_update", function (data) {
   console.log(data);
+  var lastUpdated = new Date();
+  document.getElementById("updatedTime").innerHTML = "Last update: " + lastUpdated.getHours() + ":" + lastUpdated.getMinutes();
   var newLayer = new TileLayer({
     source: new TileJSON({
       tileJSON: data,
