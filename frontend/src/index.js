@@ -171,7 +171,7 @@ if (process.env.NODE_ENV === "production") {
   var websocketUrl = "http://localhost:8071/tile";
 }
 
-var reflectivityOpacity = 0.85;
+var reflectivityOpacity = 0.75;
 
 var currentLayer = new TileLayer({
   source: new TileJSON({
@@ -188,6 +188,10 @@ const socket = io.connect(websocketUrl);
 socket.on("connect", () => console.log("websocket connected"));
 socket.on("map_update", function (data) {
   console.log(data);
+
+  var lastUpdated = new Date();
+  document.getElementById("updatedTime").innerHTML = "Last update: " + lastUpdated.getHours() + ":" + lastUpdated.getMinutes();
+
   var newLayer = new TileLayer({
     source: new TileJSON({
       tileJSON: data,
