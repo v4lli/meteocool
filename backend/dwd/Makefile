@@ -9,7 +9,7 @@ mbtiles:
 	# the worldfile defines where and how big the bitmap map in the target srs
 	cp worldfile tmp/raa01-wx_10000-latest-dwd.wld
 	gdal_translate -a_srs "+proj=stere +lat_0=90 +lat_ts=90 +lon_0=10 +k=0.93301270189 +x_0=0 +y_0=0 +a=6370040 +b=6370040 +to_meter=1000 +no_defs" tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd-srs.png
-	gdalwarp -of gtiff -t_srs EPSG:3857 tmp/raa01-wx_10000-latest-dwd-srs.png tmp/raa01-wx_10000-latest-dwd-final.tif
+	gdalwarp -overwrite -of gtiff -t_srs EPSG:3857 tmp/raa01-wx_10000-latest-dwd-srs.png tmp/raa01-wx_10000-latest-dwd-final.tif
 	# set the target srs to EPSG:3857 (standard web mercator)
 	#gdal_translate -a_srs EPSG:3857 tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd-3857.png
 	#cd tmp && time gdalwarp -overwrite -of GTiff -s_srs "+proj=stere +lon_0=10.0 +lat_0=90.0 +lat_ts=60.0 +a=6370040 +b=6370040 +units=m" -t_srs "EPSG:3857" -te_srs "+proj=stere +lon_0=10.0 +lat_0=90.0 +lat_ts=60.0 +a=6370040 +b=6370040 +units=m"  -te 207716.2755078182 5827593.4587101545 1795826.6626303399 7415703.845832676 -r near raa01-wx_10000-latest-dwd.png raa01-wx_10000-latest-dwd-srs.tif
