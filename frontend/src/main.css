@@ -1,11 +1,11 @@
 .locate-me {
-    top: 60px;
-    left: .5em;
+	top: 60px;
+	right: .5em;
 }
 
 .locate-me-btn img {
-    width: 15px;
-    height: 15px;
+	width: 15px;
+	height: 15px;
 }
 
 #navbar #spacer {
