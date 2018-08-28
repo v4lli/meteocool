@@ -11,7 +11,7 @@
 #navbar #spacer {
 	display: none;
 	width: 100%;
-	height: 25px;
+	height: 32px;
 }
 
 #logolink {
@@ -40,11 +40,11 @@
 
 #navbar #clockbg {
 	display: none;
-	background-color: #d3d3d3;
-	width: 63px;
+	background-color: #696969;
+	width: 65px;
 	height: 20px;
 	position: absolute;
 	top: 13px;
-	left: 16px;
+	left: 15px;
 	border-radius: 8px;
 }
