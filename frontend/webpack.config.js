@@ -35,12 +35,12 @@ module.exports = {
       favicon: 'assets/favicon.ico',
       inject: true
     }),
-    new CopyWebpackPlugin([
-      { from: 'assets' }
-    ]),
     new MiniCssExtractPlugin({
       filename: "main.css"
     }),
+    new CopyWebpackPlugin([
+      { from: 'assets' }
+    ]),
     new WorkboxPlugin.InjectManifest({
       importWorkboxFrom: 'local',
       swSrc: './src/sw.js',
