@@ -280,8 +280,6 @@ var locateControl = new Control({
 });
 map.addControl(locateControl);
 
-console.log(map.getLayers());
-
 // Detects if device is on iOS
 const isIos = () => {
   const userAgent = window.navigator.userAgent.toLowerCase();

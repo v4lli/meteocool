@@ -36,7 +36,7 @@ api: mbtiles
 	# Then broadcast it
 	@# XXX remove token from logging... @ might not work when the command fails
 	@curl -s -X POST -d @/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json \
-	  http://app:5000/internal/publish_new_tileset?token=${MC_TOKEN} \
+	  http://app:5000/internal/publish_new_tileset?token=$$(cat /tmp/.token) \
 	  -H 'Cache-Control: no-cache' \
 	  -H 'Content-Type: application/json'
 	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json

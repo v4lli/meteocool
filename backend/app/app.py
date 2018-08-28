@@ -25,15 +25,16 @@ def publish_tileset():
     try:
         token = request.args.get("token", "")
     except KeyError:
+        logging.warn("no token supplied")
         return "GIEV TOKEN", 400
 
     if not check_password_hash(publish_token, token):
-        logging.info("authentication fail")
-        return "BYE", 401
+        logging.warn("authentication fail")
+        return "AUTH FAIL! BYE", 401
 
     socketio.start_background_task(update_all_clients, data)
     logging.info("authentication success")
-    return "THANKS"
+    return "OK"
 
 
 @app.route("/")
