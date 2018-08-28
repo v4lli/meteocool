@@ -1,6 +1,10 @@
 .locate-me {
-	top: 60px;
-	right: .5em;
+	top: 65px;
+	left: .5em;
+}
+
+.ol-touch .locate-me {
+	top: 80px;
 }
 
 .locate-me-btn img {
