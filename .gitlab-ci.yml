@@ -1,0 +1,28 @@
+image: node:8
+
+cache:
+  paths:
+    - frontend/node_modules/
+
+stages:
+  - build
+  - test
+
+build:frontend:
+  stage: build
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    name: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA:0:8}_frontend"
+    expire_in: 4 week
+    paths:
+      - frontend/dist/*
+
+test:frontend:lint:
+  stage: test
+  script:
+    - cd frontend
+    - npm install
+    - npm run lint
