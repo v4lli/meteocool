@@ -1,7 +1,14 @@
 {
-    "extends": "standard",
-    "rules": {
-        "quotes": ["error", "double"],
-        "semi": ["error", "always"]
-    }
+  "extends": "standard",
+  "env": {
+    "browser": true,
+    "serviceworker": true
+  },
+  "globals": {
+    "workbox": false
+  },
+  "rules": {
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"]
+  }
 }

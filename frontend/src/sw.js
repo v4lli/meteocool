@@ -9,7 +9,7 @@ addEventListener("message", event => {
 
 // Cache map tiles
 workbox.routing.registerRoute(
-  new RegExp("https://(?:a|b|c).(?:tile.openstreetmap.org|basemaps.cartocdn.com)/.*\.png"),
+  new RegExp("https://(?:a|b|c).(?:tile.openstreetmap.org|basemaps.cartocdn.com)/.*.png"),
   workbox.strategies.cacheFirst({
     cacheName: "tile-cache",
     plugins: [

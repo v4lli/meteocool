@@ -9,8 +9,8 @@ import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
 import TileLayer from "ol/layer/Tile.js";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
+// import VectorLayer from "ol/layer/Vector";
+// import VectorSource from "ol/source/Vector";
 import io from "socket.io-client";
 import {Map, View, Geolocation, Feature} from "ol";
 import {defaults as defaultControls, OverviewMap} from "ol/control.js";
@@ -94,7 +94,7 @@ window.addEventListener("resize", () => {
 // default zoom, center and rotation
 var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
-var rotation = 0;
+// var rotation = 0;
 
 if (window.location.hash !== "") {
   // try to restore center, zoom-level and rotation from the URL
@@ -106,7 +106,7 @@ if (window.location.hash !== "") {
       parseFloat(parts[1]),
       parseFloat(parts[2])
     ];
-    rotation = parseFloat(parts[3]);
+    // rotation = parseFloat(parts[3]);
   }
 }
 
@@ -130,8 +130,7 @@ const map = new Map({
 });
 
 var shouldUpdate = true;
-var view = map.getView();
-var updatePermalink = function() {
+var updatePermalink = function () {
   if (!shouldUpdate) {
     // do not update the URL when the view was changed in the 'popstate' handler
     shouldUpdate = true;
@@ -156,7 +155,7 @@ map.on("moveend", updatePermalink);
 
 // restore the view state when navigating through the history, see
 // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
-window.addEventListener("popstate", function(event) {
+window.addEventListener("popstate", function (event) {
   if (event.state === null) {
     return;
   }
@@ -165,7 +164,6 @@ window.addEventListener("popstate", function(event) {
   map.getView().setRotation(event.state.rotation);
   shouldUpdate = false;
 });
-
 
 var geolocation = new Geolocation({
   // enableHighAccuracy must be set to true to have the heading value.
@@ -179,7 +177,20 @@ geolocation.setTracking(true);
 
 // handle geolocation error.
 geolocation.on("error", function (error) {
-  console.log("could not get location data, doing nothing like it's 1990");
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      console.log("User denied the request for Geolocation.");
+      break;
+    case error.POSITION_UNAVAILABLE:
+      console.log("Location information is unavailable.");
+      break;
+    case error.TIMEOUT:
+      console.log("The request to get user location timed out.");
+      break;
+    default:
+      console.log("could not get location data, doing nothing like it's 1990");
+      break;
+  }
 });
 
 var accuracyFeature = new Feature();
@@ -213,19 +224,19 @@ geolocation.on("change:position", function () {
   }
 });
 
-new VectorLayer({
-  map: map,
-  source: new VectorSource({
-    features: [accuracyFeature, positionFeature]
-  })
-});
+// Unused
+// new VectorLayer({
+//   map: map,
+//   source: new VectorSource({
+//     features: [accuracyFeature, positionFeature]
+//   })
+// });
 
+var tileUrl = "http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+var websocketUrl = "http://localhost:8071/tile";
 if (process.env.NODE_ENV === "production") {
-  var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-  var websocketUrl = "https://unimplemented.org/tile";
-} else {
-  var tileUrl = "http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-  var websocketUrl = "http://localhost:8071/tile";
+  tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+  websocketUrl = "https://unimplemented.org/tile";
 }
 
 var reflectivityOpacity = 0.75;
@@ -283,7 +294,7 @@ map.addControl(locateControl);
 // Detects if device is on iOS
 const isIos = () => {
   const userAgent = window.navigator.userAgent.toLowerCase();
-  return /iphone|ipad|ipod/.test( userAgent );
+  return /iphone|ipad|ipod/.test(userAgent);
 };
 // Detects if device is in standalone mode
 const isInStandaloneMode = () => ("standalone" in window.navigator) && (window.navigator.standalone);
