@@ -23,7 +23,7 @@
 #logotext {
 	height: 80%;
 	line-height: 95%;
-	margin-top: 1px;
+	margin-top: 2px;
 	margin-bottom: 3px;
 	font-size: 1.3rem;
 }
@@ -37,14 +37,13 @@
 	width: 50%;
 }
 
-
 #navbar #clockbg {
 	display: none;
 	background-color: #696969;
-	width: 65px;
+	width: 66px;
 	height: 20px;
 	position: absolute;
 	top: 13px;
 	left: 15px;
-	border-radius: 8px;
+	border-radius: 7px;
 }
