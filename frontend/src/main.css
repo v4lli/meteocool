@@ -8,10 +8,43 @@
     height: 15px;
 }
 
+#navbar #spacer {
+	display: none;
+	width: 100%;
+	height: 25px;
+}
+
+#logolink {
+	float: left;
+	height: 100%;
+	margin-right: 6px;
+}
+
+#logotext {
+	height: 80%;
+	line-height: 95%;
+	margin-top: 1px;
+	margin-bottom: 3px;
+	font-size: 1.3rem;
+}
+
+#statustext {
+	height: 20%;
+	line-height: 80%;
+}
+
+#compositBar {
+	width: 50%;
+}
+
+
 #navbar #clockbg {
 	display: none;
-	background-color: black;
-	width: 100px;
-	height: 40px;
-	margin: 30px;
+	background-color: #d3d3d3;
+	width: 63px;
+	height: 20px;
+	position: absolute;
+	top: 13px;
+	left: 16px;
+	border-radius: 8px;
 }

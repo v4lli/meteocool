@@ -291,6 +291,7 @@ const isIos = () => {
 const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
 
 // Checks if should display install popup notification:
-if (isIos() && !isInStandaloneMode()) {
+if (isIos() && isInStandaloneMode()) {
   document.getElementById("clockbg").style.display = "block";
+  document.getElementById("spacer").style.display = "block";
 }
