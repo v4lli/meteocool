@@ -96,10 +96,10 @@ var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
 var rotation = 0;
 
-if (window.location.hash !== '') {
+if (window.location.hash !== "") {
   // try to restore center, zoom-level and rotation from the URL
-  var hash = window.location.hash.replace('#map=', '');
-  var parts = hash.split('/');
+  var hash = window.location.hash.replace("#map=", "");
+  var parts = hash.split("/");
   if (parts.length === 4) {
     zoom = parseInt(parts[0], 10);
     center = [
@@ -139,24 +139,24 @@ var updatePermalink = function() {
   }
 
   var center = view.getCenter();
-  var hash = '#map=' +
-      view.getZoom() + '/' +
-      Math.round(center[0] * 100) / 100 + '/' +
-      Math.round(center[1] * 100) / 100 + '/' +
+  var hash = "#map=" +
+      view.getZoom() + "/" +
+      Math.round(center[0] * 100) / 100 + "/" +
+      Math.round(center[1] * 100) / 100 + "/" +
       view.getRotation();
   var state = {
     zoom: view.getZoom(),
     center: view.getCenter(),
     rotation: view.getRotation()
   };
-  window.history.pushState(state, 'map', hash);
+  window.history.pushState(state, "map", hash);
 };
 
-map.on('moveend', updatePermalink);
+map.on("moveend", updatePermalink);
 
 // restore the view state when navigating through the history, see
 // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
-window.addEventListener('popstate', function(event) {
+window.addEventListener("popstate", function(event) {
   if (event.state === null) {
     return;
   }
@@ -207,7 +207,7 @@ var haveZoomed = false;
 geolocation.on("change:position", function () {
   var coordinates = geolocation.getPosition();
   positionFeature.setGeometry(coordinates ? new Point(coordinates) : null);
-  if (window.location.hash !== '' && !haveZoomed) {
+  if (window.location.hash !== "" && !haveZoomed) {
     map.getView().animate({center: coordinates, zoom: 10});
     haveZoomed = true;
   }
@@ -284,9 +284,9 @@ map.addControl(locateControl);
 const isIos = () => {
   const userAgent = window.navigator.userAgent.toLowerCase();
   return /iphone|ipad|ipod/.test( userAgent );
-}
+};
 // Detects if device is in standalone mode
-const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+const isInStandaloneMode = () => ("standalone" in window.navigator) && (window.navigator.standalone);
 
 // Checks if should display install popup notification:
 if (isIos() && isInStandaloneMode()) {
