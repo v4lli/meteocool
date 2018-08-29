@@ -15,6 +15,7 @@ Some random notes:
 
 * Deploy frontend to production: ```cd frontend/ && npm install && npm run-script build```
 * Use feature branches
+* docker-compose MUST be executed in the root-directory of the repository!
 
 ## Backend
 
