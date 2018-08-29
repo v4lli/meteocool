@@ -129,42 +129,6 @@ const map = new Map({
   view: view
 });
 
-var shouldUpdate = true;
-var updatePermalink = function () {
-  if (!shouldUpdate) {
-    // do not update the URL when the view was changed in the 'popstate' handler
-    shouldUpdate = true;
-    return;
-  }
-
-  var center = view.getCenter();
-  var hash = "#map=" +
-      view.getZoom() + "/" +
-      Math.round(center[0] * 100) / 100 + "/" +
-      Math.round(center[1] * 100) / 100 + "/" +
-      view.getRotation();
-  var state = {
-    zoom: view.getZoom(),
-    center: view.getCenter(),
-    rotation: view.getRotation()
-  };
-  window.history.pushState(state, "map", hash);
-};
-
-map.on("moveend", updatePermalink);
-
-// restore the view state when navigating through the history, see
-// https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
-window.addEventListener("popstate", function (event) {
-  if (event.state === null) {
-    return;
-  }
-  map.getView().setCenter(event.state.center);
-  map.getView().setZoom(event.state.zoom);
-  map.getView().setRotation(event.state.rotation);
-  shouldUpdate = false;
-});
-
 var geolocation = new Geolocation({
   // enableHighAccuracy must be set to true to have the heading value.
   trackingOptions: {
@@ -200,6 +164,42 @@ geolocation.on("change:accuracyGeometry", function () {
   accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
   // stop annoying the user after a short time
   // setTimeout(function() {geolocation.on('change:accuracyGeometry', null);}, 1500);
+});
+
+var shouldUpdate = true;
+var updatePermalink = function () {
+  if (!shouldUpdate) {
+    // do not update the URL when the view was changed in the 'popstate' handler
+    shouldUpdate = true;
+    return;
+  }
+
+  var center = view.getCenter();
+  var hash = "#map=" +
+      view.getZoom() + "/" +
+      Math.round(center[0] * 100) / 100 + "/" +
+      Math.round(center[1] * 100) / 100 + "/" +
+      view.getRotation();
+  var state = {
+    zoom: view.getZoom(),
+    center: view.getCenter(),
+    rotation: view.getRotation()
+  };
+  window.history.pushState(state, "map", hash);
+};
+
+map.on("moveend", updatePermalink);
+
+// restore the view state when navigating through the history, see
+// https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
+window.addEventListener("popstate", function (event) {
+  if (event.state === null) {
+    return;
+  }
+  map.getView().setCenter(event.state.center);
+  map.getView().setZoom(event.state.zoom);
+  map.getView().setRotation(event.state.rotation);
+  shouldUpdate = false;
 });
 
 var positionFeature = new Feature();
