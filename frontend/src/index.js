@@ -173,7 +173,9 @@ var geolocation = new Geolocation({
   projection: view.getProjection()
 });
 
-geolocation.setTracking(true);
+if (!window.location.hash) {
+  geolocation.setTracking(true);
+}
 
 // handle geolocation error.
 geolocation.on("error", function (error) {
@@ -280,6 +282,7 @@ button.classList.add("locate-me-btn");
 button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
 var locateMe = function (e) {
   var coordinates = geolocation.getPosition();
+  geolocation.setTracking(true);
   map.getView().animate({center: coordinates, zoom: 10});
 };
 button.addEventListener("click", locateMe, false);
