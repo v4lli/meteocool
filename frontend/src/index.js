@@ -241,7 +241,7 @@ if (process.env.NODE_ENV === "production") {
   websocketUrl = "https://unimplemented.org/tile";
 }
 
-var reflectivityOpacity = 0.75;
+var reflectivityOpacity = 0.5;
 
 var currentLayer = new TileLayer({
   source: new TileJSON({
