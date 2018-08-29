@@ -307,3 +307,7 @@ if (isIos() && isInStandaloneMode()) {
   document.getElementById("clockbg").style.display = "block";
   document.getElementById("spacer").style.display = "block";
 }
+
+// quickfix for "last updated: never"
+var lastUpdated = new Date();
+document.getElementById("updatedTime").innerHTML = "Last update: " + lastUpdated.getHours() + ":" + lastUpdated.getMinutes();
