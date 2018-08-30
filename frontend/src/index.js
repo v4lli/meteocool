@@ -9,8 +9,8 @@ import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
 import TileLayer from "ol/layer/Tile.js";
-// import VectorLayer from "ol/layer/Vector";
-// import VectorSource from "ol/source/Vector";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
 import io from "socket.io-client";
 import {Map, View, Geolocation, Feature} from "ol";
 import {defaults as defaultControls, OverviewMap} from "ol/control.js";
@@ -225,6 +225,13 @@ positionFeature.setStyle(new Style({
   })
 }));
 
+new VectorLayer({
+  map: map,
+  source: new VectorSource({
+    features: [accuracyFeature, positionFeature]
+  })
+});
+
 var haveZoomed = false;
 geolocation.on("change:position", function () {
   var coordinates = geolocation.getPosition();
@@ -234,14 +241,6 @@ geolocation.on("change:position", function () {
     haveZoomed = true;
   }
 });
-
-// Unused
-// new VectorLayer({
-//   map: map,
-//   source: new VectorSource({
-//     features: [accuracyFeature, positionFeature]
-//   })
-// });
 
 var tileUrl = "http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var websocketUrl = "http://localhost:8071/tile";
