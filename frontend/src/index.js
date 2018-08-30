@@ -63,6 +63,8 @@ if ("serviceWorker" in navigator) {
 // mo
 var defaultOsmMapView = true;
 var toggleMode = document.getElementById("toggleMode");
+var navbar = document.getElementById("navbar");
+
 toggleMode.onclick = () => {
   var newLayer = new TileLayer({
     source: new OSM({
@@ -72,6 +74,13 @@ toggleMode.onclick = () => {
   map.getLayers().setAt(0, newLayer);
   defaultOsmMapView = !defaultOsmMapView;
   toggleMode.innerHTML = defaultOsmMapView ? "dark mode" : "light mode";
+  if (navbar.classList.contains("navbar-light")) {
+    navbar.classList.remove("navbar-light", "bg-light");
+    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
+  } else {
+    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
+    navbar.classList.add("navbar-light", "bg-light");
+  }
 };
 
 // poor man's resizer
