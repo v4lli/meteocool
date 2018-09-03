@@ -68,7 +68,7 @@ var navbar = document.getElementById("navbar");
 toggleMode.onclick = () => {
   var newLayer = new TileLayer({
     source: new OSM({
-      url: defaultOsmMapView ? "https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png" : "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      url: defaultOsmMapView ? "https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.pbf" : "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.pbf"
     })
   });
   map.getLayers().setAt(0, newLayer);
