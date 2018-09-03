@@ -268,7 +268,7 @@ socket.on("map_update", function (data) {
   console.log(data);
 
   var lastUpdated = new Date();
-  document.getElementById("updatedTime").innerHTML = "Last update: " + lastUpdated.getHours() + ":" + lastUpdated.getMinutes();
+  document.getElementById("updatedTime").innerHTML = "Last update: " + ("0" + lastUpdated.getHours()).slice(-2) + ":" + ("0" + lastUpdated.getMinutes()).slice(-2);
 
   var newLayer = new TileLayer({
     source: new TileJSON({
