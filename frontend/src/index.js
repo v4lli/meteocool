@@ -336,6 +336,7 @@ if (isIos() && isInStandaloneMode()) {
   document.getElementById("spacer").style.display = "block";
 }
 
-// quickfix for "last updated: never"
+// quickfix for "last updated: never" XXX
+// will be replaced soon by counter
 var lastUpdated = new Date();
-document.getElementById("updatedTime").innerHTML = "Last update: " + lastUpdated.getHours() + ":" + lastUpdated.getMinutes();
+document.getElementById("updatedTime").innerHTML = "Last update: " + ("0" + lastUpdated.getHours()).slice(-2) + ":" + ("0" + lastUpdated.getMinutes()).slice(-2);
