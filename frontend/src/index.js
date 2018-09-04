@@ -60,29 +60,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// mo
-var defaultOsmMapView = true;
-var toggleMode = document.getElementById("toggleMode");
-var navbar = document.getElementById("navbar");
-
-toggleMode.onclick = () => {
-  var newLayer = new TileLayer({
-    source: new OSM({
-      url: defaultOsmMapView ? "https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.pbf" : "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.pbf"
-    })
-  });
-  map.getLayers().setAt(0, newLayer);
-  defaultOsmMapView = !defaultOsmMapView;
-  toggleMode.innerHTML = defaultOsmMapView ? "dark mode" : "light mode";
-  if (navbar.classList.contains("navbar-light")) {
-    navbar.classList.remove("navbar-light", "bg-light");
-    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
-  } else {
-    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
-    navbar.classList.add("navbar-light", "bg-light");
-  }
-};
-
 // poor man's resizer
 let browserHeight;
 let navEl;
@@ -119,6 +96,31 @@ if (window.location.hash !== "") {
   }
 }
 
+var toggleButton = document.getElementById("toggleMode");
+var navbar = document.getElementById("navbar");
+
+var lightTiles = "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.pbf";
+var darkTiles = "https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.pbf";
+
+// light view is default
+var viewMode = true;
+
+var toggleHTMLfixMe = () => {
+  toggleButton.innerHTML = viewMode ? "dark mode" : "light mode";
+  if (navbar.classList.contains("navbar-light")) {
+    navbar.classList.remove("navbar-light", "bg-light");
+    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
+  } else {
+    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
+    navbar.classList.add("navbar-light", "bg-light");
+  }
+};
+
+if (localStorage.getItem("darkMode")) {
+  viewMode = false;
+  toggleHTMLfixMe();
+}
+
 var view = new View({
   center: center,
   zoom: zoom,
@@ -129,7 +131,9 @@ const map = new Map({
   target: "map",
   layers: [
     new TileLayer({
-      source: new OSM()
+      source: new OSM({
+        url: viewMode ? lightTiles : darkTiles
+      })
     })
   ],
   controls: defaultControls().extend([
@@ -137,6 +141,22 @@ const map = new Map({
   ]),
   view: view
 });
+
+var toggleViewMode = () => {
+  viewMode ? localStorage.setItem("darkMode", viewMode) : localStorage.removeItem("darkMode");
+  viewMode = !viewMode;
+  var newLayer = new TileLayer({
+    source: new OSM({
+      url: viewMode ? lightTiles : darkTiles
+    })
+  });
+  map.getLayers().setAt(0, newLayer);
+};
+
+toggleButton.onclick = () => {
+  toggleViewMode();
+  toggleHTMLfixMe();
+};
 
 var geolocation = new Geolocation({
   // enableHighAccuracy must be set to true to have the heading value.
