@@ -99,7 +99,7 @@ if (window.location.hash !== "") {
 var toggleButton = document.getElementById("toggleMode");
 var navbar = document.getElementById("navbar");
 
-var lightTiles = undefined; // this will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
+var lightTiles; // 'undefined' will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
 var darkTiles = "https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.pbf";
 
 // light view is default
@@ -245,12 +245,16 @@ positionFeature.setStyle(new Style({
   })
 }));
 
-new VectorLayer({
+/* eslint-disable no-unused-vars */
+/* Need to disable this stylechecker warning because the VectorLayer constructor
+ * us only used for its sideeffects, which isn't nice. */
+const geolocLayer = new VectorLayer({
   map: map,
   source: new VectorSource({
     features: [accuracyFeature, positionFeature]
   })
 });
+/* eslint-enable no-unused-vars */
 
 var haveZoomed = false;
 geolocation.on("change:position", function () {
