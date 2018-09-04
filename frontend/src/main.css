@@ -1,6 +1,7 @@
 .locate-me {
 	top: 65px;
 	left: .5em;
+	cursor: pointer;
 }
 
 .ol-touch .locate-me {
@@ -10,6 +11,10 @@
 .locate-me-btn img {
 	width: 15px;
 	height: 15px;
+}
+
+#toggleMode {
+	cursor: pointer;
 }
 
 #navbar #spacer {
