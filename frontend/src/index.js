@@ -99,7 +99,7 @@ if (window.location.hash !== "") {
 var toggleButton = document.getElementById("toggleMode");
 var navbar = document.getElementById("navbar");
 
-var lightTiles = "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.pbf";
+var lightTiles = undefined; // this will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
 var darkTiles = "https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.pbf";
 
 // light view is default
