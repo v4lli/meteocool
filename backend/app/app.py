@@ -2,7 +2,7 @@ import logging
 import json
 import os
 import websocket
-import thread
+import threading
 from pyproj import Proj, transform
 
 from flask import Flask, request
@@ -53,10 +53,13 @@ def blitzortung_thread():
     """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
 
     def on_message(ws, message):
-        if "lat" in message and "lon" in message:
-            transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), message["lon"], message["lat"])
-            socketio.emit("lightning", json.dumps({"lat": message["lat"], "lon": message["lon"]}), namespace="/lightning")
-        print("Processed lightning")
+        data = json.loads(message)
+        if "lat" in data and "lon" in data:
+            transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), data["lon"], data["lat"])
+            socketio.emit("lightning", json.dumps({"lat": transformed[1], "lon": transformed[0]}), namespace="/tile")
+            print("Processed lightning")
+        else:
+            print("Invalid lightning: %s" % message)
 
     def on_error(ws, error):
         print("error:")
@@ -81,6 +84,6 @@ def blitzortung_thread():
 
 if __name__ == "__main__":
     logging.info("Starting meteocool backend app.py...")
-    socketio.run(app, host="0.0.0.0")
     t = threading.Thread(target=blitzortung_thread)
     t.start()
+    socketio.run(app, host="0.0.0.0")
