@@ -15,7 +15,7 @@ import io from "socket.io-client";
 import {Map, View, Geolocation, Feature} from "ol";
 import {defaults as defaultControls, OverviewMap} from "ol/control.js";
 import Control from "ol/control/Control";
-import {Style, Fill, Stroke} from "ol/style";
+import {Style, Fill, Stroke, Icon} from "ol/style";
 import {fromLonLat} from "ol/proj.js";
 
 // Register service worker
@@ -127,7 +127,7 @@ var view = new View({
   minzoom: 5
 });
 
-const map = new Map({
+var map = new Map({
   target: "map",
   layers: [
     new TileLayer({
@@ -252,6 +252,12 @@ new VectorLayer({
   })
 });
 
+new VectorLayer({
+  map: map,
+  source: vectorSource
+});
+
+
 var haveZoomed = false;
 geolocation.on("change:position", function () {
   var coordinates = geolocation.getPosition();
@@ -284,6 +290,24 @@ map.addLayer(currentLayer);
 const socket = io.connect(websocketUrl);
 
 socket.on("connect", () => console.log("websocket connected"));
+
+var vectorSource = new VectorSource({
+  features: []
+});
+socket.on("lightning", function (data) {
+      console.log(data);
+      var lightning = new Feature({
+        geometry: new Point([data["lon"], data["lat"]])
+      });
+      lightning.setStyle(new Style({
+        image: new Icon(/** @type {module:ol/style/Icon~Options} */ ({
+          color: '#8959A8',
+          crossOrigin: 'anonymous',
+          src: 'data/dot.png'
+        }))
+      }));
+    vectorSource.addFeature(lightning);
+})
 socket.on("map_update", function (data) {
   console.log(data);
 
