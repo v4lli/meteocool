@@ -3,6 +3,7 @@ import json
 import os
 import websocket
 import thread
+from pyproj import Proj, transform
 
 from flask import Flask, request
 from flask_socketio import SocketIO
@@ -52,7 +53,10 @@ def blitzortung_thread():
     """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
 
     def on_message(ws, message):
-        print(message)
+        if "lat" in message and "lon" in message:
+            transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), message["lon"], message["lat"])
+            socketio.emit("lightning", json.dumps({"lat": message["lat"], "lon": message["lon"]}), namespace="/lightning")
+        print("Processed lightning")
 
     def on_error(ws, error):
         print("error:")
