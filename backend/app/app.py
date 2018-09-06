@@ -1,6 +1,8 @@
 import logging
 import json
 import os
+import websocket
+import thread
 
 from flask import Flask, request
 from flask_socketio import SocketIO
@@ -46,7 +48,35 @@ def index():
 def log_connection():
     logging.info("client connected")
 
+def blitzortung_thread():
+    """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
+
+    def on_message(ws, message):
+        print(message)
+
+    def on_error(ws, error):
+        print("error:")
+        print(error)
+
+    def on_close(ws):
+        print("### closed ###")
+
+    def on_open(ws):
+        ws.send(json.dumps({"west":  -20.0, "east":   44.0, "north":  71.5, "south":  23.1}))
+
+    websocket.enableTrace(True)
+    # XXX switch between all available servers like the webclient does!
+    # XXX error handling
+    ws = websocket.WebSocketApp("ws://ws.blitzortung.org:8059/",
+                              on_message = on_message,
+                              on_error = on_error,
+                              on_close = on_close)
+    ws.on_open = on_open
+    logging.info("blitzortung thread started")
+    ws.run_forever()
 
 if __name__ == "__main__":
     logging.info("Starting meteocool backend app.py...")
     socketio.run(app, host="0.0.0.0")
+    t = threading.Thread(target=blitzortung_thread)
+    t.start()
