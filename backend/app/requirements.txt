@@ -2,3 +2,4 @@ Flask==1.0.2
 Flask-SocketIO==3.0.1
 eventlet==0.24.1
 websocket-client==0.52.0
+pyproj==1.9.5.1
