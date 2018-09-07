@@ -1,8 +1,10 @@
+import eventlet
+eventlet.monkey_patch()
+
 import logging
 import json
 import os
 import websocket
-import threading
 from pyproj import Proj, transform
 
 from flask import Flask, request
@@ -52,14 +54,20 @@ def log_connection():
 def blitzortung_thread():
     """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
 
-    def on_message(ws, message):
-        data = json.loads(message)
+    logging.info("blitzortung thread init")
+
+    def broadcast_lightning(data):
         if "lat" in data and "lon" in data:
             transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), data["lon"], data["lat"])
-            socketio.emit("lightning", json.dumps({"lat": transformed[1], "lon": transformed[0]}), namespace="/tile")
+            socketio.emit("lightning", {"lat": transformed[1], "lon": transformed[0]}, namespace="/tile")
             print("Processed lightning")
         else:
             print("Invalid lightning: %s" % message)
+
+    def on_message(ws, message):
+        print("on_message")
+        data = json.loads(message)
+        socketio.start_background_task(broadcast_lightning, data)
 
     def on_error(ws, error):
         print("error:")
@@ -77,13 +85,13 @@ def blitzortung_thread():
     ws = websocket.WebSocketApp("ws://ws.blitzortung.org:8059/",
                               on_message = on_message,
                               on_error = on_error,
+                              on_open = on_open,
                               on_close = on_close)
-    ws.on_open = on_open
-    logging.info("blitzortung thread started")
+    logging.info("blitzortung run forever")
     ws.run_forever()
+
+eventlet.spawn(blitzortung_thread)
 
 if __name__ == "__main__":
     logging.info("Starting meteocool backend app.py...")
-    t = threading.Thread(target=blitzortung_thread)
-    t.start()
     socketio.run(app, host="0.0.0.0")

@@ -15,7 +15,7 @@ import io from "socket.io-client";
 import {Map, View, Geolocation, Feature} from "ol";
 import {defaults as defaultControls, OverviewMap} from "ol/control.js";
 import Control from "ol/control/Control";
-import {Style, Fill, Stroke, Icon} from "ol/style";
+import {Style, Fill, Stroke, Icon, RegularShape} from "ol/style";
 import {fromLonLat} from "ol/proj.js";
 
 // Register service worker
@@ -245,11 +245,12 @@ positionFeature.setStyle(new Style({
   })
 }));
 
-new VectorLayer({
+var vs = new VectorSource({
+  features: [accuracyFeature, positionFeature]
+});
+var vl = new VectorLayer({
   map: map,
-  source: new VectorSource({
-    features: [accuracyFeature, positionFeature]
-  })
+  source: vs
 });
 
 new VectorLayer({
@@ -291,23 +292,19 @@ const socket = io.connect(websocketUrl);
 
 socket.on("connect", () => console.log("websocket connected"));
 
-var vectorSource = new VectorSource({
-  features: []
-});
+var vectorSource = new VectorSource();
 socket.on("lightning", function (data) {
-      console.log(data);
-      var lightning = new Feature({
-        geometry: new Point([data["lon"], data["lat"]])
-      });
-      lightning.setStyle(new Style({
-        image: new Icon(/** @type {module:ol/style/Icon~Options} */ ({
-          color: '#8959A8',
-          crossOrigin: 'anonymous',
-          src: 'data/dot.png'
-        }))
-      }));
-    vectorSource.addFeature(lightning);
-})
+     var lightning = new Feature(new Point([data["lon"], data["lat"]]));
+     lightning.setStyle(new Style({
+                        image: new RegularShape({
+                                fill: new Fill({color: 'red'}),
+                                            stroke: new Stroke({color: 'black', width: 2}),
+                                            points: 4,
+                                            radius: 10,
+                                            radius2: 0,
+                                            angle: 0 })}));
+     vs.addFeature(lightning);
+});
 socket.on("map_update", function (data) {
   console.log(data);
 
