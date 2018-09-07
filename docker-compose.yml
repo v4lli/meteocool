@@ -4,6 +4,23 @@ version: '3.5'
 # - set time to localtime/host time inside the containers.
 
 services:
+  web:
+    image: nginx:mainline-alpine
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "80"]
+    port: "8070:80"
+    environment:
+      - TZ="Europe/Berlin"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${PWD}/backend/web/nginx.conf:/etc/nginx/nginx.conf:ro
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://logs7.papertrailapp.com:44195"
+        tag: "{{.Name}}/{{.ID}}"
+
+   
   app:
     build: backend/app
     restart: unless-stopped
@@ -14,8 +31,6 @@ services:
       - MC_TOKEN="loldude22changeMe"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    ports:
-      - "8071:5000"
     logging:
       driver: syslog
       options:
@@ -42,6 +57,8 @@ services:
   tileserver:
     build: tileserver-gl-meteocool
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "80"]
     environment:
       - TZ="Europe/Berlin"
     volumes:
@@ -50,8 +67,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - dwd
-    ports:
-      - "8070:80"
     logging:
       driver: syslog
       options:
