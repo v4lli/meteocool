@@ -11,12 +11,17 @@ import TileJSON from "ol/source/TileJSON.js";
 import TileLayer from "ol/layer/Tile.js";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import io from "socket.io-client";
 import {Map, View, Geolocation, Feature} from "ol";
 import {defaults as defaultControls, OverviewMap} from "ol/control.js";
 import Control from "ol/control/Control";
 import {Style, Fill, Stroke, Icon, RegularShape} from "ol/style";
 import {fromLonLat} from "ol/proj.js";
+
+import io from "socket.io-client";
+
+// ===================
+// Environment & Setup
+// ===================
 
 // Register service worker
 if ("serviceWorker" in navigator) {
@@ -60,7 +65,9 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// poor man's resizer
+//
+// poor man's resizer for fullscreen map
+//
 let browserHeight;
 let navEl;
 let mapEl;
@@ -77,7 +84,28 @@ window.addEventListener("resize", () => {
   mapEl.style.height = browserHeight - navEl + "px";
 });
 
-// default zoom, center and rotation
+
+//
+// Detect PWA on iOS for iPhone X UI optimization
+// Copied from stackoverflow:
+// https://stackoverflow.com/questions/50543163/can-i-detect-if-my-pwa-is-launched-as-an-app-or-visited-as-a-website
+//
+const isIos = () => {
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  return /iphone|ipad|ipod/.test( userAgent );
+}
+const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+if (isIos() && isInStandaloneMode()) {
+  document.getElementById("clockbg").style.display = "block";
+  document.getElementById("spacer").style.display = "block";
+}
+
+// ================
+// OpenLayers setup
+// ================
+
+// configuration/defaults
 var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
 // var rotation = 0;
@@ -95,6 +123,10 @@ if (window.location.hash !== "") {
     // rotation = parseFloat(parts[3]);
   }
 }
+
+//
+// DARK MODE
+//
 
 var toggleButton = document.getElementById("toggleMode");
 var navbar = document.getElementById("navbar");
@@ -161,6 +193,10 @@ toggleButton.onclick = () => {
   toggleViewMode();
   toggleHTMLfixMe();
 };
+
+//
+// Geolocation (showing the user's position)
+//
 
 var geolocation = new Geolocation({
   // enableHighAccuracy must be set to true to have the heading value.
@@ -273,6 +309,10 @@ geolocation.on("change:position", function () {
   }
 });
 
+//
+// actually display reflectivity radar data
+//
+
 var tileUrl = "http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var websocketUrl = "http://localhost:8071/tile";
 if (process.env.NODE_ENV === "production") {
@@ -347,21 +387,9 @@ var locateControl = new Control({
 });
 map.addControl(locateControl);
 
-// Detects if device is on iOS
-const isIos = () => {
-  const userAgent = window.navigator.userAgent.toLowerCase();
-  return /iphone|ipad|ipod/.test(userAgent);
-};
-// Detects if device is in standalone mode
-const isInStandaloneMode = () => ("standalone" in window.navigator) && (window.navigator.standalone);
-
-// Checks if should display install popup notification:
-if (isIos() && isInStandaloneMode()) {
-  document.getElementById("clockbg").style.display = "block";
-  document.getElementById("spacer").style.display = "block";
-}
-
 // quickfix for "last updated: never" XXX
 // will be replaced soon by counter
 var lastUpdated = new Date();
 document.getElementById("updatedTime").innerHTML = "Last update: " + ("0" + lastUpdated.getHours()).slice(-2) + ":" + ("0" + lastUpdated.getMinutes()).slice(-2);
+
+/* vim: set expandtab ts=2 sw=2: */
