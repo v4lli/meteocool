@@ -58,5 +58,12 @@ services:
         syslog-address: "udp://logs7.papertrailapp.com:44195"
         tag: "{{.Name}}/{{.ID}}"
 
+  elk:
+    images: diecktator/elk:latest
+    ports:
+      - 11111:5601
+      - 11112:5044
+      - 11113:9200
+
 volumes:
   dwd:
