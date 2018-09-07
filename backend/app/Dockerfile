@@ -7,4 +7,4 @@ RUN apk --update add --virtual build-dependencies build-base bash \
     && apk del build-dependencies
 COPY . /usr/src/app
 EXPOSE 5000
-CMD ["python", "app.py"]
+CMD ["sh", "/usr/src/app/start.sh"]
