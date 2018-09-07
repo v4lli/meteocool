@@ -139,6 +139,10 @@ const map = new Map({
   controls: defaultControls().extend([
     new OverviewMap()
   ]),
+  // Improve user experience by loading tiles while animating. Will make
+  // animations stutter on mobile or slow devices.
+  loadTilesWhileAnimating: true,
+  loadTilesWhileInteracting: true,
   view: view
 });
 
