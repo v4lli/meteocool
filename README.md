@@ -12,15 +12,15 @@ information from the awesome blitzortung.org project.
 
 ## Features
 
-* _Automatic Map Updates:_ the biggest inconvenience with most weather radar
+* **Automatic Map Updates:** the biggest inconvenience with most weather radar
   visualisations is out-of-date data. Meteocool notifies its clients as
   soon as new radar data becomes available and the client tries
   to be transparent about the dataset age. Say goodbye to hammering F5!
-* _Live Lightning Strikes:_ new lightning strikes are displayed instantly,
+* **Live Lightning Strikes:** new lightning strikes are displayed instantly,
   giving you an even better feeling for the cloud formation's intensity,
   trajectory and speed.
-* _Dark Mode:_ great for HUD-like displays and general night time usage.
-* _Progressive Web App_: responsive, connectivity independent and app-like.
+* **Dark Mode:** great for HUD-like displays and general night time usage.
+* **Progressive Web App:** responsive, connectivity independent and app-like.
   Add a shortcut to your iOS or Android Home Screen to use meteocool in
   "app mode".
 
