@@ -350,3 +350,5 @@ if (isIos() && isInStandaloneMode()) {
 // will be replaced soon by counter
 var lastUpdated = new Date();
 document.getElementById("updatedTime").innerHTML = "Last update: " + ("0" + lastUpdated.getHours()).slice(-2) + ":" + ("0" + lastUpdated.getMinutes()).slice(-2);
+
+/* vim: set ts=2 sw=2 expandtab: */

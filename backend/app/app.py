@@ -50,3 +50,5 @@ def log_connection():
 if __name__ == "__main__":
     logging.info("Starting meteocool backend app.py...")
     socketio.run(app, host="0.0.0.0")
+
+# vim: set ts=4 sw=4 expandtab:
