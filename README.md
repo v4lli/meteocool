@@ -2,13 +2,27 @@
 
 [meteocool](https://unimplemented.org/meteocool/) is a free GIS
 visualisation & aggregation platform with focus on thunderstorms.
-Optimized for mobile devices, so you can use it to both chase or
+Optimized for mobile devices, you can use it to both chase or
 avoid upcoming weather - that's up to you.
 
 ![An exemplary cloud formation with high reflectivity (aka thunderstorm)](/frontend/assets/IMG_3076.jpg?raw=true "An exemplary cloud formation with high reflectivity")
 
 meteocool currently uses radar data provided by DWD and realtime lightning
 information from the awesome blitzortung.org project.
+
+## Features
+
+* _Automatic Map Updates:_ the biggest inconvenience with most weather radar
+  visualisations is out-of-date data. Meteocool notifies its clients as
+  soon as new radar data becomes available and the client tries
+  to be transparent about the dataset age. Say goodbye to hammering F5!
+* _Live Lightning Strikes:_ new lightning strikes are displayed instantly,
+  giving you an even better feeling for the cloud formation's intensity,
+  trajectory and speed.
+* _Dark Mode:_ great for HUD-like displays and general night time usage.
+* _Progressive Web App_: responsive, connectivity independent and app-like.
+  Add a shortcut to your iOS or Android Home Screen to use meteocool in
+  "app mode".
 
 # Development
 
@@ -48,7 +62,7 @@ and start a development webserver on localhost.
 
 ## Install
 
-# docker-compose
+### docker-compose
 
 the way to go. 2018.
 
@@ -59,7 +73,7 @@ install `docker-compose` and do this:
 * `docker-compose up -d` (background)
 
 
-# Manual docker setup
+#### Manual docker setup
 
 DON'T USE; USE DOCKER-COMPOSE INSTEAD!
 
