@@ -59,7 +59,7 @@ services:
         tag: "{{.Name}}/{{.ID}}"
 
   elk:
-    images: diecktator/elk:latest
+    image: diecktator/elk:latest
     ports:
       - 11111:5601
       - 11112:5044
