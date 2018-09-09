@@ -371,17 +371,29 @@ const socket = io.connect(websocketUrl);
 
 socket.on("connect", () => console.log("websocket connected"));
 
-socket.on("lightning", function (data) {
-     var lightning = new Feature(new Point([data["lon"], data["lat"]]));
-     lightning.setStyle(new Style({
-                        image: new RegularShape({
-                                fill: new Fill({color: 'red'}),
-                                            stroke: new Stroke({color: 'black', width: 2}),
-                                            points: 4,
-                                            radius: 10,
-                                            radius2: 0,
-                                            angle: 0 })}));
+class StrikeManager {
+  constructor(maxStrikes) {
+    this.maxStrikes = maxStrikes;
+		this.strikes = []
+  }
+
+  addStrike(lon, lat) {
+     var lightning = new Feature(new Point([lon, lat]));
+		 lightning.setId(new Date().getTime());
+		 this.strikes.push(lightning.getId());
+		 if(this.strikes.length > this.maxStrikes) {
+				var toRemove = this.strikes.shift();
+				console.log("had to remove");
+				console.log(toRemove);
+		   vs.removeFeature(vs.getFeatureById(toRemove));
+		 }
      vs.addFeature(lightning);
+	}
+};
+let strikemgr = new StrikeManager(1337);
+
+socket.on("lightning", function (data) {
+     strikemgr.addStrike(data["lon"], data["lat"]);
 });
 
 socket.on("map_update", function (data) {
