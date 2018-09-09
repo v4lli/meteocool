@@ -5,6 +5,7 @@ import logging
 import json
 import os
 import websocket
+import threading
 from pyproj import Proj, transform
 
 from flask import Flask, request
@@ -65,9 +66,18 @@ def blitzortung_thread():
             print("Invalid lightning: %s" % message)
 
     def on_message(ws, message):
-        print("on_message")
         data = json.loads(message)
-        socketio.start_background_task(broadcast_lightning, data)
+        if "timeout" in data:
+            logging.warn("Got timeout event from upstream XXX handle")
+
+        if "lat" in data and "lon" in data:
+            transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), data["lon"], data["lat"])
+            socketio.emit("lightning", json.dumps({"lat": transformed[1], "lon": transformed[0]}), namespace="/tile")
+            # the following gets printed to much.
+            # XXX only print every 100 strikes or so
+            print("Processed lightning")
+        else:
+            print("Invalid lightning: %s" % message)
 
     def on_error(ws, error):
         print("error:")
@@ -94,6 +104,8 @@ eventlet.spawn(blitzortung_thread)
 
 if __name__ == "__main__":
     logging.info("Starting meteocool backend app.py...")
+    t = threading.Thread(target=blitzortung_thread)
+    t.start()
     socketio.run(app, host="0.0.0.0")
 
 # vim: set ts=4 sw=4 expandtab:
