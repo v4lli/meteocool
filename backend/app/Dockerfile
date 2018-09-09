@@ -1,10 +1,10 @@
-FROM python:3-alpine
+FROM python:3.6-alpine
 
 ADD requirements.txt /usr/src/app/requirements.txt
 WORKDIR /usr/src/app
-RUN apk --update add --virtual build-dependencies build-base \
+RUN apk --update add --virtual build-dependencies build-base bash \
     && pip install -r requirements.txt \
     && apk del build-dependencies
 COPY . /usr/src/app
 EXPOSE 5000
-CMD ["python", "app.py"]
+CMD ["sh", "/usr/src/app/start.sh"]
