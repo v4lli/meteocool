@@ -14,8 +14,11 @@ import VectorSource from "ol/source/Vector";
 import {Map, View, Geolocation, Feature} from "ol";
 import {defaults as defaultControls, OverviewMap} from "ol/control.js";
 import Control from "ol/control/Control";
-import {Style, Fill, Stroke, Icon, RegularShape} from "ol/style";
+import {Fill, Stroke, Style, Text, Icon, RegularShape} from "ol/style";
 import {fromLonLat} from "ol/proj.js";
+
+import {Cluster} from 'ol/source.js';
+
 
 import io from "socket.io-client";
 
@@ -287,17 +290,41 @@ positionFeature.setStyle(new Style({
  * us only used for its sideeffects, which isn't nice.
  */
 var vs = new VectorSource({
-  features: [accuracyFeature, positionFeature]
+//  features: [accuracyFeature, positionFeature]
+  features: []
 });
-var vl = new VectorLayer({
+var clusters = new Cluster({
+  distance: 3,
   map: map,
   source: vs
 });
-
-new VectorLayer({
-  map: map,
-  source: vectorSource
-});
+var styleCache = {};
+      var vl = new VectorLayer({
+        source: clusters,
+        map: map,
+        style: function(feature) {
+          var size = feature.get('features').length;
+          var style = styleCache[size];
+          if (!style) {
+            var textsize;
+            if (size > 10) {
+              textsize = 38;
+            } else if (size > 3) {
+              textsize = 33;
+            } else if (size > 1) {
+              textsize = 28;
+            }
+            style = new Style({
+              text: new Text({
+                text: "⚡️",
+                font: textsize + 'px Calibri,sans-serif'
+              })
+            });
+            styleCache[size] = style;
+          }
+          return style;
+        }
+      });
 /* eslint-enable */
 
 
@@ -338,7 +365,6 @@ const socket = io.connect(websocketUrl);
 
 socket.on("connect", () => console.log("websocket connected"));
 
-var vectorSource = new VectorSource();
 socket.on("lightning", function (data) {
      var lightning = new Feature(new Point([data["lon"], data["lat"]]));
      lightning.setStyle(new Style({
@@ -351,6 +377,7 @@ socket.on("lightning", function (data) {
                                             angle: 0 })}));
      vs.addFeature(lightning);
 });
+
 socket.on("map_update", function (data) {
   console.log(data);
 
