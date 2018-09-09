@@ -289,15 +289,22 @@ positionFeature.setStyle(new Style({
  * Need to disable this stylechecker warning because the VectorLayer constructor
  * us only used for its sideeffects, which isn't nice.
  */
+new VectorLayer({
+  source: new VectorSource({features: [accuracyFeature, positionFeature]}),
+  map: map
+});
+/* eslint-enable */
+
 var vs = new VectorSource({
-//  features: [accuracyFeature, positionFeature]
   features: []
 });
+
 var clusters = new Cluster({
   distance: 3,
   map: map,
   source: vs
 });
+
 var styleCache = {};
       var vl = new VectorLayer({
         source: clusters,
@@ -325,7 +332,6 @@ var styleCache = {};
           return style;
         }
       });
-/* eslint-enable */
 
 
 var haveZoomed = false;
