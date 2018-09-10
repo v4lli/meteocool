@@ -17,8 +17,7 @@ import Control from "ol/control/Control";
 import {Fill, Stroke, Style, Text, Icon, RegularShape} from "ol/style";
 import {fromLonLat} from "ol/proj.js";
 
-import {Cluster} from 'ol/source.js';
-
+import {Cluster} from "ol/source.js";
 
 import io from "socket.io-client";
 
@@ -87,7 +86,6 @@ window.addEventListener("resize", () => {
   mapEl.style.height = browserHeight - navEl + "px";
 });
 
-
 //
 // Detect PWA on iOS for iPhone X UI optimization
 // Copied from stackoverflow:
@@ -95,9 +93,9 @@ window.addEventListener("resize", () => {
 //
 const isIos = () => {
   const userAgent = window.navigator.userAgent.toLowerCase();
-  return /iphone|ipad|ipod/.test( userAgent );
-}
-const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+  return /iphone|ipad|ipod/.test(userAgent);
+};
+const isInStandaloneMode = () => ("standalone" in window.navigator) && (window.navigator.standalone);
 
 if (isIos() && isInStandaloneMode()) {
   document.getElementById("clockbg").style.display = "block";
@@ -306,48 +304,46 @@ var clusters = new Cluster({
 });
 
 var styleCache = {};
-      var vl = new VectorLayer({
-        source: clusters,
-        map: map,
-        style: function(feature) {
-          var size = feature.get('features').length;
-          var style = styleCache[size];
-          if (!style) {
-            var textsize;
-            if (size > 12) {
-              textsize = 38;
-            } else if (size > 8) {
-              textsize = 35;
-            } else if (size > 3) {
-              textsize = 33;
-            } else if (size > 1) {
-              textsize = 26;
-            } else {
-              textsize = 24;
-            }
-            style = new Style({
-              text: new Text({
-                text: "⚡️",
-                fill: new Fill({color: 'rgba(255, 255, 255, 1.0)'}),
-                font: textsize + 'px Calibri,sans-serif'
-              })
-            });
-            styleCache[size] = style;
-          }
-          return style;
-        }
+var vl = new VectorLayer({
+  source: clusters,
+  map: map,
+  style: function (feature) {
+    var size = feature.get("features").length;
+    var style = styleCache[size];
+    if (!style) {
+      var textsize;
+      if (size > 12) {
+        textsize = 38;
+      } else if (size > 8) {
+        textsize = 35;
+      } else if (size > 3) {
+        textsize = 33;
+      } else if (size > 1) {
+        textsize = 26;
+      } else {
+        textsize = 24;
+      }
+      style = new Style({
+        text: new Text({
+          text: "⚡️",
+          fill: new Fill({color: "rgba(255, 255, 255, 1.0)"}),
+          font: textsize + "px Calibri,sans-serif"
+        })
       });
-
+      styleCache[size] = style;
+    }
+    return style;
+  }
+});
 
 // timer every 10 sec
-//{
+// {
 //  vs.forEachFeature(function (f){
 //    // 1. get feature age from f.getId() (timestamp)
 //    // 2. calculate alpha value based on age
 //    // 3. update feature style
 //  }
-//}
-
+// }
 
 var haveZoomed = false;
 geolocation.on("change:position", function () {
@@ -389,28 +385,28 @@ const socket = io.connect(websocketUrl);
 socket.on("connect", () => console.log("websocket connected"));
 
 class StrikeManager {
-  constructor(maxStrikes) {
+  constructor (maxStrikes) {
     this.maxStrikes = maxStrikes;
-		this.strikes = []
+    this.strikes = [];
   }
 
-  addStrike(lon, lat) {
-     var lightning = new Feature(new Point([lon, lat]));
+  addStrike (lon, lat) {
+    var lightning = new Feature(new Point([lon, lat]));
 		 lightning.setId(new Date().getTime());
 		 this.strikes.push(lightning.getId());
-		 if(this.strikes.length > this.maxStrikes) {
-				var toRemove = this.strikes.shift();
-				console.log("had to remove");
-				console.log(toRemove);
+		 if (this.strikes.length > this.maxStrikes) {
+      var toRemove = this.strikes.shift();
+      console.log("had to remove");
+      console.log(toRemove);
 		   vs.removeFeature(vs.getFeatureById(toRemove));
 		 }
-     vs.addFeature(lightning);
-	}
+    vs.addFeature(lightning);
+  }
 };
 let strikemgr = new StrikeManager(1337);
 
 socket.on("lightning", function (data) {
-     strikemgr.addStrike(data["lon"], data["lat"]);
+  strikemgr.addStrike(data["lon"], data["lat"]);
 });
 
 socket.on("map_update", function (data) {
