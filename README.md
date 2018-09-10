@@ -28,14 +28,10 @@ information from the awesome blitzortung.org project.
 
 ![UML Component Diagram](/doc/meteocool_component.png?raw=true "Component diagram")
 
-Use docker-compose (see below) for the backend. Run ```npm start``` inside
-```frontend\``` to start developing on the frontend. When using docker-compose,
-note the following:
+Use docker-compose (see below) for the backend. Run ```make dev``` to start the
+development configuration.
 
-* remove all 'logging' substructures from docker-compose.yml in order to use
-  the default docker logging facility (```docker logs```/stdout)
-* Deploy frontend to production:
-  ```cd frontend/ && npm install && npm run-script build```
+* Deploy to production: ```make prod```
 * Use feature branches!
 * docker-compose MUST be executed in the root-directory of the repository!
   Otherwise bind mounts for config files will not work and no error
@@ -56,7 +52,7 @@ https://unimplemented.org/meteocool/ as soon as they are pushed
 into the master branch (See ```infra/deploy_server.py``` for the
 webhook server).
 
-For development, use ```npm install && npm start``` inside the
+For development, use ```yarn && yarn start``` inside the
 ```frontend/``` directory. This will compile the index.js application
 and start a development webserver on localhost.
 
@@ -66,34 +62,10 @@ and start a development webserver on localhost.
 
 the way to go. 2018.
 
-install `docker-compose` and do this:
+install `docker-compose` and use `make dev`.
+
+Release builds can be built using `make prod` or manually:
 
 * `docker-compose build`
 * `docker-compose up` (debug)
 * `docker-compose up -d` (background)
-
-
-#### Manual docker setup
-
-DON'T USE; USE DOCKER-COMPOSE INSTEAD!
-
-Initially, create the dwd volume, which is used to transfer date
-between the tileserver container and the backend container, then
-launch the upstream tileserver:
-
-```
-docker volume create dwd
-docker run -d --name meteocool-tile -v dwd:/data -p 8080:80 klokantech/tileserver-gl
-```
-
-Then (and after every change) re-build the backend docker container:
-
-```
-cd backend/
-docker build -t meteocool .
-docker run -it --rm -v dwd:/usr/src/app/tmp meteocool && docker exec -it meteocool-tile /bin/sh -c 'kill -HUP $(pidof node)'
-```
-
-The last line rebuilds the mbtiles file and signals the tileserver
-to reload the tiledatabase. This will be replaced soon by a backend
-process which will handle notifying websocket clients.
