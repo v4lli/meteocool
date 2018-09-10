@@ -5,7 +5,8 @@ unimplemented.org {
 	}
 	root /var/www
 
-	proxy / app:3000 {
+	proxy /tile app:3000 {
+		websocket	
 		transparent
 		# protects the internal api calls
 		except /internal/publish_new_tileset

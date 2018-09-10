@@ -5,10 +5,11 @@ version: '3.5'
 
 services:
   web:
-    image: web:mainline-alpine
+    build: backend/web
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "80"]
-    ports: "8070:80"
+    ports:
+      - "8070:80"
     environment:
       - TZ="Europe/Berlin"
     volumes:
