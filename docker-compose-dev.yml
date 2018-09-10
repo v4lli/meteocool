@@ -1,7 +1,7 @@
 version: '3.5'
 
 # XXX TODO:
-# - set time to localtime/host time inside the containers.
+# merge with the main docker-compose config somehow...
 
 services:
   web:
@@ -9,18 +9,12 @@ services:
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "80"]
     ports:
-            - "8040:8040"
-            - "8041:8041"
+      - "8040:8040"
+      - "8041:8041"
     environment:
       - TZ="Europe/Berlin"
     volumes:
       - ${PWD}/frontend/caddy/dev/Caddyfile:/etc/Caddyfile
-      - sslstore:/root/.caddy
-        #    logging:
-        #      driver: syslog
-        #      options:
-        #        syslog-address: "udp://logs7.papertrailapp.com:44195"
-        #        tag: "{{.Name}}/{{.ID}}"
 
   app:
     build: backend/app
@@ -55,4 +49,3 @@ services:
 
 volumes:
   dwd:
-  sslstore:

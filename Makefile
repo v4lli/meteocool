@@ -1,9 +1,9 @@
-.PHONY: docker app dwd
+.PHONY: dev prod
 
-docker: app dwd
+dev:
+	docker-compose -f docker-compose-dev.yml build
+	docker-compose up
 
-app: backend/app/*
-	docker build -t meteocool_app backend/app/
-
-dwd: backend/dwd/*
-	docker build -t meteocool_dwd backend/app/
+prod:
+	docker-compose -f docker-compose.yml build
+	docker-compose up

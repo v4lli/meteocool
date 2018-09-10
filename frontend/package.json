@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --config webpack.config.js --mode production",
-    "build-dev": "webpack --config webpack.dev.js --mode development",
+    "build-dev": "webpack --config webpack.config.js --mode development",
     "start": "webpack-dev-server --config webpack.config.js --mode development --content-base dist",
     "start-dev": "webpack-dev-server --config webpack.config.js --mode development --content-base dist --disable-host-check --host 0.0.0.0",
     "start-prod": "webpack-dev-server --config webpack.config.js --mode production --content-base dist --disable-host-check --host 0.0.0.0",
