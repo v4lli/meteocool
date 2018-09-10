@@ -2,11 +2,13 @@ import eventlet
 eventlet.monkey_patch()
 
 import logging
+import time
 import json
 import os
 import websocket
 import threading
 from pyproj import Proj, transform
+import random
 
 from flask import Flask, request
 from flask_socketio import SocketIO
@@ -37,36 +39,49 @@ def index():
 def log_connection():
     logging.info("client connected")
 
+numStrikes = 0
+failStrikes = 0
 def blitzortung_thread():
     """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
 
-    logging.info("blitzortung thread init")
+    logging.warn("blitzortung thread init")
 
     def broadcast_lightning(data):
+        # XXX does this need a lock in python?
+        global numStrikes
+        global failStrikes
         if "lat" in data and "lon" in data:
+            numStrikes = numStrikes + 1
             transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), data["lon"], data["lat"])
             socketio.emit("lightning", {"lat": transformed[1], "lon": transformed[0]}, namespace="/tile")
-            print("Processed lightning")
         else:
-            print("Invalid lightning: %s" % message)
+            failStrikes = failStrikes + 1
+            #print("Invalid lightning: %s" % message)
 
     def on_message(ws, message):
         data = json.loads(message)
         if "timeout" in data:
-            logging.warn("Got timeout event from upstream XXX handle")
+            logging.warn("Got timeout event from upstream, closing")
+            ws.close()
 
-        if "lat" in data and "lon" in data:
-            transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), data["lon"], data["lat"])
-            socketio.emit("lightning", json.dumps({"lat": transformed[1], "lon": transformed[0]}), namespace="/tile")
-            # the following gets printed to much.
-            # XXX only print every 100 strikes or so
-            print("Processed lightning")
-        else:
-            print("Invalid lightning: %s" % message)
+        socketio.start_background_task(broadcast_lightning, data)
+
+    def getAndResetStrikes():
+        global numStrikes
+        result = numStrikes
+        numStrikes = 0
+        return result
+
+    def getAndResetFailStrikes():
+        global failStrikes
+        result = failStrikes
+        failStrikes = 0
+        return result
 
     def on_error(ws, error):
         print("error:")
         print(error)
+        ws.close()
 
     def on_close(ws):
         print("### closed ###")
@@ -74,23 +89,31 @@ def blitzortung_thread():
     def on_open(ws):
         ws.send(json.dumps({"west":  -20.0, "east":   44.0, "north":  71.5, "south":  23.1}))
 
+    def foo():
+        logging.warn("Processed %d strikes since last report (%d failed)" % (getAndResetStrikes(),
+            getAndResetFailStrikes()))
+        threading.Timer(10, foo).start()
+
     websocket.enableTrace(True)
-    # XXX switch between all available servers like the webclient does!
-    # XXX error handling
-    ws = websocket.WebSocketApp("ws://ws.blitzortung.org:8059/",
-                              on_message = on_message,
-                              on_error = on_error,
-                              on_open = on_open,
-                              on_close = on_close)
-    logging.info("blitzortung run forever")
-    ws.run_forever()
+    logging.warn("start timer")
+    threading.Timer(5*60, foo).start()
+
+    while True:
+        # XXX error handling
+        tgtServer = "ws://ws.blitzortung.org:80%d/" % (random.randint(50, 90))
+        logging.info("blitzortung-thread: Connecting to %s..." % tgtServer)
+        ws = websocket.WebSocketApp(tgtServer,
+                                  on_message = on_message,
+                                  on_error = on_error,
+                                  on_open = on_open,
+                                  on_close = on_close)
+        logging.warn("blitzortung-thread: Entering main loop")
+        ws.run_forever()
 
 eventlet.spawn(blitzortung_thread)
 
 if __name__ == "__main__":
-    logging.info("Starting meteocool backend app.py...")
-    t = threading.Thread(target=blitzortung_thread)
-    t.start()
+    logging.warn("Starting meteocool backend app.py...")
     socketio.run(app, host="0.0.0.0")
 
 # vim: set ts=4 sw=4 expandtab:
