@@ -1,7 +1,7 @@
 localhost:8040 {
 	root /srv
 
-	proxy /tile app:3000/tile {
+	proxy /tile app:5000/tile {
 		websocket
 		transparent
 		# protects the internal api calls
@@ -11,7 +11,7 @@ localhost:8040 {
 
 	log stdout
 
-	proxy /socket.io app:3000/socket.io {
+	proxy /socket.io app:5000/socket.io {
 		websocket
 		transparent
 	}

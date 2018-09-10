@@ -49,7 +49,7 @@ services:
       - TZ="Europe/Berlin"
     volumes:
       - dwd:/data
-      - ${PWD}/tileserver-gl-meteocool/config:/etc/ts
+      - ${PWD}/tileserver-gl-meteocool/config-dev:/etc/ts
     depends_on:
       - dwd
 
