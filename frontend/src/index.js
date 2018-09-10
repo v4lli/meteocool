@@ -300,7 +300,7 @@ var vs = new VectorSource({
 });
 
 var clusters = new Cluster({
-  distance: 3,
+  distance: 4,
   map: map,
   source: vs
 });
@@ -314,16 +314,21 @@ var styleCache = {};
           var style = styleCache[size];
           if (!style) {
             var textsize;
-            if (size > 10) {
+            if (size > 12) {
               textsize = 38;
+            } else if (size > 8) {
+              textsize = 35;
             } else if (size > 3) {
               textsize = 33;
             } else if (size > 1) {
-              textsize = 28;
+              textsize = 26;
+            } else {
+              textsize = 24;
             }
             style = new Style({
               text: new Text({
                 text: "⚡️",
+                fill: new Fill({color: 'rgba(255, 255, 255, 1.0)'}),
                 font: textsize + 'px Calibri,sans-serif'
               })
             });
@@ -332,6 +337,16 @@ var styleCache = {};
           return style;
         }
       });
+
+
+// timer every 10 sec
+//{
+//  vs.forEachFeature(function (f){
+//    // 1. get feature age from f.getId() (timestamp)
+//    // 2. calculate alpha value based on age
+//    // 3. update feature style
+//  }
+//}
 
 
 var haveZoomed = false;
