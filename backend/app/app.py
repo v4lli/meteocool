@@ -74,7 +74,8 @@ def blitzortung_thread():
         global failStrikes
         data = json.loads(message)
         if "timeout" in data:
-            logging.warn("Got timeout event from upstream XXX handle")
+            logging.warn("Got timeout event from upstream, closing")
+            ws.close()
 
         if "lat" in data and "lon" in data:
             socketio.start_background_task(broadcast_lightning, data)
@@ -97,6 +98,7 @@ def blitzortung_thread():
     def on_error(ws, error):
         print("error:")
         print(error)
+        ws.close()
 
     def on_close(ws):
         print("### closed ###")
@@ -110,18 +112,20 @@ def blitzortung_thread():
         threading.Timer(10, foo).start()
 
     websocket.enableTrace(True)
-    # XXX error handling
-    tgtServer = "ws://ws.blitzortung.org:80%d/" % (random.randint(50, 90))
-    logging.info("blitzortung-thread: Connecting to %s..." % tgtServer)
-    ws = websocket.WebSocketApp(tgtServer,
-                              on_message = on_message,
-                              on_error = on_error,
-                              on_open = on_open,
-                              on_close = on_close)
     logging.warn("start timer")
     threading.Timer(10, foo).start()
-    logging.warn("blitzortung-thread: Entering main loop")
-    ws.run_forever()
+
+    while True:
+        # XXX error handling
+        tgtServer = "ws://ws.blitzortung.org:80%d/" % (random.randint(50, 90))
+        logging.info("blitzortung-thread: Connecting to %s..." % tgtServer)
+        ws = websocket.WebSocketApp(tgtServer,
+                                  on_message = on_message,
+                                  on_error = on_error,
+                                  on_open = on_open,
+                                  on_close = on_close)
+        logging.warn("blitzortung-thread: Entering main loop")
+        ws.run_forever()
 
 eventlet.spawn(blitzortung_thread)
 
