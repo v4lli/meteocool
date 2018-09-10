@@ -2,7 +2,8 @@ FROM node:8-alpine
 
 RUN apk add --no-cache yarn bash curl
 COPY . /tmp/build
-RUN cd /tmp/build && yarn && yarn build && rm -rf /var/www ; mv dist /var/www
+RUN cd /tmp/build && yarn && yarn build-dev
+
 
 FROM alpine:3.7
 
@@ -13,11 +14,13 @@ RUN apk add --no-cache --virtual build-dependencies curl \
     && mv /tmp/caddy /usr/local/bin/caddy \
     && apk del build-dependencies
 
+RUN test -d /srv || mkdir -p /srv
+WORKDIR /srv
+COPY --from=0 /tmp/build/dist/ /srv
+
+
 # expose ports
 EXPOSE 80 443
-
-# set workdir
-WORKDIR /srv
 
 # set caddy entrypoint
 ENTRYPOINT ["/usr/local/bin/caddy"]
