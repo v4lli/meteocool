@@ -34,9 +34,8 @@ api: mbtiles
 	# Then download the new tilejson (will be broadcasted to all clients)
 	wget -q https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json -O /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
 	# Then broadcast it
-	@# XXX remove token from logging... @ might not work when the command fails
 	@curl -s -X POST -d @/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json \
-	  http://app:5000/internal/publish_new_tileset?token=$$(cat /tmp/.token) \
+	  http://app:5000/internal/publish_new_tileset \
 	  -H 'Cache-Control: no-cache' \
 	  -H 'Content-Type: application/json'
 	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json

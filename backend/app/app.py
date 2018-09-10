@@ -10,14 +10,11 @@ from pyproj import Proj, transform
 
 from flask import Flask, request
 from flask_socketio import SocketIO
-from werkzeug.security import check_password_hash, generate_password_hash
 
 logging.basicConfig(level=logging.WARN)
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-
-publish_token = generate_password_hash(os.getenv("MC_TOKEN"))
 
 
 def update_all_clients(newTileJson):
@@ -27,19 +24,7 @@ def update_all_clients(newTileJson):
 @app.route("/internal/publish_new_tileset", methods=["POST"])
 def publish_tileset():
     data = request.get_json()
-
-    try:
-        token = request.args.get("token", "")
-    except KeyError:
-        logging.warn("no token supplied")
-        return "GIEV TOKEN", 400
-
-    if not check_password_hash(publish_token, token):
-        logging.warn("authentication fail")
-        return "AUTH FAIL! BYE", 401
-
     socketio.start_background_task(update_all_clients, data)
-    logging.info("authentication success")
     return "OK"
 
 

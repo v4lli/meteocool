@@ -1,0 +1,26 @@
+unimplemented.org {
+	gzip
+	tls {
+		max_certs 10
+	}
+	root /var/www
+
+	proxy /tile app:3000 {
+		websocket	
+		transparent
+		# protects the internal api calls
+		except /internal/publish_new_tileset
+	}
+}
+
+a.tileserver.unimplemented.org b.tileserver.unimplemented.org {
+	gzip
+	tls {
+		max_certs 10
+	}
+	#root /var/www
+
+	proxy / tileserver:80 {
+	    transparent
+	}
+}
