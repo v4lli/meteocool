@@ -6,7 +6,9 @@ unimplemented.org {
 	root /var/www
 
 	proxy / app:3000 {
-	    transparent
+		transparent
+		# protects the internal api calls
+		except /internal/publish_new_tileset
 	}
 }
 
