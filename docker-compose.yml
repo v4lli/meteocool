@@ -53,12 +53,12 @@ services:
     depends_on:
       - dwd
 
-  elk:
-    image: diecktator/elk:latest
-    ports:
-      - 11111:5601
-      - 11112:5044
-      - 11113:9200
+        #elk:
+        #  image: diecktator/elk:latest
+        #  ports:
+        #    - 11111:5601
+        #    - 11112:5044
+        #    - 11113:9200
 
 volumes:
   dwd:
