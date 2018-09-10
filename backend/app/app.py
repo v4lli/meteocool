@@ -77,8 +77,7 @@ def blitzortung_thread():
             logging.warn("Got timeout event from upstream XXX handle")
 
         if "lat" in data and "lon" in data:
-            transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), data["lon"], data["lat"])
-            socketio.emit("lightning", json.dumps({"lat": transformed[1], "lon": transformed[0]}), namespace="/tile")
+            socketio.start_background_task(broadcast_lightning, data)
             numStrikes = numStrikes + 1
         else:
             failStrikes = failStrikes + 1
