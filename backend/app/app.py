@@ -62,26 +62,24 @@ def blitzortung_thread():
     logging.warn("blitzortung thread init")
 
     def broadcast_lightning(data):
-        if "lat" in data and "lon" in data:
-            transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), data["lon"], data["lat"])
-            socketio.emit("lightning", {"lat": transformed[1], "lon": transformed[0]}, namespace="/tile")
-            print("Processed lightning")
-        else:
-            print("Invalid lightning: %s" % message)
-
-    def on_message(ws, message):
+        # XXX does this need a lock in python?
         global numStrikes
         global failStrikes
+        if "lat" in data and "lon" in data:
+            numStrikes = numStrikes + 1
+            transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), data["lon"], data["lat"])
+            socketio.emit("lightning", {"lat": transformed[1], "lon": transformed[0]}, namespace="/tile")
+        else:
+            failStrikes = failStrikes + 1
+            #print("Invalid lightning: %s" % message)
+
+    def on_message(ws, message):
         data = json.loads(message)
         if "timeout" in data:
             logging.warn("Got timeout event from upstream, closing")
             ws.close()
 
-        if "lat" in data and "lon" in data:
-            socketio.start_background_task(broadcast_lightning, data)
-            numStrikes = numStrikes + 1
-        else:
-            failStrikes = failStrikes + 1
+        socketio.start_background_task(broadcast_lightning, data)
 
     def getAndResetStrikes():
         global numStrikes
@@ -113,7 +111,7 @@ def blitzortung_thread():
 
     websocket.enableTrace(True)
     logging.warn("start timer")
-    threading.Timer(10, foo).start()
+    threading.Timer(5*60, foo).start()
 
     while True:
         # XXX error handling
@@ -131,8 +129,6 @@ eventlet.spawn(blitzortung_thread)
 
 if __name__ == "__main__":
     logging.warn("Starting meteocool backend app.py...")
-    #t = threading.Thread(target=blitzortung_thread)
-    #t.start()
     socketio.run(app, host="0.0.0.0")
 
 # vim: set ts=4 sw=4 expandtab:
