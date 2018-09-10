@@ -266,12 +266,14 @@ geolocation.on("change:position", function () {
   }
 });
 
-var tileUrl = "http://localhost:8070/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var websocketUrl = "http://localhost:8071/tile";
+var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+var websocketUrl = "http://localhost:8040/tile";
 if (process.env.NODE_ENV === "production") {
   tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
   websocketUrl = "https://unimplemented.org/tile";
 }
+
+console.log(tileUrl);
 
 var reflectivityOpacity = 0.5;
 

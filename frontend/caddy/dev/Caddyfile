@@ -1,11 +1,19 @@
 localhost:8040 {
 	root /srv
 
-	proxy /tile app:3000 {
+	proxy /tile app:3000/tile {
 		websocket
 		transparent
 		# protects the internal api calls
+# XXX not needed anymore?
 		except /internal/publish_new_tileset
+	}
+
+	log stdout
+
+	proxy /socket.io app:3000/socket.io {
+		websocket
+		transparent
 	}
 }
 
@@ -15,4 +23,6 @@ localhost:8041 {
 	proxy / tileserver:80 {
 	    transparent
 	}
+
+	log stdout
 }
