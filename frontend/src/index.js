@@ -14,11 +14,9 @@ import VectorSource from "ol/source/Vector";
 import {Map, View, Geolocation, Feature} from "ol";
 import {defaults as defaultControls, OverviewMap} from "ol/control.js";
 import Control from "ol/control/Control";
-import {Fill, Stroke, Style, Text, Icon, RegularShape} from "ol/style";
+import {Fill, Stroke, Style, Text} from "ol/style";
 import {fromLonLat} from "ol/proj.js";
-
 import {Cluster} from "ol/source.js";
-
 import io from "socket.io-client";
 
 // ===================
@@ -80,11 +78,6 @@ var dimensions = () => {
 };
 dimensions();
 mapEl.style.height = browserHeight - navEl + "px";
-
-window.addEventListener("resize", () => {
-  dimensions();
-  mapEl.style.height = browserHeight - navEl + "px";
-});
 
 //
 // Detect PWA on iOS for iPhone X UI optimization
@@ -451,5 +444,27 @@ map.addControl(locateControl);
 // will be replaced soon by counter
 var lastUpdated = new Date();
 document.getElementById("updatedTime").innerHTML = "Last update: " + ("0" + lastUpdated.getHours()).slice(-2) + ":" + ("0" + lastUpdated.getMinutes()).slice(-2);
+
+// https://stackoverflow.com/a/44579732/10272994
+// resize for orientationchange
+function orientationChanged () {
+  const timeout = 120;
+  return new window.Promise(function (resolve) {
+    const go = (i, height0) => {
+      window.innerHeight != height0 || i >= timeout
+        ? resolve()
+        : window.requestAnimationFrame(() => go(i + 1, height0));
+    };
+    go(0, window.innerHeight);
+  });
+}
+
+window.addEventListener("resize", function () {
+  orientationChanged().then(function () {
+    dimensions();
+    mapEl.style.height = browserHeight - navEl + "px";
+    map.updateSize();
+  });
+});
 
 /* vim: set ts=2 sw=2 expandtab: */
