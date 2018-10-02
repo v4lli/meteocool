@@ -21,8 +21,8 @@ debug:
 	time python3 dwd2geojson.py tmp/raa01-wx_10000-latest-dwd---bin tmp/raa01-wx_10000-latest-dwd.png
 
 tag: update
-	mkdir -p ~/meteopool_tags/
-	wget https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin -O ~/meteopool_tags/dwd-wx-composit-$$(date +%s).bin
+	mkdir -p ~/meteocool_tags/
+	wget https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin -O ~/meteocool_tags/dwd-wx-composit-$$(date +%s).bin
 	ls -l ~/meteopool_tags/
 
 all: mbtiles
