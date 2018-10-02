@@ -9,8 +9,8 @@ services:
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "80"]
     ports:
-            - "8040:8040"
-            - "8041:8041"
+      - "8040:8040"
+      - "8041:8041"
     environment:
       - TZ="Europe/Berlin"
     volumes:
@@ -49,7 +49,7 @@ services:
       - TZ="Europe/Berlin"
     volumes:
       - dwd:/data
-      - ${PWD}/tileserver-gl-meteocool/config-dev:/etc/ts
+      - ${PWD}/tileserver-gl-meteocool/config:/etc/ts
     depends_on:
       - dwd
 
