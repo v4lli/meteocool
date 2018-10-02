@@ -1,3 +1,4 @@
+import datetime
 import eventlet
 
 eventlet.monkey_patch()
@@ -9,15 +10,22 @@ import os
 import websocket
 import threading
 from pyproj import Proj, transform
+from pymongo import MongoClient
 import random
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_socketio import SocketIO
 
 logging.basicConfig(level=logging.WARN)
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+# mongo db conn
+db_client = MongoClient(os.getenv("DB_CONN", default="mongodb://localhost:27017/"))
+# both will be created automatically when the first document is inserted
+db = db_client[os.getenv("DB_NAME", default="meteocool")]
+collection = db[os.getenv("MONGO_COLLECTION", default="meteocollection")]
 
 
 def update_all_clients(newTileJson):
@@ -34,6 +42,31 @@ def publish_tileset():
 @app.route("/")
 def index():
     return "OK"
+
+
+@app.route("/post_location", methods=["POST"])
+def post_location():
+    data = request.get_json()
+
+    try:
+        uuid = data["uuid"]
+        latitude = data["latitude"]
+        longitude = data["longitude"]
+    except KeyError as err:
+        return jsonify(success=False, message=err)
+    else:
+        data = {
+            "uuid": uuid,
+            "latitude": latitude,
+            "longitude": longitude,
+            "last_updated": datetime.datetime.utcnow(),
+            "dbz": 42,
+        }
+
+        geolocation = db.collection
+        post_location = geolocation.insert_one(data).inserted_id
+
+    return jsonify(success=True, id=post_location)
 
 
 @socketio.on("connect", namespace="/tile")
