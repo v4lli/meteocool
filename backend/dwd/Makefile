@@ -23,7 +23,7 @@ debug:
 tag: update
 	mkdir -p ~/meteocool_tags/
 	wget https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin -O ~/meteocool_tags/dwd-wx-composit-$$(date +%s).bin
-	ls -l ~/meteopool_tags/
+	ls -l ~/meteocool_tags/
 
 all: mbtiles
 
