@@ -1,4 +1,5 @@
 import eventlet
+
 eventlet.monkey_patch()
 
 import logging
@@ -39,8 +40,11 @@ def index():
 def log_connection():
     logging.info("client connected")
 
+
 numStrikes = 0
 failStrikes = 0
+
+
 def blitzortung_thread():
     """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
 
@@ -52,11 +56,17 @@ def blitzortung_thread():
         global failStrikes
         if "lat" in data and "lon" in data:
             numStrikes = numStrikes + 1
-            transformed = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), data["lon"], data["lat"])
-            socketio.emit("lightning", {"lat": transformed[1], "lon": transformed[0]}, namespace="/tile")
+            transformed = transform(
+                Proj(init="epsg:4326"), Proj(init="epsg:3857"), data["lon"], data["lat"]
+            )
+            socketio.emit(
+                "lightning",
+                {"lat": transformed[1], "lon": transformed[0]},
+                namespace="/tile",
+            )
         else:
             failStrikes = failStrikes + 1
-            #print("Invalid lightning: %s" % message)
+            # print("Invalid lightning: %s" % message)
 
     def on_message(ws, message):
         data = json.loads(message)
@@ -87,28 +97,33 @@ def blitzortung_thread():
         print("### closed ###")
 
     def on_open(ws):
-        ws.send(json.dumps({"west":  -20.0, "east":   44.0, "north":  71.5, "south":  23.1}))
+        ws.send(json.dumps({"west": -20.0, "east": 44.0, "north": 71.5, "south": 23.1}))
 
     def foo():
-        logging.warn("Processed %d strikes since last report (%d failed)" % (getAndResetStrikes(),
-            getAndResetFailStrikes()))
+        logging.warn(
+            "Processed %d strikes since last report (%d failed)"
+            % (getAndResetStrikes(), getAndResetFailStrikes())
+        )
         threading.Timer(10, foo).start()
 
     websocket.enableTrace(True)
     logging.warn("start timer")
-    threading.Timer(5*60, foo).start()
+    threading.Timer(5 * 60, foo).start()
 
     while True:
         # XXX error handling
         tgtServer = "ws://ws.blitzortung.org:80%d/" % (random.randint(50, 90))
         logging.info("blitzortung-thread: Connecting to %s..." % tgtServer)
-        ws = websocket.WebSocketApp(tgtServer,
-                                  on_message = on_message,
-                                  on_error = on_error,
-                                  on_open = on_open,
-                                  on_close = on_close)
+        ws = websocket.WebSocketApp(
+            tgtServer,
+            on_message=on_message,
+            on_error=on_error,
+            on_open=on_open,
+            on_close=on_close,
+        )
         logging.warn("blitzortung-thread: Entering main loop")
         ws.run_forever()
+
 
 eventlet.spawn(blitzortung_thread)
 
