@@ -2,7 +2,7 @@ FROM node:8-alpine
 
 RUN apk add --no-cache yarn bash curl
 COPY . /tmp/build
-RUN cd /tmp/build && yarn && yarn build-dev
+RUN cd /tmp/build && yarn && yarn build
 
 
 FROM alpine:3.7

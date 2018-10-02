@@ -1,7 +1,7 @@
-localhost:8040 {
+127.0.0.1:8040 {
 	root /srv
 
-	proxy /tile app:5000/tile {
+	proxy /tile app:5000 {
 		websocket
 		transparent
 		# protects the internal api calls
@@ -11,17 +11,18 @@ localhost:8040 {
 
 	log stdout
 
-	proxy /socket.io app:5000/socket.io {
+	proxy /socket.io app:5000 {
 		websocket
 		transparent
 	}
 }
 
-localhost:8041 {
+127.0.0.1:8041 {
 	#root /srv
 
 	proxy / tileserver:80 {
 	    transparent
+            header_upstream X-Forwarded-Proto https
 	}
 
 	log stdout
