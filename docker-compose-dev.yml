@@ -12,6 +12,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME="root"
       - MONGO_INITDB_ROOT_PASSWORD="example"
+      - MONGO_INITDB_DATABASE="meteocool"
 
   web:
     build: frontend/
@@ -45,6 +46,7 @@ services:
       - dwd:/data
     depends_on:
       - app
+      - mongo
 
   tileserver:
     build: tileserver-gl-meteocool
@@ -53,6 +55,8 @@ services:
       test: ["CMD", "nc", "-z", "localhost", "80"]
     environment:
       - TZ="Europe/Berlin"
+      - MONGO_INITDB_ROOT_USERNAME="root"
+      - MONGO_INITDB_ROOT_PASSWORD="example"
     volumes:
       - dwd:/data
       - ${PWD}/tileserver-gl-meteocool/config-dev:/etc/ts

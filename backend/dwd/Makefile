@@ -29,16 +29,27 @@ all: mbtiles
 
 api: mbtiles
 	# First signal the tileserver
-	nc -z tileserver 10001
+	nc -z tileserver 10001 || true
 	sleep 3
 	# Then download the new tilejson (will be broadcasted to all clients)
-	wget -q https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json -O /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
+	# XXX replace with internal hostname!
+	wget -q https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json -O /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json | true
 	# Then broadcast it
-	@curl -s -X POST -d @/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json \
+	# XXX dns seems to not work in the dev version (mac docker
+	# compose problem?)
+	curl -s -X POST -d @/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json \
 	  http://app:5000/internal/publish_new_tileset \
 	  -H 'Cache-Control: no-cache' \
 	  -H 'Content-Type: application/json'
 	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
+	# Push stuff
+	# download forecast
+	rm -rf tmp/forecast*
+	mkdir tmp/forecast
+	wget https://opendata.dwd.de/weather/radar/composit/fx/FX_LATEST.tar.bz2 -O tmp/forecast.tar.bz2
+	tar -C tmp/forecast -xjf tmp/forecast.tar.bz2
+	python3 push.py tmp/forecast/FX1810031830_015_MF002
+
 
 update:
 	mkdir -p tmp/
