@@ -4,6 +4,15 @@ version: '3.5'
 # merge with the main docker-compose config somehow...
 
 services:
+  mongo:
+    image: mongo:4
+    restart: unless-stopped
+    volumes:
+      - mongo_db:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME="root"
+      - MONGO_INITDB_ROOT_PASSWORD="example"
+
   web:
     build: frontend/
     healthcheck:
@@ -23,6 +32,9 @@ services:
       test: ["CMD", "nc", "-z", "localhost", "5000"]
     environment:
       - TZ="Europe/Berlin"
+      - DB_CONN="mongodb://mongo:27017/"
+    depends_on:
+      - mongo
 
   dwd:
     build: backend/dwd
@@ -47,5 +59,7 @@ services:
     depends_on:
       - dwd
 
+
 volumes:
   dwd:
+  mongo_db:
