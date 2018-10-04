@@ -42,6 +42,7 @@ services:
     restart: unless-stopped
     environment:
       - TZ="Europe/Berlin"
+      - DB_CONN="mongodb://mongo:27017/"
     volumes:
       - dwd:/data
     depends_on:
@@ -55,8 +56,6 @@ services:
       test: ["CMD", "nc", "-z", "localhost", "80"]
     environment:
       - TZ="Europe/Berlin"
-      - MONGO_INITDB_ROOT_USERNAME="root"
-      - MONGO_INITDB_ROOT_PASSWORD="example"
     volumes:
       - dwd:/data
       - ${PWD}/tileserver-gl-meteocool/config-dev:/etc/ts

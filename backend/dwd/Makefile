@@ -40,7 +40,7 @@ api: mbtiles
 	curl -s -X POST -d @/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json \
 	  http://app:5000/internal/publish_new_tileset \
 	  -H 'Cache-Control: no-cache' \
-	  -H 'Content-Type: application/json'
+	  -H 'Content-Type: application/json' || true
 	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
 	# Push stuff
 	# download forecast
@@ -48,7 +48,7 @@ api: mbtiles
 	mkdir tmp/forecast
 	wget https://opendata.dwd.de/weather/radar/composit/fx/FX_LATEST.tar.bz2 -O tmp/forecast.tar.bz2
 	tar -C tmp/forecast -xjf tmp/forecast.tar.bz2
-	python3 push.py tmp/forecast/FX1810031830_015_MF002
+	python3 push.py $$(ls tmp/forecast/FX*_015_MF002)
 
 
 update:

@@ -11,7 +11,7 @@ import sys
 import wradlib as wrl
 from pymongo import MongoClient
 
-db_client = MongoClient(os.getenv("DB_CONN", default="mongodb://mongo:27017/"))
+db_client = MongoClient("mongodb://mongo:27017/")
 # both will be created automatically when the first document is inserted
 db = db_client[os.getenv("DB_NAME", default="meteocool")]
 collection = db[os.getenv("MONGO_COLLECTION", default="meteocollection")]

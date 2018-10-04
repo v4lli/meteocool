@@ -13,3 +13,6 @@ prod:
 restart:
 	docker-compose down
 	docker-compose up -d
+
+devstop:
+	docker-compose -f docker-compose-dev.yml down
