@@ -22,7 +22,9 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 # mongo db conn
-db_client = MongoClient(os.getenv("DB_CONN", default="mongodb://mongo:27017/"))
+dbconn = os.getenv("DB_CONN", default="mongodb://mongo:27017/")
+print(db_conn)
+db_client = MongoClient(dbconn)
 # both will be created automatically when the first document is inserted
 db = db_client[os.getenv("DB_NAME", default="meteocool")]
 collection = db[os.getenv("MONGO_COLLECTION", default="meteocollection")]
