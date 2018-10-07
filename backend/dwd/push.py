@@ -13,8 +13,8 @@ from pymongo import MongoClient
 
 db_client = MongoClient("mongodb://mongo:27017/")
 # both will be created automatically when the first document is inserted
-db = db_client[os.getenv("DB_NAME", default="meteocool")]
-collection = db[os.getenv("MONGO_COLLECTION", default="meteocollection")]
+db = db_client["meteocool"]
+collection = db["collection"]
 
 data = wrl.io.radolan.read_radolan_composite(sys.argv[1])
 
@@ -25,22 +25,27 @@ def closest_node(node, nodes):
 
 radolan_grid_ll = wrl.georef.get_radolan_grid(900,900, wgs84=True)
 
-a = []
+linearized_grid = []
 for lon in radolan_grid_ll:
     for lat in lon:
-        a.append(lat)
-
+        linearized_grid.append(lat)
 
 cursor = collection.find({})
 for document in cursor:
     print(cursor)
-    latlon = document.latlon
-    result = closest_node(latlon, a)
+    lat = document["lat"]
+    lat = document["lon"]
+    uuid = document["uuid"]
+
+    result = closest_node((lat, lon), linearized_grid)
     xy = (int(result / 900), int(result % 900))
     if data[0][xy[0]][xy[1]] > 20:
         print(">20 at %s" % latlon)
-        if document.source == 0:
+        if document.source == "browser":
             # websocket
-            requests.get(sys.argv[2])
+            #requests.get(sys.argv[2])
+            pass
+        elif document.source == "ios":
+            print("iOS push not implemented!")
         else:
             print("unknown source type")

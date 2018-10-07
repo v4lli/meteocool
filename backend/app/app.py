@@ -29,8 +29,8 @@ socketio = SocketIO(app)
 dbconn = "mongodb://mongo:27017/"
 db_client = MongoClient(dbconn)
 # both will be created automatically when the first document is inserted
-db = db_client[os.getenv("DB_NAME", default="meteocool")]
-collection = db[os.getenv("MONGO_COLLECTION", default="meteocollection")]
+db = db_client["meteocool"]
+collection = db["collection"]
 
 
 def update_all_clients(newTileJson):
@@ -60,15 +60,22 @@ def post_location():
         uuid = data["uuid"]
         latitude = data["lat"]
         longitude = data["lon"]
+        source = data["source"]
     except KeyError:
         return jsonify(success=False, message="bad request")
     else:
+        if source != "browser" and source != "ios":
+            return jsonify(success=False, message="bad request")
+
+        # XXX sanity check all other values as well!!!
+
         data = {
             "uuid": uuid,
             "latitude": latitude,
             "longitude": longitude,
             "last_updated": datetime.datetime.utcnow(),
             "dbz": 42,
+            "source": source
         }
 
         geolocation = db.collection
