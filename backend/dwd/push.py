@@ -1,4 +1,4 @@
-#!/usr/bin/python4
+#!/usr/bin/python3
 
 # very inefficient (we can simply convert between the two coordinate systems
 # and get xy directly without two O(n^2) operations). Just a poc! XXX
@@ -11,7 +11,7 @@ import sys
 import wradlib as wrl
 from pymongo import MongoClient
 
-db_client = MongoClient("mongodb://mongo:27017/")
+db_client = os.getenv("DB_CONN", default="mongodb://mongo:27017/")
 # both will be created automatically when the first document is inserted
 db = db_client[os.getenv("DB_NAME", default="meteocool")]
 collection = db[os.getenv("MONGO_COLLECTION", default="meteocollection")]
@@ -33,6 +33,7 @@ for lon in radolan_grid_ll:
 
 cursor = collection.find({})
 for document in cursor:
+    print(cursor)
     latlon = document.latlon
     result = closest_node(latlon, a)
     xy = (int(result / 900), int(result % 900))
