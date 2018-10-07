@@ -57,7 +57,7 @@ def post_location():
         return jsonify(success=False, message="bad request")
 
     try:
-        uuid = data["uuid"]
+        token = data["token"]
         latitude = data["lat"]
         longitude = data["lon"]
         source = data["source"]
@@ -70,7 +70,7 @@ def post_location():
         # XXX sanity check all other values as well!!!
 
         data = {
-            "uuid": uuid,
+            "token": token,
             "lat": latitude,
             "lon": longitude,
             "last_updated": datetime.datetime.utcnow(),

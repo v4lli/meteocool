@@ -35,10 +35,10 @@ for lon in radolan_grid_ll:
 
 cursor = collection.find({})
 for document in cursor:
-    print(cursor)
+    print(document)
     lat = document["lat"]
     lat = document["lon"]
-    uuid = document["uuid"]
+    token = document["token"]
 
     result = closest_node((lat, lon), linearized_grid)
     xy = (int(result / 900), int(result % 900))
