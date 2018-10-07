@@ -71,8 +71,8 @@ def post_location():
 
         data = {
             "uuid": uuid,
-            "latitude": latitude,
-            "longitude": longitude,
+            "lat": latitude,
+            "lon": longitude,
             "last_updated": datetime.datetime.utcnow(),
             "dbz": 42,
             "source": source

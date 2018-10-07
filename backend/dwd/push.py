@@ -16,7 +16,10 @@ db_client = MongoClient("mongodb://mongo:27017/")
 db = db_client["meteocool"]
 collection = db["collection"]
 
-data = wrl.io.radolan.read_radolan_composite(sys.argv[1])
+radar_file = sys.argv[1]
+browser_notify_url = sys.argv[2]
+
+data = wrl.io.radolan.read_radolan_composite(radar_file)
 
 def closest_node(node, nodes):
     closest_index = distance.cdist([node], nodes).argmin()
@@ -42,9 +45,7 @@ for document in cursor:
     if data[0][xy[0]][xy[1]] > 20:
         print(">20 at %s" % latlon)
         if document.source == "browser":
-            # websocket
-            #requests.get(sys.argv[2])
-            pass
+            requests.get(browser_notify_url)
         elif document.source == "ios":
             print("iOS push not implemented!")
         else:
