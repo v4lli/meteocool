@@ -18,6 +18,7 @@ import { Fill, Stroke, Style, Text } from "ol/style";
 import { fromLonLat } from "ol/proj.js";
 import { Cluster } from "ol/source.js";
 import io from "socket.io-client";
+import { DeviceDetect } from "./modules/device-detect.js";
 
 // ===================
 // Environment & Setup
@@ -79,18 +80,8 @@ var dimensions = () => {
 dimensions();
 mapEl.style.height = browserHeight - navEl + "px";
 
-//
 // Detect PWA on iOS for iPhone X UI optimization
-// Copied from stackoverflow:
-// https://stackoverflow.com/questions/50543163/can-i-detect-if-my-pwa-is-launched-as-an-app-or-visited-as-a-website
-//
-const isIos = () => {
-  const userAgent = window.navigator.userAgent.toLowerCase();
-  return /iphone|ipad|ipod/.test(userAgent);
-};
-const isInStandaloneMode = () => ("standalone" in window.navigator) && (window.navigator.standalone);
-
-if (isIos() && isInStandaloneMode()) {
+if (DeviceDetect.isiPhoneWithNotch()) {
   document.getElementById("clockbg").style.display = "block";
   document.getElementById("spacer").style.display = "block";
 }
