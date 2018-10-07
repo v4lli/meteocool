@@ -21,8 +21,12 @@ logging.basicConfig(level=logging.WARN)
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+# this doesn't work, WTF....
 # mongo db conn
-dbconn = os.getenv("DB_CONN", default="mongodb://mongo:27017/")
+#dbconn = os.getenv("DB_CONN", default="mongodb://mongo:27017/")
+#print(dbconn)
+#print(type(dbconn))
+dbconn = "mongodb://mongo:27017/"
 db_client = MongoClient(dbconn)
 # both will be created automatically when the first document is inserted
 db = db_client[os.getenv("DB_NAME", default="meteocool")]
