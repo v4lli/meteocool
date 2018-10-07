@@ -27,7 +27,9 @@ tag: update
 
 all: mbtiles
 
-api: mbtiles
+api: cron push
+
+cron: mbtiles
 	# First signal the tileserver
 	nc -z tileserver 10001 || true
 	sleep 3
@@ -42,13 +44,14 @@ api: mbtiles
 	  -H 'Cache-Control: no-cache' \
 	  -H 'Content-Type: application/json' || true
 	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
-	# Push stuff
-	# download forecast
+
+push:
+	@# download forecast
 	rm -rf tmp/forecast*
 	mkdir tmp/forecast
 	wget https://opendata.dwd.de/weather/radar/composit/fx/FX_LATEST.tar.bz2 -O tmp/forecast.tar.bz2
 	tar -C tmp/forecast -xjf tmp/forecast.tar.bz2
-	python3 push.py $$(ls tmp/forecast/FX*_015_MF002)
+	python3 push.py $$(ls tmp/forecast/FX*_015_MF002) http://app:5000/internal/trigger_browser_notification
 
 
 update:
