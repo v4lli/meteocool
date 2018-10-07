@@ -1,18 +1,23 @@
 127.0.0.1:8040 {
 	root /srv
+	log stdout
 
 	proxy /tile app:5000 {
 		websocket
 		transparent
-		# protects the internal api calls
-# XXX not needed anymore?
 		except /internal/publish_new_tileset
 	}
 
-	log stdout
-
 	proxy /socket.io app:5000 {
 		websocket
+		transparent
+	}
+
+	proxy /post_location app:5000 {
+		transparent
+	}
+
+	proxy /reflectivity dwd:5000 {
 		transparent
 	}
 }

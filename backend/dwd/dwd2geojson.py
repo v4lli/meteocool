@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 # this thing is a huge mess XXX
+# rename me!
 
 import wradlib
 import geojson_utils
