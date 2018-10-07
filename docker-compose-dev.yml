@@ -5,14 +5,10 @@ version: '3.5'
 
 services:
   mongo:
-    image: mongo:4
+    image: mongo
     restart: unless-stopped
     volumes:
-      - mongo_db:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME="root"
-      - MONGO_INITDB_ROOT_PASSWORD="example"
-      - MONGO_INITDB_DATABASE="meteocool"
+      - meteo_mongo_db:/data/db
 
   web:
     build: frontend/
@@ -62,7 +58,13 @@ services:
     depends_on:
       - dwd
 
+        #elk:
+        #  image: diecktator/elk:latest
+        #  ports:
+        #    - 11111:5601
+        #    - 11112:5044
+  #          - 11113:9200
 
 volumes:
   dwd:
-  mongo_db:
+  meteo_mongo_db:
