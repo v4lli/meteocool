@@ -7,11 +7,12 @@
   "scripts": {
     "build": "webpack --config webpack.config.js --mode production",
     "build-dev": "webpack --config webpack.config.js --mode development",
-    "start": "webpack-dev-server --config webpack.config.js --mode development --content-base dist",
-    "start-dev": "webpack-dev-server --config webpack.config.js --mode development --content-base dist --disable-host-check --host 0.0.0.0",
-    "start-prod": "webpack-dev-server --config webpack.config.js --mode production --content-base dist --disable-host-check --host 0.0.0.0",
+    "lint": "eslint src",
+    "serve-dev": "npm run build-dev && http-server -g -c0 dist",
     "serve-release": "npm run build && http-server -g -c0 dist",
-    "lint": "eslint src/*.js"
+    "start": "webpack-dev-server --config webpack.config.js --mode development --content-base dist",
+    "start-dev": "webpack-dev-server --config webpack.config.js --mode development --content-base dist --host 0.0.0.0",
+    "start-prod": "webpack-dev-server --config webpack.config.js --mode production --content-base dist --host 0.0.0.0"
   },
   "dependencies": {
     "bootstrap": "^4.1.3",
