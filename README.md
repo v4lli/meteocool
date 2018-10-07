@@ -1,6 +1,6 @@
 # meteocool
 
-[meteocool](https://unimplemented.org/meteocool/) is a free GIS
+[meteocool](https://meteocool.unimplemented.org/) is a free GIS
 visualisation & aggregation platform with focus on thunderstorms.
 Optimized for mobile devices, you can use it to both chase or
 avoid upcoming weather - that's up to you.
@@ -28,33 +28,34 @@ information from the awesome blitzortung.org project.
 
 ![UML Component Diagram](/doc/meteocool_component.png?raw=true "Component diagram")
 
-Use docker-compose (see below) for the backend. Run ```make dev``` to start the
-development configuration.
+Use docker-compose (see below) for the backend. Run ```make dev```
+to run the development build (the first one might take a while).
 
-* Deploy to production: ```make prod```
+Use ```make dev devrestart``` to build and also start all containers on
+your local system. After that, go to https://127.0.0.1:8040 to access
+your development system.
+
+* Production build: ```make prod```
 * Use feature branches!
 * docker-compose MUST be executed in the root-directory of the repository!
   Otherwise bind mounts for config files will not work and no error
-  will be reported (thanks, docker).
+  will be reported.
+* Using localhost instead of 127.0.0.1 will lead to problems (see #76).
 
 ## Backend
 
 Makefile targets in ```backend/dwd/```:
 
- - ```make mbtiles```: PNG + tiles erstellen in tmp/
- - ```make update```: aktuelle Wettermap vom DWD holen nach tmp/
- - ```make update mbtiles```: beides zusammen
+ - ```make mbtiles```: create PNG + tiles in tmp/
+ - ```make update```: fetch current radar date from DWD
+ - ```make update mbtiles```: both operations together
 
 ## Frontend
 
-All changes in ```frontend/``` are automatically deployed on
-https://unimplemented.org/meteocool/ as soon as they are pushed
-into the master branch (See ```infra/deploy_server.py``` for the
-webhook server).
-
-For development, use ```yarn && yarn start``` inside the
-```frontend/``` directory. This will compile the index.js application
-and start a development webserver on localhost.
+For frontend development, use ```yarn && yarn start``` inside the
+```frontend/``` directory. This will compile the src/index.js application
+and start a development webserver on localhost. Note that for a complete
+local development setup you also need the other containers.
 
 ## Install
 
@@ -62,7 +63,7 @@ and start a development webserver on localhost.
 
 the way to go. 2018.
 
-install `docker-compose` and use `make dev`.
+install `docker-compose` and use `make dev`. For development purposes, use the docker-compose-dev.yml file.
 
 Release builds can be built using `make prod` or manually:
 
