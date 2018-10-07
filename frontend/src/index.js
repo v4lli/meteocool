@@ -11,12 +11,12 @@ import TileJSON from "ol/source/TileJSON.js";
 import TileLayer from "ol/layer/Tile.js";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import {Map, View, Geolocation, Feature} from "ol";
-import {defaults as defaultControls, OverviewMap} from "ol/control.js";
+import { Map, View, Geolocation, Feature } from "ol";
+import { defaults as defaultControls, OverviewMap } from "ol/control.js";
 import Control from "ol/control/Control";
-import {Fill, Stroke, Style, Text} from "ol/style";
-import {fromLonLat} from "ol/proj.js";
-import {Cluster} from "ol/source.js";
+import { Fill, Stroke, Style, Text } from "ol/style";
+import { fromLonLat } from "ol/proj.js";
+import { Cluster } from "ol/source.js";
 import io from "socket.io-client";
 
 // ===================
@@ -297,7 +297,7 @@ var clusters = new Cluster({
 });
 
 var styleCache = {};
-var vl = new VectorLayer({
+var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
   source: clusters,
   map: map,
   style: function (feature) {
@@ -319,7 +319,7 @@ var vl = new VectorLayer({
       style = new Style({
         text: new Text({
           text: "⚡️",
-          fill: new Fill({color: "rgba(255, 255, 255, 1.0)"}),
+          fill: new Fill({ color: "rgba(255, 255, 255, 1.0)" }),
           font: textsize + "px Calibri,sans-serif"
         })
       });
@@ -343,7 +343,7 @@ geolocation.on("change:position", function () {
   var coordinates = geolocation.getPosition();
   positionFeature.setGeometry(coordinates ? new Point(coordinates) : null);
   if (window.location.hash !== "" && !haveZoomed) {
-    map.getView().animate({center: coordinates, zoom: 10});
+    map.getView().animate({ center: coordinates, zoom: 10 });
     haveZoomed = true;
   }
 });
@@ -385,14 +385,14 @@ class StrikeManager {
 
   addStrike (lon, lat) {
     var lightning = new Feature(new Point([lon, lat]));
-		 lightning.setId(new Date().getTime());
-		 this.strikes.push(lightning.getId());
-		 if (this.strikes.length > this.maxStrikes) {
+    lightning.setId(new Date().getTime());
+    this.strikes.push(lightning.getId());
+    if (this.strikes.length > this.maxStrikes) {
       var toRemove = this.strikes.shift();
       console.log("had to remove");
       console.log(toRemove);
-		   vs.removeFeature(vs.getFeatureById(toRemove));
-		 }
+      vs.removeFeature(vs.getFeatureById(toRemove));
+    }
     vs.addFeature(lightning);
   }
 };
@@ -429,7 +429,7 @@ button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
 var locateMe = function (e) {
   var coordinates = geolocation.getPosition();
   geolocation.setTracking(true);
-  map.getView().animate({center: coordinates, zoom: 10});
+  map.getView().animate({ center: coordinates, zoom: 10 });
 };
 button.addEventListener("click", locateMe, false);
 var element = document.createElement("div");
@@ -451,7 +451,7 @@ function orientationChanged () {
   const timeout = 120;
   return new window.Promise(function (resolve) {
     const go = (i, height0) => {
-      window.innerHeight != height0 || i >= timeout
+      window.innerHeight !== height0 || i >= timeout
         ? resolve()
         : window.requestAnimationFrame(() => go(i + 1, height0));
     };
