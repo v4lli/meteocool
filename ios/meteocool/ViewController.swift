@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//  meteocool
-//
-//  Created by Florian Mauracher on 25.08.18.
-//  Copyright © 2018 Florian Mauracher. All rights reserved.
-//
-
 import UIKit
 import WebKit
 

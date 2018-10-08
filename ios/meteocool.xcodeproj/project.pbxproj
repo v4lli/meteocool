@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		57589ACF216ADB1000CDEBB7 /* LocationUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57589ACE216ADB1000CDEBB7 /* LocationUpdater.swift */; };
+		57589AD1216ADB5C00CDEBB7 /* NetworkHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57589AD0216ADB5C00CDEBB7 /* NetworkHelper.swift */; };
 		577666922130C6E300C25E00 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577666912130C6E300C25E00 /* AppDelegate.swift */; };
 		577666942130C6E300C25E00 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577666932130C6E300C25E00 /* ViewController.swift */; };
 		577666972130C6E300C25E00 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 577666952130C6E300C25E00 /* Main.storyboard */; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		57589ACE216ADB1000CDEBB7 /* LocationUpdater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationUpdater.swift; sourceTree = "<group>"; };
+		57589AD0216ADB5C00CDEBB7 /* NetworkHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkHelper.swift; sourceTree = "<group>"; };
 		5776668E2130C6E300C25E00 /* meteocool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = meteocool.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		577666912130C6E300C25E00 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		577666932130C6E300C25E00 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -35,6 +39,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		57589ACD216ADAEB00CDEBB7 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				57589ACE216ADB1000CDEBB7 /* LocationUpdater.swift */,
+				57589AD0216ADB5C00CDEBB7 /* NetworkHelper.swift */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
 		577666852130C6E300C25E00 = {
 			isa = PBXGroup;
 			children = (
@@ -54,6 +67,7 @@
 		577666902130C6E300C25E00 /* meteocool */ = {
 			isa = PBXGroup;
 			children = (
+				57589ACD216ADAEB00CDEBB7 /* lib */,
 				577666912130C6E300C25E00 /* AppDelegate.swift */,
 				577666932130C6E300C25E00 /* ViewController.swift */,
 				577666952130C6E300C25E00 /* Main.storyboard */,
@@ -97,6 +111,11 @@
 					5776668D2130C6E300C25E00 = {
 						CreatedOnToolsVersion = 9.4.1;
 						LastSwiftMigration = 1000;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -137,6 +156,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				577666942130C6E300C25E00 /* ViewController.swift in Sources */,
+				57589ACF216ADB1000CDEBB7 /* LocationUpdater.swift in Sources */,
+				57589AD1216ADB5C00CDEBB7 /* NetworkHelper.swift in Sources */,
 				577666922130C6E300C25E00 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
