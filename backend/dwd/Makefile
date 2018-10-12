@@ -64,4 +64,4 @@ clean:
 
 legend:
 	# XXX this should be run inside a container
-	python3 color_legend.py
+	python3 color_legend.py ../../frontend/assets/legend_big.png
