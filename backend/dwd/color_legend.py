@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageDraw
 import colorsys
 from dwd2geojson import scale, dbz2color
 

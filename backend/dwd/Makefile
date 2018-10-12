@@ -61,3 +61,7 @@ update:
 
 clean:
 	rm -rf tmp/
+
+legend:
+	# XXX this should be run inside a container
+	python3 color_legend.py
