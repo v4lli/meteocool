@@ -10,10 +10,16 @@ class NetworkHelper {
         return request
     }
 
-    static func createJSONPostRequest(dst: String, dictionary: [String:String]) -> URLRequest? {
+    static func createJSONPostRequest(dst: String, dictionary: [String: Any]) -> URLRequest? {
+        let json = try! JSONSerialization.data(withJSONObject: dictionary)
+        if let jsonString = String(data: json, encoding: .utf8), debug {
+            print("POST: /\(String(describing: dst)) <- \(jsonString)")
+        }
+
         var request = createRequest(dst: dst, method: "POST")
-        request?.httpBody = try! JSONSerialization.data(withJSONObject: dictionary)
+        request?.httpBody = json
         request?.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
         return request
     }
 
@@ -23,14 +29,14 @@ class NetworkHelper {
             return nil
         }
 
-        let dest = response?.url?.path ?? ""
+        let dst = response?.url?.path ?? ""
         if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-            print("RESP: \(String(describing: dest)) -> \(httpStatus.statusCode)")
+            print("RESP: \(String(describing: dst)) -> \(httpStatus.statusCode)")
             return nil
         }
         if let responseString = String(data: data, encoding: .utf8) {
             if (debug) {
-                print("RESP: \(String(describing: dest)) -> \(responseString)")
+                print("RESP: \(String(describing: dst)) -> \(responseString)")
             }
         }
         return data
