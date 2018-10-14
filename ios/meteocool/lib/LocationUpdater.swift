@@ -44,10 +44,11 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
 
     func postLocation(location: CLLocation) {
         let locationDict = [
-            "lat":String(format: "%f", location.coordinate.latitude),
-            "lon":String(format: "%f", location.coordinate.longitude),
-            "uuid":deviceID,
-        ]
+            "lat": location.coordinate.latitude as Double,
+            "lon": location.coordinate.longitude as Double,
+            "source" : "ios",
+            "token" : deviceID,
+            ] as [String : Any]
 
         guard let request = NetworkHelper.createJSONPostRequest(dst: "post_location", dictionary: locationDict) else {
             return
