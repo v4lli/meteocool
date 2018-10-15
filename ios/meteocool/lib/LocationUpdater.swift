@@ -12,10 +12,6 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
 
-        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
-        locationManager.distanceFilter = 1000
-        locationManager.allowsBackgroundLocationUpdates = true
-
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
             case .notDetermined, .restricted, .denied:
@@ -24,16 +20,28 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
                 print("Location: WhenInUse")
             case .authorizedAlways:
                 print("Location: Always")
-                locationManager.startUpdatingLocation()
-                locationManager.startMonitoringSignificantLocationChanges()
+                startSignificantChangeLocationUpdates()
             }
         } else {
             print("Location services are not enabled")
         }
     }
 
+    func startSignificantChangeLocationUpdates() {
+        self.locationManager.allowsBackgroundLocationUpdates = true
+        self.locationManager.startMonitoringSignificantLocationChanges()
+    }
+
+    func startBackgroundLocationUpdates() {
+        self.locationManager.allowsBackgroundLocationUpdates = true
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        self.locationManager.pausesLocationUpdatesAutomatically = true
+        self.locationManager.activityType = CLActivityType.other
+        self.locationManager.startUpdatingLocation()
+    }
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.first {
+        if let location = locations.last {
             self.postLocation(location:location)
         }
     }
