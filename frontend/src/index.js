@@ -20,6 +20,8 @@ import { Cluster } from "ol/source.js";
 import io from "socket.io-client";
 import { DeviceDetect } from "./modules/device-detect.js";
 
+const safeAreaInsets = require('safe-area-insets');
+
 // ===================
 // Environment & Setup
 // ===================
@@ -66,25 +68,29 @@ if ("serviceWorker" in navigator) {
   });
 }
 
+// Detect PWA on iOS for iPhone X UI optimization
+var ipXPWAOpt = () => {
+  if (DeviceDetect.isiPhoneWithNotch()) {
+    document.getElementById("clockbg").style.display = "block";
+    document.getElementById("spacer").style.display = "block";
+  }
+}
+ipXPWAOpt();
+
 //
 // poor man's resizer for fullscreen map
 //
-let browserHeight;
-let navEl;
-let mapEl;
 var dimensions = () => {
-  browserHeight = window.innerHeight;
-  navEl = document.getElementById("navbar").clientHeight;
+  let browserHeight;
+  let navEl;
+  let mapEl;
+
   mapEl = document.getElementById("map");
+  navEl = document.getElementById("navbar").clientHeight;
+  browserHeight = window.innerHeight;
+  mapEl.style.height = browserHeight - navEl + safeAreaInsets.top + "px";
 };
 dimensions();
-mapEl.style.height = browserHeight - navEl + "px";
-
-// Detect PWA on iOS for iPhone X UI optimization
-if (DeviceDetect.isiPhoneWithNotch()) {
-  document.getElementById("clockbg").style.display = "block";
-  document.getElementById("spacer").style.display = "block";
-}
 
 // ================
 // OpenLayers setup
@@ -250,6 +256,7 @@ window.addEventListener("popstate", function (event) {
   map.getView().setZoom(event.state.zoom);
   map.getView().setRotation(event.state.rotation);
   shouldUpdate = false;
+  dimensions();
 });
 
 var positionFeature = new Feature();
@@ -451,9 +458,17 @@ function orientationChanged () {
 
 window.addEventListener("resize", function () {
   orientationChanged().then(function () {
-    dimensions();
-    mapEl.style.height = browserHeight - navEl + "px";
-    map.updateSize();
+    if (DeviceDetect.isiPhoneWithNotch()) {
+      if(window.innerHeight < window.innerWidth) {
+        // landscape
+        document.getElementById("clockbg").style.display = "none";
+        document.getElementById("spacer").style.display = "none";
+      } else {
+        // portrait
+        ipXPWAOpt();
+      }
+    }
+    setTimeout(function() { dimensions(); map.updateSize(); }, 100);
   });
 });
 
