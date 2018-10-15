@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//  meteocool
-//
-//  Created by Florian Mauracher on 25.08.18.
-//  Copyright © 2018 Florian Mauracher. All rights reserved.
-//
-
 import UIKit
 import WebKit
 
@@ -14,6 +6,10 @@ class ViewController: UIViewController, WKUIDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // #f8f9fa = non-darkmode titelbar color
+        let lightmode = UIColor(red: 0xf8/255.0, green: 0xf9/255.0, blue: 0xfa/255.0, alpha: 1.0)
+        UIApplication.shared.statusBarView?.backgroundColor = lightmode
 
         if let url = URL(string: "https://meteocool.unimplemented.org/") {
             let request = URLRequest(url: url)
