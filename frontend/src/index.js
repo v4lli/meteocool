@@ -20,7 +20,7 @@ import { Cluster } from "ol/source.js";
 import io from "socket.io-client";
 import { DeviceDetect } from "./modules/device-detect.js";
 
-const safeAreaInsets = require('safe-area-insets');
+const safeAreaInsets = require("safe-area-insets");
 
 // ===================
 // Environment & Setup
@@ -74,7 +74,7 @@ var ipXPWAOpt = () => {
     document.getElementById("clockbg").style.display = "block";
     document.getElementById("spacer").style.display = "block";
   }
-}
+};
 ipXPWAOpt();
 
 //
@@ -459,7 +459,7 @@ function orientationChanged () {
 window.addEventListener("resize", function () {
   orientationChanged().then(function () {
     if (DeviceDetect.isiPhoneWithNotch()) {
-      if(window.innerHeight < window.innerWidth) {
+      if (window.innerHeight < window.innerWidth) {
         // landscape
         document.getElementById("clockbg").style.display = "none";
         document.getElementById("spacer").style.display = "none";
@@ -468,7 +468,7 @@ window.addEventListener("resize", function () {
         ipXPWAOpt();
       }
     }
-    setTimeout(function() { dimensions(); map.updateSize(); }, 100);
+    setTimeout(function () { dimensions(); map.updateSize(); }, 100);
   });
 });
 
