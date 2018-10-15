@@ -41,6 +41,10 @@ your development system.
   Otherwise bind mounts for config files will not work and no error
   will be reported.
 * Using localhost instead of 127.0.0.1 will lead to problems (see #76).
+* When the color mapping for dbZ-values (pixels) is changed, the legend
+  needs to be regenerated. Because this happens very rarely, the script
+  for that isn't dockerized. Use ```make legend``` inside ```backend/dwd/```
+  to regenerate the legend PNG.
 
 ## Backend
 
