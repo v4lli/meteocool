@@ -15,7 +15,7 @@ class ViewController: UIViewController, WKUIDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let url = URL(string: "https://unimplemented.org/meteocool/") {
+        if let url = URL(string: "https://meteocool.unimplemented.org/") {
             let request = URLRequest(url: url)
             webView.load(request)
         }
