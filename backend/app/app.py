@@ -62,11 +62,14 @@ def post_location():
         lon = data["lon"]
         source = data["source"]
         token = data["token"]
+        accuracy = data["accuracy"]
     except KeyError:
         return jsonify(success=False, message="bad request, missing keys")
     else:
         if not isinstance(lat, float) or not isinstance(lon, float):
             return jsonify(success=False, message="bad lat/lon")
+        if not isinstance(accuracy, float):
+            return jsonify(success=False, message="invalid accuracy")
         if source != "browser" and source != "ios":
             return jsonify(success=False, message="bad source")
         if not isinstance(token, str) or len(token) > 128 or len(token) < 32:
@@ -75,6 +78,7 @@ def post_location():
         data = {
             "lat": lat,
             "lon": lon,
+            "accuracy": accuracy,
             "last_updated": datetime.datetime.utcnow(),
             "dbz": 42,
             "source": source,

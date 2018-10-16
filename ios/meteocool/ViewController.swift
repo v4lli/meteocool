@@ -7,6 +7,10 @@ class ViewController: UIViewController, WKUIDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // disable scrolling & bouncing effects
+        webView.scrollView.isScrollEnabled = false
+        webView.scrollView.bounces = false
+
         // #f8f9fa = non-darkmode titelbar color
         let lightmode = UIColor(red: 0xf8/255.0, green: 0xf9/255.0, blue: 0xfa/255.0, alpha: 1.0)
         UIApplication.shared.statusBarView?.backgroundColor = lightmode
@@ -14,6 +18,7 @@ class ViewController: UIViewController, WKUIDelegate {
         if let url = URL(string: "https://meteocool.unimplemented.org/") {
             let request = URLRequest(url: url)
             webView.load(request)
+
         }
     }
 }
