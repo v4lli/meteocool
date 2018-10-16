@@ -54,6 +54,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         let locationDict = [
             "lat": location.coordinate.latitude as Double,
             "lon": location.coordinate.longitude as Double,
+            "accuracy": location.horizontalAccuracy as Double,
             "source" : "ios",
             "token" : deviceID,
             ] as [String : Any]
