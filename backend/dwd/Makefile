@@ -6,7 +6,7 @@ OUT := tmp
 mbtiles:
 	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 	# transforms binary runlength format to a 1100x900 px bitmap
-	time python3 dwd2geojson.py tmp/raa01-wx_10000-latest-dwd---bin tmp/raa01-wx_10000-latest-dwd.png
+	time python3 dwd2png.py tmp/raa01-wx_10000-latest-dwd---bin tmp/raa01-wx_10000-latest-dwd.png
 	# the worldfile defines where and how big the bitmap map in the target srs
 	cp worldfile tmp/raa01-wx_10000-latest-dwd.wld
 	# set the source srs http://docs.wradlib.org/en/latest/notebooks/radolan/radolan_grid.html
@@ -18,7 +18,7 @@ mbtiles:
 	mv -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles $(OUT)/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 
 debug:
-	time python3 dwd2geojson.py tmp/raa01-wx_10000-latest-dwd---bin tmp/raa01-wx_10000-latest-dwd.png
+	time python3 dwd2png.py tmp/raa01-wx_10000-latest-dwd---bin tmp/raa01-wx_10000-latest-dwd.png
 
 tag: update
 	mkdir -p ~/meteocool_tags/

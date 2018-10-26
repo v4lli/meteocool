@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw
 import colorsys
 import sys
-from dwd2geojson import scale, dbz2color
+from dwd2png import scale, dbz2color
 
 #background = Image.open("osm_munich.png")
 
