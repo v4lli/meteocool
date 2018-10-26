@@ -29,42 +29,41 @@ def scale(r, g, b, num, idx, alpha=False, lightToDark=True):
 
 def dbz2color(dbz):
     factor = (dbz % 5) + 1
-    s = 0
-    if dbz >= 170-s:
+    if dbz >= 170:
         return (0, 0, 0, 0)
-    if dbz >= 74-s:
-        return scale(0xFE, 0xFC, 0xFD, 93-s, dbz % (74-s))
-    if dbz >= 71-s:
-        return scale(0xFE, 0xFC, 0xFD, 3-s, dbz % (71-s))
-    if dbz >= 65-s:
-        return scale(0x98, 0x58, 0xC4, 6-s, dbz % (65-s))
-    if dbz >= 50-s:
-        return scale(0xF6, 0x28, 0xF6, 15-s, dbz % (50-s))
-    #if dbz >= 60-s:
-    #    return scale(0xB8, 0x07, 0x11, 5-s, dbz % (60-s))
+    if dbz >= 74:
+        return scale(0xFE, 0xFC, 0xFD, 93, dbz % (74))
+    if dbz >= 71:
+        return scale(0xFE, 0xFC, 0xFD, 3, dbz % (71))
+    if dbz >= 65:
+        return scale(0x98, 0x58, 0xC4, 6, dbz % (65))
+    if dbz >= 50:
+        return scale(0xF6, 0x28, 0xF6, 15, dbz % (50))
+    #if dbz >= 60:
+    #    return scale(0xB8, 0x07, 0x11, 5, dbz % (60))
     # redundant color
-    #if dbz >= 55-s:
-    #    return scale(0xC9, 0x0B, 0x13, 5-s, dbz % (55-s))
-    if dbz >= 35-s:
-        return scale(117, 0, 0, 15-s, dbz % (35-s), False, False)
-    #if dbz >= 45-s:
-    #    return scale(0xFA, 0x93, 0x26, 5-s, dbz % (45-s))
+    #if dbz >= 55:
+    #    return scale(0xC9, 0x0B, 0x13, 5, dbz % (55))
+    if dbz >= 35:
+        return scale(117, 0, 0, 15, dbz % (35), False, True)
+    #if dbz >= 45:
+    #    return scale(0xFA, 0x93, 0x26, 5, dbz % (45))
     # ugly color
-    #if dbz >= 40-s:
-    #    return scale(0xE3, 0xBB, 0x2A, 5-s, dbz % (40-s))
-    if dbz >= 32-s:
+    #if dbz >= 40:
+    #    return scale(0xE3, 0xBB, 0x2A, 5, dbz % (40))
+    if dbz >= 32:
         #gelb
-        return scale(87, 74, 0, 3-s, dbz % (32-s))
-    if dbz >= 30-s:
+        return scale(87, 74, 0, 3, dbz % (32))
+    if dbz >= 30:
         # gruen
-        return scale(0x12, 0x8C, 0x15, 2-s, dbz % (30-s), True)
+        return scale(0x12, 0x8C, 0x15, 2, dbz % (30), True)
     # also redundant
-    #if dbz >= 25-s:
-    #    return scale(0x1E, 0xC4, 0x22, 5-s, dbz % (25-s))
-    if dbz >= 25-s:
-        #return scale(0x2A, 0xFC, 0x30, 5-s, dbz % (20-s))
+    #if dbz >= 25:
+    #    return scale(0x1E, 0xC4, 0x22, 5, dbz % (25))
+    if dbz >= 25:
+        #return scale(0x2A, 0xFC, 0x30, 5, dbz % (20))
         # the redundant color looks nicer though...
-        return scale(0x1E, 0xC4, 0x22, 5-s, dbz % (25-s))
+        return scale(0x1E, 0xC4, 0x22, 5, dbz % (25))
     if dbz >= 20:
         return scale(0x0E, 0x22, 0xEE, 10+s, dbz % 20)
     if dbz >= 10:
