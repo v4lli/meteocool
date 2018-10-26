@@ -51,7 +51,7 @@ push:
 	mkdir tmp/forecast
 	wget https://opendata.dwd.de/weather/radar/composit/fx/FX_LATEST.tar.bz2 -O tmp/forecast.tar.bz2
 	tar -C tmp/forecast -xjf tmp/forecast.tar.bz2
-	python3 push.py $$(ls tmp/forecast/FX*_015_MF002) http://app:5000/internal/trigger_browser_notification
+	python3 push.py $$(ls tmp/forecast/FX*_015_MF002) http://app:5000/internal/trigger_browser_notification || true
 
 
 update:
