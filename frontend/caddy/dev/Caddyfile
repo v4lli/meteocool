@@ -1,4 +1,4 @@
-127.0.0.1:8040 {
+127.0.0.1:8040, localhost:8040 {
 	root /srv
 	log stdout
 
@@ -22,9 +22,7 @@
 	}
 }
 
-127.0.0.1:8041 {
-	#root /srv
-
+127.0.0.1:8041, localhost:8041 {
 	proxy / tileserver:80 {
 	    transparent
             header_upstream X-Forwarded-Proto https
