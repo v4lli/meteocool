@@ -19,8 +19,26 @@ import { fromLonLat } from "ol/proj.js";
 import { Cluster } from "ol/source.js";
 import io from "socket.io-client";
 import { DeviceDetect } from "./modules/device-detect.js";
+import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+
+import $ from "jquery";
 
 const safeAreaInsets = require("safe-area-insets");
+window.jQuery = $;
+window.$ = $;
+
+var lastUpdatedServer = false;
+function lastUpdatedFn () {
+  var elem = document.getElementById("updatedTime");
+
+  if (lastUpdatedServer) {
+    elem.innerHTML = distanceInWordsToNow(lastUpdatedServer) + " ago";
+  } else {
+    elem.innerHTML = "never";
+  }
+  setTimeout(lastUpdatedFn, 10000);
+}
+lastUpdatedFn();
 
 // ===================
 // Environment & Setup
@@ -356,18 +374,27 @@ if (process.env.NODE_ENV === "production") {
   tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 }
 
-console.log(tileUrl);
-
 var reflectivityOpacity = 0.5;
+var currentLayer;
 
-var currentLayer = new TileLayer({
-  source: new TileJSON({
-    url: tileUrl,
-    crossOrigin: "anonymous"
-  }),
-  opacity: reflectivityOpacity
+// manually download tileJSON using jquery, so we can extract the "version"
+// field and use it for the "last updated" feature.
+$.getJSON({
+  dataType: "json",
+  url: tileUrl,
+  success: function (data) {
+    currentLayer = new TileLayer({
+      source: new TileJSON({
+        tileJSON: data,
+        crossOrigin: "anonymous"
+      }),
+      opacity: reflectivityOpacity
+    });
+    map.addLayer(currentLayer);
+    lastUpdatedServer = new Date(data.version * 1000);
+  }
 });
-map.addLayer(currentLayer);
+
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
 const socket = io.connect(websocketUrl);
@@ -436,11 +463,6 @@ var locateControl = new Control({
   element: element
 });
 map.addControl(locateControl);
-
-// quickfix for "last updated: never" XXX
-// will be replaced soon by counter
-var lastUpdated = new Date();
-document.getElementById("updatedTime").innerHTML = "Last update: " + ("0" + lastUpdated.getHours()).slice(-2) + ":" + ("0" + lastUpdated.getMinutes()).slice(-2);
 
 // https://stackoverflow.com/a/44579732/10272994
 // resize for orientationchange
