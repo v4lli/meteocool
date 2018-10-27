@@ -65,7 +65,7 @@ def dbz2color(dbz):
         # the redundant color looks nicer though...
         return scale(0x1E, 0xC4, 0x22, 5, dbz % (25))
     if dbz >= 20:
-        return scale(0x0E, 0x22, 0xEE, 10+s, dbz % 20)
+        return scale(0x0E, 0x22, 0xEE, 10, dbz % 20)
     if dbz >= 10:
         return scale(0x0E, 0x22, 0xEE, 10, dbz % 10, True)
     if dbz >= 0:

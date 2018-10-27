@@ -37,8 +37,10 @@ cursor = collection.find({})
 for document in cursor:
     print(document)
     lat = document["lat"]
-    lat = document["lon"]
+    lon = document["lon"]
     token = document["token"]
+
+    # XXX check lat/lon against the bounds to avoid useless calculations
 
     result = closest_node((lat, lon), linearized_grid)
     xy = (int(result / 900), int(result % 900))
