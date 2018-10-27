@@ -19,19 +19,19 @@ import { fromLonLat } from "ol/proj.js";
 import { Cluster } from "ol/source.js";
 import io from "socket.io-client";
 import { DeviceDetect } from "./modules/device-detect.js";
-import distanceInWordsToNow from 'date-fns/distance_in_words_to_now'
+import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+
+import $ from "jquery";
 
 const safeAreaInsets = require("safe-area-insets");
-
-import $ from 'jquery';
 window.jQuery = $;
 window.$ = $;
 
 var lastUpdatedServer = false;
-function lastUpdatedFn() {
+function lastUpdatedFn () {
   var elem = document.getElementById("updatedTime");
 
-  if(lastUpdatedServer) {
+  if (lastUpdatedServer) {
     elem.innerHTML = distanceInWordsToNow(lastUpdatedServer) + " ago";
   } else {
     elem.innerHTML = "never";
@@ -382,7 +382,7 @@ var currentLayer;
 $.getJSON({
   dataType: "json",
   url: tileUrl,
-  success: function(data) {
+  success: function (data) {
     currentLayer = new TileLayer({
       source: new TileJSON({
         tileJSON: data,
@@ -391,7 +391,7 @@ $.getJSON({
       opacity: reflectivityOpacity
     });
     map.addLayer(currentLayer);
-    lastUpdatedServer = new Date(data.version*1000);
+    lastUpdatedServer = new Date(data.version * 1000);
   }
 });
 
