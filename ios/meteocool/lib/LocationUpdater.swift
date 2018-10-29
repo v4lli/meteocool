@@ -4,6 +4,7 @@ import CoreLocation
 class LocationUpdater: NSObject, CLLocationManagerDelegate {
     let locationManager: CLLocationManager
     let deviceID: String = UIDevice.current.identifierForVendor!.uuidString
+    var token: String?
 
     override init() {
         locationManager = CLLocationManager()
@@ -42,7 +43,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            self.postLocation(location:location)
+            self.postLocationDeferred(location:location)
         }
     }
 
@@ -50,13 +51,30 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         print("CLLocationManager ERR: \(error)")
     }
 
+    func postLocationDeferred(location: CLLocation) {
+        if token != nil {
+            postLocation(location: location)
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
+                self.postLocation(location: location)
+            })
+        }
+    }
+
     func postLocation(location: CLLocation) {
+        guard let token = token else {
+            print("No token")
+            return
+        }
+
         let locationDict = [
             "lat": location.coordinate.latitude as Double,
             "lon": location.coordinate.longitude as Double,
             "accuracy": location.horizontalAccuracy as Double,
+            "ahead": 15,
+            "intensity": 10,
             "source" : "ios",
-            "token" : deviceID,
+            "token" : token,
             ] as [String : Any]
 
         guard let request = NetworkHelper.createJSONPostRequest(dst: "post_location", dictionary: locationDict) else {
