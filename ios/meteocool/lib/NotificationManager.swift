@@ -18,4 +18,10 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             }
         }
     }
+
+    func clearNotifications() {
+        UIApplication.shared.applicationIconBadgeNumber = 0
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    }
 }
