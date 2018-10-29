@@ -1,14 +1,15 @@
 import UIKit
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
     var window: UIWindow?
-    var locationUpdater:LocationUpdater!
-
+    var notificationManager: NotificationManager!
+    var locationUpdater: LocationUpdater!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        self.notificationManager = NotificationManager.init()
         self.locationUpdater = LocationUpdater.init()
         return true
     }
@@ -25,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        self.notificationManager.clearNotifications()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -33,6 +35,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let token = deviceToken.map { data -> String in
+            return String(format: "%02.2hhx", data)
+        }.joined()
+        print("Device Token: \(token)")
+        locationUpdater.token = token
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register for remote notifications with error: \(error)")
     }
 }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5705D3992186A16C00CC5A60 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5705D3982186A16C00CC5A60 /* NotificationManager.swift */; };
 		57589ACF216ADB1000CDEBB7 /* LocationUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57589ACE216ADB1000CDEBB7 /* LocationUpdater.swift */; };
 		57589AD1216ADB5C00CDEBB7 /* NetworkHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57589AD0216ADB5C00CDEBB7 /* NetworkHelper.swift */; };
 		577666922130C6E300C25E00 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 577666912130C6E300C25E00 /* AppDelegate.swift */; };
@@ -17,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5705D397218696FB00CC5A60 /* meteocool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meteocool.entitlements; sourceTree = "<group>"; };
+		5705D3982186A16C00CC5A60 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		57589ACE216ADB1000CDEBB7 /* LocationUpdater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationUpdater.swift; sourceTree = "<group>"; };
 		57589AD0216ADB5C00CDEBB7 /* NetworkHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkHelper.swift; sourceTree = "<group>"; };
 		5776668E2130C6E300C25E00 /* meteocool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = meteocool.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +47,7 @@
 			children = (
 				57589ACE216ADB1000CDEBB7 /* LocationUpdater.swift */,
 				57589AD0216ADB5C00CDEBB7 /* NetworkHelper.swift */,
+				5705D3982186A16C00CC5A60 /* NotificationManager.swift */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -67,6 +71,7 @@
 		577666902130C6E300C25E00 /* meteocool */ = {
 			isa = PBXGroup;
 			children = (
+				5705D397218696FB00CC5A60 /* meteocool.entitlements */,
 				57589ACD216ADAEB00CDEBB7 /* lib */,
 				577666912130C6E300C25E00 /* AppDelegate.swift */,
 				577666932130C6E300C25E00 /* ViewController.swift */,
@@ -115,6 +120,9 @@
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.Push = {
+								enabled = 1;
+							};
 						};
 					};
 				};
@@ -156,6 +164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				577666942130C6E300C25E00 /* ViewController.swift in Sources */,
+				5705D3992186A16C00CC5A60 /* NotificationManager.swift in Sources */,
 				57589ACF216ADB1000CDEBB7 /* LocationUpdater.swift in Sources */,
 				57589AD1216ADB5C00CDEBB7 /* NetworkHelper.swift in Sources */,
 				577666922130C6E300C25E00 /* AppDelegate.swift in Sources */,
@@ -302,6 +311,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = meteocool/meteocool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4L2672L4VX;
 				INFOPLIST_FILE = meteocool/Info.plist;
@@ -320,6 +330,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = meteocool/meteocool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4L2672L4VX;
 				INFOPLIST_FILE = meteocool/Info.plist;
