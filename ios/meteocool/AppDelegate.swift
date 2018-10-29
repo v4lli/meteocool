@@ -10,7 +10,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         self.notificationManager = NotificationManager.init()
-        self.locationUpdater = LocationUpdater.init()
+
+        if let remoteNotification = launchOptions?[.remoteNotification] as?  [AnyHashable : Any] {
+            // Do what you want to happen when a remote notification is tapped.
+            print("Launch because of notification")
+        } else {
+            self.locationUpdater = LocationUpdater.init()
+        }
         return true
     }
 
@@ -35,6 +41,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print(userInfo)
+        if  let clear_all = userInfo["clear_all"] as? Bool {
+            if (clear_all) {
+                self.notificationManager.clearNotifications()
+            }
+        }
+        completionHandler(.newData)
     }
 }
 
