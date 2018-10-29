@@ -44,6 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.notificationManager.clearNotifications()
             }
         }
+        completionHandler(.newData)
     }
 }
 
