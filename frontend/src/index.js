@@ -4,30 +4,34 @@ import "ol/ol.css";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import $ from "jquery";
 import CircleStyle from "ol/style/Circle";
+import Control from "ol/control/Control";
 import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
 import TileLayer from "ol/layer/Tile.js";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
+import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+import io from "socket.io-client";
+import { Cluster } from "ol/source.js";
+import { DeviceDetect } from "./modules/device-detect.js";
+import { Fill, Stroke, Style, Text } from "ol/style";
 import { Map, View, Geolocation, Feature } from "ol";
 import { defaults as defaultControls, OverviewMap } from "ol/control.js";
-import Control from "ol/control/Control";
-import { Fill, Stroke, Style, Text } from "ol/style";
-import { fromLonLat } from "ol/proj.js";
-import { Cluster } from "ol/source.js";
-import io from "socket.io-client";
-import { DeviceDetect } from "./modules/device-detect.js";
-import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+import { fromLonLat, toLonLat } from "ol/proj.js";
 
-import $ from "jquery";
+import logo_big from '../assets/android-chrome-512x512.png';
 
 const safeAreaInsets = require("safe-area-insets");
+
 window.jQuery = $;
 window.$ = $;
 
 var lastUpdatedServer = false;
+// the timer is started later by the callback which downloads the initial
+// map.
 function lastUpdatedFn () {
   var elem = document.getElementById("updatedTime");
 
@@ -38,7 +42,6 @@ function lastUpdatedFn () {
   }
   setTimeout(lastUpdatedFn, 10000);
 }
-lastUpdatedFn();
 
 // ===================
 // Environment & Setup
@@ -392,6 +395,7 @@ $.getJSON({
     });
     map.addLayer(currentLayer);
     lastUpdatedServer = new Date(data.version * 1000);
+    lastUpdatedFn();
   }
 });
 
@@ -413,8 +417,6 @@ class StrikeManager {
     this.strikes.push(lightning.getId());
     if (this.strikes.length > this.maxStrikes) {
       var toRemove = this.strikes.shift();
-      console.log("had to remove");
-      console.log(toRemove);
       vs.removeFeature(vs.getFeatureById(toRemove));
     }
     vs.addFeature(lightning);
@@ -493,5 +495,69 @@ window.addEventListener("resize", function () {
     setTimeout(function () { dimensions(); map.updateSize(); }, 100);
   });
 });
+
+/* push notifications */
+var pushLink = document.getElementById("toggleNotifyLink");
+var pushLink2 = document.getElementById("toggleNotifyLink2");
+var pushCheckbox = document.getElementById("toggleNotifyCheckbox");
+
+pushLink.onclick = () => {
+  pushCheckbox.checked = !pushCheckbox.checked;
+  pushCheckbox.onchange();
+};
+pushLink2.onclick = () => {
+  pushCheckbox.checked = !pushCheckbox.checked;
+  pushCheckbox.onchange();
+};
+
+var pushSocket;
+
+pushCheckbox.onchange = () => {
+  var checked = pushCheckbox.checked;
+  if (!Notification)
+    return;
+
+  if (checked) {
+    console.log("registering push notification...");
+    pushSocket = io.connect("/rain_notify_browser");
+
+    var ahead = parseInt(document.getElementById("aheadSelect").value);
+    var coordinates = geolocation.getPosition();
+    if (!coordinates) {
+      console.log("no geolocation");
+      $("#geoLocationModal").modal();
+      return;
+    }
+    var currentLonLat = toLonLat(coordinates);
+
+    pushSocket.on("notify", function(data) {
+      new Notification(data.title, {
+        "icon": logo_big,
+        "body": data.body,
+        "requireInteraction": true,
+        "vibrate": [200, 100, 200]
+      });
+    });
+
+    pushSocket.emit("register", {
+      "lat": currentLonLat[1],
+      "lon": currentLonLat[0],
+      "ahead": ahead,
+      "intensity": 10,
+      "accuracy": 1.0
+    });
+
+    if (Notification.permission !== "granted")
+      Notification.requestPermission();
+
+    var notifyText = "You will be notified " + ahead + " minutes before it rains!";
+    new Notification(notifyText, {
+      "icon": logo_big
+    });
+  } else {
+    console.log("unregistering...");
+    socket.emit("unregister", {});
+  }
+};
 
 /* vim: set ts=2 sw=2 expandtab: */
