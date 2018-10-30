@@ -67,9 +67,12 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
             return
         }
 
+        let accurancy = 0.005
+        let lat = location.coordinate.latitude as Double
+        let lon = location.coordinate.longitude as Double
         let locationDict = [
-            "lat": location.coordinate.latitude as Double,
-            "lon": location.coordinate.longitude as Double,
+            "lat": Double(round(lat/accurancy)*accurancy),
+            "lon": Double(round(lon/accurancy)*accurancy),
             "accuracy": location.horizontalAccuracy as Double,
             "ahead": 15,
             "intensity": 10,
