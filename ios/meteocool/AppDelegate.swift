@@ -36,6 +36,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        if let clear_all = userInfo["clear_all"] as? Bool {
+            if (clear_all) {
+                self.notificationManager.clearNotifications()
+            }
+        }
+        completionHandler(.newData)
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -43,12 +52,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let token = deviceToken.map { data -> String in
             return String(format: "%02.2hhx", data)
         }.joined()
-        print("Device Token: \(token)")
+        NSLog("Device Token: \(token)")
         locationUpdater.token = token
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("Failed to register for remote notifications with error: \(error)")
+        NSLog("Failed to register for remote notifications with error: \(error)")
     }
 }
 

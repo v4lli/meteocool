@@ -16,15 +16,15 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
             case .notDetermined, .restricted, .denied:
-                print("Location: No access")
+                NSLog("Location: No access")
             case .authorizedWhenInUse:
-                print("Location: WhenInUse")
+                NSLog("Location: WhenInUse")
             case .authorizedAlways:
-                print("Location: Always")
+                NSLog("Location: Always")
                 startSignificantChangeLocationUpdates()
             }
         } else {
-            print("Location services are not enabled")
+            NSLog("Location services are not enabled")
         }
     }
 
@@ -48,7 +48,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("CLLocationManager ERR: \(error)")
+        NSLog("CLLocationManager ERR: \(error)")
     }
 
     func postLocationDeferred(location: CLLocation) {
@@ -63,7 +63,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
 
     func postLocation(location: CLLocation) {
         guard let token = token else {
-            print("No token")
+            NSLog("No token")
             return
         }
 
@@ -88,7 +88,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
 
             if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] {
                 if let errorMessage = json?["error"] as? String {
-                    print("ERROR: \(errorMessage)")
+                    NSLog("ERROR: \(errorMessage)")
                 }
             }
         }
