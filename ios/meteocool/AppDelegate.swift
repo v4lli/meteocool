@@ -10,13 +10,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         self.notificationManager = NotificationManager.init()
-
-        if let remoteNotification = launchOptions?[.remoteNotification] as?  [AnyHashable : Any] {
-            // Do what you want to happen when a remote notification is tapped.
-            print("Launch because of notification")
-        } else {
-            self.locationUpdater = LocationUpdater.init()
-        }
+        self.locationUpdater = LocationUpdater.init()
         return true
     }
 
@@ -44,8 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print(userInfo)
-        if  let clear_all = userInfo["clear_all"] as? Bool {
+        if let clear_all = userInfo["clear_all"] as? Bool {
             if (clear_all) {
                 self.notificationManager.clearNotifications()
             }
@@ -59,12 +52,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let token = deviceToken.map { data -> String in
             return String(format: "%02.2hhx", data)
         }.joined()
-        print("Device Token: \(token)")
+        NSLog("Device Token: \(token)")
         locationUpdater.token = token
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("Failed to register for remote notifications with error: \(error)")
+        NSLog("Failed to register for remote notifications with error: \(error)")
     }
 }
 
