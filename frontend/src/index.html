@@ -8,8 +8,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
     <link rel="manifest" href="./site.webmanifest">
     <link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="apple-mobile-web-app-title" content="Meteocool">
-    <meta name="application-name" content="Meteocool">
+    <meta name="apple-mobile-web-app-title" content="meteocool">
+    <meta name="application-name" content="meteocool">
     <meta name="theme-color" content="#ffffff">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,7 +22,7 @@
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="aboutModalTitle">About Meteocool</h5>
+            <h5 class="modal-title" id="aboutModalTitle">About meteocool</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -31,8 +31,22 @@
             <h2>Legend</h2>
             <p><img src="./legend_big.png" id="legend"></p>
             <p>Shown is the scale from 0 dbZ up to 96 dbZ.</p>
+            <h2>Push Notificaitons</h2>
+            <p>meteocool can notify you about incoming rain at your
+            current location. The prediction service is based on
+            models provided by DWD. Notification set for the
+            distant future (in weather prediction terms: more than 15
+            minutes) may be inaccurate, especially for locally
+            developing thunderstorms (common in the summer).
+            </p>
+            <p>This feature obviously requires you to provide us
+            with your current location. No other information besides
+            your location data, accuracy and an anonymous, random
+            token associated with your web browser will be
+            processed.</p>
             <h2>Credits</h2>
-            <p>Meteocool was created by a few cool dudes*. so here go the credits:</p>
+            <p>meteocool was created by a few cool dudes*. so here
+            go the credits:</p>
             <ul>
               <li>DWD</li>
               <li>bootstrap</li>
@@ -47,12 +61,31 @@
         </div>
       </div>
     </div>
+    <div class="modal fade" id="geoLocationModal" tabindex="-1" role="dialog" aria-labelledby="geoLocationModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="aboutModalTitle">Enable Geolocation First</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Please enable the <i>geolocation</i> functionality fist
+            (cross-hair control in the upper left corner of the map).
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
       <div id="clockbg"></div>
       <div id="spacer"></div>
       <div id="compositBar">
         <div id="logolink">
-          <a class="navbar-brand mr-auto mt-2 mt-lg-0" href="/meteocool/">
+          <a class="navbar-brand mr-auto mt-2 mt-lg-0" href="/">
             <img src="./android-chrome-512x512.png" width="30" height="30" class="d-inline-block align-top" alt="meteocool logo">
           </a>
         </div>
@@ -66,7 +99,22 @@
         <ul class="navbar-nav ml-auto">
           <li class="nav-item"><span class="navbar-text" id="updatedTime"></span></li>
           <li class="nav-item"><a id="toggleMode" class="nav-link">dark mode</a></li>
-          <li class="nav-item"><a class="nav-link" href="javascript:void();" data-toggle="modal" data-target="#aboutModal">About</a></li>
+          <li class="nav-item"><span style="float: left; display: inline; cursor: pointer;">
+              <input type="checkbox" id="toggleNotifyCheckbox"><a id="toggleNotifyLink" class="nav-link" style="display: inline;"> tell me </a><select id="aheadSelect">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15" selected>15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="35">35</option>
+                <option value="40">40</option>
+                <option value="45">45</option>
+                <option value="50">50</option>
+                <option value="55">55</option>
+                <option value="60">60</option>
+              </select><a id="toggleNotifyLink2" class="nav-link" style="display: inline;"> minutes before it rains</a></span></li>
+              <li class="nav-item"><a class="nav-link" href="javascript:void();" data-toggle="modal" data-target="#aboutModal">About</a></li>
         </ul>
       </div>
     </nav>

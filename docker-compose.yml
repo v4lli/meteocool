@@ -47,6 +47,8 @@ services:
       - DB_CONN="mongodb://mongo:27017/"
     volumes:
       - dwd:/data
+      - /etc/meteocool/apns.json:/etc/apns.json
+      - /etc/meteocool/authkey.p8:/etc/authkey.p8
     depends_on:
       - app
       - mongo
@@ -63,13 +65,6 @@ services:
       - ${PWD}/tileserver-gl-meteocool/config:/etc/ts
     depends_on:
       - dwd
-
-        #elk:
-        #  image: diecktator/elk:latest
-        #  ports:
-        #    - 11111:5601
-        #    - 11112:5044
-  #          - 11113:9200
 
 volumes:
   dwd:

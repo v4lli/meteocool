@@ -19,10 +19,15 @@ information from the awesome blitzortung.org project.
 * **Live Lightning Strikes:** new lightning strikes are displayed instantly,
   giving you an even better feeling for the cloud formation's intensity,
   trajectory and speed.
+* **Push Notifications:** get notified about incoming rain up to 60 minutes
+  in advance. Works in any modern browser and on iOS.
 * **Dark Mode:** great for HUD-like displays and general night time usage.
 * **Progressive Web App:** responsive, connectivity independent and app-like.
   Add a shortcut to your iOS or Android Home Screen to use meteocool in
   "app mode".
+* **iOS App:** a native iOS app provides battery-efficient background
+  location services to provide accurate rain notifications without any user
+  interaction.
 
 # Development
 
@@ -44,6 +49,10 @@ your development system.
   needs to be regenerated. Because this happens very rarely, the script
   for that isn't dockerized. Use ```make legend``` inside ```backend/dwd/```
   to regenerate the legend PNG.
+* The database is initialized when the first entry is generated. Sadly this
+  causes the push backend to hang until backend/app provides a first entry.
+  As a work around, create a notification request via the web UI after the
+  first startup. The databse is persistently kept on a docker volume.
 
 ## Backend
 

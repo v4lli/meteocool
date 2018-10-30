@@ -17,9 +17,14 @@
 		transparent
 	}
 
-	proxy /reflectivity dwd:5000 {
+	proxy /rain_notify_browser app:5000 {
+		websocket
 		transparent
 	}
+
+	#proxy /reflectivity dwd:5000 {
+	#	transparent
+	#}
 }
 
 127.0.0.1:8041, localhost:8041 {

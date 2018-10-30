@@ -16,3 +16,6 @@ devrestart:
 
 devstop:
 	docker-compose -f docker-compose-dev.yml down
+
+prodstop:
+	docker-compose -f docker-compose.yml down
