@@ -22,7 +22,7 @@ import { Map, View, Geolocation, Feature } from "ol";
 import { defaults as defaultControls, OverviewMap } from "ol/control.js";
 import { fromLonLat, toLonLat } from "ol/proj.js";
 
-import logo_big from '../assets/android-chrome-512x512.png';
+import logoBig from "../assets/android-chrome-512x512.png";
 
 const safeAreaInsets = require("safe-area-insets");
 
@@ -514,8 +514,7 @@ var pushSocket;
 
 pushCheckbox.onchange = () => {
   var checked = pushCheckbox.checked;
-  if (!Notification)
-    return;
+  if (!Notification) { return; }
 
   if (checked) {
     console.log("registering push notification...");
@@ -530,13 +529,16 @@ pushCheckbox.onchange = () => {
     }
     var currentLonLat = toLonLat(coordinates);
 
-    pushSocket.on("notify", function(data) {
+    pushSocket.on("notify", function (data) {
+      /* eslint-disable no-new */
+      /* This is a browser API! I didn't want to "use new for side effects"! */
       new Notification(data.title, {
-        "icon": logo_big,
+        "icon": logoBig,
         "body": data.body,
         "requireInteraction": true,
         "vibrate": [200, 100, 200]
       });
+      /* eslint-enable */
     });
 
     pushSocket.emit("register", {
@@ -547,13 +549,15 @@ pushCheckbox.onchange = () => {
       "accuracy": 1.0
     });
 
-    if (Notification.permission !== "granted")
-      Notification.requestPermission();
+    if (Notification.permission !== "granted") { Notification.requestPermission(); }
 
     var notifyText = "You will be notified " + ahead + " minutes before it rains!";
+    /* eslint-disable no-new */
+    /* This is a browser API! I didn't want to "use new for side effects"! */
     new Notification(notifyText, {
-      "icon": logo_big
+      "icon": logoBig
     });
+    /* eslint-enable */
   } else {
     console.log("unregistering...");
     socket.emit("unregister", {});
