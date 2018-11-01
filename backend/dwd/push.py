@@ -53,8 +53,6 @@ if __name__ == "__main__":
         forecast_maps[cnt] = wrl.io.radolan.read_radolan_composite(f)
         cnt = cnt + 5
 
-    print(str(forecast_maps))
-
     # wradlib setup
     radolan_grid_ll = wrl.georef.get_radolan_grid(900,900, wgs84=True)
     linearized_grid = []
