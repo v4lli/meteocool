@@ -88,16 +88,17 @@ def save_location_to_backend(data):
         if not isinstance(intensity, int) or intensity < 0 or intensity > 130:
             return jsonify(success=False, message="invalid intensity value")
 
-        # XXX this might override ios_onscreen! FIXME
+        # XXX this will override ios_onscreen and last_push!
         data = {
             "lat": lat,
             "lon": lon,
             "accuracy": accuracy,
-            "last_updated": datetime.datetime.utcnow(),
             "intensity": intensity,
             "ahead": ahead,
-            "source": source,
+            "last_updated": datetime.datetime.utcnow(),
+            "last_push": datetime.datetime.utcfromtimestamp(0),
             "ios_onscreen": False,
+            "source": source,
             "token": token
         }
         key = {"token": token}
