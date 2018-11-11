@@ -69,6 +69,7 @@ if __name__ == "__main__":
     cursor = collection.find({})
     cnt = 0
     for document in cursor:
+        break
         doc_id = document["_id"]
         lat = document["lat"]
         lon = document["lon"]
