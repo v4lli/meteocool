@@ -15,7 +15,7 @@ import random
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO
 
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -29,7 +29,9 @@ collection = db["collection"]
 # by the dwd backend container. newTileJson needs to be a valid
 # tileJSON structure.
 def update_all_clients(newTileJson):
+    logging.warn("emit update")
     socketio.emit("map_update", newTileJson, namespace="/tile")
+    logging.warn("emit done")
 
 # Internal API endpoint, triggered by the dwd backend container.
 @app.route("/internal/publish_new_tileset", methods=["POST"])
@@ -239,7 +241,7 @@ def blitzortung_thread():
         ws.run_forever()
 
 
-eventlet.spawn(blitzortung_thread)
+#eventlet.spawn(blitzortung_thread)
 
 if __name__ == "__main__":
     logging.warn("Starting meteocool backend app.py...")
