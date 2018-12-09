@@ -69,7 +69,6 @@ if __name__ == "__main__":
     cursor = collection.find({})
     cnt = 0
     for document in cursor:
-        break
         doc_id = document["_id"]
         lat = document["lat"]
         lon = document["lon"]
@@ -77,7 +76,8 @@ if __name__ == "__main__":
         ahead = document["ahead"]
         intensity = document["intensity"]
         ios_onscreen = document["ios_onscreen"]
-        source = document["ios_onscreen"]
+        source = document["source"]
+        ios_onscreen = document["ios_onscreen"]
 
         if ahead > 110 or ahead%5 != 0:
             logging.info("%s: invalid ahead value" % doc_id)
@@ -95,19 +95,25 @@ if __name__ == "__main__":
             if source == "browser":
                 requests.post(browser_notify_url, json={"token": token, "ahead": ahead})
             elif source == "ios":
+                # https://developer.apple.com/library/archive/documentation/NetworkingInternet/
+                # Conceptual/RemoteNotificationsPG/PayloadKeyReference.html#//apple_ref/doc/uid/TP40008194-CH17-SW1
                 if apns:
-                    # https://developer.apple.com/library/archive/documentation/NetworkingInternet/
-                    # Conceptual/RemoteNotificationsPG/PayloadKeyReference.html#//apple_ref/doc/uid/TP40008194-CH17-SW1
-                    try:
-                        apns.send_message(token, ("Rain expected in %d minutes!" % ahead), badge=0, sound="pulse.aiff")
-                    except BadDeviceToken:
-                        logging.info("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
-                        collection.remove(doc_id)
+                    # only send another notification if the previous one was
+                    # acknowledged (app was opened or we successfully deleted the
+                    # last one).
+                    if not ios_onscreen:
+                        try:
+                            apns.send_message(token, ("Rain expected in %d minutes!" % ahead), badge=0, sound="pulse.aiff")
+                        except BadDeviceToken:
+                            logging.info("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
+                            collection.remove(doc_id)
+                        else:
+                            logging.info("%s: sent iOS notification", doc_id)
+                            # mark notification as delivered in the database, so we can
+                            # clear it as soon as the rain stops.
+                            db.collection.update(doc_id, {"$set": {"ios_onscreen": True}})
                     else:
-                        logging.info("%s: sent iOS notification", doc_id)
-                        # mark notification as delivered in the database, so we can
-                        # clear it as soon as the rain stops.
-                        db.collection.update(doc_id, {"$set": {"ios_onscreen": True}})
+                        logging.warn("%s: old notification not acknowledged, not re-sending", doc_id)
                 else:
                     logging.warn("iOS push not configured but iOS source requested")
             else:
