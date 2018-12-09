@@ -1,14 +1,13 @@
 import datetime
-import eventlet
-
-eventlet.monkey_patch()
+#import eventlet
+#
+#eventlet.monkey_patch()
 
 import logging
 import json
 import uuid
 import websocket
 import threading
-from pyproj import Proj, transform
 from pymongo import MongoClient
 import random
 
