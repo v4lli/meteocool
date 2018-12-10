@@ -14,8 +14,9 @@ from pymongo import MongoClient
 from scipy.spatial import distance
 import requests
 import wradlib as wrl
+from wradlib.trafo import rvp_to_dbz
 
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
 def closest_node(node, nodes):
     closest_index = distance.cdist([node], nodes).argmin()
@@ -52,9 +53,9 @@ if __name__ == "__main__":
     max_ahead = 0
     forecast_maps = {}
     for f in forecast_files:
-        forecast_maps[cnt] = wrl.io.radolan.read_radolan_composite(f)
-        max_ahead = cnt + 5
-    logging.info("Maximum forecast in minutes: %d" % max_ahead)
+        forecast_maps[max_ahead] = wrl.io.radolan.read_radolan_composite(f)
+        max_ahead = max_ahead + 5
+    logging.warn("Maximum forecast in minutes: %d" % max_ahead)
 
     # wradlib setup
     gridsize = 900
@@ -77,11 +78,13 @@ if __name__ == "__main__":
         intensity = document["intensity"]
         ios_onscreen = document["ios_onscreen"]
         source = document["source"]
-        ios_onscreen = document["ios_onscreen"]
 
-        if ahead > 110 or ahead%5 != 0:
-            logging.info("%s: invalid ahead value" % doc_id)
-            break
+        if token != "fad41f92886425d2efc71b402a711e9c63013d79a0b9905a828471860cd5ab7f":
+            continue
+
+        if ahead > max_ahead or ahead%5 != 0:
+            logging.error("%s: invalid ahead value" % doc_id)
+            continue
         data = forecast_maps[ahead]
 
         # XXX check lat/lon against the bounds of the dwd data here
@@ -89,9 +92,9 @@ if __name__ == "__main__":
 
         result = closest_node((lon, lat), linearized_grid)
         xy = (int(result / gridsize), int(result % gridsize))
-        reported_intensity = data[0][xy[0]][xy[1]]
+        reported_intensity = rvp_to_dbz(data[0][xy[0]][xy[1]])
         if reported_intensity > intensity:
-            logging.info("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (doc_id, reported_intensity, intensity, ahead, source))
+            logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (doc_id, reported_intensity, intensity, ahead, source))
             if source == "browser":
                 requests.post(browser_notify_url, json={"token": token, "ahead": ahead})
             elif source == "ios":
@@ -105,13 +108,13 @@ if __name__ == "__main__":
                         try:
                             apns.send_message(token, ("Rain expected in %d minutes!" % ahead), badge=0, sound="pulse.aiff")
                         except BadDeviceToken:
-                            logging.info("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
+                            logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
                             collection.remove(doc_id)
                         else:
-                            logging.info("%s: sent iOS notification", doc_id)
+                            logging.warn("%s: sent iOS notification", doc_id)
                             # mark notification as delivered in the database, so we can
                             # clear it as soon as the rain stops.
-                            db.collection.update(doc_id, {"$set": {"ios_onscreen": True}})
+                            collection.update({"_id": doc_id}, {"$set": {"ios_onscreen": True}})
                     else:
                         logging.warn("%s: old notification not acknowledged, not re-sending", doc_id)
                 else:
@@ -127,11 +130,11 @@ if __name__ == "__main__":
                 try:
                     apns.send_message(token, None, badge=0, content_available=True, extra={"clear_all": True})
                 except BadDeviceToken:
-                    logging.info("%s: silent iOS notification failed with BadDeviceToken, removing push client", doc_id)
+                    logging.warn("%s: silent iOS notification failed with BadDeviceToken, removing push client", doc_id)
                     collection.remove(doc_id)
                 else:
-                    logging.info("%s: sent silent notification" % doc_id)
-                    db.collection.update(doc_id, { "$set": {"ios_onscreen": True} })
+                    logging.warn("%s: sent silent notification" % doc_id)
+                    collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": True} })
         cnt = cnt + 1
 
-    logging.info("===> Processed %d total clients" % cnt)
+    logging.warn("===> Processed %d total clients" % cnt)
