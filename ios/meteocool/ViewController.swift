@@ -18,8 +18,13 @@ class ViewController: UIViewController, WKUIDelegate {
         if let url = URL(string: "https://meteocool.unimplemented.org/") {
             let request = URLRequest(url: url)
             webView.load(request)
-
         }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.reloadTiles), name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+
+    @objc func reloadTiles() {
+        webView.evaluateJavaScript("window.manualTileUpdateFn();")
     }
 }
 
