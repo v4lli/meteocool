@@ -28,6 +28,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         self.notificationManager.clearNotifications()
+        // XXX call this only when there are >0 notifications on launch!
+        if token != nil {
+            acknowledgeNotification()
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
+                self.acknowledgeNotification()
+            })
+        }
+
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
