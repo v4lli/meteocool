@@ -6,6 +6,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var notificationManager: NotificationManager!
     var locationUpdater: LocationUpdater!
+    var token: String?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -37,10 +38,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    func acknowledgeNotification() {
+        guard let token = token else {
+            NSLog("No token")
+            return
+        }
+
+        let locationDict = ["token" : token] as [String : Any]
+
+        guard let request = NetworkHelper.createJSONPostRequest(dst: "clear_notification", dictionary: locationDict) else {
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = NetworkHelper.checkResponse(data: data, response: response, error: error) else {
+                return
+            }
+
+            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] {
+                if let errorMessage = json?["error"] as? String {
+                    NSLog("ERROR: \(errorMessage)")
+                }
+            }
+        }
+        task.resume()
+    }
+
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let clear_all = userInfo["clear_all"] as? Bool {
             if (clear_all) {
                 self.notificationManager.clearNotifications()
+
+                if token != nil {
+                    acknowledgeNotification()
+                } else {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
+                        self.acknowledgeNotification()
+                    })
+                }
             }
         }
         completionHandler(.newData)
@@ -54,6 +89,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }.joined()
         NSLog("Device Token: \(token)")
         locationUpdater.token = token
+        self.token = token
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
