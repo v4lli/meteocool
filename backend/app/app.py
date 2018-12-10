@@ -1,6 +1,7 @@
 import datetime
-#import eventlet
-#
+import eventlet
+
+# this makes some flask requests hang for ever...
 #eventlet.monkey_patch()
 
 import logging
@@ -228,7 +229,7 @@ def blitzortung_thread():
     while True:
         # XXX error handling
         tgtServer = "ws://ws.blitzortung.org:80%d/" % (random.randint(50, 90))
-        logging.info("blitzortung-thread: Connecting to %s..." % tgtServer)
+        logging.warn("blitzortung-thread: Connecting to %s..." % tgtServer)
         ws = websocket.WebSocketApp(
             tgtServer,
             on_message=on_message,
@@ -240,7 +241,7 @@ def blitzortung_thread():
         ws.run_forever()
 
 
-#eventlet.spawn(blitzortung_thread)
+eventlet.spawn(blitzortung_thread)
 
 if __name__ == "__main__":
     logging.warn("Starting meteocool backend app.py...")
