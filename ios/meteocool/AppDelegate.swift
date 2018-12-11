@@ -6,7 +6,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var notificationManager: NotificationManager!
     var locationUpdater: LocationUpdater!
-    var token: String?
+    var pushToken: String?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -29,13 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         self.notificationManager.clearNotifications()
         // XXX call this only when there are >0 notifications on launch!
-        if token != nil {
-            acknowledgeNotification()
-        } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
-                self.acknowledgeNotification()
-            })
-        }
+        acknowledgeNotification(retry: true)
 
     }
 
@@ -47,9 +41,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-    func acknowledgeNotification() {
-        guard let token = token else {
-            NSLog("No token")
+    func acknowledgeNotification(retry: Bool) {
+        guard let token = pushToken else {
+            NSLog("acknowledgeNotification: no push token")
+            if (retry) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
+                    self.acknowledgeNotification(retry: false)
+                })
+            }
             return
         }
 
@@ -77,14 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let clear_all = userInfo["clear_all"] as? Bool {
             if (clear_all) {
                 self.notificationManager.clearNotifications()
-
-                if token != nil {
-                    acknowledgeNotification()
-                } else {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
-                        self.acknowledgeNotification()
-                    })
-                }
+                acknowledgeNotification(retry: true)
             }
         }
         completionHandler(.newData)
@@ -98,7 +90,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }.joined()
         NSLog("Device Token: \(token)")
         locationUpdater.token = token
-        self.token = token
+        self.pushToken = token
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
