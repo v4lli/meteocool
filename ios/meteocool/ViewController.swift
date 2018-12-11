@@ -24,7 +24,7 @@ class ViewController: UIViewController, WKUIDelegate {
     }
 
     @objc func reloadTiles() {
-        webView.evaluateJavaScript("window.manualTileUpdateFn();")
+        webView.evaluateJavaScript("window.manualTileUpdateFn(true);")
     }
 }
 
