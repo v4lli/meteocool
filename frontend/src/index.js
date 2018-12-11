@@ -399,6 +399,28 @@ $.getJSON({
   }
 });
 
+// XXX deduplicate with previous; quick fix for iOS app
+function manualTileUpdate() {
+  $.getJSON({
+    dataType: "json",
+    url: tileUrl,
+    success: function (data) {
+      var newLayer = new TileLayer({
+        source: new TileJSON({
+          tileJSON: data,
+          crossOrigin: "anonymous"
+        }),
+        opacity: reflectivityOpacity
+      });
+      map.addLayer(newLayer);
+      map.removeLayer(currentLayer);
+      currentLayer = newLayer;
+      lastUpdatedServer = new Date((data.version + 3600) * 1000);
+    }
+  });
+}
+window.manualTileUpdateFn = manualTileUpdate;
+
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
 const socket = io.connect(websocketUrl);
