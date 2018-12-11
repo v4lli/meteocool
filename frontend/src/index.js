@@ -382,25 +382,7 @@ var currentLayer;
 
 // manually download tileJSON using jquery, so we can extract the "version"
 // field and use it for the "last updated" feature.
-$.getJSON({
-  dataType: "json",
-  url: tileUrl,
-  success: function (data) {
-    currentLayer = new TileLayer({
-      source: new TileJSON({
-        tileJSON: data,
-        crossOrigin: "anonymous"
-      }),
-      opacity: reflectivityOpacity
-    });
-    map.addLayer(currentLayer);
-    lastUpdatedServer = new Date(data.version * 1000);
-    lastUpdatedFn();
-  }
-});
-
-// XXX deduplicate with previous; quick fix for iOS app
-function manualTileUpdate() {
+function manualTileUpdate(removePrevious) {
   $.getJSON({
     dataType: "json",
     url: tileUrl,
@@ -413,13 +395,18 @@ function manualTileUpdate() {
         opacity: reflectivityOpacity
       });
       map.addLayer(newLayer);
-      map.removeLayer(currentLayer);
-      currentLayer = newLayer;
-      lastUpdatedServer = new Date((data.version + 3600) * 1000);
+      if (removePrevious) {
+        map.removeLayer(currentLayer);
+        currentLayer = newLayer;
+      }
+      lastUpdatedServer = new Date(data.version * 1000);
+      if (!removePrevious)
+        lastUpdatedFn();
     }
   });
 }
 window.manualTileUpdateFn = manualTileUpdate;
+manualTileUpdate(false);
 
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
