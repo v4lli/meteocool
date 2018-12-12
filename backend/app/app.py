@@ -1,21 +1,22 @@
 import datetime
 import eventlet
 
-eventlet.monkey_patch()
+# this makes some flask requests hang for ever...
+#eventlet.monkey_patch()
 
 import logging
 import json
 import uuid
 import websocket
 import threading
-from pyproj import Proj, transform
 from pymongo import MongoClient
 import random
+from pyproj import Proj, transform
 
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO
 
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -29,7 +30,9 @@ collection = db["collection"]
 # by the dwd backend container. newTileJson needs to be a valid
 # tileJSON structure.
 def update_all_clients(newTileJson):
+    logging.warn("emit update")
     socketio.emit("map_update", newTileJson, namespace="/tile")
+    logging.warn("emit done")
 
 # Internal API endpoint, triggered by the dwd backend container.
 @app.route("/internal/publish_new_tileset", methods=["POST"])
@@ -42,6 +45,24 @@ def publish_tileset():
         return "OK"
     else:
         return "ERROR"
+
+# Public API endpoint, used by the iOS app to notify the backend about an
+# acknowledged notification.
+@app.route("/clear_notification", methods=["POST"])
+def clear_notification():
+    data = request.get_json()
+    token = None
+    if data:
+        try:
+            token = data["token"]
+        except KeyError:
+            return jsonify(success=False, message="bad request, missing keys")
+        if not isinstance(token, str) or len(token) > 128 or len(token) < 32:
+            return jsonify(success=False, message="bad token")
+
+        key = {"token": token}
+        db.collection.update(key, {"ios_onscreen": False}, upsert=False)
+    return jsonify(success=True)
 
 
 # Public API endpoint, used by mobile devies and browsers to
@@ -57,7 +78,6 @@ def publish_tileset():
 #    APNS push token.
 @app.route("/post_location", methods=["POST"])
 def post_location():
-    logging.warn(request.get_json())
     return save_location_to_backend(request.get_json())
 
 def save_location_to_backend(data):
@@ -88,7 +108,7 @@ def save_location_to_backend(data):
         if not isinstance(intensity, int) or intensity < 0 or intensity > 130:
             return jsonify(success=False, message="invalid intensity value")
 
-        # XXX this will override ios_onscreen and last_push!
+        # XXX this will override ios_onscreen! FIXME ... or not?
         data = {
             "lat": lat,
             "lon": lon,
@@ -227,7 +247,7 @@ def blitzortung_thread():
     while True:
         # XXX error handling
         tgtServer = "ws://ws.blitzortung.org:80%d/" % (random.randint(50, 90))
-        logging.info("blitzortung-thread: Connecting to %s..." % tgtServer)
+        logging.warn("blitzortung-thread: Connecting to %s..." % tgtServer)
         ws = websocket.WebSocketApp(
             tgtServer,
             on_message=on_message,
