@@ -382,7 +382,7 @@ var currentLayer;
 
 // manually download tileJSON using jquery, so we can extract the "version"
 // field and use it for the "last updated" feature.
-function manualTileUpdate(removePrevious) {
+function manualTileUpdate (removePrevious) {
   $.getJSON({
     dataType: "json",
     url: tileUrl,
@@ -400,8 +400,7 @@ function manualTileUpdate(removePrevious) {
         currentLayer = newLayer;
       }
       lastUpdatedServer = new Date(data.version * 1000);
-      if (!removePrevious)
-        lastUpdatedFn();
+      if (!removePrevious) { lastUpdatedFn(); }
     }
   });
 }
