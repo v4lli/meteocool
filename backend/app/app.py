@@ -1,25 +1,23 @@
-import datetime
 import eventlet
+eventlet.monkey_patch()
 
-# this makes some flask requests hang for ever...
-#eventlet.monkey_patch()
-
-import logging
+import datetime
 import json
-import uuid
-import websocket
-import threading
-from pymongo import MongoClient
+import logging
 import random
-from pyproj import Proj, transform
+import threading
+import uuid
 
+import websocket
+from pymongo import MongoClient
+from pyproj import Proj, transform
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode='threading')
 
 db_client = MongoClient("mongodb://mongo:27017/")
 # both will be created automatically when the first document is inserted
@@ -30,18 +28,14 @@ collection = db["collection"]
 # by the dwd backend container. newTileJson needs to be a valid
 # tileJSON structure.
 def update_all_clients(newTileJson):
-    logging.warn("emit update")
     socketio.emit("map_update", newTileJson, namespace="/tile")
-    logging.warn("emit done")
 
 # Internal API endpoint, triggered by the dwd backend container.
 @app.route("/internal/publish_new_tileset", methods=["POST"])
 def publish_tileset():
     data = request.get_json()
     if data:
-        logging.warn("starting background task")
         socketio.start_background_task(update_all_clients, data)
-        logging.warn("finished starting background task")
         return "OK"
     else:
         return "ERROR"
@@ -167,7 +161,8 @@ def trigger_browser_notification():
 
     for browser in pushable_browsers:
         if data["token"] == browser["uuid"]:
-            # XXX we need some kind of feedback from socketio here. if the notification can't be delivered, it needs to be removed from the database
+            # XXX we need some kind of feedback from socketio here.
+            # if the notification can't be delivered, it needs to be removed from the database
             # (like in push.py)
             socketio.emit("notify", {
                 "title": ("Rain expected in %d minutes!" % data["ahead"]),
