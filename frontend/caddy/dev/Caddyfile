@@ -22,6 +22,11 @@
 		transparent
 	}
 
+	proxy /clear_notification app:5000 {
+		websocket
+		transparent
+	}
+
 	#proxy /reflectivity dwd:5000 {
 	#	transparent
 	#}
