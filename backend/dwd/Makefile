@@ -16,6 +16,7 @@ mbtiles:
 	gdalwarp -overwrite -of gtiff -t_srs EPSG:3857 \
 		tmp/raa01-wx_10000-latest-dwd-srs.png tmp/raa01-wx_10000-latest-dwd-final.tif
 	# convert to mbtiles
+	make -C . push &
 	/usr/local/bin/gdal2mbtiles --version "$$(date +%s)" --min-resolution=7 \
 		--max-resolution=10 tmp/raa01-wx_10000-latest-dwd-final.tif \
 		/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
@@ -31,7 +32,7 @@ tag: update
 
 all: mbtiles
 
-api: cron push
+api: cron
 
 cron: mbtiles
 	# First signal the tileserver
@@ -50,6 +51,7 @@ cron: mbtiles
 	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.json
 
 push:
+	sleep 1
 	@# download forecast
 	rm -rf tmp/forecast*
 	mkdir tmp/forecast
