@@ -22,6 +22,24 @@ def closest_node(node, nodes):
     closest_index = distance.cdist([node], nodes).argmin()
     return closest_index
 
+def dbz_to_str(dbz):
+    if dbz > 10:
+        return "Light mist"
+    if dbz > 15:
+        return "Drizzle"
+    if dbz > 20:
+        return "Light rain"
+    if dbz > 26:
+        return "Rain"
+    if dbz > 45:
+        return "Heavy rain"
+    if dbz > 55:
+        return "Small hail"
+    if dbz > 60:
+        return "Hail"
+    if dbz > 65:
+        return "Large hail"
+
 if __name__ == "__main__":
     # programm parameters
     radar_files = sys.argv[1]
@@ -110,9 +128,13 @@ if __name__ == "__main__":
                     # acknowledged (app was opened or we successfully deleted the
                     # last one).
                     if not ios_onscreen:
+                        message_dict = {
+                            "title": ("%s expected" % (dbz_to_str(reported_intensity))),
+                            "body": "%s (%d dbZ) expected in %d minutes at your location!"  % (lower(dbz_to_str(reported_intensity)),
+                                reported_intensity, ahead)
+                        }
                         try:
-                            apns.send_message(token, ("Rain expected in %d minutes (%d dbZ)!" % (ahead, reported_intensity)),
-                                badge=0, sound="pulse.aiff")
+                            apns.send_message(token, message_dict), badge=0, sound="pulse.aiff")
                         except BadDeviceToken:
                             logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
                             collection.remove(doc_id)
@@ -131,8 +153,6 @@ if __name__ == "__main__":
             if ios_onscreen:
                 # rain has stopped and the notification is (possibly) still
                 # displayed on the device.
-                # XXX ios app should notify our api as soon as it is launched (and notifications are clearead)
-                # XXX so we can reset the flag and don't send this silent push.
                 try:
                     apns.send_message(token, None, badge=0, content_available=True, extra={"clear_all": True})
                 except BadDeviceToken:
