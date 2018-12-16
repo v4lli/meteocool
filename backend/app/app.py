@@ -55,7 +55,7 @@ def clear_notification():
             return jsonify(success=False, message="bad token")
 
         key = {"token": token}
-        db.collection.update(key, {"ios_onscreen": False}, upsert=False)
+        db.collection.update(key, {"ios_onscreen": False}, upsert=True)
     return jsonify(success=True)
 
 

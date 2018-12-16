@@ -70,14 +70,18 @@ if __name__ == "__main__":
     cursor = collection.find({})
     cnt = 0
     for document in cursor:
-        doc_id = document["_id"]
-        lat = document["lat"]
-        lon = document["lon"]
-        token = document["token"]
-        ahead = document["ahead"]
-        intensity = document["intensity"]
-        ios_onscreen = document["ios_onscreen"]
-        source = document["source"]
+        try:
+            doc_id = document["_id"]
+            lat = document["lat"]
+            lon = document["lon"]
+            token = document["token"]
+            ahead = document["ahead"]
+            intensity = document["intensity"]
+            ios_onscreen = document["ios_onscreen"]
+            source = document["source"]
+        except KeyError as e:
+            print("Invalid db line: %s" % e)
+            continue
 
         if token != "fad41f92886425d2efc71b402a711e9c63013d79a0b9905a828471860cd5ab7f":
             continue
@@ -93,6 +97,7 @@ if __name__ == "__main__":
         result = closest_node((lon, lat), linearized_grid)
         xy = (int(result / gridsize), int(result % gridsize))
         reported_intensity = rvp_to_dbz(data[0][xy[0]][xy[1]])
+        logging.warn("%d >? %d" % (reported_intensity, intensity))
         if reported_intensity > intensity:
             logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (doc_id, reported_intensity, intensity, ahead, source))
             if source == "browser":
@@ -106,7 +111,8 @@ if __name__ == "__main__":
                     # last one).
                     if not ios_onscreen:
                         try:
-                            apns.send_message(token, ("Rain expected in %d minutes!" % ahead), badge=0, sound="pulse.aiff")
+                            apns.send_message(token, ("Rain expected in %d minutes (%d dbZ)!" % (ahead, reported_intensity)),
+                                badge=0, sound="pulse.aiff")
                         except BadDeviceToken:
                             logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
                             collection.remove(doc_id)
