@@ -23,22 +23,25 @@ def closest_node(node, nodes):
     return closest_index
 
 def dbz_to_str(dbz):
-    if dbz > 10:
-        return "Light mist"
-    if dbz > 15:
-        return "Drizzle"
-    if dbz > 20:
-        return "Light rain"
-    if dbz > 26:
-        return "Rain"
-    if dbz > 45:
-        return "Heavy rain"
-    if dbz > 55:
-        return "Small hail"
-    if dbz > 60:
-        return "Hail"
     if dbz > 65:
         return "Large hail"
+    if dbz > 60:
+        return "Hail"
+    if dbz > 55:
+        return "Small hail"
+    if dbz > 45:
+        return "Heavy rain"
+    if dbz > 26:
+        return "Rain"
+    if dbz > 20:
+        return "Light rain"
+    if dbz > 15:
+        return "Drizzle"
+    if dbz > 10:
+        return "Mist"
+    if dbz > 0:
+        # ???
+        return "Light mist"
 
 if __name__ == "__main__":
     # programm parameters
@@ -130,7 +133,7 @@ if __name__ == "__main__":
                     if not ios_onscreen:
                         message_dict = {
                             "title": ("%s expected" % (dbz_to_str(reported_intensity))),
-                            "body": "%s (%d dbZ) expected in %d minutes at your location!"  % (lower(dbz_to_str(reported_intensity)),
+                            "body": "%s (%d dbZ) expected in %d minutes at your location!"  % (dbz_to_str(reported_intensity),
                                 reported_intensity, ahead)
                         }
                         try:
