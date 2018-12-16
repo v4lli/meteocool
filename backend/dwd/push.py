@@ -22,6 +22,59 @@ def closest_node(node, nodes):
     closest_index = distance.cdist([node], nodes).argmin()
     return closest_index
 
+def dbz_to_str_pure(dbz):
+    if dbz > 65:
+        return "Large hail"
+    if dbz > 60:
+        return "Hail"
+    if dbz > 55:
+        return "Small hail"
+    if dbz > 45:
+        return "Heavy rain"
+    if dbz > 26:
+        return "Rain"
+    if dbz > 20:
+        return "Light rain"
+    if dbz > 15:
+        return "Drizzle"
+    if dbz > 0:
+        # ???
+        return "Mist"
+    if dbz > -10:
+        # ???
+        return "Light mist"
+    if dbz > -31:
+        # ???
+        return "Extremely light mist"
+    if dbz <= -31:
+        return "No rain"
+
+def dbz_to_str(dbz, lower_case=False):
+    intensity = None
+    if lower_case:
+        intensity = dbz_to_str_pure(dbz).lower()
+    else:
+        intensity = dbz_to_str_pure(dbz)
+
+    return "%s (%d dbZ)" % (intensity, dbz)
+
+def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10):
+    timeframe = user_ahead
+    max_intensity = 0
+    peak_mins = 0
+
+    while timeframe <= max_ahead:
+        intensity = rvp_to_dbz(forecast_maps[timeframe][0][xy[0]][xy[1]])
+        if intensity > max_intensity:
+            peak_mins = timeframe
+            max_intensity = intensity
+        if intensity < user_intensity:
+            break
+        timeframe += 5
+
+    return max_intensity, peak_mins, timeframe-user_ahead
+
+
 if __name__ == "__main__":
     # programm parameters
     radar_files = sys.argv[1]
@@ -55,6 +108,7 @@ if __name__ == "__main__":
     for f in forecast_files:
         forecast_maps[max_ahead] = wrl.io.radolan.read_radolan_composite(f)
         max_ahead = max_ahead + 5
+    max_ahead -= 5
     logging.warn("Maximum forecast in minutes: %d" % max_ahead)
 
     # wradlib setup
@@ -70,17 +124,22 @@ if __name__ == "__main__":
     cursor = collection.find({})
     cnt = 0
     for document in cursor:
-        doc_id = document["_id"]
-        lat = document["lat"]
-        lon = document["lon"]
-        token = document["token"]
-        ahead = document["ahead"]
-        intensity = document["intensity"]
-        ios_onscreen = document["ios_onscreen"]
-        source = document["source"]
-
-        if token != "fad41f92886425d2efc71b402a711e9c63013d79a0b9905a828471860cd5ab7f":
+        try:
+            doc_id = document["_id"]
+            lat = document["lat"]
+            lon = document["lon"]
+            token = document["token"]
+            ahead = document["ahead"]
+            intensity = document["intensity"]
+            ios_onscreen = document["ios_onscreen"]
+            source = document["source"]
+        except KeyError as e:
+            print("Invalid key line: %s" % e)
             continue
+
+        if token == "fad41f92886425d2efc71b402a711e9c63013d79a0b9905a828471860cd5ab7f":
+            #ios_onscreen = False
+            intensity = 0
 
         if ahead > max_ahead or ahead%5 != 0:
             logging.error("%s: invalid ahead value" % doc_id)
@@ -93,6 +152,7 @@ if __name__ == "__main__":
         result = closest_node((lon, lat), linearized_grid)
         xy = (int(result / gridsize), int(result % gridsize))
         reported_intensity = rvp_to_dbz(data[0][xy[0]][xy[1]])
+        logging.warn("%d >? %d" % (reported_intensity, intensity))
         if reported_intensity > intensity:
             logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (doc_id, reported_intensity, intensity, ahead, source))
             if source == "browser":
@@ -105,8 +165,16 @@ if __name__ == "__main__":
                     # acknowledged (app was opened or we successfully deleted the
                     # last one).
                     if not ios_onscreen:
+                        max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, xy, ahead, intensity)
+                        message_dict = {
+                            "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity), ahead),
+                            "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
+                                dbz_to_str(max_intensity, lower_case=True), peak_mins, total_mins)
+                        }
+                        if max_intensity == reported_intensity:
+                            message_dict["body"] = "No duration estimate; possibly just a little shower."
                         try:
-                            apns.send_message(token, ("Rain expected in %d minutes!" % ahead), badge=0, sound="pulse.aiff")
+                            apns.send_message(token, message_dict, badge=0, sound="pulse.aiff")
                         except BadDeviceToken:
                             logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
                             collection.remove(doc_id)
@@ -125,8 +193,6 @@ if __name__ == "__main__":
             if ios_onscreen:
                 # rain has stopped and the notification is (possibly) still
                 # displayed on the device.
-                # XXX ios app should notify our api as soon as it is launched (and notifications are clearead)
-                # XXX so we can reset the flag and don't send this silent push.
                 try:
                     apns.send_message(token, None, badge=0, content_available=True, extra={"clear_all": True})
                 except BadDeviceToken:

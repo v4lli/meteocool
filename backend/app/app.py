@@ -54,8 +54,8 @@ def clear_notification():
         if not isinstance(token, str) or len(token) > 128 or len(token) < 32:
             return jsonify(success=False, message="bad token")
 
-        key = {"token": token}
-        db.collection.update(key, {"ios_onscreen": False}, upsert=False)
+        obj_id = posts.find_one({"token": str(token)})["_id"]
+        db.collection.update_one({"_id": obj_id}, {"ios_onscreen": False})
     return jsonify(success=True)
 
 
