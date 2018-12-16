@@ -6,6 +6,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var notificationManager: NotificationManager!
     var locationUpdater: LocationUpdater!
+    var pushToken: String?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -27,6 +28,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         self.notificationManager.clearNotifications()
+        // XXX call this only when there are >0 notifications on launch!
+        acknowledgeNotification(retry: true, from: "foreground")
+
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -37,10 +41,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    func acknowledgeNotification(retry: Bool, from: String) {
+        guard let token = pushToken else {
+            NSLog("acknowledgeNotification: no push token")
+            if (retry) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
+                    self.acknowledgeNotification(retry: false, from: from)
+                })
+            }
+            return
+        }
+
+        let locationDict = ["token" : token, "from": from] as [String : Any]
+
+        guard let request = NetworkHelper.createJSONPostRequest(dst: "clear_notification", dictionary: locationDict) else {
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = NetworkHelper.checkResponse(data: data, response: response, error: error) else {
+                return
+            }
+
+            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] {
+                if let errorMessage = json?["error"] as? String {
+                    NSLog("ERROR: \(errorMessage)")
+                }
+            }
+        }
+        task.resume()
+    }
+
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let clear_all = userInfo["clear_all"] as? Bool {
             if (clear_all) {
                 self.notificationManager.clearNotifications()
+                acknowledgeNotification(retry: true, from: "push")
             }
         }
         completionHandler(.newData)
@@ -54,6 +90,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }.joined()
         NSLog("Device Token: \(token)")
         locationUpdater.token = token
+        self.pushToken = token
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
