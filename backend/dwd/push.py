@@ -137,7 +137,7 @@ if __name__ == "__main__":
                                 reported_intensity, ahead)
                         }
                         try:
-                            apns.send_message(token, message_dict), badge=0, sound="pulse.aiff")
+                            apns.send_message(token, message_dict, badge=0, sound="pulse.aiff")
                         except BadDeviceToken:
                             logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
                             collection.remove(doc_id)
