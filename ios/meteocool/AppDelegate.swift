@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         self.notificationManager.clearNotifications()
         // XXX call this only when there are >0 notifications on launch!
-        acknowledgeNotification(retry: true)
+        acknowledgeNotification(retry: true, from: "foreground")
 
     }
 
@@ -41,18 +41,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-    func acknowledgeNotification(retry: Bool) {
+    func acknowledgeNotification(retry: Bool, from: String) {
         guard let token = pushToken else {
             NSLog("acknowledgeNotification: no push token")
             if (retry) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
-                    self.acknowledgeNotification(retry: false)
+                    self.acknowledgeNotification(retry: false, from: from)
                 })
             }
             return
         }
 
-        let locationDict = ["token" : token] as [String : Any]
+        let locationDict = ["token" : token, "from": from] as [String : Any]
 
         guard let request = NetworkHelper.createJSONPostRequest(dst: "clear_notification", dictionary: locationDict) else {
             return
@@ -76,7 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let clear_all = userInfo["clear_all"] as? Bool {
             if (clear_all) {
                 self.notificationManager.clearNotifications()
-                acknowledgeNotification(retry: true)
+                acknowledgeNotification(retry: true, from: "push")
             }
         }
         completionHandler(.newData)
