@@ -22,7 +22,7 @@ def closest_node(node, nodes):
     closest_index = distance.cdist([node], nodes).argmin()
     return closest_index
 
-def dbz_to_str(dbz):
+def dbz_to_str_pure(dbz):
     if dbz > 65:
         return "Large hail"
     if dbz > 60:
@@ -37,11 +37,43 @@ def dbz_to_str(dbz):
         return "Light rain"
     if dbz > 15:
         return "Drizzle"
-    if dbz > 10:
-        return "Mist"
     if dbz > 0:
         # ???
+        return "Mist"
+    if dbz > -10:
+        # ???
         return "Light mist"
+    if dbz > -31:
+        # ???
+        return "Extremely light mist"
+    if dbz <= -31:
+        return "No rain"
+
+def dbz_to_str(dbz, lower_case=False):
+    intensity = None
+    if lower_case:
+        intensity = dbz_to_str_pure(dbz).lower()
+    else:
+        intensity = dbz_to_str_pure(dbz)
+
+    return "%s (%d dbZ)" % (intensity, dbz)
+
+def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10):
+    timeframe = user_ahead
+    max_intensity = 0
+    peak_mins = 0
+
+    while timeframe <= max_ahead:
+        intensity = rvp_to_dbz(forecast_maps[timeframe][0][xy[0]][xy[1]])
+        if intensity > max_intensity:
+            peak_mins = timeframe
+            max_intensity = intensity
+        if intensity < user_intensity:
+            break
+        timeframe += 5
+
+    return max_intensity, peak_mins, timeframe-user_ahead
+
 
 if __name__ == "__main__":
     # programm parameters
@@ -76,6 +108,7 @@ if __name__ == "__main__":
     for f in forecast_files:
         forecast_maps[max_ahead] = wrl.io.radolan.read_radolan_composite(f)
         max_ahead = max_ahead + 5
+    max_ahead -= 5
     logging.warn("Maximum forecast in minutes: %d" % max_ahead)
 
     # wradlib setup
@@ -106,6 +139,8 @@ if __name__ == "__main__":
 
         if token != "fad41f92886425d2efc71b402a711e9c63013d79a0b9905a828471860cd5ab7f":
             continue
+        #ios_onscreen = False
+        intensity = 0
 
         if ahead > max_ahead or ahead%5 != 0:
             logging.error("%s: invalid ahead value" % doc_id)
@@ -131,11 +166,14 @@ if __name__ == "__main__":
                     # acknowledged (app was opened or we successfully deleted the
                     # last one).
                     if not ios_onscreen:
+                        max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, xy, ahead, intensity)
                         message_dict = {
-                            "title": ("%s expected" % (dbz_to_str(reported_intensity))),
-                            "body": "%s (%d dbZ) expected in %d minutes at your location!"  % (dbz_to_str(reported_intensity),
-                                reported_intensity, ahead)
+                            "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity), ahead),
+                            "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
+                                dbz_to_str(max_intensity, lower_case=True), peak_mins, total_mins)
                         }
+                        if max_intensity == reported_intensity:
+                            message_dict["body"] = "No duration estimate; possibly just a little shower."
                         try:
                             apns.send_message(token, message_dict, badge=0, sound="pulse.aiff")
                         except BadDeviceToken:
