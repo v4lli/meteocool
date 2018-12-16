@@ -134,13 +134,12 @@ if __name__ == "__main__":
             ios_onscreen = document["ios_onscreen"]
             source = document["source"]
         except KeyError as e:
-            print("Invalid db line: %s" % e)
+            print("Invalid key line: %s" % e)
             continue
 
-        if token != "fad41f92886425d2efc71b402a711e9c63013d79a0b9905a828471860cd5ab7f":
-            continue
-        #ios_onscreen = False
-        intensity = 0
+        if token == "fad41f92886425d2efc71b402a711e9c63013d79a0b9905a828471860cd5ab7f":
+            #ios_onscreen = False
+            intensity = 0
 
         if ahead > max_ahead or ahead%5 != 0:
             logging.error("%s: invalid ahead value" % doc_id)
