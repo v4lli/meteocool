@@ -174,7 +174,7 @@ var view = new View({
   minzoom: 5
 });
 
-var map = new Map({
+window.map = new Map({
   target: "map",
   layers: [
     new TileLayer({
@@ -197,7 +197,7 @@ var toggleViewMode = () => {
       url: viewMode ? lightTiles : darkTiles
     })
   });
-  map.getLayers().setAt(0, newLayer);
+  window.map.getLayers().setAt(0, newLayer);
 };
 
 toggleButton.onclick = () => {
@@ -268,7 +268,7 @@ var updatePermalink = function () {
   window.history.pushState(state, "map", hash);
 };
 
-map.on("moveend", updatePermalink);
+window.map.on("moveend", updatePermalink);
 
 // restore the view state when navigating through the history, see
 // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
@@ -276,9 +276,9 @@ window.addEventListener("popstate", function (event) {
   if (event.state === null) {
     return;
   }
-  map.getView().setCenter(event.state.center);
-  map.getView().setZoom(event.state.zoom);
-  map.getView().setRotation(event.state.rotation);
+  window.map.getView().setCenter(event.state.center);
+  window.map.getView().setZoom(event.state.zoom);
+  window.map.getView().setRotation(event.state.rotation);
   shouldUpdate = false;
   dimensions();
 });
@@ -365,7 +365,7 @@ geolocation.on("change:position", function () {
   var coordinates = geolocation.getPosition();
   positionFeature.setGeometry(coordinates ? new Point(coordinates) : null);
   if (window.location.hash !== "" && !haveZoomed) {
-    map.getView().animate({ center: coordinates, zoom: 10 });
+    window.map.getView().animate({ center: coordinates, zoom: 10 });
     haveZoomed = true;
   }
 });
@@ -381,7 +381,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 var reflectivityOpacity = 0.5;
-var currentLayer;
+window.currentLayer = false;
 
 // manually download tileJSON using jquery, so we can extract the "version"
 // field and use it for the "last updated" feature.
@@ -401,12 +401,12 @@ function manualTileUpdate (removePrevious) {
         }),
         opacity: reflectivityOpacity
       });
-      //map.addLayer(newLayer);
-      if (removePrevious) {
-        map.removeLayer(currentLayer);
-        currentLayer = newLayer;
-      }
+      window.map.addLayer(newLayer);
+      if (window.currentLayer)
+        window.map.removeLayer(currentLayer);
+      window.currentLayer = newLayer;
       updateTimestamp(new Date(data.version * 1000));
+      console.log(window.map.getLayers());
     }
   });
 }
@@ -454,9 +454,9 @@ socket.on("map_update", function (data) {
   });
   // first add & fetch the new layer, then remove the old one to avoid
   // having no layer at all at some point.
-  map.addLayer(newLayer);
-  map.removeLayer(currentLayer);
-  currentLayer = newLayer;
+  window.map.addLayer(newLayer);
+  window.map.removeLayer(window.currentLayer);
+  window.currentLayer = newLayer;
 });
 
 // locate me button
@@ -466,7 +466,7 @@ button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
 var locateMe = function (e) {
   var coordinates = geolocation.getPosition();
   geolocation.setTracking(true);
-  map.getView().animate({ center: coordinates, zoom: 10 });
+  window.map.getView().animate({ center: coordinates, zoom: 10 });
 };
 button.addEventListener("click", locateMe, false);
 var element = document.createElement("div");
@@ -475,7 +475,7 @@ element.appendChild(button);
 var locateControl = new Control({
   element: element
 });
-map.addControl(locateControl);
+window.map.addControl(locateControl);
 
 // https://stackoverflow.com/a/44579732/10272994
 // resize for orientationchange
@@ -503,7 +503,7 @@ window.addEventListener("resize", function () {
         ipXPWAOpt();
       }
     }
-    setTimeout(function () { dimensions(); map.updateSize(); }, 100);
+    setTimeout(function () { dimensions(); window.map.updateSize(); }, 100);
   });
 });
 
