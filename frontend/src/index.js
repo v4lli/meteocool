@@ -35,7 +35,7 @@ function lastUpdatedFn () {
   if (window.lastUpdatedServer) {
     elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer) + " ago";
   } else {
-    elem.innerHTML = "never";
+    elem.innerHTML = "<span style='color: #ff0000;'>connection error</span>";
   }
 }
 setTimeout(lastUpdatedFn, 10000);
@@ -386,6 +386,9 @@ window.currentLayer = false;
 // manually download tileJSON using jquery, so we can extract the "version"
 // field and use it for the "last updated" feature.
 function manualTileUpdate (removePrevious) {
+  var elem = document.getElementById("updatedTime");
+  elem.innerHTML = "checking...";
+
   // XXX abuse this to hook the ios app
   if (removePrevious)
     document.getElementById("browserPushMenu").style.display="none";
