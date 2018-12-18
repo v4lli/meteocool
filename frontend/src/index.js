@@ -101,6 +101,11 @@ var ipXPWAOpt = () => {
 };
 ipXPWAOpt();
 
+// hide browser push feature on ios
+if (DeviceDetect.isIos) {
+  document.getElementById("browserPushMenu").style.display="none";
+}
+
 //
 // poor man's resizer for fullscreen map
 //
@@ -409,7 +414,6 @@ function manualTileUpdate (removePrevious) {
         window.map.removeLayer(currentLayer);
       window.currentLayer = newLayer;
       updateTimestamp(new Date(data.version * 1000));
-      console.log(window.map.getLayers());
     }
   });
 }
