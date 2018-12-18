@@ -18,6 +18,10 @@
 	cursor: pointer;
 }
 
+#navbar {
+	padding: .5rem 1rem .1rem 1rem;
+}
+
 #navbar #spacer {
 	padding-top: constant(safe-area-inset-top);
 	display: none;
@@ -38,7 +42,7 @@
 #logotext {
 	height: 80%;
 	line-height: 95%;
-	margin-top: 2px;
+	margin-top: 3px;
 	margin-bottom: 3px;
 	font-size: 1.3rem;
 }
@@ -49,7 +53,7 @@
 }
 
 #compositBar {
-	width: 50%;
+	width: 75%;
 }
 
 #navbar #clockbg {

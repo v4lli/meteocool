@@ -29,18 +29,21 @@ const safeAreaInsets = require("safe-area-insets");
 window.jQuery = $;
 window.$ = $;
 
-var lastUpdatedServer = false;
-// the timer is started later by the callback which downloads the initial
-// map.
 function lastUpdatedFn () {
   var elem = document.getElementById("updatedTime");
 
-  if (lastUpdatedServer) {
-    elem.innerHTML = distanceInWordsToNow(lastUpdatedServer) + " ago";
+  if (window.lastUpdatedServer) {
+    elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer) + " ago";
   } else {
     elem.innerHTML = "never";
   }
-  setTimeout(lastUpdatedFn, 10000);
+}
+setTimeout(lastUpdatedFn, 10000);
+
+window.lastUpdatedServer = false;
+function updateTimestamp(lastUpdatedParam) {
+  window.lastUpdatedServer = lastUpdatedParam;
+  lastUpdatedFn();
 }
 
 // ===================
@@ -383,6 +386,10 @@ var currentLayer;
 // manually download tileJSON using jquery, so we can extract the "version"
 // field and use it for the "last updated" feature.
 function manualTileUpdate (removePrevious) {
+  // XXX abuse this to hook the ios app
+  if (removePrevious)
+    document.getElementById("browserPushMenu").style.display="none";
+
   $.getJSON({
     dataType: "json",
     url: tileUrl,
@@ -394,13 +401,12 @@ function manualTileUpdate (removePrevious) {
         }),
         opacity: reflectivityOpacity
       });
-      map.addLayer(newLayer);
+      //map.addLayer(newLayer);
       if (removePrevious) {
         map.removeLayer(currentLayer);
         currentLayer = newLayer;
       }
-      lastUpdatedServer = new Date(data.version * 1000);
-      if (!removePrevious) { lastUpdatedFn(); }
+      updateTimestamp(new Date(data.version * 1000));
     }
   });
 }
@@ -437,10 +443,7 @@ socket.on("lightning", function (data) {
 });
 
 socket.on("map_update", function (data) {
-  console.log(data);
-
-  var lastUpdated = new Date();
-  document.getElementById("updatedTime").innerHTML = "Last update: " + ("0" + lastUpdated.getHours()).slice(-2) + ":" + ("0" + lastUpdated.getMinutes()).slice(-2);
+  updateTimestamp(new Date(data.version * 1000));
 
   var newLayer = new TileLayer({
     source: new TileJSON({
