@@ -49,8 +49,13 @@
 }
 
 #compositBar {
-	margin-top: -0.5rem;
-	width: 60%;
+	width: 50%;
+}
+@media (max-width: 990px) {
+	#compositBar {
+		margin-top: -0.4rem;
+		width: 75%;
+	}
 }
 
 #navbar #clockbg {
