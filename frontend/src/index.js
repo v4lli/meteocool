@@ -41,7 +41,7 @@ function lastUpdatedFn () {
 setTimeout(lastUpdatedFn, 10000);
 
 window.lastUpdatedServer = false;
-function updateTimestamp(lastUpdatedParam) {
+function updateTimestamp (lastUpdatedParam) {
   window.lastUpdatedServer = lastUpdatedParam;
   lastUpdatedFn();
 }
@@ -103,7 +103,7 @@ ipXPWAOpt();
 
 // hide browser push feature on ios
 if (DeviceDetect.isIos) {
-  document.getElementById("browserPushMenu").style.display="none";
+  document.getElementById("browserPushMenu").style.display = "none";
 }
 
 //
@@ -319,14 +319,14 @@ var vs = new VectorSource({
 
 var clusters = new Cluster({
   distance: 4,
-  map: map,
+  map: document.map,
   source: vs
 });
 
 var styleCache = {};
 var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
   source: clusters,
-  map: map,
+  map: document.map,
   style: function (feature) {
     var size = feature.get("features").length;
     var style = styleCache[size];
@@ -395,8 +395,7 @@ function manualTileUpdate (removePrevious) {
   elem.innerHTML = "checking...";
 
   // XXX abuse this to hook the ios app
-  if (removePrevious)
-    document.getElementById("browserPushMenu").style.display="none";
+  if (removePrevious) { document.getElementById("browserPushMenu").style.display = "none"; }
 
   $.getJSON({
     dataType: "json",
@@ -410,8 +409,7 @@ function manualTileUpdate (removePrevious) {
         opacity: reflectivityOpacity
       });
       window.map.addLayer(newLayer);
-      if (window.currentLayer)
-        window.map.removeLayer(currentLayer);
+      if (window.currentLayer) { window.map.removeLayer(window.currentLayer); }
       window.currentLayer = newLayer;
       updateTimestamp(new Date(data.version * 1000));
     }
