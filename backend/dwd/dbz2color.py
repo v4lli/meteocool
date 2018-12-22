@@ -26,7 +26,7 @@ def dbz2color(dbz):
     if dbz >= 170:
         return (0, 0, 0, 0)
     if dbz >= 70:
-        return scale(0xFE, 0xFC, 0xFD, 90, dbz % (70))
+        return scale(0xFE, 0xFC, 0xFD, 10, dbz % (70), False, True)
     if dbz >= 55:
         return scale(0xFE, 0xFC, 0xFD, 15, dbz % (55))
     if dbz >= 45:

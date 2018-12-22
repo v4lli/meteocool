@@ -102,7 +102,7 @@ var ipXPWAOpt = () => {
 ipXPWAOpt();
 
 // hide browser push feature on ios
-if (DeviceDetect.isIos) {
+if (DeviceDetect.isIos()) {
   document.getElementById("browserPushMenu").style.display = "none";
 }
 
@@ -395,7 +395,7 @@ function manualTileUpdate (removePrevious) {
   elem.innerHTML = "checking...";
 
   // XXX abuse this to hook the ios app
-  if (removePrevious) { document.getElementById("browserPushMenu").style.display = "none"; }
+  //if (removePrevious) { document.getElementById("browserPushMenu").style.display = "none"; }
 
   $.getJSON({
     dataType: "json",

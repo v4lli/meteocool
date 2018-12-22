@@ -50,12 +50,18 @@ def clear_notification():
         try:
             token = data["token"]
         except KeyError:
+            logging.warn("Invalid request: %s", str(data))
             return jsonify(success=False, message="bad request, missing keys")
         if not isinstance(token, str) or len(token) > 128 or len(token) < 32:
+            logging.warn("Invalid request: %s", str(data))
             return jsonify(success=False, message="bad token")
 
-        obj_id = db.collection.find_one({"token": str(token)})["_id"]
-        db.collection.update_one({"_id": obj_id}, {"$set": {"ios_onscreen": False}})
+        obj = db.collection.find_one({"token": str(token)})
+        if not obj or not "_id" in obj:
+            logging.warn("Token %s not found in db", str(token))
+            return jsonify(success=False)
+        db.collection.update_one({"_id": obj["_id"]}, {"$set": {"ios_onscreen": False}})
+        logging.warn("Updated session for %s", str(data))
     return jsonify(success=True)
 
 
@@ -87,19 +93,26 @@ def save_location_to_backend(data):
         token = data["token"]
         accuracy = data["accuracy"]
     except KeyError:
+        logging.warn("Bad request, missing keys: %s" % data)
         return jsonify(success=False, message="bad request, missing keys")
     else:
         if not isinstance(lat, float) or not isinstance(lon, float):
+            logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="bad lat/lon")
         if not isinstance(accuracy, float) and not isinstance(accuracy, int):
+            logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="invalid accuracy")
         if source != "browser" and source != "ios":
+            logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="bad source")
         if not isinstance(token, str) or len(token) > 128 or len(token) < 32:
+            logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="bad token")
         if not isinstance(ahead, int) or ahead < 0 or ahead > 60:
+            logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="invalid ahead value")
         if not isinstance(intensity, int) or intensity < 0 or intensity > 130:
+            logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="invalid intensity value")
 
         # XXX this will override ios_onscreen! FIXME ... or not?
@@ -117,6 +130,7 @@ def save_location_to_backend(data):
         }
         key = {"token": token}
         db.collection.update(key, data, upsert=True)
+        logging.warn("inserted new client data: %s" % data)
 
     return jsonify(success=True)
 
