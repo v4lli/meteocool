@@ -15,8 +15,9 @@ mbtiles:
 	# set the target srs to EPSG:3857 (standard web mercator)
 	gdalwarp -overwrite -of gtiff -t_srs EPSG:3857 \
 		tmp/raa01-wx_10000-latest-dwd-srs.png tmp/raa01-wx_10000-latest-dwd-final.tif
+	# process forecasts concurrently
+	nice -n 15 make -C . push &
 	# convert to mbtiles
-	nice -n 19 make -C . push &
 	/usr/local/bin/gdal2mbtiles --version "$$(date +%s)" --min-resolution=7 \
 		--max-resolution=10 tmp/raa01-wx_10000-latest-dwd-final.tif \
 		/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
@@ -37,7 +38,8 @@ api: cron
 cron: mbtiles
 	# First signal the tileserver
 	nc -z tileserver 10001 || true
-	sleep 3
+	# XXX need to sync the nc call above to the async push target... m(
+	sleep 2
 	# Then download the new tilejson (will be broadcasted to all clients)
 	# XXX replace with internal hostname!
 	wget --no-verbose \
@@ -59,6 +61,10 @@ push:
 		https://opendata.dwd.de/weather/radar/composit/fx/FX_LATEST.tar.bz2 \
 		-O tmp/forecast.tar.bz2
 	tar -C tmp/forecast -xjf tmp/forecast.tar.bz2
+	bash -c 'for f in $$PWD/tmp/forecast/FX*_0{05,10,15}_*; do make -C fc_preview/ FC_FILE=$$f; done'
+	mv tmp/forecast/*.mbtiles /data/
+	nc -z tileserver 10001 || true
+	sleep 2
 	python3 push.py tmp/forecast/ \
 		http://app:5000/internal/trigger_browser_notification || true
 

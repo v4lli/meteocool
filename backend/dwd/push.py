@@ -15,6 +15,7 @@ from scipy.spatial import distance
 import requests
 import wradlib as wrl
 from wradlib.trafo import rvp_to_dbz
+import smopy
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
@@ -29,9 +30,15 @@ def dbz_to_str_pure(dbz):
         return "Hail"
     if dbz > 55:
         return "Small hail"
-    if dbz > 45:
+    if dbz > 47:
+        return "Extreme rain"
+    if dbz > 40:
         return "Heavy rain"
-    if dbz > 26:
+    if dbz > 35:
+        return "Intense rain"
+    if dbz > 30:
+        return "More intense rain"
+    if dbz > 25:
         return "Rain"
     if dbz > 20:
         return "Light rain"

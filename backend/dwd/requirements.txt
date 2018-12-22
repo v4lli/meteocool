@@ -6,3 +6,4 @@ gdal2mbtiles
 pymongo==3.7.1
 requests
 gobiko.apns
+smopy
