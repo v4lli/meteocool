@@ -8,8 +8,9 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
     }
 
     func registerForPushNotifications() {
-        UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+        center.requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, error) in
             NSLog("Permission granted: \(granted)")
             guard granted else { return }
@@ -17,6 +18,9 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
                 UIApplication.shared.registerForRemoteNotifications()
             }
         }
+        let openAction = UNNotificationAction(identifier: "OpenNotification", title: NSLocalizedString("Abrir", comment: ""), options: UNNotificationActionOptions.foreground)
+        let deafultCategory = UNNotificationCategory(identifier: "CustomSamplePush", actions: [openAction], intentIdentifiers: [], options: [])
+        center.setNotificationCategories(Set([deafultCategory]))
     }
 
     func clearNotifications() {
