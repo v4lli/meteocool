@@ -16,6 +16,8 @@ import requests
 import wradlib as wrl
 from wradlib.trafo import rvp_to_dbz
 import smopy
+import random
+import string
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
@@ -81,6 +83,12 @@ def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10
 
     return max_intensity, peak_mins, timeframe-user_ahead
 
+def generate_preview(lat, lon):
+    map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9, tileserver="https://a.tileserver.unimplemented.org/data/FX1812221455_005_MF002-final/{z}/{x}/{y}.png")
+    random_name = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(128))
+    map.save_png("/pushpreview/%s.png" % random_name)
+    #map.to_pil()
+    return "https://meteocool.unimplemented.org/pushpreview/%s.png" % random_name
 
 if __name__ == "__main__":
     # programm parameters
@@ -144,9 +152,9 @@ if __name__ == "__main__":
             print("Invalid key line: %s" % e)
             continue
 
-        if token == "fad41f92886425d2efc71b402a711e9c63013d79a0b9905a828471860cd5ab7f":
+        if token == "bce7de81efd65af385fc6fae5d794ad7ed6b6decef3c289fac13b285e210dc8c":
             #ios_onscreen = False
-            intensity = 0
+            intensity = -31
 
         if ahead > max_ahead or ahead%5 != 0:
             logging.error("%s: invalid ahead value" % doc_id)
@@ -178,10 +186,15 @@ if __name__ == "__main__":
                             "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
                                 dbz_to_str(max_intensity, lower_case=True), peak_mins, total_mins)
                         }
+                        extra_dict = None
+                        preview_url = generate_preview(lat, lon)
+                        if preview_url:
+                            logging.warn("generated push preview at %s" % preview_url)
+                            extra_dict = {"preview": preview_url}
                         if max_intensity == reported_intensity:
                             message_dict["body"] = "No duration estimate; possibly just a little shower."
                         try:
-                            apns.send_message(token, message_dict, badge=0, sound="pulse.aiff")
+                            apns.send_message(token, message_dict, badge=0, sound="pulse.aiff", extra=extra_dict)
                         except BadDeviceToken:
                             logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
                             collection.remove(doc_id)

@@ -22,6 +22,7 @@ services:
       - TZ="Europe/Berlin"
     volumes:
       - ${PWD}/frontend/caddy/dev/Caddyfile:/etc/Caddyfile
+      - pushpreview:/pushpreview
       - sslstore:/root/.caddy
         #    logging:
         #      driver: syslog
@@ -48,6 +49,7 @@ services:
       - DB_CONN="mongodb://mongo:27017/"
     volumes:
       - dwd:/data
+      - pushpreview:/pushpreview
       - /etc/meteocool/apns.json:/etc/apns.json
       - /etc/meteocool/authkey.p8:/etc/authkey.p8
     depends_on:
@@ -71,3 +73,4 @@ volumes:
   dwd:
   meteo_mongo_db:
   sslstore:
+  pushpreview:

@@ -6,4 +6,4 @@ gdal2mbtiles
 pymongo==3.7.1
 requests
 gobiko.apns
-smopy
+git+git://github.com/rossant/smopy.git@2049646f967df47d4a4e49b9423478cd34484e5b#egg=smopy
