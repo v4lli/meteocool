@@ -180,13 +180,18 @@ if __name__ == "__main__":
 
         # get forecasted value from grid
         data = forecast_maps[ahead]
-        reported_intensity = rvp_to_dbz(data[0][xy[0]][xy[1]])
+        reported_intensity = rvp_to_dbz(forecast_maps[ahead][0][xy[0]][xy[1]])
 
+        # also check timeframes BEFORE the configured ahead value
         if reported_intensity < intensity:
-            # XXX check previous timeframes as well (if the user configured
-            # 30 minutes but dwd only reports bad weather 15 mins ahead,
-            # we'll miss it...)
-            pass
+            timeframe = ahead - 5
+            while timeframe > 0:
+                previous_intensity = rvp_to_dbz(forecast_maps[timeframe][0][xy[0]][xy[1]])
+                if previous_intensity >= intensity:
+                    logging.warn("%s: no match for old ahead value, but %d >= %d for lower ahead=%d!" % (token, previous_intensity, intensity, timeframe))
+                    reported_intensity = previous_intensity
+                    ahead = timeframe
+                timeframe -= 5
 
         logging.warn("%d >? %d" % (reported_intensity, intensity))
         if reported_intensity >= intensity:
