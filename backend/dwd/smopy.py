@@ -89,7 +89,7 @@ def fetch_map(box, z, tileserver, tilesize, maxtiles):
         raise Exception(("You are requesting a very large map, beware of "
                          "OpenStreetMap tile usage policy "
                          "(http://wiki.openstreetmap.org/wiki/Tile_usage_policy)."))
-    img = Image.new('RGB', (sx*tilesize, sy*tilesize))
+    img = Image.new('RGBA', (sx*tilesize, sy*tilesize))
     for x in range(x0, x1 + 1):
         for y in range(y0, y1 + 1):
             px, py = tilesize * (x - x0), tilesize * (y - y0)

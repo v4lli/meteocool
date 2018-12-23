@@ -87,7 +87,7 @@ def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10
 
 # XXX make dependant on ahead
 # XXX cleanup cronjob
-def generate_preview(lat, lon, ahead):
+def generate_preview(lat, lon):
     osm_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9)
     tile_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9, tileserver="http://a.tileserver.unimplemented.org/data/FX_015-latest/{z}/{x}/{y}.png")
 
@@ -163,23 +163,33 @@ if __name__ == "__main__":
             print("Invalid key line: %s" % e)
             continue
 
-        if token == "1be97aefdddbb164bd1ba0fa98655772887f38450ac324472c4c5000c1bb3348":
-            intensity = -33
-            ios_onscreen = False
+        #if token == "1be97aefdddbb164bd1ba0fa98655772887f38450ac324472c4c5000c1bb3348":
+        #    intensity = -33
+        #    ios_onscreen = False
 
         if ahead > max_ahead or ahead%5 != 0:
             logging.error("%s: invalid ahead value" % doc_id)
             continue
-        data = forecast_maps[ahead]
 
         # XXX check lat/lon against the bounds of the dwd data here
         # to avoid useless calculations here
 
+        # user position in grid
         result = closest_node((lon, lat), linearized_grid)
         xy = (int(result / gridsize), int(result % gridsize))
+
+        # get forecasted value from grid
+        data = forecast_maps[ahead]
         reported_intensity = rvp_to_dbz(data[0][xy[0]][xy[1]])
+
+        if reported_intensity < intensity:
+            # XXX check previous timeframes as well (if the user configured
+            # 30 minutes but dwd only reports bad weather 15 mins ahead,
+            # we'll miss it...)
+            pass
+
         logging.warn("%d >? %d" % (reported_intensity, intensity))
-        if reported_intensity > intensity:
+        if reported_intensity >= intensity:
             logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (token, reported_intensity, intensity, ahead, source))
             if source == "browser":
                 requests.post(browser_notify_url, json={"token": token, "ahead": ahead})

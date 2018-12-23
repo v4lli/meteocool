@@ -61,7 +61,7 @@ push:
 		https://opendata.dwd.de/weather/radar/composit/fx/FX_LATEST.tar.bz2 \
 		-O tmp/forecast.tar.bz2
 	tar -C tmp/forecast -xjf tmp/forecast.tar.bz2
-	bash -c 'for f in $$PWD/tmp/forecast/FX*_0{10,15}_*; do make -C fc_preview/ FC_FILE=$$f; done'
+	bash -c 'for f in $$PWD/tmp/forecast/FX*_0{05,10,15}_*; do make -C fc_preview/ FC_FILE=$$f; done'
 	mv tmp/forecast/FX*_005_*.mbtiles /data/FX_005-latest.mbtiles
 	mv tmp/forecast/FX*_010_*.mbtiles /data/FX_010-latest.mbtiles
 	mv tmp/forecast/FX*_015_*.mbtiles /data/FX_015-latest.mbtiles
