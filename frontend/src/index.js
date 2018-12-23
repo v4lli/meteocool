@@ -394,9 +394,6 @@ function manualTileUpdate (removePrevious) {
   var elem = document.getElementById("updatedTime");
   elem.innerHTML = "checking...";
 
-  // XXX abuse this to hook the ios app
-  //if (removePrevious) { document.getElementById("browserPushMenu").style.display = "none"; }
-
   $.getJSON({
     dataType: "json",
     url: tileUrl,
