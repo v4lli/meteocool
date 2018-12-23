@@ -18,6 +18,8 @@ from wradlib.trafo import rvp_to_dbz
 import smopy
 import random
 import string
+from PIL.Image import composite, blend
+from PIL import Image
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
@@ -83,11 +85,20 @@ def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10
 
     return max_intensity, peak_mins, timeframe-user_ahead
 
-def generate_preview(lat, lon):
-    map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9, tileserver="https://a.tileserver.unimplemented.org/data/FX1812221455_005_MF002-final/{z}/{x}/{y}.png")
+# XXX make dependant on ahead
+# XXX cleanup cronjob
+def generate_preview(lat, lon, ahead):
+    osm_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9)
+    tile_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9, tileserver="http://a.tileserver.unimplemented.org/data/FX_015-latest/{z}/{x}/{y}.png")
+
     random_name = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(128))
-    map.save_png("/pushpreview/%s.png" % random_name)
-    #map.to_pil()
+
+    ironman = tile_map.to_pil()
+    bg = osm_map.to_pil()
+
+    text_img = Image.alpha_composite(bg, ironman)
+    text_img.save("/pushpreview/%s.png" % random_name, format="png")
+
     return "https://meteocool.unimplemented.org/pushpreview/%s.png" % random_name
 
 if __name__ == "__main__":
@@ -152,9 +163,9 @@ if __name__ == "__main__":
             print("Invalid key line: %s" % e)
             continue
 
-        if token == "bce7de81efd65af385fc6fae5d794ad7ed6b6decef3c289fac13b285e210dc8c":
-            #ios_onscreen = False
-            intensity = -31
+        if token == "1be97aefdddbb164bd1ba0fa98655772887f38450ac324472c4c5000c1bb3348":
+            intensity = -33
+            ios_onscreen = False
 
         if ahead > max_ahead or ahead%5 != 0:
             logging.error("%s: invalid ahead value" % doc_id)
@@ -169,7 +180,7 @@ if __name__ == "__main__":
         reported_intensity = rvp_to_dbz(data[0][xy[0]][xy[1]])
         logging.warn("%d >? %d" % (reported_intensity, intensity))
         if reported_intensity > intensity:
-            logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (doc_id, reported_intensity, intensity, ahead, source))
+            logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (token, reported_intensity, intensity, ahead, source))
             if source == "browser":
                 requests.post(browser_notify_url, json={"token": token, "ahead": ahead})
             elif source == "ios":
@@ -186,25 +197,25 @@ if __name__ == "__main__":
                             "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
                                 dbz_to_str(max_intensity, lower_case=True), peak_mins, total_mins)
                         }
-                        extra_dict = None
+                        extra_dict = {}
                         preview_url = generate_preview(lat, lon)
                         if preview_url:
                             logging.warn("generated push preview at %s" % preview_url)
-                            extra_dict = {"preview": preview_url}
+                            extra_dict["preview"] = preview_url
                         if max_intensity == reported_intensity:
                             message_dict["body"] = "No duration estimate; possibly just a little shower."
                         try:
-                            apns.send_message(token, message_dict, badge=0, sound="pulse.aiff", extra=extra_dict)
+                            apns.send_message(token, message_dict, badge=0, sound="pulse.aiff", extra=extra_dict, mutable_content=True, category="WeatherAlert")
                         except BadDeviceToken:
-                            logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", doc_id)
+                            logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", token)
                             collection.remove(doc_id)
                         else:
-                            logging.warn("%s: sent iOS notification", doc_id)
+                            logging.warn("%s: sent iOS notification", token)
                             # mark notification as delivered in the database, so we can
                             # clear it as soon as the rain stops.
                             collection.update({"_id": doc_id}, {"$set": {"ios_onscreen": True}})
                     else:
-                        logging.warn("%s: old notification not acknowledged, not re-sending", doc_id)
+                        logging.warn("%s: old notification not acknowledged, not re-sending", token)
                 else:
                     logging.warn("iOS push not configured but iOS source requested")
             else:
@@ -216,10 +227,10 @@ if __name__ == "__main__":
                 try:
                     apns.send_message(token, None, badge=0, content_available=True, extra={"clear_all": True})
                 except BadDeviceToken:
-                    logging.warn("%s: silent iOS notification failed with BadDeviceToken, removing push client", doc_id)
+                    logging.warn("%s: silent iOS notification failed with BadDeviceToken, removing push client", token)
                     collection.remove(doc_id)
                 else:
-                    logging.warn("%s: sent silent notification" % doc_id)
+                    logging.warn("%s: sent silent notification" % token)
                     collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": True} })
         cnt = cnt + 1
 
