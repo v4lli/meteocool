@@ -577,4 +577,102 @@ pushCheckbox.onchange = () => {
   }
 };
 
+window.forecastLayers = [false, false, false, false, false, false];
+window.forecastNo = -1;
+
+function downloadForecast() {
+  var ahead;
+  let forecast_array_idx = 0;
+
+  for (ahead = 5; ahead <= 30; ahead += 5) {
+    let idx = forecast_array_idx;
+    var num_str;
+    if (ahead == 5) {
+      num_str = "05";
+    } else {
+      num_str = ahead.toString();
+    }
+    let url = "https://a.tileserver.unimplemented.org/data/FX_0" + num_str + "-latest.json";
+    $.getJSON({
+      dataType: "json",
+      url: url,
+      success: function (data) {
+        var newLayer = new TileLayer({
+          source: new TileJSON({
+            tileJSON: data,
+            crossOrigin: "anonymous",
+            transition: 0
+          }),
+          opacity: reflectivityOpacity
+        });
+        window.forecastLayers[idx] = newLayer;
+      }
+    });
+    forecast_array_idx++;
+  }
+}
+
+function playForecast() {
+  if (!(window.forecastLayers[0] && window.forecastLayers[1] && window.forecastLayers[2])) {
+    console.log("not all forecasts downloaded yet");
+    console.log(window.forecastLayers);
+    return;
+  }
+
+  console.log(window.forecastNo);
+  switch(window.forecastNo) {
+    case -1:
+      console.log("removing first layer");
+      window.forecastNo++;
+      window.map.addLayer(window.forecastLayers[window.forecastNo]);
+      window.map.removeLayer(window.currentLayer);
+      window.setTimeout(window.playForecast, 750);
+      break;
+    case 0:
+      console.log("second fc layer");
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.setTimeout(window.playForecast, 750);
+      break;
+    case 1:
+      console.log("third fc layer");
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.setTimeout(window.playForecast, 750);
+      break;
+    case 2:
+      console.log("fourth fc layer");
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.setTimeout(window.playForecast, 750);
+      break;
+    case 3:
+      console.log("fifth fc layer");
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.setTimeout(window.playForecast, 750);
+      break;
+    case 4:
+      console.log("sixth fc layer");
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.setTimeout(window.playForecast, 750);
+      break;
+    case 5:
+      console.log("reset");
+      window.map.addLayer(window.currentLayer);
+      window.map.removeLayer(window.forecastLayers[window.forecastNo]);
+      window.forecastNo = -1;
+      break;
+  }
+}
+
+window.downloadForecast = downloadForecast;
+window.playForecast = playForecast;
+
 /* vim: set ts=2 sw=2 expandtab: */
