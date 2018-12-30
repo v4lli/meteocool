@@ -101,8 +101,15 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item"><span class="navbar-text" id="updatedTime"></span></li>
+          <li class="nav-item"><a class="nav-link" href="javascript:window.smartDownloadAndPlay();">
+              <div class="spinner-border spinner-border-sm" role="status" id="nowcastLoading" style="display: none;">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <span id="nowcastLabel">⏯ Forecast</span>
+            </a>
+          </li>
           <li class="nav-item"><a id="toggleMode" class="nav-link">dark mode</a></li>
-          <li class="nav-item" id="browserPushMenu"><span style="float: left; display: inline; cursor: pointer;">
+          <li class="nav-item" id="browserPushMenu" style="display: none;"><span style="float: left; display: inline; cursor: pointer;">
               <input type="checkbox" id="toggleNotifyCheckbox"><a id="toggleNotifyLink" class="nav-link" style="display: inline;"> tell me </a><select id="aheadSelect">
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -118,8 +125,6 @@
                 <option value="60">60</option>
               </select><a id="toggleNotifyLink2" class="nav-link" style="display: inline;"> minutes before it rains</a></span></li>
               <li class="nav-item"><a class="nav-link" href="javascript:void();" data-toggle="modal" data-target="#aboutModal">About</a></li>
-              <li class="nav-item"><a class="nav-link" href="javascript:window.downloadForecast();">Download Forecast</a></li>
-              <li class="nav-item"><a class="nav-link" href="javascript:window.playForecast();">Play Forecast</a></li>
         </ul>
       </div>
     </nav>

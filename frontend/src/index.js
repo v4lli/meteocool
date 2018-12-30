@@ -10,6 +10,7 @@ import Control from "ol/control/Control";
 import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
+import TileImage from 'ol/source/TileImage';
 import TileLayer from "ol/layer/Tile.js";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -381,9 +382,9 @@ geolocation.on("change:position", function () {
 
 var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var websocketUrl = "/tile";
-if (process.env.NODE_ENV === "production") {
+//if (process.env.NODE_ENV === "production") {
   tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-}
+//}
 
 var reflectivityOpacity = 0.5;
 window.currentLayer = false;
@@ -459,6 +460,11 @@ socket.on("map_update", function (data) {
   window.map.addLayer(newLayer);
   window.map.removeLayer(window.currentLayer);
   window.currentLayer = newLayer;
+  // invalidate old forecast
+  window.forecastDownloaded = false;
+  window.forecastLayers.forEach(function (layer) {
+    layer = false;
+  });
 });
 
 // locate me button
@@ -577,10 +583,62 @@ pushCheckbox.onchange = () => {
   }
 };
 
+// openlayers in-flight tile detection from
+// https://stackoverflow.com/questions/33061221/ensuring-all-tiles-are-loaded-in-open-layers-3-xyz-source/45054387#45054387
+
+var activityIndicatorEnabled = false;
+
+function enableActivityIndicator() {
+  if (!activityIndicatorEnabled) {
+    console.log("activity indicator ENABLE");
+    activityIndicatorEnabled = true;
+  }
+}
+function disableActivityIndicator() {
+  if (activityIndicatorEnabled) {
+    console.log("disable indicator DISABLE");
+    activityIndicatorEnabled = false;
+  }
+}
+
+//map.getLayers().forEach(function (layer) {
+//  var source = layer.getSource();
+//  if (source instanceof TileImage) {
+//    source.on('tileloadstart', function () {++numInFlightTiles})
+//    source.on('tileloadend', function () {--numInFlightTiles})
+//  }
+//})
+
+window.map.on('postrender', function (evt) {
+  if (!evt.frameState)
+    return;
+
+  var numHeldTiles = 0;
+  var wanted = evt.frameState.wantedTiles;
+  for (var layer in wanted)
+    if (wanted.hasOwnProperty(layer))
+      numHeldTiles += Object.keys(wanted[layer]).length;
+
+  var ready = window.numInFlightTiles === 0 && numHeldTiles === 0;
+  if (window.map.get('ready') !== ready)
+    window.map.set('ready', ready);
+});
+
+window.map.set('ready', false);
+
+function whenMapIsReady(callback) {
+  if (window.map.get('ready'))
+    callback();
+  else
+    window.map.once('change:ready', whenMapIsReady.bind(null, callback));
+}
+
+
 window.forecastLayers = [false, false, false, false, false, false];
 window.forecastNo = -1;
+window.numInFlightTiles = 0;
 
-function downloadForecast() {
+function downloadForecast(cb) {
   var ahead;
   let forecast_array_idx = 0;
 
@@ -593,24 +651,48 @@ function downloadForecast() {
       num_str = ahead.toString();
     }
     let url = "https://a.tileserver.unimplemented.org/data/FX_0" + num_str + "-latest.json";
+    window.finishedCounter = 0;
     $.getJSON({
       dataType: "json",
       url: url,
       success: function (data) {
-        var newLayer = new TileLayer({
-          source: new TileJSON({
+        var source = new TileJSON({
             tileJSON: data,
             crossOrigin: "anonymous",
             transition: 0
-          }),
-          opacity: reflectivityOpacity
+          });
+        source.on('tileloadstart', function () {++window.numInFlightTiles})
+        source.on('tileloadend', function () {--window.numInFlightTiles})
+        var newLayer = new TileLayer({
+          source: source,
+          opacity: 0
         });
         window.forecastLayers[idx] = newLayer;
+        // This starts the tile download process:
+        window.map.set('ready', false);
+        window.map.addLayer(newLayer);
+
+        whenMapIsReady(function() {
+          window.finishedCounter++;
+          if (window.finishedCounter == window.forecastLayers.length) {
+            console.log("finished all tiles: " + window.finishedCounter);
+            window.forecastLayers.forEach(function (layer) {
+              if (layer) {
+                window.map.removeLayer(layer);
+                layer.setOpacity(0.5);
+              }
+            });
+            if (cb)
+              cb();
+          }
+        });
       }
     });
     forecast_array_idx++;
   }
 }
+
+window.playInPorgress = false;
 
 function playForecast() {
   if (!(window.forecastLayers[0] && window.forecastLayers[1] && window.forecastLayers[2])) {
@@ -619,60 +701,98 @@ function playForecast() {
     return;
   }
 
-  console.log(window.forecastNo);
+  //if (playInPorgress) {
+  //  console.log("playback already in progress");
+  //  return;
+  //}
+
   switch(window.forecastNo) {
     case -1:
       console.log("removing first layer");
       window.forecastNo++;
       window.map.addLayer(window.forecastLayers[window.forecastNo]);
       window.map.removeLayer(window.currentLayer);
-      window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 0:
       console.log("second fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 1:
       console.log("third fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 2:
       console.log("fourth fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 3:
       console.log("fifth fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 4:
       console.log("sixth fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 5:
       console.log("reset");
       window.map.addLayer(window.currentLayer);
       window.map.removeLayer(window.forecastLayers[window.forecastNo]);
       window.forecastNo = -1;
+      window.playInPorgress = false;
+      document.getElementById("nowcastLabel").innerHTML = "⏯ Forecast";
       break;
   }
 }
 
 window.downloadForecast = downloadForecast;
 window.playForecast = playForecast;
+
+window.forecastDownloaded = false;
+window.smartDownloadAndPlay = function() {
+  console.log("EVENT");
+
+  if (window.playInPorgress) {
+    clearTimeout(window.activeForecastTimeout);
+    window.playInPorgress = false;
+    document.getElementById("nowcastLabel").innerHTML = "▶️ Forecast";
+    return;
+  }
+
+  if (!window.forecastDownloaded) {
+    document.getElementById("nowcastLoading").style.display = "";
+    document.getElementById("nowcastLabel").style.display = "none";
+    window.downloadForecast(function() {
+      document.getElementById("nowcastLoading").style.display = "none";
+      document.getElementById("nowcastLabel").style.display = "";
+      window.forecastDownloaded = true;
+      window.playInPorgress = true;
+      document.getElementById("nowcastLabel").innerHTML = "⏸ Forecast";
+      window.playForecast();
+    });
+  } else {
+    window.playInPorgress = true;
+    document.getElementById("nowcastLabel").innerHTML = "⏸ Forecast";
+    playForecast();
+  }
+};
+
+
+//enableActivityIndicator();
 
 /* vim: set ts=2 sw=2 expandtab: */

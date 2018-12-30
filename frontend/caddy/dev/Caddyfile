@@ -6,6 +6,8 @@
 		websocket
 		transparent
 		except /internal/publish_new_tileset
+		try_duration 10s
+		try_interval 500ms
 	}
 
 	proxy /socket.io app:5000 {
