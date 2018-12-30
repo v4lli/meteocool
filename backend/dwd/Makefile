@@ -18,7 +18,7 @@ mbtiles:
 	# process forecasts concurrently
 	nice -n 15 make -C . push &
 	# convert to mbtiles
-	/usr/local/bin/gdal2mbtiles --version "$$(date +%s)" --min-resolution=7 \
+	/usr/local/bin/gdal2mbtiles --version "$$(date +%s)" --min-resolution=6 \
 		--max-resolution=10 tmp/raa01-wx_10000-latest-dwd-final.tif \
 		/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 	mv -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles \

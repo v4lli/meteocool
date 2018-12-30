@@ -13,6 +13,6 @@ $(FC_FILE).mbtiles: $(FC_FILE)
 	# set the target srs to EPSG:3857 (standard web mercator)
 	gdalwarp -overwrite -of gtiff -t_srs EPSG:3857 \
 	        $(FC_FILE)-srs.png $(FC_FILE)-final.tif
-	/usr/local/bin/gdal2mbtiles --version "$$(date +%s)" --min-resolution=9 \
+	/usr/local/bin/gdal2mbtiles --version "$$(date +%s)" --min-resolution=6 \
 	        --max-resolution=9 $(FC_FILE)-final.tif \
 	        $(FC_FILE)-final.mbtiles
