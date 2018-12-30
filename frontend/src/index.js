@@ -755,7 +755,7 @@ function playForecast() {
       window.map.removeLayer(window.forecastLayers[window.forecastNo]);
       window.forecastNo = -1;
       window.playInPorgress = false;
-      document.getElementById("nowcastLabel").innerHTML = "⏯ Forecast";
+      document.getElementById("nowcastLabel").innerHTML = "⏯ forecast";
       break;
   }
 }
@@ -770,7 +770,7 @@ window.smartDownloadAndPlay = function() {
   if (window.playInPorgress) {
     clearTimeout(window.activeForecastTimeout);
     window.playInPorgress = false;
-    document.getElementById("nowcastLabel").innerHTML = "▶️ Forecast";
+    document.getElementById("nowcastLabel").innerHTML = "▶️ forecast";
     return;
   }
 
@@ -782,12 +782,12 @@ window.smartDownloadAndPlay = function() {
       document.getElementById("nowcastLabel").style.display = "";
       window.forecastDownloaded = true;
       window.playInPorgress = true;
-      document.getElementById("nowcastLabel").innerHTML = "⏸ Forecast";
+      document.getElementById("nowcastLabel").innerHTML = "⏸ forecast";
       window.playForecast();
     });
   } else {
     window.playInPorgress = true;
-    document.getElementById("nowcastLabel").innerHTML = "⏸ Forecast";
+    document.getElementById("nowcastLabel").innerHTML = "⏸ forecast";
     playForecast();
   }
 };
