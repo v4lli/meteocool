@@ -87,19 +87,22 @@ def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10
 
 # XXX make dependant on ahead
 # XXX cleanup cronjob
+# XXX missing OSM and DWD copyright
+# XXX missing crop
 def generate_preview(lat, lon):
-    osm_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9)
-    tile_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9, tileserver="http://a.tileserver.unimplemented.org/data/FX_015-latest/{z}/{x}/{y}.png")
+    osm_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9).to_pil()
+    weather_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9,
+            tileserver="http://a.tileserver.unimplemented.org/data/FX_015-latest/{z}/{x}/{y}.png").to_pil()
 
     random_name = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(128))
+    pathspec = "/pushpreview/%s.png" % random_name
 
-    ironman = tile_map.to_pil()
-    bg = osm_map.to_pil()
+    out = Image.blend(osm_map, weather_map, 0.4).convert("RGB")
+    # out is 768 × 768 pixels
+    #out.crop((100,100, 668,668)).save("/pushpreview/%s.png" % random_name, format="png", optimize=True)
+    out.save(pathspec, format="png", optimize=True)
 
-    text_img = Image.alpha_composite(bg, ironman)
-    text_img.save("/pushpreview/%s.png" % random_name, format="png")
-
-    return "https://meteocool.unimplemented.org/pushpreview/%s.png" % random_name
+    return "https://meteocool.unimplemented.org%s" % pathspec
 
 if __name__ == "__main__":
     # programm parameters
