@@ -15,7 +15,46 @@
 		577666972130C6E300C25E00 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 577666952130C6E300C25E00 /* Main.storyboard */; };
 		577666992130C6E300C25E00 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 577666982130C6E300C25E00 /* Assets.xcassets */; };
 		5776669C2130C6E300C25E00 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5776669A2130C6E300C25E00 /* LaunchScreen.storyboard */; };
+		57C66BE821CF2590004EC825 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57C66BE721CF2590004EC825 /* UserNotifications.framework */; };
+		57C66BEA21CF2590004EC825 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57C66BE921CF2590004EC825 /* UserNotificationsUI.framework */; };
+		57C66BED21CF2590004EC825 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BEC21CF2590004EC825 /* NotificationViewController.swift */; };
+		57C66BF021CF2590004EC825 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 57C66BEE21CF2590004EC825 /* MainInterface.storyboard */; };
+		57C66BF421CF2590004EC825 /* NotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57C66BE521CF2590004EC825 /* NotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		57C66C0021CF25A8004EC825 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BFF21CF25A8004EC825 /* NotificationService.swift */; };
+		57C66C0421CF25A8004EC825 /* NotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57C66BFD21CF25A7004EC825 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		57C66BF221CF2590004EC825 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 577666862130C6E300C25E00 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 57C66BE421CF2590004EC825;
+			remoteInfo = NotificationContent;
+		};
+		57C66C0221CF25A8004EC825 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 577666862130C6E300C25E00 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 57C66BFC21CF25A7004EC825;
+			remoteInfo = NotificationService;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		57C66BF821CF2590004EC825 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				57C66BF421CF2590004EC825 /* NotificationContent.appex in Embed App Extensions */,
+				57C66C0421CF25A8004EC825 /* NotificationService.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5705D397218696FB00CC5A60 /* meteocool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meteocool.entitlements; sourceTree = "<group>"; };
@@ -29,10 +68,35 @@
 		577666982130C6E300C25E00 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5776669B2130C6E300C25E00 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5776669D2130C6E300C25E00 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		57C66BE521CF2590004EC825 /* NotificationContent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationContent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		57C66BE721CF2590004EC825 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		57C66BE921CF2590004EC825 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
+		57C66BEC21CF2590004EC825 /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
+		57C66BEF21CF2590004EC825 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		57C66BF121CF2590004EC825 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		57C66BFD21CF25A7004EC825 /* NotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		57C66BFF21CF25A8004EC825 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		57C66C0121CF25A8004EC825 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		5776668B2130C6E300C25E00 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57C66BE221CF2590004EC825 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57C66BEA21CF2590004EC825 /* UserNotificationsUI.framework in Frameworks */,
+				57C66BE821CF2590004EC825 /* UserNotifications.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57C66BFA21CF25A7004EC825 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -56,6 +120,9 @@
 			isa = PBXGroup;
 			children = (
 				577666902130C6E300C25E00 /* meteocool */,
+				57C66BEB21CF2590004EC825 /* NotificationContent */,
+				57C66BFE21CF25A8004EC825 /* NotificationService */,
+				57C66BE621CF2590004EC825 /* Frameworks */,
 				5776668F2130C6E300C25E00 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,6 +131,8 @@
 			isa = PBXGroup;
 			children = (
 				5776668E2130C6E300C25E00 /* meteocool.app */,
+				57C66BE521CF2590004EC825 /* NotificationContent.appex */,
+				57C66BFD21CF25A7004EC825 /* NotificationService.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +152,34 @@
 			path = meteocool;
 			sourceTree = "<group>";
 		};
+		57C66BE621CF2590004EC825 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				57C66BE721CF2590004EC825 /* UserNotifications.framework */,
+				57C66BE921CF2590004EC825 /* UserNotificationsUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		57C66BEB21CF2590004EC825 /* NotificationContent */ = {
+			isa = PBXGroup;
+			children = (
+				57C66BEC21CF2590004EC825 /* NotificationViewController.swift */,
+				57C66BEE21CF2590004EC825 /* MainInterface.storyboard */,
+				57C66BF121CF2590004EC825 /* Info.plist */,
+			);
+			path = NotificationContent;
+			sourceTree = "<group>";
+		};
+		57C66BFE21CF25A8004EC825 /* NotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				57C66BFF21CF25A8004EC825 /* NotificationService.swift */,
+				57C66C0121CF25A8004EC825 /* Info.plist */,
+			);
+			path = NotificationService;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -93,15 +190,52 @@
 				5776668A2130C6E300C25E00 /* Sources */,
 				5776668B2130C6E300C25E00 /* Frameworks */,
 				5776668C2130C6E300C25E00 /* Resources */,
+				57C66BF821CF2590004EC825 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				57C66BF321CF2590004EC825 /* PBXTargetDependency */,
+				57C66C0321CF25A8004EC825 /* PBXTargetDependency */,
 			);
 			name = meteocool;
 			productName = meteocool;
 			productReference = 5776668E2130C6E300C25E00 /* meteocool.app */;
 			productType = "com.apple.product-type.application";
+		};
+		57C66BE421CF2590004EC825 /* NotificationContent */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57C66BF721CF2590004EC825 /* Build configuration list for PBXNativeTarget "NotificationContent" */;
+			buildPhases = (
+				57C66BE121CF2590004EC825 /* Sources */,
+				57C66BE221CF2590004EC825 /* Frameworks */,
+				57C66BE321CF2590004EC825 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NotificationContent;
+			productName = NotificationContent;
+			productReference = 57C66BE521CF2590004EC825 /* NotificationContent.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		57C66BFC21CF25A7004EC825 /* NotificationService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57C66C0521CF25A8004EC825 /* Build configuration list for PBXNativeTarget "NotificationService" */;
+			buildPhases = (
+				57C66BF921CF25A7004EC825 /* Sources */,
+				57C66BFA21CF25A7004EC825 /* Frameworks */,
+				57C66BFB21CF25A7004EC825 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NotificationService;
+			productName = NotificationService;
+			productReference = 57C66BFD21CF25A7004EC825 /* NotificationService.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -109,7 +243,7 @@
 		577666862130C6E300C25E00 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0940;
+				LastSwiftUpdateCheck = 1010;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Florian Mauracher";
 				TargetAttributes = {
@@ -124,6 +258,12 @@
 								enabled = 1;
 							};
 						};
+					};
+					57C66BE421CF2590004EC825 = {
+						CreatedOnToolsVersion = 10.1;
+					};
+					57C66BFC21CF25A7004EC825 = {
+						CreatedOnToolsVersion = 10.1;
 					};
 				};
 			};
@@ -141,6 +281,8 @@
 			projectRoot = "";
 			targets = (
 				5776668D2130C6E300C25E00 /* meteocool */,
+				57C66BE421CF2590004EC825 /* NotificationContent */,
+				57C66BFC21CF25A7004EC825 /* NotificationService */,
 			);
 		};
 /* End PBXProject section */
@@ -153,6 +295,21 @@
 				5776669C2130C6E300C25E00 /* LaunchScreen.storyboard in Resources */,
 				577666992130C6E300C25E00 /* Assets.xcassets in Resources */,
 				577666972130C6E300C25E00 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57C66BE321CF2590004EC825 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57C66BF021CF2590004EC825 /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57C66BFB21CF25A7004EC825 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,7 +328,36 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		57C66BE121CF2590004EC825 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57C66BED21CF2590004EC825 /* NotificationViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57C66BF921CF25A7004EC825 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57C66C0021CF25A8004EC825 /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		57C66BF321CF2590004EC825 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 57C66BE421CF2590004EC825 /* NotificationContent */;
+			targetProxy = 57C66BF221CF2590004EC825 /* PBXContainerItemProxy */;
+		};
+		57C66C0321CF25A8004EC825 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 57C66BFC21CF25A7004EC825 /* NotificationService */;
+			targetProxy = 57C66C0221CF25A8004EC825 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		577666952130C6E300C25E00 /* Main.storyboard */ = {
@@ -188,6 +374,14 @@
 				5776669B2130C6E300C25E00 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		57C66BEE21CF2590004EC825 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				57C66BEF21CF2590004EC825 /* Base */,
+			);
+			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -310,6 +504,7 @@
 		577666A12130C6E300C25E00 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = meteocool/meteocool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -329,6 +524,7 @@
 		577666A22130C6E300C25E00 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = meteocool/meteocool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -340,6 +536,92 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		57C66BF521CF2590004EC825 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4L2672L4VX;
+				INFOPLIST_FILE = NotificationContent/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.NotificationContent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		57C66BF621CF2590004EC825 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4L2672L4VX;
+				INFOPLIST_FILE = NotificationContent/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.NotificationContent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		57C66C0621CF25A8004EC825 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4L2672L4VX;
+				INFOPLIST_FILE = NotificationService/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.NotificationService;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		57C66C0721CF25A8004EC825 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4L2672L4VX;
+				INFOPLIST_FILE = NotificationService/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.NotificationService;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -362,6 +644,24 @@
 			buildConfigurations = (
 				577666A12130C6E300C25E00 /* Debug */,
 				577666A22130C6E300C25E00 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		57C66BF721CF2590004EC825 /* Build configuration list for PBXNativeTarget "NotificationContent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57C66BF521CF2590004EC825 /* Debug */,
+				57C66BF621CF2590004EC825 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		57C66C0521CF25A8004EC825 /* Build configuration list for PBXNativeTarget "NotificationService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57C66C0621CF25A8004EC825 /* Debug */,
+				57C66C0721CF25A8004EC825 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
