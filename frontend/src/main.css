@@ -1,12 +1,30 @@
 .locate-me {
-	top: 65px;
+	top: 66px;
 	left: .5em;
 	cursor: pointer;
 }
 
+.play {
+	top: 99px;
+	left: .5em;
+	cursor: pointer;
+}
+
+#nowcastIcon {
+	width: 14px;
+	height: 14px;
+}
+
+#nowcastLoading { }
+
 .ol-touch .locate-me {
 	padding-top: constant(safe-area-inset-top);
 	top: 80px;
+}
+
+.ol-touch .play {
+	padding-top: constant(safe-area-inset-top);
+	top: 90px;
 }
 
 .locate-me-btn img {

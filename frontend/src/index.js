@@ -10,7 +10,7 @@ import Control from "ol/control/Control";
 import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
-import TileImage from 'ol/source/TileImage';
+import TileImage from "ol/source/TileImage";
 import TileLayer from "ol/layer/Tile.js";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -382,9 +382,9 @@ geolocation.on("change:position", function () {
 
 var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var websocketUrl = "/tile";
-//if (process.env.NODE_ENV === "production") {
-  tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-//}
+// if (process.env.NODE_ENV === "production") {
+tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+// }
 
 var reflectivityOpacity = 0.5;
 window.currentLayer = false;
@@ -484,6 +484,30 @@ var locateControl = new Control({
   element: element
 });
 window.map.addControl(locateControl);
+
+
+
+// forecast button
+var playButton = document.createElement("button");
+playButton.classList.add("play");
+playButton.innerHTML = '<img src=\"./player-play.png\" id="nowcastIcon"><div class="spinner-border spinner-border-sm" role="status" id="nowcastLoading" style="display: none;"><span class="sr-only">Loading...</span></div>';
+var playButtonScript = function (e) {
+  window.smartDownloadAndPlay();
+};
+playButton.addEventListener("click", playButtonScript, false);
+var playElement = document.createElement("div");
+playElement.className = "play ol-unselectable ol-control";
+playElement.appendChild(playButton);
+var playControl = new Control({
+  element: playElement
+});
+window.map.addControl(playControl);
+
+
+
+
+
+
 
 // https://stackoverflow.com/a/44579732/10272994
 // resize for orientationchange
@@ -588,57 +612,51 @@ pushCheckbox.onchange = () => {
 
 var activityIndicatorEnabled = false;
 
-function enableActivityIndicator() {
+function enableActivityIndicator () {
   if (!activityIndicatorEnabled) {
     console.log("activity indicator ENABLE");
     activityIndicatorEnabled = true;
   }
 }
-function disableActivityIndicator() {
+function disableActivityIndicator () {
   if (activityIndicatorEnabled) {
     console.log("disable indicator DISABLE");
     activityIndicatorEnabled = false;
   }
 }
 
-//map.getLayers().forEach(function (layer) {
+// map.getLayers().forEach(function (layer) {
 //  var source = layer.getSource();
 //  if (source instanceof TileImage) {
 //    source.on('tileloadstart', function () {++numInFlightTiles})
 //    source.on('tileloadend', function () {--numInFlightTiles})
 //  }
-//})
+// })
 
-window.map.on('postrender', function (evt) {
-  if (!evt.frameState)
-    return;
+window.map.on("postrender", function (evt) {
+  if (!evt.frameState) { return; }
 
   var numHeldTiles = 0;
   var wanted = evt.frameState.wantedTiles;
-  for (var layer in wanted)
-    if (wanted.hasOwnProperty(layer))
-      numHeldTiles += Object.keys(wanted[layer]).length;
+  for (var layer in wanted) {
+    if (wanted.hasOwnProperty(layer)) { numHeldTiles += Object.keys(wanted[layer]).length; }
+  }
 
   var ready = window.numInFlightTiles === 0 && numHeldTiles === 0;
-  if (window.map.get('ready') !== ready)
-    window.map.set('ready', ready);
+  if (window.map.get("ready") !== ready) { window.map.set("ready", ready); }
 });
 
-window.map.set('ready', false);
+window.map.set("ready", false);
 
-function whenMapIsReady(callback) {
-  if (window.map.get('ready'))
-    callback();
-  else
-    window.map.once('change:ready', whenMapIsReady.bind(null, callback));
+function whenMapIsReady (callback) {
+  if (window.map.get("ready")) { callback(); } else { window.map.once("change:ready", whenMapIsReady.bind(null, callback)); }
 }
-
 
 window.forecastLayers = [false, false, false, false, false, false];
 window.forecastNo = -1;
 window.numInFlightTiles = 0;
 
-function downloadForecast(cb) {
+function downloadForecast (cb) {
   var ahead;
   let forecast_array_idx = 0;
 
@@ -657,22 +675,22 @@ function downloadForecast(cb) {
       url: url,
       success: function (data) {
         var source = new TileJSON({
-            tileJSON: data,
-            crossOrigin: "anonymous",
-            transition: 0
-          });
-        source.on('tileloadstart', function () {++window.numInFlightTiles})
-        source.on('tileloadend', function () {--window.numInFlightTiles})
+          tileJSON: data,
+          crossOrigin: "anonymous",
+          transition: 0
+        });
+        source.on("tileloadstart", function () { ++window.numInFlightTiles; });
+        source.on("tileloadend", function () { --window.numInFlightTiles; });
         var newLayer = new TileLayer({
           source: source,
           opacity: 0
         });
         window.forecastLayers[idx] = newLayer;
         // This starts the tile download process:
-        window.map.set('ready', false);
+        window.map.set("ready", false);
         window.map.addLayer(newLayer);
 
-        whenMapIsReady(function() {
+        whenMapIsReady(function () {
           window.finishedCounter++;
           if (window.finishedCounter == window.forecastLayers.length) {
             console.log("finished all tiles: " + window.finishedCounter);
@@ -682,8 +700,7 @@ function downloadForecast(cb) {
                 layer.setOpacity(0.5);
               }
             });
-            if (cb)
-              cb();
+            if (cb) { cb(); }
           }
         });
       }
@@ -694,68 +711,57 @@ function downloadForecast(cb) {
 
 window.playInPorgress = false;
 
-function playForecast() {
+function playForecast () {
   if (!(window.forecastLayers[0] && window.forecastLayers[1] && window.forecastLayers[2])) {
     console.log("not all forecasts downloaded yet");
     console.log(window.forecastLayers);
     return;
   }
 
-  //if (playInPorgress) {
-  //  console.log("playback already in progress");
-  //  return;
-  //}
-
-  switch(window.forecastNo) {
+  switch (window.forecastNo) {
     case -1:
-      console.log("removing first layer");
       window.forecastNo++;
       window.map.addLayer(window.forecastLayers[window.forecastNo]);
       window.map.removeLayer(window.currentLayer);
       window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 0:
-      console.log("second fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
       window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 1:
-      console.log("third fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
       window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 2:
-      console.log("fourth fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
       window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 3:
-      console.log("fifth fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
       window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 4:
-      console.log("sixth fc layer");
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
       window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
       break;
     case 5:
-      console.log("reset");
       window.map.addLayer(window.currentLayer);
       window.map.removeLayer(window.forecastLayers[window.forecastNo]);
       window.forecastNo = -1;
       window.playInPorgress = false;
-      document.getElementById("nowcastLabel").innerHTML = "⏯ forecast";
+      document.getElementById("nowcastIcon").src = "./player-play.png";
+      document.getElementById("nowcastIcon").style.display = "";
       break;
   }
 }
@@ -764,35 +770,34 @@ window.downloadForecast = downloadForecast;
 window.playForecast = playForecast;
 
 window.forecastDownloaded = false;
-window.smartDownloadAndPlay = function() {
-  console.log("EVENT");
-
+window.smartDownloadAndPlay = function () {
   if (window.playInPorgress) {
     clearTimeout(window.activeForecastTimeout);
     window.playInPorgress = false;
-    document.getElementById("nowcastLabel").innerHTML = "▶️ forecast";
+    document.getElementById("nowcastIcon").src = "./player-play.png";
+    document.getElementById("nowcastIcon").style.display = "";
     return;
   }
 
   if (!window.forecastDownloaded) {
+    document.getElementById("nowcastIcon").style.display = "none";
     document.getElementById("nowcastLoading").style.display = "";
-    document.getElementById("nowcastLabel").style.display = "none";
-    window.downloadForecast(function() {
+    window.downloadForecast(function () {
       document.getElementById("nowcastLoading").style.display = "none";
-      document.getElementById("nowcastLabel").style.display = "";
+      document.getElementById("nowcastIcon").style.display = "";
+      document.getElementById("nowcastIcon").src = "./player-pause.png";
       window.forecastDownloaded = true;
       window.playInPorgress = true;
-      document.getElementById("nowcastLabel").innerHTML = "⏸ forecast";
       window.playForecast();
     });
   } else {
     window.playInPorgress = true;
-    document.getElementById("nowcastLabel").innerHTML = "⏸ forecast";
+    document.getElementById("nowcastIcon").style.display = "";
+    document.getElementById("nowcastIcon").src = "./player-pause.png";
     playForecast();
   }
 };
 
-
-//enableActivityIndicator();
+// enableActivityIndicator();
 
 /* vim: set ts=2 sw=2 expandtab: */
