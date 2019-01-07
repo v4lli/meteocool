@@ -10,7 +10,6 @@ import Control from "ol/control/Control";
 import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
-import TileImage from "ol/source/TileImage";
 import TileLayer from "ol/layer/Tile.js";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -485,12 +484,10 @@ var locateControl = new Control({
 });
 window.map.addControl(locateControl);
 
-
-
 // forecast button
 var playButton = document.createElement("button");
 playButton.classList.add("play");
-playButton.innerHTML = '<img src=\"./player-play.png\" id="nowcastIcon"><div class="spinner-border spinner-border-sm" role="status" id="nowcastLoading" style="display: none;"><span class="sr-only">Loading...</span></div>';
+playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
 var playButtonScript = function (e) {
   window.smartDownloadAndPlay();
 };
@@ -502,12 +499,6 @@ var playControl = new Control({
   element: playElement
 });
 window.map.addControl(playControl);
-
-
-
-
-
-
 
 // https://stackoverflow.com/a/44579732/10272994
 // resize for orientationchange
@@ -610,28 +601,20 @@ pushCheckbox.onchange = () => {
 // openlayers in-flight tile detection from
 // https://stackoverflow.com/questions/33061221/ensuring-all-tiles-are-loaded-in-open-layers-3-xyz-source/45054387#45054387
 
-var activityIndicatorEnabled = false;
+// var activityIndicatorEnabled = false;
 
-function enableActivityIndicator () {
-  if (!activityIndicatorEnabled) {
-    console.log("activity indicator ENABLE");
-    activityIndicatorEnabled = true;
-  }
-}
-function disableActivityIndicator () {
-  if (activityIndicatorEnabled) {
-    console.log("disable indicator DISABLE");
-    activityIndicatorEnabled = false;
-  }
-}
-
-// map.getLayers().forEach(function (layer) {
-//  var source = layer.getSource();
-//  if (source instanceof TileImage) {
-//    source.on('tileloadstart', function () {++numInFlightTiles})
-//    source.on('tileloadend', function () {--numInFlightTiles})
-//  }
-// })
+// function enableActivityIndicator () {
+//   if (!activityIndicatorEnabled) {
+//     console.log("activity indicator ENABLE");
+//     activityIndicatorEnabled = true;
+//   }
+// }
+// function disableActivityIndicator () {
+//   if (activityIndicatorEnabled) {
+//     console.log("disable indicator DISABLE");
+//     activityIndicatorEnabled = false;
+//   }
+// }
 
 window.map.on("postrender", function (evt) {
   if (!evt.frameState) { return; }
