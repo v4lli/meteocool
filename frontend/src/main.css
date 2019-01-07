@@ -19,12 +19,12 @@
 
 .ol-touch .locate-me {
 	padding-top: constant(safe-area-inset-top);
-	top: 80px;
+	top: 82px;
 }
 
 .ol-touch .play {
 	padding-top: constant(safe-area-inset-top);
-	top: 90px;
+	top: 122px;
 }
 
 .locate-me-btn img {
