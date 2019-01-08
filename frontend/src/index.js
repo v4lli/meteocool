@@ -184,7 +184,8 @@ window.map = new Map({
   layers: [
     new TileLayer({
       source: new OSM({
-        url: viewMode ? lightTiles : darkTiles
+        url: viewMode ? lightTiles : darkTiles,
+        attributions:  '&#169; <a href="https://www.dwd.de/DE/service/copyright/copyright_artikel.html">DWD</a> &#169; <a href="http://en.blitzortung.org/contact.php">blitzortung.org</a> &#169; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.'
       })
     })
   ],
@@ -460,10 +461,15 @@ socket.on("map_update", function (data) {
   window.map.removeLayer(window.currentLayer);
   window.currentLayer = newLayer;
   // invalidate old forecast
+  if (window.playInPorgress) {
+    // pause playback
+    window.smartDownloadAndPlay();
+  }
   window.forecastDownloaded = false;
   window.forecastLayers.forEach(function (layer) {
     layer = false;
   });
+  window.smartDownloadAndPlay();
 });
 
 // locate me button
