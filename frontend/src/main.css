@@ -1,30 +1,40 @@
 .locate-me {
-	top: 66px;
-	left: .5em;
+	top: 7px;
+	right: .5em;
 	cursor: pointer;
 }
 
 .play {
-	top: 99px;
-	left: .5em;
+	top: 48px;
+	right: .5em;
 	cursor: pointer;
 }
 
 #nowcastIcon {
-	width: 14px;
-	height: 14px;
+	width: 13px;
+	height: 13px;
 }
 
 #nowcastLoading { }
 
+.ol-rotate {
+	left: .5em;
+	right: auto !important;
+}
+
 .ol-touch .locate-me {
 	padding-top: constant(safe-area-inset-top);
-	top: 82px;
+	top: 7px;
 }
 
 .ol-touch .play {
 	padding-top: constant(safe-area-inset-top);
-	top: 122px;
+	top: 48px;
+}
+
+.ol-touch .ol-rotate {
+	padding-top: constant(safe-area-inset-top);
+	top: 82px;
 }
 
 .locate-me-btn img {
