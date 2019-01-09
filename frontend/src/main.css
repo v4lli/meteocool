@@ -1,3 +1,8 @@
+.ol-attribution.ol-uncollapsible {
+	height: 1.2em !important;
+	line-height: 0.8em !important;
+}
+
 .locate-me {
 	top: 7px;
 	right: .5em;
@@ -20,6 +25,7 @@
 .ol-rotate {
 	left: .5em;
 	right: auto !important;
+	top: 66px !important;
 }
 
 .ol-touch .locate-me {

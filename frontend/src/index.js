@@ -11,6 +11,7 @@ import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
 import TileLayer from "ol/layer/Tile.js";
+import Attribution from 'ol/control/Attribution';
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
@@ -179,18 +180,24 @@ var view = new View({
   minzoom: 5
 });
 
+var attribution = new Attribution({
+  collapsible: false
+});
+
+
 window.map = new Map({
   target: "map",
   layers: [
     new TileLayer({
       source: new OSM({
         url: viewMode ? lightTiles : darkTiles,
-        attributions:  '&#169; <a href="https://www.dwd.de/DE/service/copyright/copyright_artikel.html">DWD</a> &#169; <a href="http://en.blitzortung.org/contact.php">blitzortung.org</a> &#169; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.'
+        attributions:  '&#169; <a href="https://www.dwd.de/DE/service/copyright/copyright_artikel.html">DWD</a> &#169; <a href="http://en.blitzortung.org/contact.php">blitzortung.org</a> &#169; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors.'
       })
     })
   ],
-  controls: defaultControls().extend([
-    new OverviewMap()
+  controls: defaultControls({attribution: false}).extend([
+    new OverviewMap(),
+    attribution
   ]),
   view: view
 });
@@ -461,15 +468,18 @@ socket.on("map_update", function (data) {
   window.map.removeLayer(window.currentLayer);
   window.currentLayer = newLayer;
   // invalidate old forecast
+  var wasActive = false;
   if (window.playInPorgress) {
     // pause playback
     window.smartDownloadAndPlay();
+    wasActive = true;
   }
   window.forecastDownloaded = false;
   window.forecastLayers.forEach(function (layer) {
     layer = false;
   });
-  window.smartDownloadAndPlay();
+  if (wasActive)
+    window.smartDownloadAndPlay();
 });
 
 // locate me button
@@ -534,6 +544,14 @@ window.addEventListener("resize", function () {
     }
     setTimeout(function () { dimensions(); window.map.updateSize(); }, 100);
   });
+  if (DeviceDetect.isIos()) {
+    attribution.setCollapsible(true);
+    attribution.setCollapsed(true);
+  } else {
+    var smallAttrib = window.map.getSize()[0] < 800;
+    attribution.setCollapsible(smallAtrrib);
+    attribution.setCollapsed(smallAttrib);
+  }
 });
 
 /* push notifications */
