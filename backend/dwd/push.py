@@ -170,6 +170,9 @@ if __name__ == "__main__":
         #    intensity = -33
         #    ios_onscreen = False
 
+        # overwrite instensity for everyone
+        intensity = 18
+
         if ahead > max_ahead or ahead%5 != 0:
             logging.error("%s: invalid ahead value" % doc_id)
             continue
