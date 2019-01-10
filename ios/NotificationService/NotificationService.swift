@@ -20,7 +20,7 @@ class NotificationService: UNNotificationServiceExtension {
             contentHandler(bestAttemptContent)
             return
         }
-        guard let attachment = UNNotificationAttachment.saveImageToDisk(fileIdentifier: "image.jpg", data: imageData, options: nil) else {
+        guard let attachment = UNNotificationAttachment.saveImageToDisk(fileIdentifier: "image.png", data: imageData, options: nil) else {
             contentHandler(bestAttemptContent)
             return
         }
