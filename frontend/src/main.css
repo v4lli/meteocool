@@ -3,18 +3,6 @@
 	line-height: 0.8em !important;
 }
 
-.locate-me {
-	top: 7px;
-	right: .5em;
-	cursor: pointer;
-}
-
-.play {
-	top: 48px;
-	right: .5em;
-	cursor: pointer;
-}
-
 #nowcastIcon {
 	width: 13px;
 	height: 13px;
@@ -22,10 +10,10 @@
 
 #nowcastLoading { }
 
-.ol-rotate {
-	left: .5em;
-	right: auto !important;
-	top: 66px !important;
+.locate-me {
+	top: 7px;
+	right: .5em;
+	cursor: pointer;
 }
 
 .ol-touch .locate-me {
@@ -33,19 +21,32 @@
 	top: 7px;
 }
 
-.ol-touch .play {
-	padding-top: constant(safe-area-inset-top);
-	top: 48px;
-}
-
-.ol-touch .ol-rotate {
-	padding-top: constant(safe-area-inset-top);
-	top: 82px;
-}
-
 .locate-me-btn img {
 	width: 15px;
 	height: 15px;
+}
+
+.play {
+	top: 39px;
+	right: .5em;
+	cursor: pointer;
+}
+
+.ol-touch .play {
+	padding-top: constant(safe-area-inset-top);
+	top: 48px;
+	background-color: red !important;
+}
+
+.ol-rotate {
+	left: .5em;
+	right: auto !important;
+	top: 66px !important;
+}
+
+.ol-touch .ol-rotate {
+	padding-top: constant(safe-area-inset-top) !important;
+	top: 94px !important;
 }
 
 #toggleMode {

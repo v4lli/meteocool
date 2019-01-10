@@ -103,8 +103,14 @@ var ipXPWAOpt = () => {
 ipXPWAOpt();
 
 // hide browser push feature on ios
+var attribution = new Attribution({
+  collapsible: false
+});
 if (DeviceDetect.isIos()) {
   document.getElementById("browserPushMenu").style.display = "none";
+
+  attribution.setCollapsible(true);
+  attribution.setCollapsed(true);
 }
 
 //
@@ -178,10 +184,6 @@ var view = new View({
   center: center,
   zoom: zoom,
   minzoom: 5
-});
-
-var attribution = new Attribution({
-  collapsible: false
 });
 
 
@@ -548,8 +550,8 @@ window.addEventListener("resize", function () {
     attribution.setCollapsible(true);
     attribution.setCollapsed(true);
   } else {
-    var smallAttrib = window.map.getSize()[0] < 800;
-    attribution.setCollapsible(smallAtrrib);
+    var smallAttrib = window.map.getSize()[0] < 700;
+    attribution.setCollapsible(smallAttrib);
     attribution.setCollapsed(smallAttrib);
   }
 });
