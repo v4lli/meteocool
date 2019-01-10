@@ -11,7 +11,7 @@ import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
 import TileLayer from "ol/layer/Tile.js";
-import Attribution from 'ol/control/Attribution';
+import Attribution from "ol/control/Attribution";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
@@ -186,18 +186,17 @@ var view = new View({
   minzoom: 5
 });
 
-
 window.map = new Map({
   target: "map",
   layers: [
     new TileLayer({
       source: new OSM({
         url: viewMode ? lightTiles : darkTiles,
-        attributions:  '&#169; <a href="https://www.dwd.de/DE/service/copyright/copyright_artikel.html">DWD</a> &#169; <a href="http://en.blitzortung.org/contact.php">blitzortung.org</a> &#169; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors.'
+        attributions: "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\">OSM</a> contributors."
       })
     })
   ],
-  controls: defaultControls({attribution: false}).extend([
+  controls: defaultControls({ attribution: false }).extend([
     new OverviewMap(),
     attribution
   ]),
@@ -418,6 +417,14 @@ function manualTileUpdate (removePrevious) {
       window.map.addLayer(newLayer);
       if (window.currentLayer) { window.map.removeLayer(window.currentLayer); }
       window.currentLayer = newLayer;
+
+      // force reload of forecast
+      window.forecastDownloaded = false;
+      window.forecastLayers.forEach(function (layer) {
+        window.playInPorgress = false;
+        layer = false;
+      });
+
       updateTimestamp(new Date(data.version * 1000));
     }
   });
@@ -480,8 +487,7 @@ socket.on("map_update", function (data) {
   window.forecastLayers.forEach(function (layer) {
     layer = false;
   });
-  if (wasActive)
-    window.smartDownloadAndPlay();
+  if (wasActive) { window.smartDownloadAndPlay(); }
 });
 
 // locate me button
@@ -667,17 +673,18 @@ window.numInFlightTiles = 0;
 
 function downloadForecast (cb) {
   var ahead;
-  let forecast_array_idx = 0;
+  let forecastArrayIdx = 0;
 
   for (ahead = 5; ahead <= 30; ahead += 5) {
-    let idx = forecast_array_idx;
-    var num_str;
-    if (ahead == 5) {
-      num_str = "05";
+    let idx = forecastArrayIdx;
+    /* javascript: because who the fuck need proper printf? */
+    var numStr;
+    if (ahead === 5) {
+      numStr = "05";
     } else {
-      num_str = ahead.toString();
+      numStr = ahead.toString();
     }
-    let url = "https://a.tileserver.unimplemented.org/data/FX_0" + num_str + "-latest.json";
+    let url = "https://a.tileserver.unimplemented.org/data/FX_0" + numStr + "-latest.json";
     window.finishedCounter = 0;
     $.getJSON({
       dataType: "json",
@@ -701,7 +708,7 @@ function downloadForecast (cb) {
 
         whenMapIsReady(function () {
           window.finishedCounter++;
-          if (window.finishedCounter == window.forecastLayers.length) {
+          if (window.finishedCounter === window.forecastLayers.length) {
             console.log("finished all tiles: " + window.finishedCounter);
             window.forecastLayers.forEach(function (layer) {
               if (layer) {
@@ -714,7 +721,7 @@ function downloadForecast (cb) {
         });
       }
     });
-    forecast_array_idx++;
+    forecastArrayIdx++;
   }
 }
 
