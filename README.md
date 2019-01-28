@@ -28,6 +28,9 @@ information from the awesome blitzortung.org project.
 * **iOS App:** a native iOS app provides battery-efficient background
   location services to provide accurate rain notifications without any user
   interaction.
+  
+![iOS Push Notifications](/doc/ios-lockscreen.png?raw=true "iOS Push notifications with preview")
+ 
 
 # Development
 
