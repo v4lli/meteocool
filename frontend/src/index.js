@@ -214,9 +214,21 @@ var toggleViewMode = () => {
   window.map.getLayers().setAt(0, newLayer);
 };
 
+function toggleIOSBar() {
+  if (DeviceDetect.isIos()) {
+    if (viewMode) {
+      window.webkit.messageHandlers["scriptHandler"].postMessage("lightmode");
+    } else {
+      window.webkit.messageHandlers["scriptHandler"].postMessage("darkmode");
+    }
+  }
+}
+
+
 toggleButton.onclick = () => {
   toggleViewMode();
   toggleHTMLfixMe();
+  toggleIOSBar();
 };
 
 //

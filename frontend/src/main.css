@@ -35,7 +35,6 @@
 .ol-touch .play {
 	padding-top: constant(safe-area-inset-top);
 	top: 48px;
-	background-color: red !important;
 }
 
 .ol-rotate {
@@ -46,7 +45,7 @@
 
 .ol-touch .ol-rotate {
 	padding-top: constant(safe-area-inset-top) !important;
-	top: 94px !important;
+	top: 84px !important;
 }
 
 #toggleMode {
