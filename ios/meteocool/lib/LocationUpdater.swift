@@ -56,7 +56,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
                 self.averagePressure = 0
                 self.pressureMeasurements = 0
                 self.altimeter.startRelativeAltitudeUpdates(to: OperationQueue.main, withHandler: { (altitudeData:CMAltitudeData?, error:Error?) in
-                    if (error != nil) {
+                    guard let altitudeData = altitudeData, error != nil else {
                         self.altimeter.stopRelativeAltitudeUpdates()
                         return
                     }
@@ -68,7 +68,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
                     // average over the last n measurements
                     // XXX time will tell if this is really necessary... the altimeter is very accurate, so it might not be necessary
                     // to take an average. remove if battery usage is a concern.
-                    let measurement = altitudeData!.pressure.doubleValue * 10
+                    let measurement = altitudeData.pressure.doubleValue * 10
                     if (self.pressureMeasurements == 0) {
                         self.averagePressure = measurement
                     } else {
