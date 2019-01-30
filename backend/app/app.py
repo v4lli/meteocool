@@ -118,7 +118,7 @@ def save_location_to_backend(data):
             return jsonify(success=False, message="invalid intensity value")
 
         # XXX this will override ios_onscreen! FIXME ... or not?
-        data = {
+        insert_data = {
             "lat": lat,
             "lon": lon,
             "accuracy": accuracy,
@@ -132,8 +132,8 @@ def save_location_to_backend(data):
         }
         key = {"token": token}
         if token != "anon":
-            db.collection.update(key, data, upsert=True)
-            logging.warn("inserted new client data: %s" % data)
+            db.collection.update(key, insert_data, upsert=True)
+            logging.warn("inserted new client data: %s" % insert_data)
 
     try:
         altitude = data["altitude"]
