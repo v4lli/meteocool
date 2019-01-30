@@ -144,9 +144,9 @@ def save_location_to_backend(data):
     except KeyError as e:
         logging.warn("request does not include barometric parameters: %s" % e)
     else:
-        if not isinstance(altitude, float) or not isinstance(verticalAccuracy, float) or not isinstance(pressure, float) or not isinstance(timestamp, int):
+        if not isinstance(altitude, float) or not isinstance(verticalAccuracy, int) or not isinstance(pressure, float) or not isinstance(timestamp, float):
             logging.warn("Bad request, invalid values for non-omitted key(s): %s" % data)
-            return jsonify(success=False, message="invalid ahead value")
+            return jsonify(success=False, message="invalid non-omitted value")
         data = {
             "lat": lat,
             "lon": lon,
