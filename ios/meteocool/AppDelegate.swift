@@ -1,5 +1,6 @@
 import UIKit
 import UserNotifications
+import CoreMotion
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,6 +8,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var notificationManager: NotificationManager!
     var locationUpdater: LocationUpdater!
     var pushToken: String?
+    lazy var altimeter = CMAltimeter()
+    var pressure: Double = 0.0
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -30,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.notificationManager.clearNotifications()
         // XXX call this only when there are >0 notifications on launch!
         acknowledgeNotification(retry: true, from: "foreground")
-
+        self.locationUpdater.locationManager.requestLocation()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
