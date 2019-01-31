@@ -56,8 +56,9 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
                 self.averagePressure = 0
                 self.pressureMeasurements = 0
                 self.altimeter.startRelativeAltitudeUpdates(to: OperationQueue.main, withHandler: { (altitudeData:CMAltitudeData?, error:Error?) in
-                    guard let altitudeData = altitudeData, error != nil else {
+                    guard let altitudeData = altitudeData else {
                         self.altimeter.stopRelativeAltitudeUpdates()
+                        NSLog("Error reading altimeter despite reported as available")
                         return
                     }
                     // not sure if necessary to avoid processing old OperationQueue items.
