@@ -23,6 +23,7 @@ db_client = MongoClient("mongodb://mongo:27017/")
 # both will be created automatically when the first document is inserted
 db = db_client["meteocool"]
 collection = db["collection"]
+pressure = db["pressure"]
 
 # Background thread started by the internal API endpoint, triggered
 # by the dwd backend container. newTileJson needs to be a valid
@@ -106,8 +107,9 @@ def save_location_to_backend(data):
             logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="bad source")
         if not isinstance(token, str) or len(token) > 128 or len(token) < 32:
-            logging.warn("Bad request, invalid key(s): %s" % data)
-            return jsonify(success=False, message="bad token")
+            if token != "anon":
+                logging.warn("Bad request, invalid key(s): %s" % data)
+                return jsonify(success=False, message="bad token")
         if not isinstance(ahead, int) or ahead < 0 or ahead > 60:
             logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="invalid ahead value")
@@ -116,7 +118,7 @@ def save_location_to_backend(data):
             return jsonify(success=False, message="invalid intensity value")
 
         # XXX this will override ios_onscreen! FIXME ... or not?
-        data = {
+        insert_data = {
             "lat": lat,
             "lon": lon,
             "accuracy": accuracy,
@@ -129,8 +131,31 @@ def save_location_to_backend(data):
             "token": token
         }
         key = {"token": token}
-        db.collection.update(key, data, upsert=True)
-        logging.warn("inserted new client data: %s" % data)
+        if token != "anon":
+            db.collection.update(key, insert_data, upsert=True)
+            logging.warn("inserted new client data: %s" % insert_data)
+
+    try:
+        altitude = data["altitude"]
+        verticalAccuracy = data["verticalAccuracy"]
+        pressure = data["pressure"]
+        timestamp = data["timestamp"]
+        # lat + lon + accuracy already processed above
+    except KeyError as e:
+        logging.warn("request does not include barometric parameters: %s" % e)
+    else:
+        if not isinstance(altitude, float) or not isinstance(verticalAccuracy, int) or not isinstance(pressure, float) or not isinstance(timestamp, float):
+            logging.warn("Bad request, invalid values for non-omitted key(s): %s" % data)
+            return jsonify(success=False, message="invalid non-omitted value")
+        data = {
+            "lat": lat,
+            "lon": lon,
+            "altitude": altitude,
+            "verticalAccuracy": verticalAccuracy,
+            "pressure": pressure,
+            "timestamp": timestamp
+        }
+        db.pressure.insert(data)
 
     return jsonify(success=True)
 
