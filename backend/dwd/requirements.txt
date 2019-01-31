@@ -11,3 +11,4 @@ ipython
 pillow
 six
 matplotlib
+pyfcm

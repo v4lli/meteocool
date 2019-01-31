@@ -20,6 +20,7 @@ import random
 import string
 from PIL.Image import composite, blend
 from PIL import Image
+from pyfcm import FCMNotification
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
@@ -124,6 +125,11 @@ if __name__ == "__main__":
             use_sandbox=config["use_sandbox"]
         )
 
+    # Android push setup. The API key comes from the environment.
+    fcm = None
+    if os.getenv('FCM_API_KEY', None):
+        fcm = FCMNotification()
+
     # mongodb setup
     db_client = MongoClient("mongodb://mongo:27017/")
     # both will be created automatically when the first document is inserted
@@ -166,10 +172,6 @@ if __name__ == "__main__":
             print("Invalid key line: %s" % e)
             continue
 
-        #if token == "1be97aefdddbb164bd1ba0fa98655772887f38450ac324472c4c5000c1bb3348":
-        #    intensity = -33
-        #    ios_onscreen = False
-
         # overwrite instensity for everyone
         intensity = 18
 
@@ -194,7 +196,8 @@ if __name__ == "__main__":
             while timeframe > 0:
                 previous_intensity = rvp_to_dbz(forecast_maps[timeframe][0][xy[0]][xy[1]])
                 if previous_intensity >= intensity:
-                    logging.warn("%s: no match for old ahead value, but %d >= %d for lower ahead=%d!" % (token, previous_intensity, intensity, timeframe))
+                    logging.warn("%s: no match for old ahead value, but %d >= %d for lower ahead=%d!" % (token,
+                        previous_intensity, intensity, timeframe))
                     reported_intensity = previous_intensity
                     ahead = timeframe
                 timeframe -= 5
@@ -202,8 +205,30 @@ if __name__ == "__main__":
         logging.warn("%d >? %d" % (reported_intensity, intensity))
         if reported_intensity >= intensity:
             logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (token, reported_intensity, intensity, ahead, source))
+
+            # fancy message generation
+            max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, xy, ahead, intensity)
+            message_dict = {
+                "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity), ahead),
+                "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
+                    dbz_to_str(max_intensity, lower_case=True), peak_mins, total_mins)
+            }
+            if max_intensity == reported_intensity:
+                message_dict["body"] = "No duration estimate; possibly just a little shower."
+
             if source == "browser":
                 requests.post(browser_notify_url, json={"token": token, "ahead": ahead})
+            elif source == "android":
+                # XXX just a poc; deduplicate with ios code below
+                if fcm:
+                    if not ios_onscreen:
+                        result = fcm.notify_single_device(registration_id=token,
+                                message_title=message_dict["title"],
+                                message_body=message_dict["body"])
+                        collection.update({"_id": doc_id}, {"$set": {"ios_onscreen": True}})
+                        logging.warn("%s: Delivered android push notification with result=%s" % (token, result))
+                else:
+                    logging.error("FCM support not enabled")
             elif source == "ios":
                 # https://developer.apple.com/library/archive/documentation/NetworkingInternet/
                 # Conceptual/RemoteNotificationsPG/PayloadKeyReference.html#//apple_ref/doc/uid/TP40008194-CH17-SW1
@@ -212,21 +237,15 @@ if __name__ == "__main__":
                     # acknowledged (app was opened or we successfully deleted the
                     # last one).
                     if not ios_onscreen:
-                        max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, xy, ahead, intensity)
-                        message_dict = {
-                            "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity), ahead),
-                            "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
-                                dbz_to_str(max_intensity, lower_case=True), peak_mins, total_mins)
-                        }
+                        # push preview maps
                         extra_dict = {}
                         preview_url = generate_preview(lat, lon)
                         if preview_url:
                             logging.warn("generated push preview at %s" % preview_url)
                             extra_dict["preview"] = preview_url
-                        if max_intensity == reported_intensity:
-                            message_dict["body"] = "No duration estimate; possibly just a little shower."
                         try:
-                            apns.send_message(token, message_dict, badge=0, sound="pulse.aiff", extra=extra_dict, mutable_content=True, category="WeatherAlert")
+                            apns.send_message(token, message_dict, badge=0,
+                                    sound="pulse.aiff", extra=extra_dict, mutable_content=True, category="WeatherAlert")
                         except BadDeviceToken:
                             logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", token)
                             collection.remove(doc_id)
