@@ -144,18 +144,40 @@ def save_location_to_backend(data):
     except KeyError as e:
         logging.warn("request does not include barometric parameters: %s" % e)
     else:
-        if not isinstance(altitude, float) or not isinstance(verticalAccuracy, int) or not isinstance(pressure, float) or not isinstance(timestamp, float):
-            logging.warn("Bad request, invalid values for non-omitted key(s): %s" % data)
-            return jsonify(success=False, message="invalid non-omitted value")
-        data = {
+        invalidKey = None
+        if not isinstance(altitude, float):
+            invalidKey = "altitude"
+        if not isinstance(verticalAccuracy, int) and not isinstance(verticalAccuracy, float):
+            invalidKey = "verticalAccuracy"
+        if not isinstance(pressure, float):
+            invalidKey = "pressure"
+        if not isinstance(timestamp, float):
+            if isinstance(timestamp, int):
+                timestamp = float(timestamp)
+            else:
+                invalidKey = "timestamp"
+
+        if invalidKey:
+            logging.warn("Bad request, invalid values for non-omitted key(s): %s - %s" % (invalidKey, data))
+            return jsonify(success=False, message="invalid non-omitted value %s" % invalidKey)
+
+        device_str = source
+        if "device" in data:
+            if isinstance(data["device"], str) and len(data["device"]) < 128 and len(data["device"]) > 0:
+                device_str = data["device"]
+
+        pressure_data = {
             "lat": lat,
             "lon": lon,
             "altitude": altitude,
-            "verticalAccuracy": verticalAccuracy,
+            "verticalAccuracy": float(verticalAccuracy),
             "pressure": pressure,
-            "timestamp": timestamp
+            "receivedTimestamp": datetime.datetime.utcnow(),
+            "device": device_str,
+            "deviceTimestamp": timestamp
         }
-        db.pressure.insert(data)
+        db.pressure.insert(pressure_data)
+        logging.warn("inserted new barometric data: %s" % pressure_data)
 
     return jsonify(success=True)
 

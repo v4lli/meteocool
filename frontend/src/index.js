@@ -828,4 +828,8 @@ window.smartDownloadAndPlay = function () {
 
 // enableActivityIndicator();
 
+window.injectLocation = function(lat, lon, accuracy) {
+  window.map.getView().animate({center: fromLonLat([lon, lat]), zoom: 9});
+}
+
 /* vim: set ts=2 sw=2 expandtab: */
