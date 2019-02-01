@@ -1,7 +1,11 @@
 package org.unimplemented.meteocool
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.webkit.WebView
 import com.google.gson.Gson
@@ -16,10 +20,12 @@ class Meteocool : AppCompatActivity() {
     companion object {
        const val WEB_URL = "https://meteocool.unimplemented.org/?mobile=android"
        const val REST_URL = "https://meteocool.unimplemented.org/post_location"
+       const val PERMISSION_REQUEST_LOCATION = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkPermission()
         val myWebView = WebView(this)
         val webSettings = myWebView.settings
         webSettings.javaScriptEnabled = true
@@ -34,8 +40,50 @@ class Meteocool : AppCompatActivity() {
         doAsync {sendPostRequest()}
     }
 
+    private fun checkPermission() {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSION_REQUEST_LOCATION
+            )
+/*
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            ) {
+                //TODO Show permission information
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_CONTACTS),
+                    PERMISSION_REQUEST_LOCATION
+                )
+
+                // PERMISSION_REQUEST_LOCATION is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }*/
+        } else {
+            // Permission has already been granted
+        }
+    }
+
     private fun makeJSON() : String{
-        val gson = Gson().newBuilder().create()
+        val gsonBuilder = Gson().newBuilder().create()
         val post = ServerPost(
             1.0,
             1.0,
@@ -48,15 +96,13 @@ class Meteocool : AppCompatActivity() {
             "ios",
             15,
             10)
-        val test = gson.toJson(post)
+        val test = gsonBuilder.toJson(post)
         Log.d("JSON", test)
         return test
     }
 
     private fun sendPostRequest() {
 
-        //var reqParam = URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(userName, "UTF-8")
-        //reqParam += "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8")
         val mURL = URL(REST_URL)
 
         with(mURL.openConnection() as HttpURLConnection) {
@@ -90,6 +136,7 @@ class Meteocool : AppCompatActivity() {
                 Log.d("Response", "$response")
             }
         }
+
 
     }
 }
