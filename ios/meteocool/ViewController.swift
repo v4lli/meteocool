@@ -1,8 +1,10 @@
 import UIKit
 import WebKit
+import CoreLocation
 
-class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler {
+class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CLLocationManagerDelegate {
     @IBOutlet weak var webView: WKWebView!
+    let locationManager: CLLocationManager = CLLocationManager()
 
     func toggleDarkMode() {
         // #343a40 = darkmode titelbar color
@@ -26,12 +28,52 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler {
         if action == "lightmode" {
             toggleLightMode()
         }
+
+        if action == "startMonitoringLocation" {
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.startUpdatingLocation()
+        }
+        if action == "stopMonitoringLocation" {
+            locationManager.stopUpdatingLocation()
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            NSLog("injecting location update")
+            webView.evaluateJavaScript("window.injectLocation(\(location.coordinate.latitude), \(location.coordinate.longitude), \(location.horizontalAccuracy));")
+
+            // good enough - save energy
+            if location.horizontalAccuracy <= 100 {
+                locationManager.stopUpdatingLocation()
+                locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+                locationManager.startUpdatingLocation()
+            }
+        }
     }
 
     override func loadView() {
         super.loadView()
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
         self.view.addSubview(webView!)
+
+        locationManager.delegate = self
+        locationManager.requestAlwaysAuthorization()
+        if CLLocationManager.locationServicesEnabled() {
+            switch CLLocationManager.authorizationStatus() {
+            case .notDetermined, .restricted, .denied:
+                NSLog("Location WebView: No access")
+            case .authorizedWhenInUse:
+                NSLog("Location WebView: WhenInUse")
+            case .authorizedAlways:
+                NSLog("Location WebView: Always")
+            }
+        } else {
+            NSLog("Location services are not enabled")
+        }
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        locationManager.pausesLocationUpdatesAutomatically = true
+        locationManager.activityType = CLActivityType.other
     }
 
     override func viewDidLoad() {
@@ -48,6 +90,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler {
             webView.load(request)
         }
 
+        // reload tiles if app resumes from background
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.reloadTiles), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 

@@ -54,6 +54,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
             UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.latitude, forKey: "lat")
             UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.longitude, forKey: "lon")
 
+            // XXX factor out altimeter stuff
             if (CMAltimeter.isRelativeAltitudeAvailable()) {
                 // we have a location fix, now read a few values from the altimeter
                 self.averagePressure = 0
