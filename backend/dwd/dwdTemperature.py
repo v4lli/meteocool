@@ -1,3 +1,10 @@
+"""
+N. Loser, loser@hm.edu ,https://github.com/nina2244
+
+based on: marians, https://github.com/marians/dwd-weather
+"""
+
+
 from ftplib import FTP
 from io import BytesIO
 import re
@@ -14,27 +21,15 @@ class dwdTemperature():
     # FTP server path for our files
     serverpath = "/pub/CDC/observations_germany/climate/10_minutes/air_temperature/now/"
 
-    nearest_station_id = None
-
     def __init__(self):
-        """
-        Use all keyword arguments as configuration
-        - user
-        - passwd
-        - cachepath
-        """
-
-        cp = None
+        self.nearest_station_id = None
 
         self.user = "anonymous"
         self.passwd = "guest@example.com"
 
         self.verbosity = 0
 
-        try:
-            self.cachepath = "/tmp"
-        except OSError:
-            os.mkdir("/tmp")
+        self.cachepath = "/tmp"
 
         try:
             self.station_map = pickle.load(open("/tmp/station_map.p", "rb"))
@@ -102,7 +97,6 @@ class dwdTemperature():
             if linecount > 2:
                 # frist 7 fields
                 parts = re.split(r"\s+", line, 6)
-                # seperate name from Bundesland
                 (name, bundesland) = parts[6].rsplit(" ", 1)
                 name = name.strip()
                 del parts[6]
