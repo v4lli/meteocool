@@ -51,6 +51,9 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
+            UserDefaults.init(suiteName: "group.meteocool")?.setValue(location.coordinate.latitude, forKey: "lat")
+            UserDefaults.init(suiteName: "group.meteocool")?.setValue(location.coordinate.longitude, forKey: "lon")
+
             if (CMAltimeter.isRelativeAltitudeAvailable()) {
                 // we have a location fix, now read a few values from the altimeter
                 self.averagePressure = 0

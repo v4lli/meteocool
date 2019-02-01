@@ -19,37 +19,31 @@
 		57C66BEA21CF2590004EC825 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57C66BE921CF2590004EC825 /* UserNotificationsUI.framework */; };
 		57C66BED21CF2590004EC825 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BEC21CF2590004EC825 /* NotificationViewController.swift */; };
 		57C66BF021CF2590004EC825 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 57C66BEE21CF2590004EC825 /* MainInterface.storyboard */; };
-		57C66BF421CF2590004EC825 /* NotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57C66BE521CF2590004EC825 /* NotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		57C66C0021CF25A8004EC825 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BFF21CF25A8004EC825 /* NotificationService.swift */; };
-		57C66C0421CF25A8004EC825 /* NotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57C66BFD21CF25A7004EC825 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EA358D442204966200CBB0F1 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA358D432204966200CBB0F1 /* NotificationCenter.framework */; };
+		EA358D472204966200CBB0F1 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA358D462204966200CBB0F1 /* TodayViewController.swift */; };
+		EA358D4A2204966200CBB0F1 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA358D482204966200CBB0F1 /* MainInterface.storyboard */; };
+		EA358D4E2204966200CBB0F1 /* Widget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = EA358D422204966100CBB0F1 /* Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		57C66BF221CF2590004EC825 /* PBXContainerItemProxy */ = {
+		EA358D4C2204966200CBB0F1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 577666862130C6E300C25E00 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 57C66BE421CF2590004EC825;
-			remoteInfo = NotificationContent;
-		};
-		57C66C0221CF25A8004EC825 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 577666862130C6E300C25E00 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 57C66BFC21CF25A7004EC825;
-			remoteInfo = NotificationService;
+			remoteGlobalIDString = EA358D412204966100CBB0F1;
+			remoteInfo = Widget;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		57C66BF821CF2590004EC825 /* Embed App Extensions */ = {
+		EA358D522204966200CBB0F1 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				57C66BF421CF2590004EC825 /* NotificationContent.appex in Embed App Extensions */,
-				57C66C0421CF25A8004EC825 /* NotificationService.appex in Embed App Extensions */,
+				EA358D4E2204966200CBB0F1 /* Widget.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -77,6 +71,12 @@
 		57C66BFD21CF25A7004EC825 /* NotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C66BFF21CF25A8004EC825 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		57C66C0121CF25A8004EC825 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EA358D422204966100CBB0F1 /* Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Widget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA358D432204966200CBB0F1 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		EA358D462204966200CBB0F1 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
+		EA358D492204966200CBB0F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		EA358D4B2204966200CBB0F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EA358D532204A41800CBB0F1 /* Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widget.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +103,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EA358D3F2204966100CBB0F1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA358D442204966200CBB0F1 /* NotificationCenter.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -122,6 +130,7 @@
 				577666902130C6E300C25E00 /* meteocool */,
 				57C66BEB21CF2590004EC825 /* NotificationContent */,
 				57C66BFE21CF25A8004EC825 /* NotificationService */,
+				EA358D452204966200CBB0F1 /* Widget */,
 				57C66BE621CF2590004EC825 /* Frameworks */,
 				5776668F2130C6E300C25E00 /* Products */,
 			);
@@ -133,6 +142,7 @@
 				5776668E2130C6E300C25E00 /* meteocool.app */,
 				57C66BE521CF2590004EC825 /* NotificationContent.appex */,
 				57C66BFD21CF25A7004EC825 /* NotificationService.appex */,
+				EA358D422204966100CBB0F1 /* Widget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,6 +167,7 @@
 			children = (
 				57C66BE721CF2590004EC825 /* UserNotifications.framework */,
 				57C66BE921CF2590004EC825 /* UserNotificationsUI.framework */,
+				EA358D432204966200CBB0F1 /* NotificationCenter.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -180,6 +191,17 @@
 			path = NotificationService;
 			sourceTree = "<group>";
 		};
+		EA358D452204966200CBB0F1 /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				EA358D532204A41800CBB0F1 /* Widget.entitlements */,
+				EA358D462204966200CBB0F1 /* TodayViewController.swift */,
+				EA358D482204966200CBB0F1 /* MainInterface.storyboard */,
+				EA358D4B2204966200CBB0F1 /* Info.plist */,
+			);
+			path = Widget;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -190,13 +212,12 @@
 				5776668A2130C6E300C25E00 /* Sources */,
 				5776668B2130C6E300C25E00 /* Frameworks */,
 				5776668C2130C6E300C25E00 /* Resources */,
-				57C66BF821CF2590004EC825 /* Embed App Extensions */,
+				EA358D522204966200CBB0F1 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				57C66BF321CF2590004EC825 /* PBXTargetDependency */,
-				57C66C0321CF25A8004EC825 /* PBXTargetDependency */,
+				EA358D4D2204966200CBB0F1 /* PBXTargetDependency */,
 			);
 			name = meteocool;
 			productName = meteocool;
@@ -237,13 +258,30 @@
 			productReference = 57C66BFD21CF25A7004EC825 /* NotificationService.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		EA358D412204966100CBB0F1 /* Widget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EA358D512204966200CBB0F1 /* Build configuration list for PBXNativeTarget "Widget" */;
+			buildPhases = (
+				EA358D3E2204966100CBB0F1 /* Sources */,
+				EA358D3F2204966100CBB0F1 /* Frameworks */,
+				EA358D402204966100CBB0F1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Widget;
+			productName = Widget;
+			productReference = EA358D422204966100CBB0F1 /* Widget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		577666862130C6E300C25E00 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1010;
+				LastSwiftUpdateCheck = 1020;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Florian Mauracher";
 				TargetAttributes = {
@@ -251,11 +289,14 @@
 						CreatedOnToolsVersion = 9.4.1;
 						LastSwiftMigration = 1000;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
 							com.apple.Push = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -264,6 +305,14 @@
 					};
 					57C66BFC21CF25A7004EC825 = {
 						CreatedOnToolsVersion = 10.1;
+					};
+					EA358D412204966100CBB0F1 = {
+						CreatedOnToolsVersion = 10.2;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -283,6 +332,7 @@
 				5776668D2130C6E300C25E00 /* meteocool */,
 				57C66BE421CF2590004EC825 /* NotificationContent */,
 				57C66BFC21CF25A7004EC825 /* NotificationService */,
+				EA358D412204966100CBB0F1 /* Widget */,
 			);
 		};
 /* End PBXProject section */
@@ -310,6 +360,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA358D402204966100CBB0F1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA358D4A2204966200CBB0F1 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,18 +402,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EA358D3E2204966100CBB0F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA358D472204966200CBB0F1 /* TodayViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		57C66BF321CF2590004EC825 /* PBXTargetDependency */ = {
+		EA358D4D2204966200CBB0F1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 57C66BE421CF2590004EC825 /* NotificationContent */;
-			targetProxy = 57C66BF221CF2590004EC825 /* PBXContainerItemProxy */;
-		};
-		57C66C0321CF25A8004EC825 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 57C66BFC21CF25A7004EC825 /* NotificationService */;
-			targetProxy = 57C66C0221CF25A8004EC825 /* PBXContainerItemProxy */;
+			target = EA358D412204966100CBB0F1 /* Widget */;
+			targetProxy = EA358D4C2204966200CBB0F1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -380,6 +441,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				57C66BEF21CF2590004EC825 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
+		EA358D482204966200CBB0F1 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EA358D492204966200CBB0F1 /* Base */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -508,13 +577,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = meteocool/meteocool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 4L2672L4VX;
+				DEVELOPMENT_TEAM = 3AM692E9WY;
 				INFOPLIST_FILE = meteocool/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.NINA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -528,13 +597,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = meteocool/meteocool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 4L2672L4VX;
+				DEVELOPMENT_TEAM = 3AM692E9WY;
 				INFOPLIST_FILE = meteocool/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.NINA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -627,6 +696,51 @@
 			};
 			name = Release;
 		};
+		EA358D4F2204966200CBB0F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3AM692E9WY;
+				INFOPLIST_FILE = Widget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.NINA.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EA358D502204966200CBB0F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3AM692E9WY;
+				INFOPLIST_FILE = Widget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.NINA.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -662,6 +776,15 @@
 			buildConfigurations = (
 				57C66C0621CF25A8004EC825 /* Debug */,
 				57C66C0721CF25A8004EC825 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EA358D512204966200CBB0F1 /* Build configuration list for PBXNativeTarget "Widget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EA358D4F2204966200CBB0F1 /* Debug */,
+				EA358D502204966200CBB0F1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
