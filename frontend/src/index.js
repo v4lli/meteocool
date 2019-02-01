@@ -139,15 +139,23 @@ var center = fromLonLat([10.447683, 51.163375]);
 
 if (window.location.hash !== "") {
   // try to restore center, zoom-level and rotation from the URL
-  var hash = window.location.hash.replace("#map=", "");
-  var parts = hash.split("/");
-  if (parts.length === 4) {
-    zoom = parseInt(parts[0], 10);
-    center = [
-      parseFloat(parts[1]),
-      parseFloat(parts[2])
-    ];
-    // rotation = parseFloat(parts[3]);
+  if (window.location.hash.includes("#widgetMap")) {
+    var hash = window.location.hash.replace("#widgetMap=", "");
+    var parts = hash.split("/");
+    if (parts.length === 4) {
+      zoom = parseInt(parts[0], 10);
+      center = fromLonLat([
+        parseFloat(parts[2]),
+        parseFloat(parts[1])
+      ]);
+    }
+  } else {
+    var hash = window.location.hash.replace("#map=", "");
+    var parts = hash.split("/");
+    if (parts.length === 4) {
+      zoom = parseInt(parts[0], 10);
+      center = [ parseFloat(parts[1]), parseFloat(parts[2]) ];
+    }
   }
 }
 
@@ -827,5 +835,9 @@ window.smartDownloadAndPlay = function () {
 };
 
 // enableActivityIndicator();
+
+window.injectLocation = function(lat, lon, accuracy) {
+  window.map.getView().animate({center: fromLonLat([lon, lat]), zoom: 9});
+}
 
 /* vim: set ts=2 sw=2 expandtab: */
