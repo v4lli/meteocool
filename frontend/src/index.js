@@ -122,7 +122,7 @@ var dimensions = () => {
   let mapEl;
 
   mapEl = document.getElementById("map");
-  if (document.getElementById("navbar").style.display == "none") {
+  if (document.getElementById("navbar").style.display === "none") {
     navEl = 0;
   } else {
     navEl = document.getElementById("navbar").clientHeight;
@@ -154,14 +154,14 @@ if (window.location.hash !== "") {
         parseFloat(parts[1])
       ]);
       widgetMode = true;
-      document.getElementById("navbar").style.display="none";
+      document.getElementById("navbar").style.display = "none";
     }
   } else {
-    var hash = window.location.hash.replace("#map=", "");
-    var parts = hash.split("/");
+    var hashM = window.location.hash.replace("#map=", "");
+    var partsM = hashM.split("/");
     if (parts.length === 4) {
-      zoom = parseInt(parts[0], 10);
-      center = [ parseFloat(parts[1]), parseFloat(parts[2]) ];
+      zoom = parseInt(partsM[0], 10);
+      center = [ parseFloat(partsM[1]), parseFloat(partsM[2]) ];
     }
   }
 }
@@ -238,7 +238,7 @@ var toggleViewMode = () => {
   window.map.getLayers().setAt(0, newLayer);
 };
 
-function toggleIOSBar() {
+function toggleIOSBar () {
   if (DeviceDetect.isIos()) {
     if (viewMode) {
       window.webkit.messageHandlers["scriptHandler"].postMessage("lightmode");
@@ -247,7 +247,6 @@ function toggleIOSBar() {
     }
   }
 }
-
 
 toggleButton.onclick = () => {
   toggleViewMode();
@@ -856,8 +855,8 @@ window.smartDownloadAndPlay = function () {
 
 // enableActivityIndicator();
 
-window.injectLocation = function(lat, lon, accuracy) {
-  window.map.getView().animate({center: fromLonLat([lon, lat]), zoom: 9});
-}
+window.injectLocation = function (lat, lon, accuracy) {
+  window.map.getView().animate({ center: fromLonLat([lon, lat]), zoom: 9 });
+};
 
 /* vim: set ts=2 sw=2 expandtab: */
