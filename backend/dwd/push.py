@@ -21,6 +21,7 @@ import string
 from PIL.Image import composite, blend
 from PIL import Image
 from pyfcm import FCMNotification
+from dwdTemperature import dwdTemperature
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
@@ -28,7 +29,9 @@ def closest_node(node, nodes):
     closest_index = distance.cdist([node], nodes).argmin()
     return closest_index
 
-def dbz_to_str_pure(dbz):
+def dbz_to_str_pure(dbz,lat,lon):
+    rain_snow = rain_or_snow(lat,lon)
+
     if dbz > 65:
         return "Large hail"
     if dbz > 60:
@@ -36,17 +39,17 @@ def dbz_to_str_pure(dbz):
     if dbz > 55:
         return "Small hail"
     if dbz > 47:
-        return "Extreme rain"
+        return "Extreme %s" % rain_snow
     if dbz > 40:
-        return "Heavy rain"
+        return "Heavy %s" % rain_snow
     if dbz > 35:
-        return "Intense rain"
+        return "Intense %s" % rain_snow
     if dbz > 30:
-        return "More intense rain"
+        return "More intense %s" % rain_snow
     if dbz > 25:
-        return "Rain"
+        return "Rain" if rain_snow == "rain"  else "Snow"
     if dbz > 20:
-        return "Light rain"
+        return "Light %s" % rain_snow
     if dbz > 15:
         return "Drizzle"
     if dbz > 0:
@@ -59,14 +62,27 @@ def dbz_to_str_pure(dbz):
         # ???
         return "Extremely light mist"
     if dbz <= -31:
-        return "No rain"
+        return "No %s" % rain_snow
 
-def dbz_to_str(dbz, lower_case=False):
+
+def rain_or_snow(lat,lon):
+    d = dwdTemperature();
+    d.get_stations()
+    station_id = d.find_next_station(lat, lon)
+    currend_temperature = d.get_current_temperature(station_id)
+    print(currend_temperature)
+
+    if(currend_temperature <= 0):
+        return "snow"
+    else:
+        return "rain"
+
+def dbz_to_str(dbz, lat, lon, lower_case=False):
     intensity = None
     if lower_case:
-        intensity = dbz_to_str_pure(dbz).lower()
+        intensity = dbz_to_str_pure(dbz,lat,lon).lower()
     else:
-        intensity = dbz_to_str_pure(dbz)
+        intensity = dbz_to_str_pure(dbz,lat,lon)
 
     return "%s (%d dbZ)" % (intensity, dbz)
 
@@ -209,9 +225,9 @@ if __name__ == "__main__":
             # fancy message generation
             max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, xy, ahead, intensity)
             message_dict = {
-                "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity), ahead),
+                "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity,lat,lon), ahead),
                 "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
-                    dbz_to_str(max_intensity, lower_case=True), peak_mins, total_mins)
+                    dbz_to_str(max_intensity, lat, lon, lower_case=True), peak_mins, total_mins)
             }
             if max_intensity == reported_intensity:
                 message_dict["body"] = "No duration estimate; possibly just a little shower."
