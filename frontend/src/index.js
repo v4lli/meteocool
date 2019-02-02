@@ -122,11 +122,15 @@ var dimensions = () => {
   let mapEl;
 
   mapEl = document.getElementById("map");
-  navEl = document.getElementById("navbar").clientHeight;
+  if (document.getElementById("navbar").style.display == "none") {
+    navEl = 0;
+  } else {
+    navEl = document.getElementById("navbar").clientHeight;
+  }
+
   browserHeight = window.innerHeight;
   mapEl.style.height = browserHeight - navEl + safeAreaInsets.top + "px";
 };
-dimensions();
 
 // ================
 // OpenLayers setup
@@ -135,11 +139,12 @@ dimensions();
 // configuration/defaults
 var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
-// var rotation = 0;
+var widgetMode = false;
 
 if (window.location.hash !== "") {
   // try to restore center, zoom-level and rotation from the URL
   if (window.location.hash.includes("#widgetMap")) {
+    // XXX deduplicate with other case
     var hash = window.location.hash.replace("#widgetMap=", "");
     var parts = hash.split("/");
     if (parts.length === 4) {
@@ -148,6 +153,8 @@ if (window.location.hash !== "") {
         parseFloat(parts[2]),
         parseFloat(parts[1])
       ]);
+      widgetMode = true;
+      document.getElementById("navbar").style.display="none";
     }
   } else {
     var hash = window.location.hash.replace("#map=", "");
@@ -158,6 +165,7 @@ if (window.location.hash !== "") {
     }
   }
 }
+dimensions();
 
 //
 // DARK MODE
@@ -166,8 +174,8 @@ if (window.location.hash !== "") {
 var toggleButton = document.getElementById("toggleMode");
 var navbar = document.getElementById("navbar");
 
-var lightTiles; // 'undefined' will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
-var darkTiles = "https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.pbf";
+var lightTiles = "https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"; // 'undefined' will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
+var darkTiles = "https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png";
 
 // light view is default
 var viewMode = true;
@@ -194,17 +202,21 @@ var view = new View({
   minzoom: 5
 });
 
+var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\">OSM</a> contributors.";
+
+var darkAttributions = " Tiles by Cartos (CC BY 3.0).";
+
 window.map = new Map({
   target: "map",
   layers: [
     new TileLayer({
       source: new OSM({
         url: viewMode ? lightTiles : darkTiles,
-        attributions: "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\">OSM</a> contributors."
+        attributions: viewMode ? baseAttributions : baseAttributions + darkAttributions
       })
     })
   ],
-  controls: defaultControls({ attribution: false }).extend([
+  controls: widgetMode ? [attribution] : defaultControls({ attribution: false }).extend([
     new OverviewMap(),
     attribution
   ]),
@@ -216,7 +228,8 @@ var toggleViewMode = () => {
   viewMode = !viewMode;
   var newLayer = new TileLayer({
     source: new OSM({
-      url: viewMode ? lightTiles : darkTiles
+      url: viewMode ? lightTiles : darkTiles,
+      attributions: viewMode ? baseAttributions : baseAttributions + darkAttributions
     })
   });
   window.map.getLayers().setAt(0, newLayer);
@@ -511,38 +524,42 @@ socket.on("map_update", function (data) {
 });
 
 // locate me button
-var button = document.createElement("button");
-button.classList.add("locate-me-btn");
-button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
-var locateMe = function (e) {
-  var coordinates = geolocation.getPosition();
-  geolocation.setTracking(true);
-  window.map.getView().animate({ center: coordinates, zoom: 10 });
-};
-button.addEventListener("click", locateMe, false);
-var element = document.createElement("div");
-element.className = "locate-me ol-unselectable ol-control";
-element.appendChild(button);
-var locateControl = new Control({
-  element: element
-});
-window.map.addControl(locateControl);
+if (!widgetMode) {
+  var button = document.createElement("button");
+  button.classList.add("locate-me-btn");
+  button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
+  var locateMe = function (e) {
+    var coordinates = geolocation.getPosition();
+    geolocation.setTracking(true);
+    window.map.getView().animate({ center: coordinates, zoom: 10 });
+  };
+  button.addEventListener("click", locateMe, false);
+  var element = document.createElement("div");
+  element.className = "locate-me ol-unselectable ol-control";
+  element.appendChild(button);
+  var locateControl = new Control({
+    element: element
+  });
+  window.map.addControl(locateControl);
+}
 
 // forecast button
-var playButton = document.createElement("button");
-playButton.classList.add("play");
-playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
-var playButtonScript = function (e) {
-  window.smartDownloadAndPlay();
-};
-playButton.addEventListener("click", playButtonScript, false);
-var playElement = document.createElement("div");
-playElement.className = "play ol-unselectable ol-control";
-playElement.appendChild(playButton);
-var playControl = new Control({
-  element: playElement
-});
-window.map.addControl(playControl);
+if (!widgetMode) {
+  var playButton = document.createElement("button");
+  playButton.classList.add("play");
+  playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
+  var playButtonScript = function (e) {
+    window.smartDownloadAndPlay();
+  };
+  playButton.addEventListener("click", playButtonScript, false);
+  var playElement = document.createElement("div");
+  playElement.className = "play ol-unselectable ol-control";
+  playElement.appendChild(playButton);
+  var playControl = new Control({
+    element: playElement
+  });
+  window.map.addControl(playControl);
+}
 
 // https://stackoverflow.com/a/44579732/10272994
 // resize for orientationchange
