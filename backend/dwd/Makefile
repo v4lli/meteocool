@@ -63,13 +63,16 @@ push:
 		https://opendata.dwd.de/weather/radar/composit/fx/FX_LATEST.tar.bz2 \
 		-O /forecast/tmp/forecast.tar.bz2
 	tar -C /forecast/tmp/forecast -xjf /forecast/tmp/forecast.tar.bz2
-	bash -c 'for f in /forecast/tmp/forecast/FX*_0{05,10,15,20,25,30}_*; do make -C fc_preview/ FC_FILE=$$f; done'
+	bash -c 'for f in /forecast/tmp/forecast/FX*_0{05,10,15,20,25,30,35,40,45}_*; do nice -n 1 make -C fc_preview/ FC_FILE=$$f &; done; wait'
 	mv /forecast/tmp/forecast/FX*_005_*.mbtiles /data/FX_005-latest.mbtiles
 	mv /forecast/tmp/forecast/FX*_010_*.mbtiles /data/FX_010-latest.mbtiles
 	mv /forecast/tmp/forecast/FX*_015_*.mbtiles /data/FX_015-latest.mbtiles
 	mv /forecast/tmp/forecast/FX*_020_*.mbtiles /data/FX_020-latest.mbtiles
 	mv /forecast/tmp/forecast/FX*_025_*.mbtiles /data/FX_025-latest.mbtiles
 	mv /forecast/tmp/forecast/FX*_030_*.mbtiles /data/FX_030-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_035_*.mbtiles /data/FX_035-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_040_*.mbtiles /data/FX_040-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_045_*.mbtiles /data/FX_045-latest.mbtiles
 	nc -z tileserver 10001 || true
 	sleep 2
 	python3 push.py /forecast/tmp/forecast/ \

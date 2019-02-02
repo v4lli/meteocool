@@ -712,7 +712,7 @@ function whenMapIsReady (callback) {
   if (window.map.get("ready")) { callback(); } else { window.map.once("change:ready", whenMapIsReady.bind(null, callback)); }
 }
 
-window.forecastLayers = [false, false, false, false, false, false];
+window.forecastLayers = [false, false, false, false, false, false, false, false, false];
 window.forecastNo = -1;
 window.numInFlightTiles = 0;
 
@@ -720,7 +720,7 @@ function downloadForecast (cb) {
   var ahead;
   let forecastArrayIdx = 0;
 
-  for (ahead = 5; ahead <= 30; ahead += 5) {
+  for (ahead = 5; ahead <= 45; ahead += 5) {
     let idx = forecastArrayIdx;
     /* javascript: because who the fuck need proper printf? */
     var numStr;
@@ -784,39 +784,57 @@ function playForecast () {
       window.forecastNo++;
       window.map.addLayer(window.forecastLayers[window.forecastNo]);
       window.map.removeLayer(window.currentLayer);
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 0:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 1:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 2:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 3:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 4:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 5:
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
+      break;
+    case 6:
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
+      break;
+    case 7:
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
+      break;
+    case 8:
       window.map.addLayer(window.currentLayer);
       window.map.removeLayer(window.forecastLayers[window.forecastNo]);
       window.forecastNo = -1;
