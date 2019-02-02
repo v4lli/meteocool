@@ -72,7 +72,7 @@ def rain_or_snow(lat,lon):
     station_id = dwdTemp.find_next_station(lat, lon)
     current_temperature = dwdTemp.get_current_temperature(station_id)
 
-    if(current_temperature <= 0):
+    if current_temperature and current_temperature <= 0:
         return "snow"
     else:
         return "rain"
