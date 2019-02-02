@@ -52,6 +52,9 @@ services:
       - pushpreview:/pushpreview
       - /etc/meteocool/apns.json:/etc/apns.json
       - /etc/meteocool/authkey.p8:/etc/authkey.p8
+    tmpfs:
+      - /scratch
+      - /forecast
     depends_on:
       - app
       - mongo
