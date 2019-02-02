@@ -174,7 +174,10 @@ dimensions();
 var toggleButton = document.getElementById("toggleMode");
 var navbar = document.getElementById("navbar");
 
-var lightTiles = "https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"; // 'undefined' will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
+// XXX use retina tiles if possible!
+// https://openlayers.org/en/latest/examples/xyz-retina.html?mode=raw
+// https://github.com/CartoDB/basemap-styles
+var lightTiles = "https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png"; // 'undefined' will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
 var darkTiles = "https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png";
 
 // light view is default
@@ -202,9 +205,9 @@ var view = new View({
   minzoom: 5
 });
 
-var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\">OSM</a> contributors.";
+var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\">OSM</a>; <a href=\"https://carto.com/attribution/\">CARTO</a>";
 
-var darkAttributions = " Tiles by Cartos (CC BY 3.0).";
+var darkAttributions = "";
 
 window.map = new Map({
   target: "map",
