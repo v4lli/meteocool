@@ -136,6 +136,20 @@ var dimensions = () => {
 // OpenLayers setup
 // ================
 
+var positionFeature = new Feature();
+positionFeature.setStyle(new Style({
+  image: new CircleStyle({
+    radius: 9,
+    fill: new Fill({
+      color: "#3399CC"
+    }),
+    stroke: new Stroke({
+      color: "#fff",
+      width: 3
+    })
+  })
+}));
+
 // configuration/defaults
 var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
@@ -155,11 +169,12 @@ if (window.location.hash !== "") {
       ]);
       widgetMode = true;
       document.getElementById("navbar").style.display = "none";
+      positionFeature.setGeometry(center ? new Point(center) : null);
     }
   } else {
     var hashM = window.location.hash.replace("#map=", "");
     var partsM = hashM.split("/");
-    if (parts.length === 4) {
+    if (partsM.length === 4) {
       zoom = parseInt(partsM[0], 10);
       center = [ parseFloat(partsM[1]), parseFloat(partsM[2]) ];
     }
@@ -331,20 +346,6 @@ window.addEventListener("popstate", function (event) {
   shouldUpdate = false;
   dimensions();
 });
-
-var positionFeature = new Feature();
-positionFeature.setStyle(new Style({
-  image: new CircleStyle({
-    radius: 6,
-    fill: new Fill({
-      color: "#3399CC"
-    }),
-    stroke: new Stroke({
-      color: "#fff",
-      width: 2
-    })
-  })
-}));
 
 /* eslint-disable */
 /*
