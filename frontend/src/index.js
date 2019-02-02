@@ -220,7 +220,7 @@ var view = new View({
   minzoom: 5
 });
 
-var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\">OSM</a>; <a href=\"https://carto.com/attribution/\">CARTO</a>";
+var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\">OSM</a> &#169; <a href=\"https://carto.com/attribution/\">CARTO</a> | <a href=\"/impressum.html\">Impressum</a>";
 
 var darkAttributions = "";
 
