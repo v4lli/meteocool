@@ -8,7 +8,7 @@ import sys
 import json
 import glob
 import logging
-from gobiko.apns.exceptions import BadDeviceToken
+from gobiko.apns.exceptions import BadDeviceToken, Unregistered
 from gobiko.apns import APNsClient
 from pymongo import MongoClient
 from scipy.spatial import distance
@@ -47,11 +47,11 @@ def dbz_to_str_pure(dbz,lat,lon):
     if dbz > 30:
         return "More intense %s" % rain_snow
     if dbz > 25:
-        return "Rain" if rain_snow == "rain"  else "Snow"
+        return "Rain" if rain_snow == "rain" else "Snow"
     if dbz > 20:
         return "Light %s" % rain_snow
     if dbz > 15:
-        return "Drizzle"
+        return "Drizzle" if rain_snow == "rain" else "Snowflakes"
     if dbz > 0:
         # ???
         return "Mist"
@@ -65,14 +65,14 @@ def dbz_to_str_pure(dbz,lat,lon):
         return "No %s" % rain_snow
 
 
-def rain_or_snow(lat,lon):
-    d = dwdTemperature();
-    d.get_stations()
-    station_id = d.find_next_station(lat, lon)
-    currend_temperature = d.get_current_temperature(station_id)
-    print(currend_temperature)
+dwdTemp = dwdTemperature()
+dwdTemp.get_stations()
 
-    if(currend_temperature <= 0):
+def rain_or_snow(lat,lon):
+    station_id = dwdTemp.find_next_station(lat, lon)
+    current_temperature = dwdTemp.get_current_temperature(station_id)
+
+    if(current_temperature <= 0):
         return "snow"
     else:
         return "rain"
@@ -188,6 +188,9 @@ if __name__ == "__main__":
             print("Invalid key line: %s" % e)
             continue
 
+        if token == "anon":
+            continue
+
         # overwrite instensity for everyone
         intensity = 18
 
@@ -265,6 +268,9 @@ if __name__ == "__main__":
                         except BadDeviceToken:
                             logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", token)
                             collection.remove(doc_id)
+                        except Unregistered:
+                            logging.warn("%s: sending iOS notification failed with Unregistered, removing push client", token)
+                            collection.remove(doc_id)
                         else:
                             logging.warn("%s: sent iOS notification", token)
                             # mark notification as delivered in the database, so we can
@@ -284,6 +290,9 @@ if __name__ == "__main__":
                     apns.send_message(token, None, badge=0, content_available=True, extra={"clear_all": True})
                 except BadDeviceToken:
                     logging.warn("%s: silent iOS notification failed with BadDeviceToken, removing push client", token)
+                    collection.remove(doc_id)
+                except Unregistered:
+                    logging.warn("%s: silent iOS notification failed with Unregistered, removing push client", token)
                     collection.remove(doc_id)
                 else:
                     logging.warn("%s: sent silent notification" % token)
