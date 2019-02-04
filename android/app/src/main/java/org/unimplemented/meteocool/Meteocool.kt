@@ -1,24 +1,19 @@
 package org.unimplemented.meteocool
 
-import android.Manifest
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.pm.PackageManager
 import android.os.Build
 import android.preference.PreferenceManager
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.util.Log
 
-import com.google.gson.Gson
 import org.jetbrains.anko.doAsync
-import java.io.*
-import java.net.HttpURLConnection
-import java.net.URL
+import org.unimplemented.meteocool.security.Validator
+import org.unimplemented.meteocool.utility.JSONPost
+import org.unimplemented.meteocool.utility.NetworkUtility
 
 
 class Meteocool : AppCompatActivity() {
@@ -31,7 +26,7 @@ class Meteocool : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkPermission()
+        Validator.checkAndroidPermissions(this, this)
         val myWebView = WebView(this)
         val webSettings = myWebView.settings
         webSettings.javaScriptEnabled = true
@@ -57,55 +52,8 @@ class Meteocool : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        doAsync {sendPostRequest()}
-    }
-
-    private fun checkPermission() {
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                PERMISSION_REQUEST_LOCATION
-            )
-/*
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            ) {
-                //TODO Show permission information
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.READ_CONTACTS),
-                    PERMISSION_REQUEST_LOCATION
-                )
-
-                // PERMISSION_REQUEST_LOCATION is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }*/
-        } else {
-            // Permission has already been granted
-        }
-    }
-
-    private fun makeJSON() : String{
-        val gsonBuilder = Gson().newBuilder().create()
-        val post = ServerPost(
-            1.0,
+        doAsync { NetworkUtility.sendPostRequest(
+            JSONPost(1.0,
             1.0,
             1.1,
             1.1,
@@ -116,47 +64,7 @@ class Meteocool : AppCompatActivity() {
             "ios",
             15,
             10)
-        val test = gsonBuilder.toJson(post)
-        Log.d("JSON", test)
-        return test
-    }
-
-    private fun sendPostRequest() {
-
-        val mURL = URL(REST_URL)
-
-        with(mURL.openConnection() as HttpURLConnection) {
-            // optional default is GET
-            requestMethod = "POST"
-            setRequestProperty("charset", "utf-8")
-            setRequestProperty("Content-lenght", makeJSON().toString().length.toString())
-            setRequestProperty("Content-Type", "application/json")
-
-            val wr = OutputStreamWriter(outputStream)
-
-            val buffer = ByteArrayOutputStream()
-            val oos = ObjectOutputStream(buffer)
-
-            wr.write(makeJSON())
-            wr.flush()
-
-            Log.d("URL", "$url")
-            Log.d("Response Code", "$responseCode")
-
-
-            BufferedReader(InputStreamReader(inputStream)).use {
-                val response = StringBuffer()
-
-                var inputLine = it.readLine()
-                while (inputLine != null) {
-                    response.append(inputLine)
-                    inputLine = it.readLine()
-                }
-                it.close()
-                Log.d("Response", "$response")
-            }
-        }
-
-
+        )} // currently for testing
     }
 }
+
