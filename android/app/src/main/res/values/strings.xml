@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Meteocool</string>
+    <string name="notifications_admin_channel_name">Meteocool</string>
+    <string name="notifications_admin_channel_description">Meteocool</string>
+    <string name="notifications_admin_channel_id">Meteocool</string>
+    <string name="default_notification_channel_id">Meteocool</string>
 </resources>
