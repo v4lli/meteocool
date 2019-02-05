@@ -43,7 +43,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
                 alert_box.text = alert
                 message_box.text = message
 
-                //ausklappen
+                //expand
                 widgetActiveDisplayModeDidChange(NCWidgetDisplayMode.expanded, withMaximumSize: CGSize.init(width: 359, height: -1))
             }
         } else{
@@ -51,7 +51,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             alert_box.text = "No rain expected!"
             alert_box.frame.origin = CGPoint(x:98,y:45)
 
-            //einklappen
+            //colapse
             widgetActiveDisplayModeDidChange(NCWidgetDisplayMode.compact, withMaximumSize: CGSize.init(width: 359, height: -1))
         }
     }
@@ -63,13 +63,13 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             self.preferredContentSize = CGSize(width: maxSize.width, height: 110)
             webView.isHidden = true
 
-            //Für den test
+            //For test
             //UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "alert")
             //UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "message")
         }
         else
         {
-            //für den test
+            //Fot test
             //UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue("Light rain (20 dbZ) expexted in 5 min!\n", forKey: "alert")
             //UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue("Peaks with rain (29 dbZ) in 30 minutes; lasting a total of at least 90 min.", forKey: "message")
 
