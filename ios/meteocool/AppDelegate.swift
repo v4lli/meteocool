@@ -2,6 +2,7 @@ import UIKit
 import UserNotifications
 import CoreMotion
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
@@ -80,6 +81,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if (clear_all) {
                 self.notificationManager.clearNotifications()
                 acknowledgeNotification(retry: true, from: "push")
+                
+                UserDefaults.init(suiteName: "group.meteocool")?.removeObject(forKey: "alert")
+                UserDefaults.init(suiteName: "group.meteocool")?.removeObject(forKey: "message")
             }
         }
         completionHandler(.newData)

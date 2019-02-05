@@ -3,16 +3,26 @@ import UserNotifications
 import UserNotificationsUI
 
 class NotificationViewController: UIViewController, UNNotificationContentExtension {
-
+    
     @IBOutlet weak var imageView: UIImageView!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
     func didReceive(_ notification: UNNotification) {
         let content = notification.request.content
-
+        
+        if let aps = content.userInfo["aps"] as? NSDictionary {
+            if let alert = aps["alert"] as? NSDictionary {
+                if let message = alert["message"] as? NSString {
+                    UserDefaults.init(suiteName: "group.meteocool")?.setValue(location.coordinate.latitude, forKey: "message")
+                }
+            } else if let alert = aps["alert"] as? NSString {
+                UserDefaults.init(suiteName: "group.meteocool")?.setValue(location.coordinate.latitude, forKey: "alert")
+            }
+        }
+        
         if let urlString = content.userInfo["preview"] as? String,
             let url = URL(string: urlString) {
             URLSession.downloadImage(atURL: url) { [weak self] (data, error) in
