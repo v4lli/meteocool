@@ -47,6 +47,8 @@ services:
     environment:
       - TZ="Europe/Berlin"
       - DB_CONN="mongodb://mongo:27017/"
+    env_file:
+      - /etc/meteocool_env
     volumes:
       - dwd:/data
       - pushpreview:/pushpreview
