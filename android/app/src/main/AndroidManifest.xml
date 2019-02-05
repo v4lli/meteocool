@@ -37,6 +37,9 @@
             </intent-filter>
         </service>
 
+        <service android:name="org.unimplemented.meteocool.location.MyLocationService">
+        </service>
+
     </application>
 
 </manifest>

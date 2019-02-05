@@ -13,7 +13,7 @@ companion object {
     private fun buildJSON(json : JSONPost) : String{
         val gsonBuilder = Gson().newBuilder().create()
         val jsonAsString = gsonBuilder.toJson(json)
-        Log.d("JSON", jsonAsString)
+        Log.d("Location", "JSON $jsonAsString")
         return jsonAsString
     }
 
@@ -30,14 +30,11 @@ companion object {
 
             val wr = OutputStreamWriter(outputStream)
 
-            val buffer = ByteArrayOutputStream()
-            val oos = ObjectOutputStream(buffer)
-
             wr.write(buildJSON(json))
             wr.flush()
 
-            Log.d("URL", "$url")
-            Log.d("Response Code", "$responseCode")
+            Log.d("Location", "URL $url")
+            Log.d("Location", "HTTP-Response $responseCode")
 
 
             BufferedReader(InputStreamReader(inputStream)).use {
