@@ -13,6 +13,7 @@ import android.content.Intent
 import android.os.Build
 import org.unimplemented.meteocool.Meteocool
 import org.unimplemented.meteocool.R
+import java.util.*
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -20,44 +21,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
 
         Log.d(TAG, "From: " + remoteMessage!!.from!!)
-        Log.d(TAG, "Notification Message Body: " + remoteMessage.notification!!.body!!)
+        Log.d(TAG, "Notification Message Body: " + remoteMessage.data!!["clear_all"]!!)
 
-        sendNotification(remoteMessage.notification!!.body!!)
-
-    }
-
-    override fun onDeletedMessages() {
-        super.onDeletedMessages()
-        Log.d(TAG, "on delete")
-    }
-
-    private fun sendNotification(messageBody: String) {
-        val intent = Intent(this, Meteocool::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-            PendingIntent.FLAG_ONE_SHOT)
-
-        val channelId = getString(R.string.default_notification_channel_id)
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(getString(R.string.default_notification_channel_id))
-            .setContentText(messageBody)
-            .setAutoCancel(true)
-            .setSound(defaultSoundUri)
-            .setContentIntent(pendingIntent)
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        // Since android Oreo notification channel is needed.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId,
-                "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT)
-            notificationManager.createNotificationChannel(channel)
+        if(remoteMessage.data!!["clear_all"]!! == "true") {
+            cancelNotification()
         }
+    }
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+    private fun cancelNotification() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
     }
 
     companion object {
