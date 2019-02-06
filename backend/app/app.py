@@ -13,6 +13,7 @@ from pymongo import MongoClient
 from pyproj import Proj, transform
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO
+import geopy.distance
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
@@ -117,6 +118,61 @@ def save_location_to_backend(data):
             logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="invalid intensity value")
 
+        ## TRAVEL MODE
+        # get current speed as reported by the device
+        try:
+            speed = data["speed"]
+        except KeyError:
+            speed = 0
+        if not isinstance(speed, float) and not isinstance(speed, int):
+            logging.warn("Invalid speed value: %s" % data)
+            return jsonify(success=False, message="invalid speed value")
+        # get last speed and last updated time
+        obj = db.collection.find_one({"token": str(token)})
+        last_speed = -1
+        last_time = datetime.datetime.utcnow()
+        last_time = None
+        last_latlon = None
+        if not obj or not "_id" in obj:
+            logging.warn("Token %s not found in db", str(token))
+        else:
+            try:
+                last_speed = obj["travelmode_speed"]
+                last_time = obj["last_updated"]
+                last_latlon = (obj["lat"], obj["lon"])
+            except KeyError:
+                logging.warn("No travelmode for client")
+                last_speed = -1
+                pass
+
+        def calculate_travelspeed(last_time, last_latlon, current_speed, current_latlon):
+            # If the client reports a value and we have none, takt the one from
+            # the client.
+            ret_speed = 0
+            if not current_latlon or not last_latlon:
+                if current_speed >= 0:
+                    ret_speed = current_speed
+                logging.warn("unable to interpolate speed, using client reported=%d" % current_speed)
+            else:
+                if last_latlon:
+                    # based on the last update and the last update's timestamp,
+                    # we can calculate an average speed between the old location
+                    # and the new one.
+                    km_dist = geopy.distance.vincenty((last_latlon[0], last_latlon[1]), (current_latlon[0], current_latlon[1])).km
+                    h_diff = (datetime.datetime.utcnow()-last_time).total_seconds()/3600
+                    ret_speed = km_dist/h_diff
+                    logging.warn("DISTNACE between %f/%f and %f/%f in %d seconds: %f" % (last_latlon[0],
+                        last_latlon[1], current_latlon[0], current_latlon[1],
+                        (datetime.datetime.utcnow()-last_time).total_seconds(), ret_speed))
+                else:
+                    # well we're fucked now
+                    pass
+
+            # XXX accuracy is totally ignored still
+            return ret_speed, -1
+
+        travelmode_speed, travelmode_accuracy = calculate_travelspeed(last_time, last_latlon, speed, (lat, lon))
+
         # XXX this will override ios_onscreen! FIXME ... or not?
         insert_data = {
             "lat": lat,
@@ -127,6 +183,8 @@ def save_location_to_backend(data):
             "last_updated": datetime.datetime.utcnow(),
             "last_push": datetime.datetime.utcfromtimestamp(0),
             "ios_onscreen": False,
+            "travelmode_speed": travelmode_speed,
+            "travelmode_accuracy": travelmode_accuracy,
             "source": source,
             "token": token
         }

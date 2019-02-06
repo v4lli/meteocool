@@ -184,6 +184,7 @@ if __name__ == "__main__":
             intensity = document["intensity"]
             ios_onscreen = document["ios_onscreen"]
             source = document["source"]
+            last_updated = document["last_updated"]
         except KeyError as e:
             print("Invalid key line: %s" % e)
             continue
@@ -197,6 +198,24 @@ if __name__ == "__main__":
         if ahead > max_ahead or ahead%5 != 0:
             logging.error("%s: invalid ahead value" % doc_id)
             continue
+
+        # TRAVEL MODE DETECTION
+        try:
+            travelmodeSpeed = document["travelmode_speed"]
+            travelmodeAccuracy = document["travelmode_accuracy"]
+        except KeyError as e:
+            logging.warn("travel mode not supported for this client")
+        else:
+            # if the interpolated speed is still above ~20 km/h, don't push
+            # XXX accuracy beachten
+            m_diff = (datetime.datetime.utcnow()-last_updated).total_seconds() / 60
+            # cool down by 0.35 km/h per minute
+            interpolatedSpeed = max(travelmodeSpeed - m_diff*0.35, 0)
+            if interpolatedSpeed > 10:
+                logging.warn("%s: not pushing for client because of too high interpolated speed %f (orig=%f)" % (token, interpolatedSpeed, travelmodeSpeed))
+                continue
+            else:
+                logging.warn("interpolatedSpeed=%f < 20km/h -> OK" % interpolatedSpeed)
 
         # XXX check lat/lon against the bounds of the dwd data here
         # to avoid useless calculations here
