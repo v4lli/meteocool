@@ -5,6 +5,7 @@ import CoreLocation
 class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CLLocationManagerDelegate {
     @IBOutlet weak var webView: WKWebView!
     let locationManager: CLLocationManager = CLLocationManager()
+    var lastLocation: CLLocation!
 
     func toggleDarkMode() {
         // #343a40 = darkmode titelbar color
@@ -16,6 +17,18 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
         // #f8f9fa = non-darkmode titelbar color
         let lightmode = UIColor(red: 0xf8/255.0, green: 0xf9/255.0, blue: 0xfa/255.0, alpha: 1.0)
         UIApplication.shared.statusBarView?.backgroundColor = lightmode
+    }
+
+    func injectLocationUpdate() {
+        if let location = self.lastLocation {
+            NSLog("injecting location update")
+            webView.evaluateJavaScript("window.injectLocation(\(location.coordinate.latitude), \(location.coordinate.longitude), \(location.horizontalAccuracy));")
+
+            if location.horizontalAccuracy <= 20 {
+                locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+            }
+        }
+
     }
 
     /* called from javascript */
@@ -32,23 +45,32 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
         if action == "startMonitoringLocation" {
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             locationManager.startUpdatingLocation()
+            injectLocationUpdate()
         }
         if action == "stopMonitoringLocation" {
             locationManager.stopUpdatingLocation()
         }
     }
 
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        if let clErr = error as? CLError {
+            switch clErr {
+            case CLError.locationUnknown:
+                print("location unknown")
+            case CLError.denied:
+                print("denied")
+            default:
+                print("other Core Location error")
+            }
+        } else {
+            print("other error:", error.localizedDescription)
+        }
+    }
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            NSLog("injecting location update")
-            webView.evaluateJavaScript("window.injectLocation(\(location.coordinate.latitude), \(location.coordinate.longitude), \(location.horizontalAccuracy));")
-
-            // good enough - save energy
-            if location.horizontalAccuracy <= 100 {
-                locationManager.stopUpdatingLocation()
-                locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
-                locationManager.startUpdatingLocation()
-            }
+            self.lastLocation = location;
+            self.injectLocationUpdate()
         }
     }
 
@@ -85,7 +107,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
 
         toggleLightMode()
 
-        if let url = URL(string: "https://meteocool.unimplemented.org/?mobile=ios") {
+        if let url = URL(string: "https://meteocool.unimplemented.org/?mobile=ios2") {
             let request = URLRequest(url: url)
             webView.load(request)
         }
