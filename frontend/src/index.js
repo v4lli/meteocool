@@ -139,13 +139,13 @@ var dimensions = () => {
 var positionFeature = new Feature();
 positionFeature.setStyle(new Style({
   image: new CircleStyle({
-    radius: 9,
+    radius: 8,
     fill: new Fill({
       color: "#3399CC"
     }),
     stroke: new Stroke({
       color: "#fff",
-      width: 3
+      width: 2.5
     })
   })
 }));
@@ -281,7 +281,7 @@ var geolocation = new Geolocation({
   projection: view.getProjection()
 });
 
-if (!window.location.hash) {
+if (!window.location.hash && window.location.search.indexOf('mobile=ios2') < 0) {
   geolocation.setTracking(true);
 }
 
@@ -526,6 +526,15 @@ socket.on("map_update", function (data) {
   if (wasActive) { window.smartDownloadAndPlay(); }
 });
 
+var isV2 = (window.location.search.indexOf('mobile=ios2') != -1);
+
+window.isMonitoring = false;
+
+if (isV2) {
+  window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
+  window.isMonitoring = true;
+}
+
 // locate me button
 if (!widgetMode) {
   var button = document.createElement("button");
@@ -536,7 +545,20 @@ if (!widgetMode) {
     geolocation.setTracking(true);
     window.map.getView().animate({ center: coordinates, zoom: 10 });
   };
-  button.addEventListener("click", locateMe, false);
+
+  if (isV2) {
+    button.addEventListener("click", function() {
+      if(window.isMonitoring) {
+        window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
+        window.map.getView().animate({ center: window.userLocation, zoom: 10 });
+      } else {
+        window.webkit.messageHandlers["scriptHandler"].postMessage("stopMonitoringLocation");
+      }
+      window.isMonitoring = !window.isMonitoring;
+    }, false);
+  } else {
+    button.addEventListener("click", locateMe, false);
+  }
   var element = document.createElement("div");
   element.className = "locate-me ol-unselectable ol-control";
   element.appendChild(button);
@@ -879,8 +901,15 @@ window.smartDownloadAndPlay = function () {
 
 // enableActivityIndicator();
 
+window.userLocation = null;
 window.injectLocation = function (lat, lon, accuracy) {
-  window.map.getView().animate({ center: fromLonLat([lon, lat]), zoom: 9 });
+  var center = fromLonLat([lon, lat]);
+  window.userLocation = center;
+  if (haveZoomed) {
+    haveZoomed = true;
+    window.map.getView().animate({ center: center, zoom: 9 });
+  }
+  positionFeature.setGeometry(center ? new Point(center) : null);
 };
 
 /* vim: set ts=2 sw=2 expandtab: */
