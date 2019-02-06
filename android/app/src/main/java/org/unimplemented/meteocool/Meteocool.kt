@@ -8,6 +8,7 @@ import android.webkit.WebView
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.preference.PreferenceManager
 import android.util.Log
@@ -18,15 +19,13 @@ import android.location.LocationManager
 import android.support.v4.content.ContextCompat
 import android.location.Criteria
 import com.google.firebase.iid.FirebaseInstanceId
-import org.unimplemented.meteocool.location.MyLocationListener
+import org.unimplemented.meteocool.service.UploadLocationService
 
 
 class Meteocool : AppCompatActivity() {
 
     companion object {
-       const val WEB_URL = "https://meteocool.unimplemented.org/?mobile=android"
-       const val REST_URL = "https://meteocool.unimplemented.org/post_location"
-       const val PERMISSION_REQUEST_LOCATION = 0
+       private const val WEB_URL = "https://meteocool.unimplemented.org/?mobile=android"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,30 +37,14 @@ class Meteocool : AppCompatActivity() {
         webSettings.domStorageEnabled = true
         webSettings.databaseEnabled = true
         setContentView(myWebView)
-        myWebView.loadUrl("https://meteocool.unimplemented.org/?mobile=android")
 
-        //this.getSystemService(Context.LOCATION_SERVICE)
-       // startService(Intent(this, MyLocationService::class.java))
-
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.d("Location", "Entered location block")
-            val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            val locationListener = MyLocationListener()
-            val criteria = Criteria()
-            criteria.accuracy = Criteria.ACCURACY_COARSE
-            criteria.powerRequirement = Criteria.POWER_LOW
-            val bestProvider = locationManager.getBestProvider(criteria, true)
-            locationManager
-                .requestLocationUpdates(bestProvider, 5000, 10f, locationListener)
-        }else{
-            Log.d("Location", "Entered location block not")
+        val mService = Intent(this, UploadLocationService::class.java).also { intent ->
+            startService(intent)
         }
 
         val preference = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         Log.d("Preferences", preference.getString("FIREBASE_TOKEN", "error"))
-        Log.d("Preferences", FirebaseInstanceId.getInstance().token)
+        //Log.d("Preferences", FirebaseInstanceId.getInstance().token) --> Causes error on first installation
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -81,19 +64,7 @@ class Meteocool : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        /*doAsync { NetworkUtility.sendPostRequest(
-            JSONPost(1.0,
-            1.0,
-            1.1,
-            1.1f,
-            1.0f,
-            123.0,
-            1234.0,
-            "anon",
-            "android",
-            15,
-            10)
-        )} // currently for testing*/
+
     }
 }
 
