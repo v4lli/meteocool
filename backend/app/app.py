@@ -104,10 +104,10 @@ def save_location_to_backend(data):
         if not isinstance(accuracy, float) and not isinstance(accuracy, int):
             logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="invalid accuracy")
-        if source != "browser" and source != "ios":
+        if source != "browser" and source != "ios" and source != "android":
             logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="bad source")
-        if not isinstance(token, str) or len(token) > 128 or len(token) < 32:
+        if not isinstance(token, str) or len(token) > 192 or len(token) < 32:
             if token != "anon":
                 logging.warn("Bad request, invalid key(s): %s" % data)
                 return jsonify(success=False, message="bad token")

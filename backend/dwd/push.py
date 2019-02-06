@@ -257,14 +257,13 @@ if __name__ == "__main__":
             if source == "browser":
                 requests.post(browser_notify_url, json={"token": token, "ahead": ahead})
             elif source == "android":
-                # XXX just a poc; deduplicate with ios code below
-                if fcm:
-                    if not ios_onscreen:
-                        result = fcm.notify_single_device(registration_id=token,
-                                message_title=message_dict["title"],
-                                message_body=message_dict["body"])
-                        collection.update({"_id": doc_id}, {"$set": {"ios_onscreen": True}})
-                        logging.warn("%s: Delivered android push notification with result=%s" % (token, result))
+                if fcm and not ios_onscreen:
+                    result = fcm.notify_single_device(registration_id=token,
+                            message_title=message_dict["title"],
+                            message_body=message_dict["body"],
+                            message_icon="rain")
+                    collection.update({"_id": doc_id}, {"$set": {"ios_onscreen": True}})
+                    logging.warn("%s: Delivered android push notification with result=%s" % (token, result))
                 else:
                     logging.error("FCM support not enabled")
             elif source == "ios":
@@ -305,17 +304,24 @@ if __name__ == "__main__":
             if ios_onscreen:
                 # rain has stopped and the notification is (possibly) still
                 # displayed on the device.
-                try:
-                    apns.send_message(token, None, badge=0, content_available=True, extra={"clear_all": True})
-                except BadDeviceToken:
-                    logging.warn("%s: silent iOS notification failed with BadDeviceToken, removing push client", token)
-                    collection.remove(doc_id)
-                except Unregistered:
-                    logging.warn("%s: silent iOS notification failed with Unregistered, removing push client", token)
-                    collection.remove(doc_id)
+                if source == "ios":
+                    try:
+                        apns.send_message(token, None, badge=0, content_available=True, extra={"clear_all": True})
+                    except BadDeviceToken:
+                        logging.warn("%s: silent iOS notification failed with BadDeviceToken, removing push client", token)
+                        collection.remove(doc_id)
+                    except Unregistered:
+                        logging.warn("%s: silent iOS notification failed with Unregistered, removing push client", token)
+                        collection.remove(doc_id)
+                    else:
+                        logging.warn("%s: sent silent notification" % token)
+                        collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
+                elif source == "android":
+                    result = fcm.single_device_data_message(registration_id=token, data_message={"clear_all": True})
+                    logging.warn("%s: Delivered android data push with result=%s" % (token, result))
+                    collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
                 else:
-                    logging.warn("%s: sent silent notification" % token)
-                    collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": True} })
+                    logging.error("%s: Unsupported source" % token)
         cnt = cnt + 1
 
     logging.warn("===> Processed %d total clients" % cnt)
