@@ -17,6 +17,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.support.v4.content.ContextCompat
 import android.location.Criteria
+import com.google.firebase.iid.FirebaseInstanceId
 import org.unimplemented.meteocool.location.MyLocationListener
 
 
@@ -60,6 +61,7 @@ class Meteocool : AppCompatActivity() {
 
         val preference = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         Log.d("Preferences", preference.getString("FIREBASE_TOKEN", "error"))
+        Log.d("Preferences", FirebaseInstanceId.getInstance().token)
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

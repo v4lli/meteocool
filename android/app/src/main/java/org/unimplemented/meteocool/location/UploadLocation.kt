@@ -2,6 +2,7 @@ package org.unimplemented.meteocool.location
 
 import android.os.AsyncTask
 import android.util.Log
+import com.google.firebase.iid.FirebaseInstanceId
 import org.unimplemented.meteocool.utility.JSONPost
 import org.unimplemented.meteocool.utility.NetworkUtility
 
@@ -13,6 +14,9 @@ class UploadLocation: AsyncTask<android.location.Location, Unit, Unit>(){
         } else {
             -1.0f
         }
+
+        var token =  FirebaseInstanceId.getInstance().token
+        if(token==null) {token = "no token"}
         NetworkUtility.sendPostRequest(
             JSONPost(
                 params[0]!!.latitude,
@@ -22,7 +26,7 @@ class UploadLocation: AsyncTask<android.location.Location, Unit, Unit>(){
                 verticalAccuracy,
                 123.0,
                 System.currentTimeMillis().toDouble(),
-                "anon",
+                token,
                 "android",
                 15,
                 10
