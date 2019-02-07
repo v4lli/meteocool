@@ -18,16 +18,15 @@ import org.unimplemented.meteocool.location.UploadLocation
 class UploadLocationService : Service(){
 
     companion object {
-        private const val MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS : Long = 5000
-        private const val MIN_DISTANCE_LOCATION_UPDATE_METER = 10f
+        private const val MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS : Long = 600000
+        private const val MIN_DISTANCE_LOCATION_UPDATE_METER : Float = 500f
         private const val TWO_MINUTES: Long = 1000 * 60 * 2
-
     }
 
     private var locationManager : LocationManager? = null
     private var locationListener : MyLocationListener? = null
 
-    private val BROADCAST_ACTION = "Hello World"
+    private val BROADCAST_ACTION = "UploadLocationService start"
 
     private var intent : Intent? = null
 
@@ -47,7 +46,7 @@ class UploadLocationService : Service(){
         Log.e("UploadLocationService", "onStartCommand")
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            return Service.START_NOT_STICKY
+            return Service.START_STICKY
         }
         locationManager?.requestLocationUpdates(
             LocationManager.NETWORK_PROVIDER,
@@ -58,7 +57,7 @@ class UploadLocationService : Service(){
             MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS,
             MIN_DISTANCE_LOCATION_UPDATE_METER, locationListener)
         Log.d("UploadLocationService", "Update requested in onStartCommand")
-        return Service.START_NOT_STICKY
+        return Service.START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -71,6 +70,8 @@ class UploadLocationService : Service(){
      * @param currentBestLocation The current Location fix, to which you want to compare the new one
      */
     fun isBetterLocation(location: Location, currentBestLocation: Location?): Boolean {
+        Log.d("UploadLocationService", "Current best location: ${currentBestLocation?.longitude}/${currentBestLocation?.latitude}")
+        Log.d("UploadLocationService", "New location : ${location.longitude}/${location.latitude}")
         if (currentBestLocation == null) {
             // A new location is always better than no location
             return true
@@ -84,9 +85,15 @@ class UploadLocationService : Service(){
         when {
             // If it's been more than two minutes since the current location, use the new location
             // because the user has likely moved
-            isSignificantlyNewer -> return true
+            isSignificantlyNewer -> {
+                Log.d("UploadLocationService", "Time is newer")
+                return true
+            }
             // If the new location is more than two minutes older, it must be worse
-            isSignificantlyOlder -> return false
+            isSignificantlyOlder -> {
+                Log.d("UploadLocationService", "Time is older")
+                return false
+            }
         }
 
         // Check whether the new location fix is more or less accurate
@@ -109,24 +116,17 @@ class UploadLocationService : Service(){
     }
 
     inner class MyLocationListener() : LocationListener {
-
+        private var lastKnownLocation : Location? = null
         override fun onLocationChanged(location: Location) {
-            val lastKnownLocation : Location?
-            if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED
-                ) {
-                    lastKnownLocation = locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                }else{
-                    lastKnownLocation = null
-                }
-
             Log.d("LocationListener", "$location changed")
             if (isBetterLocation(location, lastKnownLocation) ) {
-                Log.d("LocationListener", "$location is better")
+                Log.d("LocationListener", "${location.longitude}/${location.latitude} is better")
                 UploadLocation().execute(location)
                 sendBroadcast(intent)
+                lastKnownLocation = location
+                Toast.makeText(applicationContext,"Location pushed",Toast.LENGTH_LONG).show()
             }else{
-                Log.d("LocationListener", "$location is not better")
+                Log.d("LocationListener", "${location.longitude}/${location.latitude} is not better")
             }
         }
 
@@ -143,9 +143,5 @@ class UploadLocationService : Service(){
             Log.d("LocationListener", "$provider onDisabled")
             Toast.makeText(applicationContext, "Gps Disabled", Toast.LENGTH_SHORT ).show()
         }
-
-
     }
-
-
 }
