@@ -5,6 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <!-- Needed only if your app targets Android 5.0 (API level 21) or higher. -->
+    <uses-feature android:name="android.hardware.location.gps" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/android_chrome_512x512"
@@ -37,8 +41,10 @@
             </intent-filter>
         </service>
 
-        <service android:name="org.unimplemented.meteocool.location.MyLocationService">
-        </service>
+        <service
+            android:name=".service.UploadLocationService"
+            android:exported="false"/>
+
 
     </application>
 

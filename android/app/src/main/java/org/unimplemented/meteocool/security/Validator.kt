@@ -10,6 +10,9 @@ import org.unimplemented.meteocool.Meteocool
 
 class Validator{
 companion object {
+
+    private const val PERMISSION_REQUEST_LOCATION = 0
+
      fun checkAndroidPermissions(context: Context, activity: Activity) {
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(
@@ -21,7 +24,7 @@ companion object {
             ActivityCompat.requestPermissions(
                 activity,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                Meteocool.PERMISSION_REQUEST_LOCATION
+                PERMISSION_REQUEST_LOCATION
             )
 /*
             // Permission is not granted

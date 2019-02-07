@@ -2,7 +2,6 @@ package org.unimplemented.meteocool.utility
 
 import android.util.Log
 import com.google.gson.Gson
-import org.unimplemented.meteocool.Meteocool
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -10,10 +9,12 @@ import java.net.URL
 class NetworkUtility{
 companion object {
 
-    private fun buildJSON(json : JSONPost) : String{
+    private const val REST_URL = "https://meteocool.unimplemented.org/post_location"
+
+    private fun buildJSONString(json : JSONPost) : String{
         val gsonBuilder = Gson().newBuilder().create()
         val jsonAsString = gsonBuilder.toJson(json)
-        Log.d("Location", "JSON $jsonAsString")
+        Log.d("NetworkUtility", "JSON $jsonAsString")
         return jsonAsString
     }
 
@@ -26,22 +27,24 @@ companion object {
 
     fun sendPostRequest(json : JSONPost) {
 
-        val mURL = URL(Meteocool.REST_URL)
+        val jsonAsString = buildJSONString(json)
+
+        val mURL = URL(REST_URL)
 
         with(mURL.openConnection() as HttpURLConnection) {
             // optional default is GET
             requestMethod = "POST"
             setRequestProperty("charset", "utf-8")
-            setRequestProperty("Content-lenght", buildJSON(json).length.toString())
+            setRequestProperty("Content-lenght", jsonAsString.length.toString())
             setRequestProperty("Content-Type", "application/json")
 
             val wr = OutputStreamWriter(outputStream)
 
-            wr.write(buildJSON(json))
+            wr.write(jsonAsString)
             wr.flush()
 
-            Log.d("Location", "URL $url")
-            Log.d("Location", "HTTP-Response $responseCode")
+            Log.d("NetworkUtility", "URL $url")
+            Log.d("NetworkUtility", "HTTP-Response $responseCode")
 
 
             BufferedReader(InputStreamReader(inputStream)).use {
@@ -53,7 +56,7 @@ companion object {
                     inputLine = it.readLine()
                 }
                 it.close()
-                Log.d("Response", "$response")
+                Log.d("NetworkUtility", "$response")
             }
         }
     }

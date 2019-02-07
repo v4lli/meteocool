@@ -1,27 +1,21 @@
 package org.unimplemented.meteocool
 
-import android.Manifest
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
+import android.content.Intent
 import android.preference.PreferenceManager
 import android.util.Log
 
 import org.unimplemented.meteocool.security.Validator
-import android.content.pm.PackageManager
-import android.location.LocationManager
-import android.support.v4.content.ContextCompat
-import android.location.Criteria
 import com.google.firebase.iid.FirebaseInstanceId
 import org.jetbrains.anko.doAsync
-import org.unimplemented.meteocool.location.MyLocationListener
 import org.unimplemented.meteocool.utility.JSONClearPost
 import org.unimplemented.meteocool.utility.NetworkUtility
+import org.unimplemented.meteocool.service.UploadLocationService
 
 
 class Meteocool : AppCompatActivity() {
@@ -42,25 +36,9 @@ class Meteocool : AppCompatActivity() {
         webSettings.domStorageEnabled = true
         webSettings.databaseEnabled = true
         setContentView(myWebView)
-        myWebView.loadUrl("https://meteocool.unimplemented.org/?mobile=android")
 
-        //this.getSystemService(Context.LOCATION_SERVICE)
-       // startService(Intent(this, MyLocationService::class.java))
-
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.d("Location", "Entered location block")
-            val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            val locationListener = MyLocationListener()
-            val criteria = Criteria()
-            criteria.accuracy = Criteria.ACCURACY_COARSE
-            criteria.powerRequirement = Criteria.POWER_LOW
-            val bestProvider = locationManager.getBestProvider(criteria, true)
-            locationManager
-                .requestLocationUpdates(bestProvider, 5000, 10f, locationListener)
-        }else{
-            Log.d("Location", "Entered location block not")
+        val mService = Intent(this, UploadLocationService::class.java).also { intent ->
+            startService(intent)
         }
 
         val preference = PreferenceManager.getDefaultSharedPreferences(applicationContext)
