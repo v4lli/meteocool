@@ -21,10 +21,7 @@ import org.unimplemented.meteocool.service.UploadLocationService
 class Meteocool : AppCompatActivity() {
 
     companion object {
-       const val WEB_URL = "https://meteocool.unimplemented.org/?mobile=android"
-       const val REST_URL = "https://meteocool.unimplemented.org/post_location"
-        const val CLEAR_URL = "https://meteocool.unimplemented.org/clear_notification"
-       const val PERMISSION_REQUEST_LOCATION = 0
+       private const val WEB_URL = "https://meteocool.unimplemented.org/?mobile=android"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

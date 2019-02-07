@@ -10,6 +10,7 @@ class NetworkUtility{
 companion object {
 
     private const val REST_URL = "https://meteocool.unimplemented.org/post_location"
+    private const val CLEAR_URL = "https://meteocool.unimplemented.org/clear_notification"
 
     private fun buildJSONString(json : JSONPost) : String{
         val gsonBuilder = Gson().newBuilder().create()
@@ -63,7 +64,7 @@ companion object {
 
     fun sendClearPostRequest(json : JSONClearPost) {
 
-        val mURL = URL(Meteocool.CLEAR_URL)
+        val mURL = URL(CLEAR_URL)
 
         with(mURL.openConnection() as HttpURLConnection) {
             // optional default is GET
