@@ -2,7 +2,6 @@ package org.unimplemented.meteocool
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.webkit.WebView
 
 import android.app.NotificationManager
 import android.content.Context
@@ -20,19 +19,12 @@ import org.unimplemented.meteocool.service.UploadLocationService
 
 class Meteocool : AppCompatActivity() {
 
-    companion object {
-       private const val WEB_URL = "https://meteocool.unimplemented.org/?mobile=android"
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_meteocool)
         Validator.checkAndroidPermissions(this.applicationContext, this)
-        val myWebView = WebView(this)
-        val webSettings = myWebView.settings
-        webSettings.javaScriptEnabled = true
-        webSettings.domStorageEnabled = true
-        webSettings.databaseEnabled = true
-        setContentView(myWebView)
 
         val mService = Intent(this, UploadLocationService::class.java).also { intent ->
             startService(intent)
@@ -67,9 +59,11 @@ class Meteocool : AppCompatActivity() {
                 )
             }
         }
+        supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
 
-        myWebView.loadUrl(WEB_URL)
     }
+
+
 
     override fun onResume() {
         super.onResume()
