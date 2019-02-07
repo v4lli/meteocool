@@ -98,6 +98,23 @@ class Meteocool : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if(notificationManager.activeNotifications.isNotEmpty()) {
+            notificationManager.cancelAll()
+            var token = FirebaseInstanceId.getInstance().token
+            if (token == null) {
+                token = "no token"
+            }
+            doAsync {
+                NetworkUtility.sendClearPostRequest(
+                    JSONClearPost(
+                        token,
+                        "backend"
+                    )
+                )
+            }
+        }
         /*doAsync { NetworkUtility.sendPostRequest(
             JSONPost(1.0,
             1.0,
