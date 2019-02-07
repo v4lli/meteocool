@@ -18,7 +18,10 @@ import android.location.LocationManager
 import android.support.v4.content.ContextCompat
 import android.location.Criteria
 import com.google.firebase.iid.FirebaseInstanceId
+import org.jetbrains.anko.doAsync
 import org.unimplemented.meteocool.location.MyLocationListener
+import org.unimplemented.meteocool.utility.JSONClearPost
+import org.unimplemented.meteocool.utility.NetworkUtility
 
 
 class Meteocool : AppCompatActivity() {
@@ -26,6 +29,7 @@ class Meteocool : AppCompatActivity() {
     companion object {
        const val WEB_URL = "https://meteocool.unimplemented.org/?mobile=android"
        const val REST_URL = "https://meteocool.unimplemented.org/post_location"
+        const val CLEAR_URL = "https://meteocool.unimplemented.org/clear_notification"
        const val PERMISSION_REQUEST_LOCATION = 0
     }
 
@@ -61,20 +65,33 @@ class Meteocool : AppCompatActivity() {
 
         val preference = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         Log.d("Preferences", preference.getString("FIREBASE_TOKEN", "error"))
-        Log.d("Preferences", FirebaseInstanceId.getInstance().token)
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create channel to show notifications.
-            val channelId = getString(R.string.notifications_admin_channel_id)
-            val channelName = getString(R.string.notifications_admin_channel_name)
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(NotificationChannel(channelId,
-                channelName, NotificationManager.IMPORTANCE_LOW))
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            // Create channel to show notifications.
+//            val channelId = getString(R.string.notifications_admin_channel_id)
+//            val channelName = getString(R.string.notifications_admin_channel_name)
+//            val notificationManager = getSystemService(NotificationManager::class.java)
+//            notificationManager?.createNotificationChannel(NotificationChannel(channelId,
+//                channelName, NotificationManager.IMPORTANCE_LOW))
+//        }
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancelAll()
+        if(notificationManager.activeNotifications.isNotEmpty()) {
+            notificationManager.cancelAll()
+            var token = FirebaseInstanceId.getInstance().token
+            if (token == null) {
+                token = "no token"
+            }
+            doAsync {
+                NetworkUtility.sendClearPostRequest(
+                    JSONClearPost(
+                        token,
+                        "backend"
+                    )
+                )
+            }
+        }
 
         myWebView.loadUrl(WEB_URL)
     }
