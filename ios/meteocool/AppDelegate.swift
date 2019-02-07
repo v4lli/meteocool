@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.notificationManager.clearNotifications()
         // XXX call this only when there are >0 notifications on launch!
         acknowledgeNotification(retry: true, from: "foreground")
-        self.locationUpdater.locationManager.requestLocation()
+        self.locationUpdater.locationManager.startUpdatingLocation()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
