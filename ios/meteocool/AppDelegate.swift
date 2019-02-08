@@ -82,8 +82,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.notificationManager.clearNotifications()
                 acknowledgeNotification(retry: true, from: "push")
 
-                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "alert")
-                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "message")
+                UserDefaults.init(suiteName: "group.meteocool")?.removeObject(forKey: "alert")
+                UserDefaults.init(suiteName: "group.meteocool")?.removeObject(forKey: "message")
             }
         }
         completionHandler(.newData)

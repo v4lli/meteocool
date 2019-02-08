@@ -57,7 +57,6 @@ class CustomGestureRecognizer : UIGestureRecognizer {
             return
         }
         let newPoint = (newTouch?.location(in: self.view))!
-        //let previousPoint = (newTouch?.previousLocation(in: self.view))!
         
         let angle = atan((corner_right.y-newPoint.y)/(corner_right.x-newPoint.x))
         
@@ -129,7 +128,6 @@ class CustomGestureRecognizer : UIGestureRecognizer {
         if self.state == .possible &&
             newPoint.y != initialTouchPoint.y {
             self.state = .recognized
-            print("finisch")
         } else {
             self.state = .failed
         }

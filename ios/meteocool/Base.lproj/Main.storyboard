@@ -34,6 +34,13 @@
                                 <rect key="frame" x="264" y="877" width="19" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YLM-To-OTW">
+                                <rect key="frame" x="350" y="835" width="40" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <action selector="slider_showen_buttonWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fbi-Qv-ZGG"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
@@ -46,6 +53,7 @@
                         <viewLayoutGuide key="safeArea" id="eLq-EE-HwW"/>
                     </view>
                     <connections>
+                        <outlet property="button" destination="YLM-To-OTW" id="enJ-iB-iSY"/>
                         <outlet property="slider_button" destination="2rh-rK-OQM" id="2p1-dd-7wc"/>
                         <outlet property="slider_ring" destination="rrm-xV-iBd" id="mRg-B7-dgz"/>
                         <outlet property="webView" destination="aOD-KT-ksP" id="bnj-n4-EyD"/>
