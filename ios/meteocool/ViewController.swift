@@ -11,6 +11,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     @IBOutlet weak var button: UIButton!
     
     var slider_shown: Bool = false
+    var color: [Int] = []
     
     @IBAction func slider_showen_button(sender: AnyObject){
                 if(slider_shown){
@@ -103,6 +104,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
         let gesture = CustomGestureRecognizer(target: self, action: nil)
         gesture.setView(viewing: self)
         view.addGestureRecognizer(gesture)
+
     }
 
     override func viewDidLoad() {
