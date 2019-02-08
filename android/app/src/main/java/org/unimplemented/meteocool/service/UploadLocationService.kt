@@ -10,9 +10,11 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.IBinder
+import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
+import org.jetbrains.anko.defaultSharedPreferences
 import org.unimplemented.meteocool.location.UploadLocation
 
 class UploadLocationService : Service(){
@@ -21,12 +23,8 @@ class UploadLocationService : Service(){
         private const val MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS : Long = 600000
         private const val MIN_DISTANCE_LOCATION_UPDATE_METER : Float = 500f
         private const val TWO_MINUTES: Long = 1000 * 60 * 2
+        private const val BROADCAST_ACTION = "UploadLocationService start"
     }
-
-    private var locationManager : LocationManager? = null
-    private var locationListener : MyLocationListener? = null
-
-    private val BROADCAST_ACTION = "UploadLocationService start"
 
     private var intent : Intent? = null
 
@@ -41,21 +39,26 @@ class UploadLocationService : Service(){
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        locationManager = getSystemService(Service.LOCATION_SERVICE) as (LocationManager)
-        locationListener = MyLocationListener()
         Log.e("UploadLocationService", "onStartCommand")
+
+        val locationManager = getSystemService(Service.LOCATION_SERVICE) as (LocationManager)
+        val locationListener = MyLocationListener()
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             return Service.START_STICKY
         }
-        locationManager?.requestLocationUpdates(
+
+        locationManager.requestLocationUpdates(
             LocationManager.NETWORK_PROVIDER,
             MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS,
             MIN_DISTANCE_LOCATION_UPDATE_METER, locationListener)
-        locationManager?.requestLocationUpdates(
+
+        locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS,
             MIN_DISTANCE_LOCATION_UPDATE_METER, locationListener)
+
         Log.d("UploadLocationService", "Update requested in onStartCommand")
         return Service.START_STICKY
     }
@@ -69,7 +72,7 @@ class UploadLocationService : Service(){
      * @param location The new Location that you want to evaluate
      * @param currentBestLocation The current Location fix, to which you want to compare the new one
      */
-    fun isBetterLocation(location: Location, currentBestLocation: Location?): Boolean {
+    private fun isBetterLocation(location: Location, currentBestLocation: Location?): Boolean {
         Log.d("UploadLocationService", "Current best location: ${currentBestLocation?.longitude}/${currentBestLocation?.latitude}")
         Log.d("UploadLocationService", "New location : ${location.longitude}/${location.latitude}")
         if (currentBestLocation == null) {
@@ -119,6 +122,7 @@ class UploadLocationService : Service(){
         private var lastKnownLocation : Location? = null
         override fun onLocationChanged(location: Location) {
             Log.d("LocationListener", "$location changed")
+            storeInPreference(location)
             if (isBetterLocation(location, lastKnownLocation) ) {
                 Log.d("LocationListener", "${location.longitude}/${location.latitude} is better")
                 UploadLocation().execute(location)
@@ -142,6 +146,19 @@ class UploadLocationService : Service(){
         override fun onProviderDisabled(provider: String?) {
             Log.d("LocationListener", "$provider onDisabled")
             Toast.makeText(applicationContext, "Gps Disabled", Toast.LENGTH_SHORT ).show()
+        }
+
+        /**
+         * Store latitude, longitude and accuracy in preferences for later use.
+         * @param location used for storing latitude, longitude and accuracy in preferences
+         */
+        private fun storeInPreference(location : Location){
+            val preferenceManager = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            preferenceManager.edit()
+                .putFloat("latitude", location.latitude.toFloat())
+                .putFloat("longitude", location.longitude.toFloat())
+                .putFloat("accuracy", location.accuracy.toFloat())
+                .apply()
         }
     }
 }

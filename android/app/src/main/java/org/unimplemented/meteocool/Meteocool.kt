@@ -22,6 +22,7 @@ class Meteocool : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_meteocool)
+        supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
         Validator.checkAndroidPermissions(this.applicationContext, this)
 
         val mService = Intent(this, UploadLocationService::class.java).also { intent ->
@@ -31,12 +32,16 @@ class Meteocool : AppCompatActivity() {
         val preference = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         Log.d("Preferences", preference.getString("FIREBASE_TOKEN", "error"))
 
+        cancelNotifications()
 
-        supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
     }
 
     override fun onResume() {
         super.onResume()
+        cancelNotifications()
+    }
+
+    private fun cancelNotifications(){
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if(notificationManager.activeNotifications.isNotEmpty()) {
             notificationManager.cancelAll()

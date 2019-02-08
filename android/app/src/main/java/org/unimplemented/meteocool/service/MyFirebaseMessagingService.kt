@@ -24,11 +24,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
 
-        Log.d(TAG, "From: " + remoteMessage!!.from!!)
-        Log.d(TAG, "Notification Message Body: " + remoteMessage.data!!["clear_all"]!!)
+        if(remoteMessage != null) {
+            Log.d(TAG, "From: " + remoteMessage.from!!)
+            Log.d(TAG, "Notification Message Body: " + remoteMessage.data["clear_all"])
 
-        if(remoteMessage.data!!["clear_all"]!! == "true") {
-            cancelNotification()
+            if (remoteMessage.data["clear_all"] == "true") {
+                cancelNotification()
+            }
         }
     }
 
