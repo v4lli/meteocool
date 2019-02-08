@@ -1,9 +1,19 @@
 import UIKit
 import WebKit
-import CoreLocation
+import UIKit.UIGestureRecognizer
 
-class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CLLocationManagerDelegate, LocationObserver {
+class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, LocationObserver {
+    var buttonsize = 19.0 as CGFloat
+
     @IBOutlet weak var webView: WKWebView!
+    @IBOutlet weak var slider_ring: UIImageView!
+    @IBOutlet weak var slider_button: UIImageView!
+
+    func move_slider_button(pointToMove: CGPoint){
+        let x_coordiante = (pointToMove.x)-(buttonsize/2)
+        let y_coordinate = (pointToMove.y)-(buttonsize/2)
+        slider_button.frame.origin = CGPoint(x:x_coordiante,y:y_coordinate)
+    }
 
     func toggleDarkMode() {
         // #343a40 = darkmode titelbar color
@@ -65,6 +75,12 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
         super.loadView()
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
         self.view.addSubview(webView!)
+        self.view.addSubview(slider_ring!)
+        self.view.addSubview(slider_button!)
+
+        let gesture = CustomGestureRecognizer(target: self, action: nil)
+        gesture.setView(viewing: self)
+        view.addGestureRecognizer(gesture) // #selector(UIViewController.viewDidLoad)
     }
 
     override func viewDidLoad() {
