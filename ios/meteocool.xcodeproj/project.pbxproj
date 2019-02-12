@@ -22,6 +22,7 @@
 		57C66BF421CF2590004EC825 /* NotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57C66BE521CF2590004EC825 /* NotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		57C66C0021CF25A8004EC825 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BFF21CF25A8004EC825 /* NotificationService.swift */; };
 		57C66C0421CF25A8004EC825 /* NotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57C66BFD21CF25A7004EC825 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A7F5B2132214D77C005EB78C /* PressureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5B2122214D77C005EB78C /* PressureManager.swift */; };
 		EA2B77DD2209A9DF00610ED7 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA2B77DC2209A9DF00610ED7 /* NotificationCenter.framework */; };
 		EA2B77E02209A9DF00610ED7 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */; };
 		EA2B77E32209A9DF00610ED7 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA2B77E12209A9DF00610ED7 /* MainInterface.storyboard */; };
@@ -89,6 +90,7 @@
 		57C66BFD21CF25A7004EC825 /* NotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C66BFF21CF25A8004EC825 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		57C66C0121CF25A8004EC825 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A7F5B2122214D77C005EB78C /* PressureManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PressureManager.swift; sourceTree = "<group>"; };
 		EA2B77DB2209A9DF00610ED7 /* Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Widget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA2B77DC2209A9DF00610ED7 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
 		EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 		57589ACD216ADAEB00CDEBB7 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				A7F5B2122214D77C005EB78C /* PressureManager.swift */,
 				57589ACE216ADB1000CDEBB7 /* LocationUpdater.swift */,
 				57589AD0216ADB5C00CDEBB7 /* NetworkHelper.swift */,
 				5705D3982186A16C00CC5A60 /* NotificationManager.swift */,
@@ -388,6 +391,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7F5B2132214D77C005EB78C /* PressureManager.swift in Sources */,
 				577666942130C6E300C25E00 /* ViewController.swift in Sources */,
 				5705D3992186A16C00CC5A60 /* NotificationManager.swift in Sources */,
 				57589ACF216ADB1000CDEBB7 /* LocationUpdater.swift in Sources */,
