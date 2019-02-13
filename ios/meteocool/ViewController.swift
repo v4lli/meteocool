@@ -18,7 +18,6 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
     }
 
     func notify(location: CLLocation) {
-        NSLog("injecting location update")
         webView.evaluateJavaScript("window.injectLocation(\(location.coordinate.latitude), \(location.coordinate.longitude), \(location.horizontalAccuracy));")
     }
 

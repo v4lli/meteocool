@@ -23,6 +23,7 @@
 		57C66C0021CF25A8004EC825 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BFF21CF25A8004EC825 /* NotificationService.swift */; };
 		57C66C0421CF25A8004EC825 /* NotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57C66BFD21CF25A7004EC825 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A7F5B2132214D77C005EB78C /* PressureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5B2122214D77C005EB78C /* PressureManager.swift */; };
+		A7F5B2162214DBAF005EB78C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A7F5B2152214DBAF005EB78C /* Media.xcassets */; };
 		EA2B77DD2209A9DF00610ED7 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA2B77DC2209A9DF00610ED7 /* NotificationCenter.framework */; };
 		EA2B77E02209A9DF00610ED7 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */; };
 		EA2B77E32209A9DF00610ED7 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA2B77E12209A9DF00610ED7 /* MainInterface.storyboard */; };
@@ -91,6 +92,8 @@
 		57C66BFF21CF25A8004EC825 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		57C66C0121CF25A8004EC825 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A7F5B2122214D77C005EB78C /* PressureManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PressureManager.swift; sourceTree = "<group>"; };
+		A7F5B2142214D998005EB78C /* Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widget.entitlements; sourceTree = "<group>"; };
+		A7F5B2152214DBAF005EB78C /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		EA2B77DB2209A9DF00610ED7 /* Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Widget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA2B77DC2209A9DF00610ED7 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
 		EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
@@ -214,6 +217,8 @@
 		EA2B77DE2209A9DF00610ED7 /* Widget */ = {
 			isa = PBXGroup;
 			children = (
+				A7F5B2152214DBAF005EB78C /* Media.xcassets */,
+				A7F5B2142214D998005EB78C /* Widget.entitlements */,
 				EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */,
 				EA2B77E12209A9DF00610ED7 /* MainInterface.storyboard */,
 				EA2B77E42209A9DF00610ED7 /* Info.plist */,
@@ -310,6 +315,9 @@
 						CreatedOnToolsVersion = 9.4.1;
 						LastSwiftMigration = 1000;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
@@ -326,6 +334,11 @@
 					};
 					EA2B77DA2209A9DF00610ED7 = {
 						CreatedOnToolsVersion = 10.2;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -380,6 +393,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7F5B2162214DBAF005EB78C /* Media.xcassets in Resources */,
 				EA2B77E32209A9DF00610ED7 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -725,6 +739,7 @@
 		EA2B77E82209A9DF00610ED7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4L2672L4VX;
 				INFOPLIST_FILE = Widget/Info.plist;
@@ -747,6 +762,7 @@
 		EA2B77E92209A9DF00610ED7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widget/Widget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4L2672L4VX;
 				INFOPLIST_FILE = Widget/Info.plist;
