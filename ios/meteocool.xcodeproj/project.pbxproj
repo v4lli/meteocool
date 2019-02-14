@@ -20,11 +20,21 @@
 		57C66BED21CF2590004EC825 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BEC21CF2590004EC825 /* NotificationViewController.swift */; };
 		57C66BF021CF2590004EC825 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 57C66BEE21CF2590004EC825 /* MainInterface.storyboard */; };
 		57C66C0021CF25A8004EC825 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BFF21CF25A8004EC825 /* NotificationService.swift */; };
-		EA2B77DD2209A9DF00610ED7 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA2B77DC2209A9DF00610ED7 /* NotificationCenter.framework */; };
-		EA2B77E02209A9DF00610ED7 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */; };
-		EA2B77E32209A9DF00610ED7 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA2B77E12209A9DF00610ED7 /* MainInterface.storyboard */; };
 		EA5E618F220A3A7A00BB3647 /* CustomeGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5E618E220A3A7A00BB3647 /* CustomeGestureRecognizer.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EA20BE20220D7E4E006B3B8E /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5705D397218696FB00CC5A60 /* meteocool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = meteocool.entitlements; sourceTree = "<group>"; };
@@ -47,11 +57,8 @@
 		57C66BFD21CF25A7004EC825 /* NotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C66BFF21CF25A8004EC825 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		57C66C0121CF25A8004EC825 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EA2B77DB2209A9DF00610ED7 /* Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Widget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA20BE22220D7F59006B3B8E /* NotificationService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationService.entitlements; sourceTree = "<group>"; };
 		EA2B77DC2209A9DF00610ED7 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
-		EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
-		EA2B77E22209A9DF00610ED7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		EA2B77E42209A9DF00610ED7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EA5E618E220A3A7A00BB3647 /* CustomeGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomeGestureRecognizer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -79,14 +86,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EA2B77D82209A9DF00610ED7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EA2B77DD2209A9DF00610ED7 /* NotificationCenter.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -106,7 +105,6 @@
 				577666902130C6E300C25E00 /* meteocool */,
 				57C66BEB21CF2590004EC825 /* NotificationContent */,
 				57C66BFE21CF25A8004EC825 /* NotificationService */,
-				EA2B77DE2209A9DF00610ED7 /* Widget */,
 				57C66BE621CF2590004EC825 /* Frameworks */,
 				5776668F2130C6E300C25E00 /* Products */,
 			);
@@ -118,7 +116,6 @@
 				5776668E2130C6E300C25E00 /* meteocool.app */,
 				57C66BE521CF2590004EC825 /* NotificationContent.appex */,
 				57C66BFD21CF25A7004EC825 /* NotificationService.appex */,
-				EA2B77DB2209A9DF00610ED7 /* Widget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -162,20 +159,11 @@
 		57C66BFE21CF25A8004EC825 /* NotificationService */ = {
 			isa = PBXGroup;
 			children = (
+				EA20BE22220D7F59006B3B8E /* NotificationService.entitlements */,
 				57C66BFF21CF25A8004EC825 /* NotificationService.swift */,
 				57C66C0121CF25A8004EC825 /* Info.plist */,
 			);
 			path = NotificationService;
-			sourceTree = "<group>";
-		};
-		EA2B77DE2209A9DF00610ED7 /* Widget */ = {
-			isa = PBXGroup;
-			children = (
-				EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */,
-				EA2B77E12209A9DF00610ED7 /* MainInterface.storyboard */,
-				EA2B77E42209A9DF00610ED7 /* Info.plist */,
-			);
-			path = Widget;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -188,6 +176,7 @@
 				5776668A2130C6E300C25E00 /* Sources */,
 				5776668B2130C6E300C25E00 /* Frameworks */,
 				5776668C2130C6E300C25E00 /* Resources */,
+				EA20BE20220D7E4E006B3B8E /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
@@ -232,23 +221,6 @@
 			productReference = 57C66BFD21CF25A7004EC825 /* NotificationService.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		EA2B77DA2209A9DF00610ED7 /* Widget */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = EA2B77EA2209A9DF00610ED7 /* Build configuration list for PBXNativeTarget "Widget" */;
-			buildPhases = (
-				EA2B77D72209A9DF00610ED7 /* Sources */,
-				EA2B77D82209A9DF00610ED7 /* Frameworks */,
-				EA2B77D92209A9DF00610ED7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = Widget;
-			productName = Widget;
-			productReference = EA2B77DB2209A9DF00610ED7 /* Widget.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -263,6 +235,9 @@
 						CreatedOnToolsVersion = 9.4.1;
 						LastSwiftMigration = 1000;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
@@ -276,9 +251,11 @@
 					};
 					57C66BFC21CF25A7004EC825 = {
 						CreatedOnToolsVersion = 10.1;
-					};
-					EA2B77DA2209A9DF00610ED7 = {
-						CreatedOnToolsVersion = 10.2;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
@@ -298,7 +275,6 @@
 				5776668D2130C6E300C25E00 /* meteocool */,
 				57C66BE421CF2590004EC825 /* NotificationContent */,
 				57C66BFC21CF25A7004EC825 /* NotificationService */,
-				EA2B77DA2209A9DF00610ED7 /* Widget */,
 			);
 		};
 /* End PBXProject section */
@@ -326,14 +302,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		EA2B77D92209A9DF00610ED7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EA2B77E32209A9DF00610ED7 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,14 +337,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EA2B77D72209A9DF00610ED7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EA2B77E02209A9DF00610ED7 /* TodayViewController.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -400,14 +360,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				57C66BEF21CF2590004EC825 /* Base */,
-			);
-			name = MainInterface.storyboard;
-			sourceTree = "<group>";
-		};
-		EA2B77E12209A9DF00610ED7 /* MainInterface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				EA2B77E22209A9DF00610ED7 /* Base */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -533,6 +485,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = meteocool/meteocool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3AM692E9WY;
 				INFOPLIST_FILE = meteocool/Info.plist;
@@ -551,6 +504,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = meteocool/meteocool.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3AM692E9WY;
 				INFOPLIST_FILE = meteocool/Info.plist;
@@ -651,49 +605,6 @@
 			};
 			name = Release;
 		};
-		EA2B77E82209A9DF00610ED7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3AM692E9WY;
-				INFOPLIST_FILE = Widget/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.Widget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		EA2B77E92209A9DF00610ED7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3AM692E9WY;
-				INFOPLIST_FILE = Widget/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocool.Widget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -729,15 +640,6 @@
 			buildConfigurations = (
 				57C66C0621CF25A8004EC825 /* Debug */,
 				57C66C0721CF25A8004EC825 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		EA2B77EA2209A9DF00610ED7 /* Build configuration list for PBXNativeTarget "Widget" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				EA2B77E82209A9DF00610ED7 /* Debug */,
-				EA2B77E92209A9DF00610ED7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
