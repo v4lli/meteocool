@@ -1,9 +1,10 @@
 import UIKit
-import WebKit
 import UIKit.UIGestureRecognizer
+import WebKit
+import CoreLocation
 
 class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, LocationObserver {
-    var buttonsize = 19.0 as CGFloat
+    let buttonsize = 19.0 as CGFloat
 
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var slider_ring: UIImageView!
@@ -72,21 +73,6 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
 
         if action == "openSettingsView" {
             // XXX implement me
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        if let clErr = error as? CLError {
-            switch clErr {
-            case CLError.locationUnknown:
-                print("location unknown")
-            case CLError.denied:
-                print("denied")
-            default:
-                print("other Core Location error")
-            }
-        } else {
-            print("other error:", error.localizedDescription)
         }
     }
 
