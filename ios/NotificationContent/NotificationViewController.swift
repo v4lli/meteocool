@@ -42,7 +42,7 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
 
 extension URLSession {
     class func downloadImage(atURL url: URL, withCompletionHandler completionHandler: @escaping (Data?, NSError?) -> Void) {
-        let dataTask = URLSession.shared.dataTask(with: url) { (data, urlResponse, error) in
+        let dataTask = URLSession.shared.dataTask(with: url) { (data, _, _) in
             completionHandler(data, nil)
         }
         dataTask.resume()

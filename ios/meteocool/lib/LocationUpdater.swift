@@ -1,21 +1,38 @@
 import UIKit
 import CoreLocation
-import CoreMotion
 
-let NUM_PRESSURE_MEASUREMENTS = 3
+protocol LocationObserver {
+    func notify(location: CLLocation)
+}
 
+let SharedLocationUpdater = LocationUpdater.init()
+
+// XXX is there a way to make this class not instanciable? it should be a singleton (FUCKING JAVA BROKE ME)
 class LocationUpdater: NSObject, CLLocationManagerDelegate {
-    let locationManager: CLLocationManager
-    lazy var altimeter = CMAltimeter()
-    let deviceID: String = UIDevice.current.identifierForVendor!.uuidString
-    var token: String?
-    var averagePressure: Double
-    var pressureMeasurements: Int
+    /// location manager instace we're wrapping
+    private let locationManager: CLLocationManager = CLLocationManager()
+    /// device identifier (currently unused...)
+    private let deviceID: String = UIDevice.current.identifierForVendor!.uuidString
+    /// pressure manager object
+    private let pressure: PressureManager = PressureManager()
+    /// Location observers (only notified if app is active and a new location update becomes available)
+    private var observers = [LocationObserver]()
 
+    // accurate location updates are/were enabled before suspend
+    private var accurateLocationUpdatesEnabled: Bool = false
+
+    // the last location reported to the backend
+    private var lastPostedLocation: CLLocation?
+    // the last received location (might not have been reported to the backend)
+    private var lastReceivedLocation: CLLocation?
+    // XXX device push token - should go somewhere else
+    var token: String?
+
+    /// default accuracy for monitoring significant location changes
+    private let backgroundAccuracy = kCLLocationAccuracyKilometer
+
+    /// constructor
     override init() {
-        locationManager = CLLocationManager()
-        averagePressure = 0
-        pressureMeasurements = 0
         super.init()
 
         locationManager.delegate = self
@@ -34,70 +51,127 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         } else {
             NSLog("Location services are not enabled")
         }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(LocationUpdater.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LocationUpdater.willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
     }
 
+    // =============== Observer pattern ===========
+    func addObserver(observer: LocationObserver) {
+        observers.append(observer)
+    }
+
+    func requestLocation(observer: LocationObserver) {
+        if let location = self.lastReceivedLocation {
+            observer.notify(location: location)
+        } else {
+            NSLog("location requested by observer, but none cached!")
+        }
+    }
+
+    // =============== Notification center callbacks ==========
+    @objc func willResignActive() {
+        if (accurateLocationUpdatesEnabled) {
+            self.locationManager.stopUpdatingLocation()
+        }
+        locationManager.desiredAccuracy = backgroundAccuracy
+        startSignificantChangeLocationUpdates()
+    }
+
+    @objc func willEnterForeground() {
+        if (accurateLocationUpdatesEnabled) {
+            startAccurateLocationUpdates()
+        }
+    }
+
+    // setters to change between various location modes
     func startSignificantChangeLocationUpdates() {
         self.locationManager.allowsBackgroundLocationUpdates = true
         self.locationManager.startMonitoringSignificantLocationChanges()
     }
 
-    func startBackgroundLocationUpdates() {
+    /* unused */
+    /*func startBackgroundLocationUpdates() {
         self.locationManager.allowsBackgroundLocationUpdates = true
         self.locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         self.locationManager.pausesLocationUpdatesAutomatically = true
         self.locationManager.activityType = CLActivityType.other
         self.locationManager.startUpdatingLocation()
+    }*/
+
+    func startAccurateLocationUpdates() {
+        if UIApplication.shared.applicationState != .active {
+            return
+        }
+
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        self.locationManager.pausesLocationUpdatesAutomatically = true
+        self.locationManager.activityType = CLActivityType.other
+        self.locationManager.startUpdatingLocation()
+        accurateLocationUpdatesEnabled = true
     }
 
+    func stopAccurateLocationUpdates() {
+        self.locationManager.stopUpdatingLocation()
+        accurateLocationUpdatesEnabled = false
+    }
+
+    // helper method to decide whether a new location is significant enough to be reported
+    // to the backend.
+    private func decideSignificantChange(old: CLLocation?, new: CLLocation?) -> Bool {
+        if let old = old, let new = new {
+            if new.verticalAccuracy + 1 < old.verticalAccuracy {
+                return true
+            }
+            if new.distance(from: old) > 500 {
+                return true
+            }
+            return false
+        } else {
+            return true
+        }
+    }
+
+    // delegate method called when new location events are available (background and foreground location)
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        var background = true
+        if UIApplication.shared.applicationState == .active {
+            background = false
+        }
+
         if let location = locations.last {
-            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.latitude, forKey: "lat")
-            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.longitude, forKey: "lon")
 
-            // XXX factor out altimeter stuff
-            if (CMAltimeter.isRelativeAltitudeAvailable()) {
-                // we have a location fix, now read a few values from the altimeter
-                self.averagePressure = 0
-                self.pressureMeasurements = 0
-                self.altimeter.startRelativeAltitudeUpdates(to: OperationQueue.main, withHandler: { (altitudeData:CMAltitudeData?, error:Error?) in
-                    guard let altitudeData = altitudeData else {
-                        self.altimeter.stopRelativeAltitudeUpdates()
-                        NSLog("Error reading altimeter despite reported as available")
-                        return
-                    }
-                    // not sure if necessary to avoid processing old OperationQueue items.
-                    if (self.pressureMeasurements >= NUM_PRESSURE_MEASUREMENTS) {
-                        return
-                    }
+            if (background || decideSignificantChange(old: self.lastPostedLocation, new: location)) {
+                // take pressure measurement and send json request
+                pressure.getPressure(completion: {
+                    pressure in self.postLocationDeferred(location: location, pressure: pressure)  })
+                self.lastPostedLocation = location
 
-                    // average over the last n measurements
-                    // XXX time will tell if this is really necessary... the altimeter is very accurate, so it might not be necessary
-                    // to take an average. remove if battery usage is a concern.
-                    let measurement = altitudeData.pressure.doubleValue * 10
-                    if (self.pressureMeasurements == 0) {
-                        self.averagePressure = measurement
-                    } else {
-                        self.averagePressure = (self.averagePressure + measurement) / 2
-                    }
-                    self.pressureMeasurements += 1
+                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.latitude, forKey: "lat")
+                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.longitude, forKey: "lon")
+            }
 
-                    if (self.pressureMeasurements == NUM_PRESSURE_MEASUREMENTS) {
-                        NSLog("Average pressure (%d measurements): %f", NUM_PRESSURE_MEASUREMENTS, self.averagePressure)
-                        self.altimeter.stopRelativeAltitudeUpdates()
-                        self.postLocationDeferred(location: location, pressure: self.averagePressure)
-                    }
-                })
-            } else {
-                self.postLocationDeferred(location:location, pressure: -1)
+            // XXX decide if new location is better than the previous one. does apple guarantee this??
+            self.lastReceivedLocation = location
+            if (!background) {
+                for observer in observers {
+                    observer.notify(location: location)
+                }
+
+                if location.horizontalAccuracy <= 20 {
+                    locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+                }
             }
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        NSLog("CLLocationManager ERR: \(error)")
+        NSLog("CLLocationManager error: \(error)")
     }
 
-    func postLocationDeferred(location: CLLocation, pressure: Double) {
+    // interface methods to the backend
+    func postLocationDeferred(location: CLLocation, pressure: Float) {
+        // XXX not sure we need this hack... if there is no token, don't use background location stuff
         if token != nil {
             postLocation(location: location, pressure: pressure)
         } else {
@@ -107,8 +181,8 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    func postLocation(location: CLLocation, pressure: Double) {
-        let tokenValue = self.token ?? "anon";
+    func postLocation(location: CLLocation, pressure: Float) {
+        let tokenValue = self.token ?? "anon2"
 
         let locationDict = [
             "lat": location.coordinate.latitude as Double,
@@ -122,9 +196,9 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
             "timestamp": location.timestamp.timeIntervalSince1970 as Double,
             "ahead": 15,
             "intensity": 10,
-            "source" : "ios",
-            "token" : tokenValue,
-            ] as [String : Any]
+            "source": "ios",
+            "token": tokenValue
+            ] as [String: Any]
 
         guard let request = NetworkHelper.createJSONPostRequest(dst: "post_location", dictionary: locationDict) else {
             return
@@ -135,7 +209,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
                 return
             }
 
-            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String:Any] {
+            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                 if let errorMessage = json?["error"] as? String {
                     NSLog("ERROR: \(errorMessage)")
                 }

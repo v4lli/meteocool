@@ -2,10 +2,8 @@ import UIKit
 import WebKit
 import CoreLocation
 
-class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CLLocationManagerDelegate {
+class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CLLocationManagerDelegate, LocationObserver {
     @IBOutlet weak var webView: WKWebView!
-    let locationManager: CLLocationManager = CLLocationManager()
-    var lastLocation: CLLocation!
 
     func toggleDarkMode() {
         // #343a40 = darkmode titelbar color
@@ -19,21 +17,14 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
         UIApplication.shared.statusBarView?.backgroundColor = lightmode
     }
 
-    func injectLocationUpdate() {
-        if let location = self.lastLocation {
-            NSLog("injecting location update")
-            webView.evaluateJavaScript("window.injectLocation(\(location.coordinate.latitude), \(location.coordinate.longitude), \(location.horizontalAccuracy));")
-
-            if location.horizontalAccuracy <= 20 {
-                locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
-            }
-        }
-
+    func notify(location: CLLocation) {
+        webView.evaluateJavaScript("window.injectLocation(\(location.coordinate.latitude), \(location.coordinate.longitude), \(location.horizontalAccuracy));")
     }
 
     /* called from javascript */
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         let action = String(describing: message.body)
+        NSLog(action)
 
         if action == "darkmode" {
             toggleDarkMode()
@@ -43,12 +34,15 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
         }
 
         if action == "startMonitoringLocation" {
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.startUpdatingLocation()
-            injectLocationUpdate()
+            SharedLocationUpdater.requestLocation(observer: self)
+            SharedLocationUpdater.startAccurateLocationUpdates()
         }
         if action == "stopMonitoringLocation" {
-            locationManager.stopUpdatingLocation()
+            SharedLocationUpdater.stopAccurateLocationUpdates()
+        }
+
+        if action == "openSettingsView" {
+            // XXX implement me
         }
     }
 
@@ -67,35 +61,10 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
         }
     }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last {
-            self.lastLocation = location;
-            self.injectLocationUpdate()
-        }
-    }
-
     override func loadView() {
         super.loadView()
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
         self.view.addSubview(webView!)
-
-        locationManager.delegate = self
-        locationManager.requestAlwaysAuthorization()
-        if CLLocationManager.locationServicesEnabled() {
-            switch CLLocationManager.authorizationStatus() {
-            case .notDetermined, .restricted, .denied:
-                NSLog("Location WebView: No access")
-            case .authorizedWhenInUse:
-                NSLog("Location WebView: WhenInUse")
-            case .authorizedAlways:
-                NSLog("Location WebView: Always")
-            }
-        } else {
-            NSLog("Location services are not enabled")
-        }
-        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-        locationManager.pausesLocationUpdatesAutomatically = true
-        locationManager.activityType = CLActivityType.other
     }
 
     override func viewDidLoad() {
@@ -112,11 +81,12 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
             webView.load(request)
         }
 
-        // reload tiles if app resumes from background
-        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.reloadTiles), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        SharedLocationUpdater.addObserver(observer: self)
     }
 
-    @objc func reloadTiles() {
+    @objc func willEnterForeground() {
+        // reload tiles if app resumes from background
         webView.evaluateJavaScript("window.manualTileUpdateFn(true);")
     }
 }

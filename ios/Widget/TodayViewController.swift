@@ -75,10 +75,9 @@ class TodayViewController: UIViewController, NCWidgetProviding {
 
             //do things only seen if mode ist expand
             webView.isHidden = false
-            if let lat = UserDefaults.init(suiteName: "group.meteocool")?.value(forKey: "lat"){
-                if let lon = UserDefaults.init(suiteName: "group.meteocool")?.value(forKey: "lon"){
-                    //print (lat)
-                    //print (lon)
+            if let lat = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "lat"){
+                if let lon = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "lon"){
+                    print("https://meteocool.unimplemented.org/?mobile=ios_widget#widgetMap=9.5f/\(lat)/\(lon)/0")
                     if let url = URL(string: "https://meteocool.unimplemented.org/?mobile=ios_widget#widgetMap=9.5f/\(lat)/\(lon)/0") {
                         let request = URLRequest(url: url)
                         webView.load(request)
