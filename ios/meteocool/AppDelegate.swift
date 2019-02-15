@@ -2,7 +2,6 @@ import UIKit
 import UserNotifications
 import CoreMotion
 
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?

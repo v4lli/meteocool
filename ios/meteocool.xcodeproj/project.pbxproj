@@ -22,6 +22,7 @@
 		57C66BF421CF2590004EC825 /* NotificationContent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57C66BE521CF2590004EC825 /* NotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		57C66C0021CF25A8004EC825 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BFF21CF25A8004EC825 /* NotificationService.swift */; };
 		57C66C0421CF25A8004EC825 /* NotificationService.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57C66BFD21CF25A7004EC825 /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A7661F4B2217265700834E1D /* CustomeGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7661F4A2217265700834E1D /* CustomeGestureRecognizer.swift */; };
 		A7F5B2132214D77C005EB78C /* PressureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5B2122214D77C005EB78C /* PressureManager.swift */; };
 		A7F5B2162214DBAF005EB78C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A7F5B2152214DBAF005EB78C /* Media.xcassets */; };
 		EA2B77DD2209A9DF00610ED7 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA2B77DC2209A9DF00610ED7 /* NotificationCenter.framework */; };
@@ -91,6 +92,7 @@
 		57C66BFD21CF25A7004EC825 /* NotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C66BFF21CF25A8004EC825 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		57C66C0121CF25A8004EC825 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A7661F4A2217265700834E1D /* CustomeGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomeGestureRecognizer.swift; sourceTree = "<group>"; };
 		A7F5B2122214D77C005EB78C /* PressureManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PressureManager.swift; sourceTree = "<group>"; };
 		A7F5B2142214D998005EB78C /* Widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widget.entitlements; sourceTree = "<group>"; };
 		A7F5B2152214DBAF005EB78C /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 		577666902130C6E300C25E00 /* meteocool */ = {
 			isa = PBXGroup;
 			children = (
+				A7661F4A2217265700834E1D /* CustomeGestureRecognizer.swift */,
 				5705D397218696FB00CC5A60 /* meteocool.entitlements */,
 				57589ACD216ADAEB00CDEBB7 /* lib */,
 				577666912130C6E300C25E00 /* AppDelegate.swift */,
@@ -410,6 +413,7 @@
 				5705D3992186A16C00CC5A60 /* NotificationManager.swift in Sources */,
 				57589ACF216ADB1000CDEBB7 /* LocationUpdater.swift in Sources */,
 				57589AD1216ADB5C00CDEBB7 /* NetworkHelper.swift in Sources */,
+				A7661F4B2217265700834E1D /* CustomeGestureRecognizer.swift in Sources */,
 				577666922130C6E300C25E00 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -545,7 +549,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -599,7 +603,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;

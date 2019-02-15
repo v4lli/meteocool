@@ -36,20 +36,20 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     func widgetPerformUpdate(completionHandler: (@escaping (NCUpdateResult) -> Void)) {
         completionHandler(NCUpdateResult.newData)
 
-        if let alert : String = UserDefaults.init(suiteName: "group.meteocool")?.value(forKey: "alert") as? String{
+        if let alert: String = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "alert") as? String {
             umbrella.image = UIImage(named: "umbrella_open")
-            if let message : String = UserDefaults.init(suiteName: "group.meteocool")?.value(forKey: "message") as? String{
-                alert_box.frame.origin = CGPoint(x:98,y:9)
+            if let message: String = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "message") as? String {
+                alert_box.frame.origin = CGPoint(x: 98, y: 9)
                 alert_box.text = alert
                 message_box.text = message
 
                 //expand
                 widgetActiveDisplayModeDidChange(NCWidgetDisplayMode.expanded, withMaximumSize: CGSize.init(width: 359, height: -1))
             }
-        } else{
+        } else {
             umbrella.image = UIImage(named: "umbrella_closed")
             alert_box.text = "No rain expected!"
-            alert_box.frame.origin = CGPoint(x:98,y:45)
+            alert_box.frame.origin = CGPoint(x: 98, y: 45)
 
             //colapse
             widgetActiveDisplayModeDidChange(NCWidgetDisplayMode.compact, withMaximumSize: CGSize.init(width: 359, height: -1))
@@ -57,8 +57,7 @@ class TodayViewController: UIViewController, NCWidgetProviding {
     }
 
     func widgetActiveDisplayModeDidChange(_ activeDisplayMode: NCWidgetDisplayMode, withMaximumSize maxSize: CGSize) {
-        if activeDisplayMode == NCWidgetDisplayMode.compact
-        {
+        if activeDisplayMode == NCWidgetDisplayMode.compact {
             //do things only seen if mode ist compact
             self.preferredContentSize = CGSize(width: maxSize.width, height: 110)
             webView.isHidden = true
@@ -66,17 +65,15 @@ class TodayViewController: UIViewController, NCWidgetProviding {
             //For test
             //UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "alert")
             //UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "message")
-        }
-        else
-        {
+        } else {
             //Fot test
             //UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue("Light rain (20 dbZ) expexted in 5 min!\n", forKey: "alert")
             //UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue("Peaks with rain (29 dbZ) in 30 minutes; lasting a total of at least 90 min.", forKey: "message")
 
             //do things only seen if mode ist expand
             webView.isHidden = false
-            if let lat = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "lat"){
-                if let lon = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "lon"){
+            if let lat = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "lat") {
+                if let lon = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "lon") {
                     print("https://meteocool.unimplemented.org/?mobile=ios_widget#widgetMap=9.5f/\(lat)/\(lon)/0")
                     if let url = URL(string: "https://meteocool.unimplemented.org/?mobile=ios_widget#widgetMap=9.5f/\(lat)/\(lon)/0") {
                         let request = URLRequest(url: url)

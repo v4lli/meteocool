@@ -140,7 +140,6 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         }
 
         if let location = locations.last {
-
             if (background || decideSignificantChange(old: self.lastPostedLocation, new: location)) {
                 // take pressure measurement and send json request
                 pressure.getPressure(completion: {

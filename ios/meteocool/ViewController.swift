@@ -1,9 +1,49 @@
 import UIKit
+import UIKit.UIGestureRecognizer
 import WebKit
 import CoreLocation
 
-class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CLLocationManagerDelegate, LocationObserver {
+class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, LocationObserver {
+    let buttonsize = 19.0 as CGFloat
+
     @IBOutlet weak var webView: WKWebView!
+    @IBOutlet weak var slider_ring: UIImageView!
+    @IBOutlet weak var slider_button: UIImageView!
+    @IBOutlet weak var button: UIButton!
+
+    var slider_shown: Bool = false
+    var color: [Int] = []
+
+    @IBAction func slider_showen_button(sender: AnyObject) {
+                if(slider_shown) {
+                    slider_ring.isHidden = true
+                    slider_button.isHidden = true
+                    slider_shown = false
+                } else {
+                    move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width - 140, y: UIScreen.main.bounds.height))
+
+                    let webkitFunction = """
+window.downloadForecast(function() {
+    document.getElementById(\"navbar\").style.color=\"red\";
+    window.forecastDownloaded = true;
+    window.webkit.messageHandlers["scriptHandler"].postMessage("forecastDownloaded");
+});
+"""
+                    //print(webkitFunction)
+                    webView.evaluateJavaScript(webkitFunction)
+
+                    slider_ring.isHidden = false
+                    slider_button.isHidden = false
+                    slider_shown = true
+                }
+    }
+
+    func move_slider_button(pointToMove: CGPoint) {
+        let x_coordiante = (pointToMove.x)-(buttonsize/2)
+        let y_coordinate = (pointToMove.y)-(buttonsize/2)
+
+        slider_button.frame.origin = CGPoint(x: x_coordiante, y: y_coordinate)
+    }
 
     func toggleDarkMode() {
         // #343a40 = darkmode titelbar color
@@ -41,23 +81,13 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
             SharedLocationUpdater.stopAccurateLocationUpdates()
         }
 
+        if action == "forecastDownloaded" {
+            print("forecast finished downloading")
+            // XXX nina: hier ring anzeigen
+        }
+
         if action == "openSettingsView" {
             // XXX implement me
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        if let clErr = error as? CLError {
-            switch clErr {
-            case CLError.locationUnknown:
-                print("location unknown")
-            case CLError.denied:
-                print("denied")
-            default:
-                print("other Core Location error")
-            }
-        } else {
-            print("other error:", error.localizedDescription)
         }
     }
 
@@ -65,6 +95,17 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, CL
         super.loadView()
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
         self.view.addSubview(webView!)
+        self.view.addSubview(slider_ring!)
+        self.view.addSubview(slider_button!)
+        self.view.addSubview(button!)
+
+        slider_ring.isHidden = true
+        slider_button.isHidden = true
+
+        let gesture = CustomGestureRecognizer(target: self, action: nil)
+        gesture.setView(viewing: self)
+        view.addGestureRecognizer(gesture)
+
     }
 
     override func viewDidLoad() {
