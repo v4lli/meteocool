@@ -21,7 +21,17 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
                     slider_shown = false
                 } else {
                     move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width - 140, y: UIScreen.main.bounds.height))
-                    webView.evaluateJavaScript("window.downloadForecast(function() {document.getElementById(\"navbar\").style.color=\"red\"});")
+
+                    let webkitFunction = """
+window.downloadForecast(function() {
+    document.getElementById(\"navbar\").style.color=\"red\";
+    window.forecastDownloaded = true;
+    window.webkit.messageHandlers["scriptHandler"].postMessage("forecastDownloaded");
+});
+"""
+                    //print(webkitFunction)
+                    webView.evaluateJavaScript(webkitFunction)
+
                     slider_ring.isHidden = false
                     slider_button.isHidden = false
                     slider_shown = true
@@ -69,6 +79,11 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
         }
         if action == "stopMonitoringLocation" {
             SharedLocationUpdater.stopAccurateLocationUpdates()
+        }
+
+        if action == "forecastDownloaded" {
+            print("forecast finished downloading")
+            // XXX nina: hier ring anzeigen
         }
 
         if action == "openSettingsView" {
