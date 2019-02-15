@@ -10,12 +10,12 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     @IBOutlet weak var slider_ring: UIImageView!
     @IBOutlet weak var slider_button: UIImageView!
     @IBOutlet weak var button: UIButton!
-    
+
     var slider_shown: Bool = false
     var color: [Int] = []
-    
-    @IBAction func slider_showen_button(sender: AnyObject){
-                if(slider_shown){
+
+    @IBAction func slider_showen_button(sender: AnyObject) {
+                if(slider_shown) {
                     slider_ring.isHidden = true
                     slider_button.isHidden = true
                     slider_shown = false
@@ -38,11 +38,11 @@ window.downloadForecast(function() {
                 }
     }
 
-    func move_slider_button(pointToMove: CGPoint){
+    func move_slider_button(pointToMove: CGPoint) {
         let x_coordiante = (pointToMove.x)-(buttonsize/2)
         let y_coordinate = (pointToMove.y)-(buttonsize/2)
-        
-        slider_button.frame.origin = CGPoint(x:x_coordiante,y:y_coordinate)
+
+        slider_button.frame.origin = CGPoint(x: x_coordiante, y: y_coordinate)
     }
 
     func toggleDarkMode() {

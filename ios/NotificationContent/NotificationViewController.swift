@@ -16,10 +16,10 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
         if let aps = content.userInfo["aps"] as? NSDictionary {
             if let alert = aps["alert"] as? NSDictionary {
                 if let message = alert["message"] as? NSString {
-                    UserDefaults.init(suiteName: "group.meteocool")?.setValue(message , forKey: "message")
+                    UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(message, forKey: "message")
                 }
             } else if let alert = aps["alert"] as? NSString {
-                UserDefaults.init(suiteName: "group.meteocool")?.setValue(alert, forKey: "alert")
+                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(alert, forKey: "alert")
             }
         }
 

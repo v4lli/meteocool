@@ -14,17 +14,17 @@ enum SymbolPhase {
     case initialPoint
 }
 
-class CustomGestureRecognizer : UIGestureRecognizer {
-    var strokePhase : SymbolPhase = .notStarted
-    var initialTouchPoint : CGPoint = CGPoint.zero
-    var trackedTouch : UITouch? = nil
-    var viewCont : ViewController? = nil
-    
-    var corner_right : CGPoint = CGPoint.init(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)
+class CustomGestureRecognizer: UIGestureRecognizer {
+    var strokePhase: SymbolPhase = .notStarted
+    var initialTouchPoint: CGPoint = CGPoint.zero
+    var trackedTouch: UITouch?
+    var viewCont: ViewController?
+
+    var corner_right: CGPoint = CGPoint.init(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)
 
     var lastSlot = 0
 
-    func setView(viewing: ViewController){
+    func setView(viewing: ViewController) {
         viewCont = viewing
     }
 
@@ -39,7 +39,7 @@ class CustomGestureRecognizer : UIGestureRecognizer {
             self.trackedTouch = touches.first
             self.strokePhase = .initialPoint
             self.initialTouchPoint = (self.trackedTouch?.location(in: self.view))!
-            
+
         } else {
             // Ignore all but the first touch.
             for touch in touches {
@@ -64,10 +64,10 @@ class CustomGestureRecognizer : UIGestureRecognizer {
 
         var slot = 0
 
-        if(newPoint.x > corner_right.x-150 && newPoint.y > corner_right.y-150){
+        if(newPoint.x > corner_right.x-150 && newPoint.y > corner_right.y-150) {
             viewCont?.move_slider_button(pointToMove: CGPoint.init(x: corner_right.x-140*cos(angle), y: corner_right.y-140*sin(angle)))
 
-            switch(true){
+            switch(true) {
                 case angle*180/3.1415<=10:
                     slot = 0
                     //print("Winkel: 5 min")
@@ -125,8 +125,7 @@ class CustomGestureRecognizer : UIGestureRecognizer {
             self.state = .failed
             return
         }
-        
-        
+
         let newPoint = (newTouch?.location(in: self.view))!
         // If the stroke was down up and the final point is
         // below the initial point, the gesture succeeds.
