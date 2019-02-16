@@ -31,10 +31,6 @@ window.downloadForecast(function() {
 """
                     //print(webkitFunction)
                     webView.evaluateJavaScript(webkitFunction)
-
-                    slider_ring.isHidden = false
-                    slider_button.isHidden = false
-                    slider_shown = true
                 }
     }
 
@@ -83,7 +79,9 @@ window.downloadForecast(function() {
 
         if action == "forecastDownloaded" {
             print("forecast finished downloading")
-            // XXX nina: hier ring anzeigen
+            slider_ring.isHidden = false
+            slider_button.isHidden = false
+            slider_shown = true
         }
 
         if action == "openSettingsView" {
