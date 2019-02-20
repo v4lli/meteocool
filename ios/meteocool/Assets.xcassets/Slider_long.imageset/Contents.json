@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
+      "filename" : "Slider_long.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Slider_ring_normal.png",
       "scale" : "2x"
     },
     {

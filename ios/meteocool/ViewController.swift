@@ -3,28 +3,33 @@ import UIKit.UIGestureRecognizer
 import WebKit
 import CoreLocation
 
-class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, LocationObserver {
+class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, LocationObserver{
     let buttonsize = 19.0 as CGFloat
 
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var slider_ring: UIImageView!
     @IBOutlet weak var slider_button: UIImageView!
     @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var time: UILabel!
 
     var slider_shown: Bool = false
     var color: [Int] = []
-
+    var currentdate = Date()
+    let formatter = DateFormatter()
+    
     @IBAction func slider_showen_button(sender: AnyObject) {
                 if(slider_shown) {
+                    time.isHidden = true
                     slider_ring.isHidden = true
                     slider_button.isHidden = true
                     slider_shown = false
+                    webView.evaluateJavaScript("window.resetLayers();")
                 } else {
-                    move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width - 140, y: UIScreen.main.bounds.height))
+                    move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height-268))
+                    slider_ring.isHidden = false
 
                     let webkitFunction = """
 window.downloadForecast(function() {
-    document.getElementById(\"navbar\").style.color=\"red\";
     window.forecastDownloaded = true;
     window.webkit.messageHandlers["scriptHandler"].postMessage("forecastDownloaded");
 });
@@ -61,6 +66,11 @@ window.downloadForecast(function() {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         let action = String(describing: message.body)
         NSLog(action)
+        NSLog(message.name)
+
+        if message.name == "timeHandler" {
+            self.currentdate = NSDate(timeIntervalSince1970: Double(action)!) as Date
+        }
 
         if action == "darkmode" {
             toggleDarkMode()
@@ -78,10 +88,19 @@ window.downloadForecast(function() {
         }
 
         if action == "forecastDownloaded" {
-            print("forecast finished downloading")
-            slider_ring.isHidden = false
+            //print("forecast finished downloading")
+            time.text = formatter.string(from: currentdate)
             slider_button.isHidden = false
             slider_shown = true
+            time.isHidden = false
+        }
+        
+        if action == "forecastInvalid"{
+            slider_button.isHidden = true
+            slider_ring.isHidden = true
+            slider_shown = false
+            time.isHidden = true
+            webView.evaluateJavaScript("window.resetLayers();")
         }
 
         if action == "openSettingsView" {
@@ -92,13 +111,21 @@ window.downloadForecast(function() {
     override func loadView() {
         super.loadView()
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
+        webView?.configuration.userContentController.add(self, name: "timeHandler")
         self.view.addSubview(webView!)
         self.view.addSubview(slider_ring!)
         self.view.addSubview(slider_button!)
         self.view.addSubview(button!)
+        self.view.addSubview(time!)
 
+        time.isHidden = true
+        time.layer.masksToBounds = true
+        time.layer.cornerRadius = 8.0
         slider_ring.isHidden = true
         slider_button.isHidden = true
+        
+        formatter.locale = Locale(identifier: "de_De")
+        formatter.dateFormat = "H:mm"
 
         let gesture = CustomGestureRecognizer(target: self, action: nil)
         gesture.setView(viewing: self)
