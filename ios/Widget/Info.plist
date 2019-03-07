@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>NotificationContent</string>
+	<string>meteocool</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -22,21 +22,10 @@
 	<string>18</string>
 	<key>NSExtension</key>
 	<dict>
-		<key>NSExtensionAttributes</key>
-		<dict>
-			<key>UNNotificationExtensionCategory</key>
-			<array>
-				<string>WeatherAlert</string>
-			</array>
-			<key>UNNotificationExtensionDefaultContentHidden</key>
-			<false/>
-			<key>UNNotificationExtensionInitialContentSizeRatio</key>
-			<integer>1</integer>
-		</dict>
 		<key>NSExtensionMainStoryboard</key>
 		<string>MainInterface</string>
 		<key>NSExtensionPointIdentifier</key>
-		<string>com.apple.usernotifications.content-extension</string>
+		<string>com.apple.widget-extension</string>
 	</dict>
 </dict>
 </plist>
