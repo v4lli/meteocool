@@ -281,7 +281,10 @@ var geolocation = new Geolocation({
   projection: view.getProjection()
 });
 
-if (!window.location.hash && window.location.search.indexOf('mobile=ios2') < 0) {
+var isV2 = (window.location.search.indexOf('mobile=ios2') != -1);
+var isAndroid = (window.location.search.indexOf('mobile=android') != -1);
+
+if (!window.location.hash && !isV2 && !isAndroid) {
   geolocation.setTracking(true);
 }
 
@@ -461,7 +464,15 @@ function manualTileUpdate (removePrevious) {
         layer = false;
       });
 
+      if (isV2) {
+        window.webkit.messageHandlers["scriptHandler"].postMessage("forecastInvalid");
+      }
+
       updateTimestamp(new Date(data.version * 1000));
+      // XXX this is actually API version v3....
+      if (isV2) {
+        window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
+      }
     }
   });
 }
@@ -500,6 +511,11 @@ socket.on("lightning", function (data) {
 socket.on("map_update", function (data) {
   updateTimestamp(new Date(data.version * 1000));
 
+  // XXX actually V3
+  if (isV2) {
+    window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
+  }
+
   var newLayer = new TileLayer({
     source: new TileJSON({
       tileJSON: data,
@@ -526,8 +542,6 @@ socket.on("map_update", function (data) {
   if (wasActive) { window.smartDownloadAndPlay(); }
 });
 
-var isV2 = (window.location.search.indexOf('mobile=ios2') != -1);
-
 window.isMonitoring = false;
 
 if (isV2) {
@@ -536,7 +550,7 @@ if (isV2) {
 }
 
 // locate me button
-if (!widgetMode) {
+if (!widgetMode && !isAndroid) {
   var button = document.createElement("button");
   button.classList.add("locate-me-btn");
   button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
@@ -744,7 +758,7 @@ function downloadForecast (cb) {
 
   for (ahead = 5; ahead <= 45; ahead += 5) {
     let idx = forecastArrayIdx;
-    /* javascript: because who the fuck need proper printf? */
+    /* javascript: because who the fuck needs proper printf? */
     var numStr;
     if (ahead === 5) {
       numStr = "05";
@@ -911,5 +925,26 @@ window.injectLocation = function (lat, lon, accuracy) {
   }
   positionFeature.setGeometry(center ? new Point(center) : null);
 };
+
+window.setForecastLayer = function(num) {
+  if (num == window.forecastNo)
+    return;
+  if (!window.forecastDownloaded)
+    return;
+
+  if (!window.playInPorgress) {
+      window.map.removeLayer(window.currentLayer);
+  }
+
+  window.map.addLayer(window.forecastLayers[num]);
+  window.map.removeLayer(window.forecastLayers[window.forecastNo]);
+  window.forecastNo = num;
+};
+
+window.resetLayers = function() {
+  window.map.addLayer(window.currentLayer);
+  window.map.removeLayer(window.forecastLayers[window.forecastNo]);
+  window.forecastNo = -1;
+}
 
 /* vim: set ts=2 sw=2 expandtab: */
