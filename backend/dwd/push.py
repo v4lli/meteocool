@@ -18,6 +18,7 @@ from wradlib.trafo import rvp_to_dbz
 import smopy
 import random
 import string
+import datetime
 from PIL.Image import composite, blend
 from PIL import Image
 from pyfcm import FCMNotification
@@ -69,8 +70,13 @@ dwdTemp = dwdTemperature()
 dwdTemp.get_stations()
 
 def rain_or_snow(lat,lon):
-    station_id = dwdTemp.find_next_station(lat, lon)
-    current_temperature = dwdTemp.get_current_temperature(station_id)
+    current_temperature = None
+    try:
+        station_id = dwdTemp.find_next_station(lat, lon)
+        current_temperature = dwdTemp.get_current_temperature(station_id)
+    except ConnectionRefusedError as e:
+        logging.error("DWD reports ConnectionRefusedError: %s" % e)
+        pass
 
     if current_temperature and current_temperature <= 0:
         return "snow"
