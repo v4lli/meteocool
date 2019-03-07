@@ -195,7 +195,7 @@ if __name__ == "__main__":
             print("Invalid key line: %s" % e)
             continue
 
-        if token == "anon":
+        if token == "anon" or token == "anon2":
             continue
 
         # overwrite instensity for everyone
@@ -229,6 +229,14 @@ if __name__ == "__main__":
         # user position in grid
         result = closest_node((lon, lat), linearized_grid)
         xy = (int(result / gridsize), int(result % gridsize))
+
+        # if xy lies on one of the outermost tiles, ignore. hotfix for bug #113 (will be
+        # obsoleted by rewrite).
+        if ((xy[0] == 0 and xy[1] == 0) or
+            (xy[0] == gridsize-1 and xy[1] == gridsize-1) or
+            (xy[0] == 0 and xy[1] == gridsize-1) or
+            (xy[0] == gridsize-1 and xy[1] == 0)):
+            logging.warn("NOT PUSHING for client %s because it's outside the grid: %f,%f", token, lat, lon)
 
         # get forecasted value from grid
         data = forecast_maps[ahead]
