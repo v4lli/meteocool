@@ -223,7 +223,7 @@ var view = new View({
 var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\" target=\"_blank\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\" target=\"_blank\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">OSM</a> &#169; <a href=\"https://carto.com/attribution/\" target=\"_blank\">CARTO</a>";
 
 if (!widgetMode) {
-  baseAttributions = baseAttributions +  " | <a href=\"#\" onclick=\"$('#impressumModal').modal('show'); return false;\">Impressum</a>";
+  baseAttributions = baseAttributions + " | <a href=\"#\" onclick=\"$('#impressumModal').modal('show'); return false;\">Impressum</a>";
 }
 
 var darkAttributions = "";
@@ -285,8 +285,8 @@ var geolocation = new Geolocation({
   projection: view.getProjection()
 });
 
-var isV2 = (window.location.search.indexOf('mobile=ios2') != -1);
-var isAndroid = (window.location.search.indexOf('mobile=android') != -1);
+var isV2 = (window.location.search.indexOf("mobile=ios2") !== -1);
+var isAndroid = (window.location.search.indexOf("mobile=android") !== -1);
 
 if (!window.location.hash && !isV2 && !isAndroid) {
   geolocation.setTracking(true);
@@ -565,8 +565,8 @@ if (!widgetMode && !isAndroid) {
   };
 
   if (isV2) {
-    button.addEventListener("click", function() {
-      if(window.isMonitoring) {
+    button.addEventListener("click", function () {
+      if (window.isMonitoring) {
         window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
         window.map.getView().animate({ center: window.userLocation, zoom: 10 });
       } else {
@@ -930,14 +930,12 @@ window.injectLocation = function (lat, lon, accuracy) {
   positionFeature.setGeometry(center ? new Point(center) : null);
 };
 
-window.setForecastLayer = function(num) {
-  if (num == window.forecastNo)
-    return;
-  if (!window.forecastDownloaded)
-    return;
+window.setForecastLayer = function (num) {
+  if (num === window.forecastNo) { return; }
+  if (!window.forecastDownloaded) { return; }
 
   if (!window.playInPorgress) {
-      window.map.removeLayer(window.currentLayer);
+    window.map.removeLayer(window.currentLayer);
   }
 
   window.map.addLayer(window.forecastLayers[num]);
@@ -945,10 +943,10 @@ window.setForecastLayer = function(num) {
   window.forecastNo = num;
 };
 
-window.resetLayers = function() {
+window.resetLayers = function () {
   window.map.addLayer(window.currentLayer);
   window.map.removeLayer(window.forecastLayers[window.forecastNo]);
   window.forecastNo = -1;
-}
+};
 
 /* vim: set ts=2 sw=2 expandtab: */
