@@ -130,7 +130,7 @@ var dimensions = () => {
 
   browserHeight = window.innerHeight;
 
-  if (window.location.pathname == "/privacy.html") {
+  if (window.location.pathname == "/privacy.html" || window.location.pathname == "/documentation.html") {
     mapEl.style.height = navEl;
   } else {
     mapEl.style.height = browserHeight - navEl + safeAreaInsets.top + "px";
@@ -160,7 +160,7 @@ var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
 var widgetMode = false;
 
-if (window.location.pathname == "/privacy.html") {
+if (window.location.pathname == "/privacy.html" || window.location.pathname == "/documentation.html") {
   widgetMode = true;
 }
 
@@ -235,7 +235,7 @@ if (!widgetMode) {
   baseAttributions = baseAttributions + " | <a href=\"#\" onclick=\"$('#impressumModal').modal('show'); return false;\">Impressum</a>";
 }
 
-if (window.location.pathname == "/privacy.html") {
+if (window.location.pathname == "/privacy.html" || window.location.pathname == "/documentation.html") {
   baseAttributions = "";
 }
 
@@ -422,6 +422,7 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
     return style;
   }
 });
+vl.setZIndex(100);
 window.map.addLayer(vl);
 
 // timer every 10 sec
@@ -438,7 +439,7 @@ geolocation.on("change:position", function () {
   var coordinates = geolocation.getPosition();
   positionFeature.setGeometry(coordinates ? new Point(coordinates) : null);
   if (window.location.hash !== "" && !haveZoomed) {
-    window.map.getView().animate({ center: coordinates, zoom: 10 });
+    window.map.getView().animate({ center: coordinates, zoom: 9 });
     haveZoomed = true;
   }
 });

@@ -4,7 +4,7 @@ import colorsys
 import sys
 from dbz2color import scale, dbz2color
 
-size = (1036, 500)
+size = (1036, 405)
 image = Image.new("RGBA", size, "white")
 draw = ImageDraw.Draw(image)
 
