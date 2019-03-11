@@ -107,3 +107,19 @@
 	width: 100%;
 }
 
+blockquote {
+	padding-top: 16px;
+	padding-bottom: 16px;
+	padding-left: 24px;
+	font-style: italic;
+}
+
+hr {
+	width: 75%;
+}
+
+#body {
+	padding: 24px;
+	padding-top: 70px;
+	background-color: rgb(248, 249, 250);
+}

@@ -16,7 +16,8 @@
 
   </head>
   <body>
-    <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
+    <div id="map" style="position: absolute; top: 0; left: 0; height: 57px; width: 100%; z-index: 0;"></div>
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-light" style="position: absolute; top: 0; left: 0; width: 100%; z-index: 100000;">
       <div id="clockbg"></div>
       <div id="spacer"></div>
       <div id="compositBar">
@@ -25,19 +26,16 @@
             <img src="./android-chrome-512x512.png" width="30" height="30" class="d-inline-block align-top" alt="meteocool logo">
           </a>
         </div>
-        <div id="logotext">meteocool</div>
-        <div id="statustext"><small>-</small></div>
+        <div id="logotext" style="padding-top: 6px; padding-left: 14px;">meteocool</div>
       </div>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto"> <li class="nav-item bg-light" style="height: 100%; "><a id="documentationLink" class="nav-link" href="/">&laquo; map view</a></li> </ul>
       </div>
     </nav>
     <div id="body">
-    hello!
-
-
       <h2>Privacy Policy</h2>
       <p>Personal data (usually referred to just as "data" below) will only be processed by us to the extent necessary and for the purpose of
       providing a functional and user-friendly website, including its contents, and the services offered there.</p>
@@ -50,12 +48,14 @@
       components we use to optimize our website and improve the user experience which may result in said third parties also processing data
       they collect and control.</p>
       <h3>I. Information about us as controllers of your data</h3>
-      The party responsible for this website (the "controller") for purposes of data protection law is:<br><br>
+      The party responsible for this website (the "controller") for purposes of data protection law is:<br>
+      <blockquote>
       Valentin Dornauer<br>
       c/o AutorenServices.de<br>
       Birkenallee 24<br>
       36037 Fulda<br>
-      meteocool@unimplemented.org<br>
+      meteocool@unimplemented.org
+      </blockquote>
       <p>If possible, please send requests <b>via E-Mail only!</b> No package deliveries accepted.</p>
 
       <h3>II. The rights of users and data subjects</h3>
@@ -116,18 +116,20 @@
       please use the help function or consult the documentation for your browser or contact its maker for support.</p>
       <p>If you prevent or restrict the installation of cookies, not all of the functions on our site may be fully usable.</p>
       <p><a href="https://www.ratgeberrecht.eu/leistungen/muster-datenschutzerklaerung.html" target="_blank" rel="noopener">Model Data
-        Protection Statement</a> for <a href="https://www.ratgeberrecht.eu/" target="_blank">Anwaltskanzlei Weiß &amp; Partner</a></p>:w
+        Protection Statement</a> for <a href="https://www.ratgeberrecht.eu/" target="_blank">Anwaltskanzlei Weiß &amp; Partner</a></p>
 
       <br>
 
       <h2>Datenschutzerklärung</h2>
       <h3>I. Informationen über uns als Verantwortlich</h3>
       Verantwortlicher Anbieter dieses Internetauftritts im datenschutzrechtlichen Sinne ist:<br><br>
+      <blockquote>
       Valentin Dornauer<br>
       c/o AutorenServices.de<br>
       Birkenallee 24<br>
       36037 Fulda<br>
-      meteocool@unimplemented.org<br>
+      meteocool@unimplemented.org
+      </blockquote>
       <p>Anfragen wenn m&ouml;glich <b>bitte NUR per E-Mail!</b> Bitte keine Pakete.</p>
 
       <p>Personenbezogene Daten (nachfolgend zumeist nur „Daten“ genannt) werden von uns nur im Rahmen der Erforderlichkeit sowie zum Zwecke

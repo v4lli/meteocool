@@ -33,10 +33,12 @@ window.$ = $;
 function lastUpdatedFn () {
   var elem = document.getElementById("updatedTime");
 
-  if (window.lastUpdatedServer) {
-    elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer) + " ago";
-  } else {
-    elem.innerHTML = "<span style='color: #ff0000;'>connection error</span>";
+  if (elem) {
+    if (window.lastUpdatedServer) {
+      elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer) + " ago";
+    } else {
+      elem.innerHTML = "<span style='color: #ff0000;'>connection error</span>";
+    }
   }
 }
 setTimeout(lastUpdatedFn, 10000);
@@ -107,8 +109,6 @@ var attribution = new Attribution({
   collapsible: false
 });
 if (DeviceDetect.isIos()) {
-  document.getElementById("browserPushMenu").style.display = "none";
-
   attribution.setCollapsible(true);
   attribution.setCollapsed(true);
 }
@@ -129,7 +129,12 @@ var dimensions = () => {
   }
 
   browserHeight = window.innerHeight;
-  mapEl.style.height = browserHeight - navEl + safeAreaInsets.top + "px";
+
+  if (window.location.pathname == "/privacy.html") {
+    mapEl.style.height = navEl;
+  } else {
+    mapEl.style.height = browserHeight - navEl + safeAreaInsets.top + "px";
+  }
 };
 
 // ================
@@ -154,6 +159,10 @@ positionFeature.setStyle(new Style({
 var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
 var widgetMode = false;
+
+if (window.location.pathname == "/privacy.html") {
+  widgetMode = true;
+}
 
 if (window.location.hash !== "") {
   // try to restore center, zoom-level and rotation from the URL
@@ -226,6 +235,10 @@ if (!widgetMode) {
   baseAttributions = baseAttributions + " | <a href=\"#\" onclick=\"$('#impressumModal').modal('show'); return false;\">Impressum</a>";
 }
 
+if (window.location.pathname == "/privacy.html") {
+  baseAttributions = "";
+}
+
 var darkAttributions = "";
 
 window.map = new Map({
@@ -267,11 +280,13 @@ function toggleIOSBar () {
   }
 }
 
-toggleButton.onclick = () => {
-  toggleViewMode();
-  toggleHTMLfixMe();
-  toggleIOSBar();
-};
+if (toggleButton) {
+  toggleButton.onclick = () => {
+    toggleViewMode();
+    toggleHTMLfixMe();
+    toggleIOSBar();
+  };
+}
 
 //
 // Geolocation (showing the user's position)
@@ -407,6 +422,7 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
     return style;
   }
 });
+window.map.addLayer(vl);
 
 // timer every 10 sec
 // {
@@ -433,6 +449,7 @@ geolocation.on("change:position", function () {
 
 var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var websocketUrl = "/tile";
+var websocketUrl = "https://meteocool.unimplemented.org/tile";
 // if (process.env.NODE_ENV === "production") {
 tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 // }
@@ -444,6 +461,7 @@ window.currentLayer = false;
 // field and use it for the "last updated" feature.
 function manualTileUpdate (removePrevious) {
   var elem = document.getElementById("updatedTime");
+  if (elem)
   elem.innerHTML = "checking...";
 
   $.getJSON({
@@ -511,6 +529,8 @@ let strikemgr = new StrikeManager(1337);
 socket.on("lightning", function (data) {
   strikemgr.addStrike(data["lon"], data["lat"]);
 });
+
+window.sock = socket
 
 socket.on("map_update", function (data) {
   updateTimestamp(new Date(data.version * 1000));
@@ -646,74 +666,6 @@ if (widgetMode) {
   attribution.setCollapsible(false);
   attribution.setCollapsed(false);
 }
-
-/* push notifications */
-var pushLink = document.getElementById("toggleNotifyLink");
-var pushLink2 = document.getElementById("toggleNotifyLink2");
-var pushCheckbox = document.getElementById("toggleNotifyCheckbox");
-
-pushLink.onclick = () => {
-  pushCheckbox.checked = !pushCheckbox.checked;
-  pushCheckbox.onchange();
-};
-pushLink2.onclick = () => {
-  pushCheckbox.checked = !pushCheckbox.checked;
-  pushCheckbox.onchange();
-};
-
-var pushSocket;
-
-pushCheckbox.onchange = () => {
-  var checked = pushCheckbox.checked;
-  if (!Notification) { return; }
-
-  if (checked) {
-    console.log("registering push notification...");
-    pushSocket = io.connect("/rain_notify_browser");
-
-    var ahead = parseInt(document.getElementById("aheadSelect").value);
-    var coordinates = geolocation.getPosition();
-    if (!coordinates) {
-      console.log("no geolocation");
-      $("#geoLocationModal").modal();
-      return;
-    }
-    var currentLonLat = toLonLat(coordinates);
-
-    pushSocket.on("notify", function (data) {
-      /* eslint-disable no-new */
-      /* This is a browser API! I didn't want to "use new for side effects"! */
-      new Notification(data.title, {
-        "icon": logoBig,
-        "body": data.body,
-        "requireInteraction": true,
-        "vibrate": [200, 100, 200]
-      });
-      /* eslint-enable */
-    });
-
-    pushSocket.emit("register", {
-      "lat": currentLonLat[1],
-      "lon": currentLonLat[0],
-      "ahead": ahead,
-      "intensity": 10,
-      "accuracy": 1.0
-    });
-
-    if (Notification.permission !== "granted") { Notification.requestPermission(); }
-
-    var notifyText = "You will be notified " + ahead + " minutes before it rains!";
-    /* eslint-disable no-new */
-    /* This is a browser API! I didn't want to "use new for side effects"! */
-    new Notification(notifyText, {
-      "icon": logoBig
-    });
-    /* eslint-enable */
-  } else {
-    console.log("unregistering...");
-    socket.emit("unregister", {});
-  }
-};
 
 // openlayers in-flight tile detection from
 // https://stackoverflow.com/questions/33061221/ensuring-all-tiles-are-loaded-in-open-layers-3-xyz-source/45054387#45054387
