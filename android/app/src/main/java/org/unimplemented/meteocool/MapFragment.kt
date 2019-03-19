@@ -2,6 +2,7 @@ package org.unimplemented.meteocool
 
 import android.Manifest
 import android.app.Service
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import org.unimplemented.meteocool.location.WebAppInterface
 
 
 class MapFragment : Fragment(){
@@ -31,33 +33,14 @@ class MapFragment : Fragment(){
         webSettings?.domStorageEnabled = true
         webSettings?.databaseEnabled = true
         webSettings?.setGeolocationEnabled(true)
-
-
-
         mWebView?.loadUrl(WEB_URL)
-
-
-
         // Force links and redirects to open in the WebView instead of in a browser
         mWebView?.webViewClient = WebViewClient()
-
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        val locationManager = activity!!.getSystemService(Service.LOCATION_SERVICE) as (LocationManager)
-
-        Thread.sleep(2000)
-        if (ContextCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
-            val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            Log.d("JSINJECT", "entered")
-            val string = "window.injectLocation(${lastKnownLocation.latitude}, ${lastKnownLocation.longitude}, ${lastKnownLocation.accuracy});"
-            Log.d("JSINJECT", "$string")
-            mWebView?.evaluateJavascript(string, { value ->
-                Log.d("JSINJECT","$value")
-            } )
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mWebView?.addJavascriptInterface(WebAppInterface(this.context!!, mWebView!!), "Android")
     }
 }

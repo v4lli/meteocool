@@ -8,10 +8,12 @@ import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
 import android.util.Log
+import android.webkit.WebView
 
 import org.unimplemented.meteocool.security.Validator
 import com.google.firebase.iid.FirebaseInstanceId
 import org.jetbrains.anko.doAsync
+import org.unimplemented.meteocool.location.WebAppInterface
 import org.unimplemented.meteocool.utility.JSONClearPost
 import org.unimplemented.meteocool.utility.NetworkUtility
 import org.unimplemented.meteocool.service.UploadLocationService
@@ -23,9 +25,10 @@ class Meteocool : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_meteocool)
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
+
         Validator.checkAndroidPermissions(this.applicationContext, this)
 
-        val mService = Intent(this, UploadLocationService::class.java).also { intent ->
+        Intent(this, UploadLocationService::class.java).also { intent ->
             startService(intent)
         }
 
