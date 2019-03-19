@@ -537,6 +537,7 @@ socket.on("map_update", function (data) {
   // XXX actually V3
   if (isV2) {
     window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
+    window.webkit.messageHandlers["scriptHandler"].postMessage("forecastInvalid");
   }
 
   var newLayer = new TileLayer({
@@ -546,23 +547,25 @@ socket.on("map_update", function (data) {
     }),
     opacity: reflectivityOpacity
   });
+
+  // invalidate old forecast
+  if (window.playInPorgress) {
+    // pause playback
+    window.smartDownloadAndPlay();
+    window.resetLayers();
+  }
+
   // first add & fetch the new layer, then remove the old one to avoid
   // having no layer at all at some point.
   window.map.addLayer(newLayer);
   window.map.removeLayer(window.currentLayer);
   window.currentLayer = newLayer;
-  // invalidate old forecast
-  var wasActive = false;
-  if (window.playInPorgress) {
-    // pause playback
-    window.smartDownloadAndPlay();
-    wasActive = true;
-  }
+
+  // reset internal forecast state
   window.forecastDownloaded = false;
   window.forecastLayers.forEach(function (layer) {
     layer = false;
   });
-  if (wasActive) { window.smartDownloadAndPlay(); }
 });
 
 window.isMonitoring = false;
@@ -899,5 +902,10 @@ window.resetLayers = function () {
   window.map.removeLayer(window.forecastLayers[window.forecastNo]);
   window.forecastNo = -1;
 };
+
+window.androidInjectLocation = function() {
+  Android.injectLocation();
+}
+
 
 /* vim: set ts=2 sw=2 expandtab: */
