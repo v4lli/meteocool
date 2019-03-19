@@ -23,8 +23,8 @@ class Meteocool : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_meteocool)
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
+        setContentView(R.layout.activity_meteocool)
 
         Validator.checkAndroidPermissions(this.applicationContext, this)
 
@@ -37,6 +37,12 @@ class Meteocool : AppCompatActivity() {
 
         cancelNotifications()
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val mWebView : WebView = findViewById(R.id.webView)
+        mWebView.addJavascriptInterface(WebAppInterface(this, mWebView), "Android")
     }
 
     override fun onResume() {

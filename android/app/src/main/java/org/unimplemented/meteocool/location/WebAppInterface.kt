@@ -1,12 +1,10 @@
 package org.unimplemented.meteocool.location
 
 import android.Manifest
-import android.app.Service
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.LocationManager
+import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.getSystemService
 import android.util.Log
 import android.view.View
 import android.webkit.JavascriptInterface
@@ -14,37 +12,35 @@ import android.webkit.WebView
 import android.widget.Toast
 import org.unimplemented.meteocool.R
 
-/** Instantiate the interface and set the context  */
-class WebAppInterface(private val mContext: Context, private val mWebView : WebView) {
+/** Instantiate the interface and set the comntext */
+class WebAppInterface(private val mContext: Context, private val mWebView: WebView) {
 
-    /** Show a toast from the web page  */
     @JavascriptInterface
     fun injectLocation() {
-       // Toast.makeText(mContext, "From Server", Toast.LENGTH_SHORT).show()
 
-        val locationManager = mContext.getSystemService(Service.LOCATION_SERVICE) as (LocationManager)
+        val preferenceManager = PreferenceManager.getDefaultSharedPreferences(mContext)
 
         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
-            val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            //if(lastKnownLocation != null) {
-            Log.d("JSINJECT", "entered")
-            //val mWebView  : WebView = View(mContext).findViewById(R.id.webView)
+            val lat = preferenceManager.getFloat("latitude", -1f)
+            val lon = preferenceManager.getFloat("longitude", -1f)
+            val acc = preferenceManager.getFloat("accuracy", -1f)
 
-
-            val string = "window.injectLocation(49.0, 11.0, 100);"
-            Log.d("JSINJECT", "$string")
-            mWebView.post({
-                run() {
-                    mWebView.evaluateJavascript(string, { value ->
-                        Log.d("JSINJECT", "$value")
-                    })
-                }
-            });
-
-            //}
+            if(lat >= 0.0) {
+                Log.d("JSINJECT", "entered")
+                val string = "window.injectLocation($lat, $lon, $acc, true);"
+                //val mWebView : WebView = View(mContext).findViewById(R.id.webView)
+                Log.d("JSINJECT", string)
+                mWebView.post({
+                    run  {
+                        mWebView.evaluateJavascript(string, { value ->
+                            Log.d("JSINJECT", string)
+                        })
+                    }
+                })
+            }else{
+                Toast.makeText(mContext, "Location null", Toast.LENGTH_SHORT).show()
+            }
         }
-
-
     }
 }
