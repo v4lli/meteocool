@@ -22,6 +22,7 @@
 		57C66C0021CF25A8004EC825 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BFF21CF25A8004EC825 /* NotificationService.swift */; };
 		A7661F4B2217265700834E1D /* CustomeGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7661F4A2217265700834E1D /* CustomeGestureRecognizer.swift */; };
 		A7F5B2132214D77C005EB78C /* PressureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F5B2122214D77C005EB78C /* PressureManager.swift */; };
+		EA943E94221DB22F006C59C1 /* RainForecastRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA943E93221DB22F006C59C1 /* RainForecastRing.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 		A7661F4A2217265700834E1D /* CustomeGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomeGestureRecognizer.swift; sourceTree = "<group>"; };
 		A7F5B2122214D77C005EB78C /* PressureManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PressureManager.swift; sourceTree = "<group>"; };
 		EA2B77DC2209A9DF00610ED7 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		EA943E93221DB22F006C59C1 /* RainForecastRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RainForecastRing.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +123,7 @@
 				577666982130C6E300C25E00 /* Assets.xcassets */,
 				5776669A2130C6E300C25E00 /* LaunchScreen.storyboard */,
 				5776669D2130C6E300C25E00 /* Info.plist */,
+				EA943E93221DB22F006C59C1 /* RainForecastRing.swift */,
 			);
 			path = meteocool;
 			sourceTree = "<group>";
@@ -296,6 +299,7 @@
 			files = (
 				A7F5B2132214D77C005EB78C /* PressureManager.swift in Sources */,
 				577666942130C6E300C25E00 /* ViewController.swift in Sources */,
+				EA943E94221DB22F006C59C1 /* RainForecastRing.swift in Sources */,
 				5705D3992186A16C00CC5A60 /* NotificationManager.swift in Sources */,
 				57589ACF216ADB1000CDEBB7 /* LocationUpdater.swift in Sources */,
 				57589AD1216ADB5C00CDEBB7 /* NetworkHelper.swift in Sources */,
