@@ -20,6 +20,13 @@ class CustomGestureRecognizer: UIGestureRecognizer {
     var trackedTouch: UITouch?
     var viewCont: ViewController?
 
+    let ringAngle = 99.0 //count of degree that are seeable
+    let xValueRing = 75.0 //x-size of the ring (picture, half ring)
+    let yValueRing = 300.0 // y-size of the ring (picture, half ring)
+    let yRing = 176.0 //y-position of the ring (picture) from the top
+    let slots = 9 //cout of slots of the forcarst
+    let timeSteps = 5.0 //the steps of the forcarst in minuts
+
     var corner_right: CGPoint = CGPoint.init(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height)
 
     var lastSlot = 0
@@ -60,47 +67,57 @@ class CustomGestureRecognizer: UIGestureRecognizer {
         }
         let newPoint = (newTouch?.location(in: self.view))!
 
-        let angle = atan((corner_right.y-newPoint.y)/(corner_right.x-newPoint.x))
+        let angle = atan((CGFloat(yRing)+CGFloat(yValueRing/2)-newPoint.y)/(corner_right.x+CGFloat(xValueRing)-newPoint.x))
+
+        //multiply these to get form rad the degree
+        let toDegree = 180/Float.pi
 
         var slot = 0
 
-        if(newPoint.x > corner_right.x-150 && newPoint.y > corner_right.y-150) {
-            viewCont?.move_slider_button(pointToMove: CGPoint.init(x: corner_right.x-140*cos(angle), y: corner_right.y-140*sin(angle)))
+        //Touch moves in the picture of the ring
+        if(newPoint.x > (corner_right.x - CGFloat(xValueRing)) && (newPoint.y > CGFloat(yRing)) && (newPoint.y) < CGFloat(yRing+yValueRing)) {
+            //move the button to the right position on the ring
+            viewCont?.move_slider_button(pointToMove: CGPoint.init(x: (corner_right.x+CGFloat(xValueRing))-140*cos(angle), y: CGFloat(yRing)+CGFloat(yValueRing/2)-140*sin(angle)))
 
+            //set the time shown in the time lable
             switch(true) {
-                case angle*180/3.1415<=10:
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*0):
                     slot = 0
+                    //print("Winkel: 0 min")
+                break
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*1):
+                    slot = 1
                     //print("Winkel: 5 min")
                 break
-                case angle*180/3.1415<=20:
-                    slot = 1
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*2):
+                    slot = 2
                     //print("Winkel: 10 min")
                 break
-                case angle*180/3.1415<=30:
-                    slot = 2
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*3):
+                    slot = 3
                     //print("Winkel: 15 min")
                 break
-                case angle*180/3.1415<=40:
-                    slot = 3
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*4):
+                    slot = 4
                     //print("Winkel: 20 min")
                 break
-                case angle*180/3.1415<=50:
-                    slot = 4
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*5):
+                    slot = 5
                     //print("Winkel: 25 min")
                 break
-                case angle*180/3.1415<=60:
-                    slot = 5
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*6):
+                    slot = 6
                     //print("Winkel: 30 min")
                 break
-                case angle*180/3.1415<=70:
-                    slot = 6
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*7):
+                    slot = 7
                     //print("Winkel: 35 min")
                 break
-                case angle*180/3.1415<=80:
-                    slot = 7
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*8):
+                    slot = 8
                     //print("Winkel: 40 min")
                 break
-                case angle*180/3.1415<=90:
+                case Float(angle)*toDegree >= Float(ringAngle/2-(ringAngle/Double(slots))*9):
                     slot = 8
                     //print("Winkel: 45 min")
                 break
@@ -108,6 +125,8 @@ class CustomGestureRecognizer: UIGestureRecognizer {
                     //print("default")
                     return
             }
+
+            viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(Double(slot)*timeSteps*60))
         }
 
         if (slot != self.lastSlot) {
