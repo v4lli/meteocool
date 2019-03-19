@@ -21,9 +21,9 @@ import { DeviceDetect } from "./modules/device-detect.js";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import { Map, View, Geolocation, Feature } from "ol";
 import { defaults as defaultControls, OverviewMap } from "ol/control.js";
-import { fromLonLat, toLonLat } from "ol/proj.js";
+import { fromLonLat } from "ol/proj.js";
 
-import logoBig from "../assets/android-chrome-512x512.png";
+import logoBig from "../assets/android-chrome-512x512.png"; // eslint-disable-line no-unused-vars
 
 const safeAreaInsets = require("safe-area-insets");
 
@@ -130,7 +130,7 @@ var dimensions = () => {
 
   browserHeight = window.innerHeight;
 
-  if (window.location.pathname == "/privacy.html" || window.location.pathname == "/documentation.html") {
+  if (window.location.pathname === "/privacy.html" || window.location.pathname === "/documentation.html") {
     mapEl.style.height = navEl;
   } else {
     mapEl.style.height = browserHeight - navEl + safeAreaInsets.top + "px";
@@ -160,7 +160,7 @@ var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
 var widgetMode = false;
 
-if (window.location.pathname == "/privacy.html" || window.location.pathname == "/documentation.html") {
+if (window.location.pathname === "/privacy.html" || window.location.pathname === "/documentation.html") {
   widgetMode = true;
 }
 
@@ -235,7 +235,7 @@ if (!widgetMode) {
   baseAttributions = baseAttributions + " | <a href=\"#\" onclick=\"$('#impressumModal').modal('show'); return false;\">Impressum</a>";
 }
 
-if (window.location.pathname == "/privacy.html" || window.location.pathname == "/documentation.html") {
+if (window.location.pathname === "/privacy.html" || window.location.pathname === "/documentation.html") {
   baseAttributions = "";
 }
 
@@ -449,7 +449,6 @@ geolocation.on("change:position", function () {
 //
 
 var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var websocketUrl = "/tile";
 var websocketUrl = "https://meteocool.unimplemented.org/tile";
 // if (process.env.NODE_ENV === "production") {
 tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
@@ -462,8 +461,7 @@ window.currentLayer = false;
 // field and use it for the "last updated" feature.
 function manualTileUpdate (removePrevious) {
   var elem = document.getElementById("updatedTime");
-  if (elem)
-  elem.innerHTML = "checking...";
+  if (elem) { elem.innerHTML = "checking..."; }
 
   $.getJSON({
     dataType: "json",
@@ -531,7 +529,7 @@ socket.on("lightning", function (data) {
   strikemgr.addStrike(data["lon"], data["lat"]);
 });
 
-window.sock = socket
+window.sock = socket;
 
 socket.on("map_update", function (data) {
   updateTimestamp(new Date(data.version * 1000));
