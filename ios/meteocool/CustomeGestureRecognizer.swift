@@ -67,57 +67,57 @@ class CustomGestureRecognizer: UIGestureRecognizer {
         var slot = 0
 
         if(newPoint.x > corner_right.x-75 && newPoint.y > corner_right.y-300) {
-            viewCont?.move_slider_button(pointToMove: CGPoint.init(x: (corner_right.x+75)-140*cos(angle), y: (corner_right.y-150)-140*sin(angle)))
+            viewCont?.move_slider_button(pointToMove: CGPoint.init(x: 150-140*cos(angle), y: 150-140*sin(angle)))
             
-            print(Float(angle*180/3.1415))
+            print(Float(Double(angle*180)/Double.pi))
 
             switch(true) {
-                case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*0):
+                case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*0):
                     slot = 0
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate)
                     print("Winkel: 0 min")
                 break
-                case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*1):
+                case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*1):
                     slot = 1
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(5.0*60))
                     print("Winkel: 5 min")
                 break
-                case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*2):
+                case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*2):
                     slot = 2
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(10.0*60))
                     print("Winkel: 10 min")
                 break
-            case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*3):
+            case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*3):
                     slot = 3
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(15.0*60))
                     print("Winkel: 15 min")
                 break
-                case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*4):
+                case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*4):
                     slot = 4
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(20.0*60))
                     print("Winkel: 20 min")
                 break
-                case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*5):
+                case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*5):
                     slot = 5
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(25.0*60))
                     print("Winkel: 25 min")
                 break
-                case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*6):
+                case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*6):
                     slot = 6
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(30.0*60))
                     print("Winkel: 30 min")
                 break
-                case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*7):
+                case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*7):
                     slot = 7
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(35.0*60))
                     print("Winkel: 35 min")
                 break
-                case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*8):
+                case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*8):
                     slot = 8
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(40.0*60))
                     print("Winkel: 40 min")
                 break
-                case Float(angle*180/3.1415) >= Float(ringAngle/2-(ringAngle/9)*9):
+                case Float(Double(angle*180)/Double.pi) >= Float(ringAngle/2-(ringAngle/9)*9):
                     slot = 8
                     viewCont?.time.text = viewCont?.formatter.string(from: viewCont!.currentdate.addingTimeInterval(40.0*60))
                     print("Winkel: 45 min")

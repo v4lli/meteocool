@@ -7,11 +7,13 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     let buttonsize = 19.0 as CGFloat
 
     @IBOutlet weak var webView: WKWebView!
+    @IBOutlet weak var sliderView: UIView!
     @IBOutlet weak var slider_ring: UIImageView!
     @IBOutlet weak var slider_button: UIImageView!
     @IBOutlet weak var button: UIButton!
     @IBOutlet weak var time: UILabel!
 
+    var path: UIBezierPath!
     var slider_shown: Bool = false
     var color: [Int] = []
     var currentdate = Date()
@@ -25,7 +27,8 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
                     slider_shown = false
                     webView.evaluateJavaScript("window.resetLayers();")
                 } else {
-                    move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height-268))
+                    //move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width, y: UIScreen.main.bounds.height-268))
+                    move_slider_button(pointToMove: CGPoint.init(x: 150-140*cos(52/180*Double.pi), y: 150-140*sin(52/180*Double.pi)))
                     slider_ring.isHidden = false
 
                     let webkitFunction = """
@@ -113,10 +116,11 @@ window.downloadForecast(function() {
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
         webView?.configuration.userContentController.add(self, name: "timeHandler")
         self.view.addSubview(webView!)
-        self.view.addSubview(slider_ring!)
-        self.view.addSubview(slider_button!)
-        self.view.addSubview(button!)
         self.view.addSubview(time!)
+        self.view.addSubview(sliderView!)
+        self.sliderView.addSubview(slider_ring!)
+        self.sliderView.addSubview(slider_button!)
+        self.sliderView.addSubview(button!)
 
         time.isHidden = true
         time.layer.masksToBounds = true
