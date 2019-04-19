@@ -125,7 +125,7 @@ def generate_preview(lat, lon):
     #out.crop((100,100, 668,668)).save("/pushpreview/%s.png" % random_name, format="png", optimize=True)
     out.save(pathspec, format="png", optimize=True)
 
-    return "https://meteocool.unimplemented.org%s" % pathspec
+    return "https://meteocool.com%s" % pathspec
 
 if __name__ == "__main__":
     # programm parameters

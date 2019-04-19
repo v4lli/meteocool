@@ -449,7 +449,7 @@ geolocation.on("change:position", function () {
 //
 
 var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var websocketUrl = "https://meteocool.unimplemented.org/tile";
+var websocketUrl = "https://meteocool.com/tile";
 // if (process.env.NODE_ENV === "production") {
 tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 // }
