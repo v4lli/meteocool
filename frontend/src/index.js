@@ -576,14 +576,19 @@ if (isV2) {
 }
 
 // locate me button
-if (!widgetMode && !isAndroid) {
+if (!widgetMode) {
   var button = document.createElement("button");
   button.classList.add("locate-me-btn");
   button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
+}
+
+if (!widgetMode && !isAndroid) {
   var locateMe = function (e) {
     var coordinates = geolocation.getPosition();
-    geolocation.setTracking(true);
-    window.map.getView().animate({ center: coordinates, zoom: 10 });
+    if (coordinates) {
+      geolocation.setTracking(true);
+      window.map.getView().animate({ center: coordinates, zoom: 10 });
+    }
   };
 
   if (isV2) {
@@ -599,6 +604,13 @@ if (!widgetMode && !isAndroid) {
   } else {
     button.addEventListener("click", locateMe, false);
   }
+}
+
+if (isAndroid) {
+  button.addEventListener("click", function() { Android.injectLocation(); }, false);
+}
+
+if (!widgetMode) {
   var element = document.createElement("div");
   element.className = "locate-me ol-unselectable ol-control";
   element.appendChild(button);
@@ -874,10 +886,10 @@ window.smartDownloadAndPlay = function () {
 // enableActivityIndicator();
 
 window.userLocation = null;
-window.injectLocation = function (lat, lon, accuracy) {
+window.injectLocation = function (lat, lon, accuracy, zoom=false) {
   var center = fromLonLat([lon, lat]);
   window.userLocation = center;
-  if (haveZoomed) {
+  if (zoom || !haveZoomed) {
     haveZoomed = true;
     window.map.getView().animate({ center: center, zoom: 9 });
   }
@@ -903,9 +915,6 @@ window.resetLayers = function () {
   window.forecastNo = -1;
 };
 
-window.androidInjectLocation = function() {
-  Android.injectLocation();
-}
-
+document.getElementById("logolinkhref").href = window.location.href;
 
 /* vim: set ts=2 sw=2 expandtab: */
