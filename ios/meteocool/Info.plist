@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We want notify you ahead of rain or snow at your current location.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We want notify you ahead of rain or snow at your current location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Display your own location on the weather map.</string>
 	<key>UIBackgroundModes</key>
