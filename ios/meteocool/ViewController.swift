@@ -11,32 +11,77 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     @IBOutlet weak var slider_button: UIImageView!
     @IBOutlet weak var button: UIButton!
     @IBOutlet weak var time: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
-    var slider_shown: Bool = false
-    var color: [Int] = []
+    enum DrawerStates {
+        case CLOSED
+        case LOADING
+        case OPEN
+    }
+
+    var drawerState = DrawerStates.CLOSED
+    var originalButtonPosition: CGRect!
+
     var currentdate = Date()
     let formatter = DateFormatter()
 
-    @IBAction func slider_show_button(sender: AnyObject) {
-                if(slider_shown) {
-                    time.isHidden = true
-                    slider_ring.isHidden = true
-                    slider_button.isHidden = true
-                    slider_shown = false
-                    webView.evaluateJavaScript("window.resetLayers();")
-                } else {
-                    move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width, y: 209))
-                    slider_ring.isHidden = false
+    func drawer_open() {
+        if (drawerState == .CLOSED) {
+            activityIndicator.startAnimating()
+            button.alpha = 0.5
+            move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width, y: 209))
+            drawerState = .LOADING
+        }
+        if (originalButtonPosition == nil) {
+            originalButtonPosition = button.frame
+        }
+    }
 
-                    let webkitFunction = """
+    func drawer_open_finish() {
+        if (drawerState == .LOADING) {
+            slider_button.isHidden = false
+            slider_ring.isHidden = false
+            time.isHidden = false
+            button.alpha = 1
+            button.frame = CGRect(x: button.frame.origin.x-(button.frame.width/2), y: button.frame.origin.y, width: button.frame.width*2, height: button.frame.height)
+            button.setImage(UIImage(named: "Slider_Handle_open"), for: [])
+            activityIndicator.stopAnimating()
+            drawerState = .OPEN
+        }
+    }
+
+    func drawer_close() {
+        time.isHidden = true
+        slider_ring.isHidden = true
+        slider_button.isHidden = true
+        button.alpha = 1.0
+
+        if (drawerState == .OPEN) {
+            button.setImage(UIImage(named: "Slider_Handle"), for: [])
+            button.frame = originalButtonPosition
+            //CGRect(x: button.frame.origin.x+(button.frame.width/2), y: button.frame.origin.y, width: button.frame.width/2, height: button.frame.height)
+        }
+        activityIndicator.stopAnimating()
+        drawerState = .CLOSED
+    }
+
+    @IBAction func slider_show_button(sender: AnyObject) {
+        if (drawerState == .OPEN) {
+            // hide drawer
+            webView.evaluateJavaScript("window.resetLayers();")
+            drawer_close()
+        } else if (drawerState == .CLOSED) {
+            // show drawer (in loading mode)
+            drawer_open()
+
+            let webkitFunction = """
 window.downloadForecast(function() {
     window.forecastDownloaded = true;
     window.webkit.messageHandlers["scriptHandler"].postMessage("forecastDownloaded");
 });
 """
-                    //print(webkitFunction)
-                    webView.evaluateJavaScript(webkitFunction)
-                }
+            webView.evaluateJavaScript(webkitFunction)
+        }
     }
 
     func move_slider_button(pointToMove: CGPoint) {
@@ -87,17 +132,12 @@ window.downloadForecast(function() {
 
         if action == "forecastDownloaded" {
             //print("forecast finished downloading")
-            time.text = formatter.string(from: currentdate)
-            slider_button.isHidden = false
-            slider_shown = true
-            time.isHidden = false
+            time.text = formatter.string(from: Date())
+            drawer_open_finish()
         }
 
         if action == "forecastInvalid" {
-            slider_button.isHidden = true
-            slider_ring.isHidden = true
-            slider_shown = false
-            time.isHidden = true
+            drawer_close()
         }
 
         if action == "openSettingsView" {
@@ -114,6 +154,7 @@ window.downloadForecast(function() {
         self.view.addSubview(slider_button!)
         self.view.addSubview(button!)
         self.view.addSubview(time!)
+        self.view.addSubview(activityIndicator!)
 
         time.isHidden = true
         time.layer.masksToBounds = true
@@ -133,7 +174,7 @@ window.downloadForecast(function() {
         super.viewDidLoad()
 
         // disable scrolling & bouncing effects
-        webView.scrollView.isScrollEnabled = false
+        webView.scrollView.isScrollEnabled = true
         webView.scrollView.bounces = false
 
         toggleLightMode()

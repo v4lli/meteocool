@@ -47,6 +47,8 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
             case .authorizedAlways:
                 NSLog("Location: Always")
                 startSignificantChangeLocationUpdates()
+            @unknown default:
+                NSLog("Location: unknown case")
             }
         } else {
             NSLog("Location services are not enabled")
@@ -208,7 +210,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
                 return
             }
 
-            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+            if let json = ((try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]) as [String : Any]??) {
                 if let errorMessage = json?["error"] as? String {
                     NSLog("ERROR: \(errorMessage)")
                 }

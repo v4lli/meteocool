@@ -131,7 +131,7 @@ class CustomGestureRecognizer: UIGestureRecognizer {
 
         if (slot != self.lastSlot) {
             viewCont?.webView.evaluateJavaScript("window.setForecastLayer(\(slot));")
-            print("window.setForecastLayer(\(slot));")
+            //print("window.setForecastLayer(\(slot));")
             self.lastSlot = slot
         }
     }
