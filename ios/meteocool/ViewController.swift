@@ -11,6 +11,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     @IBOutlet weak var slider_button: UIImageView!
     @IBOutlet weak var button: UIButton!
     @IBOutlet weak var time: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     var slider_shown: Bool = false
     var color: [Int] = []
@@ -19,14 +20,17 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
 
     @IBAction func slider_show_button(sender: AnyObject) {
                 if(slider_shown) {
+                    activityIndicator.stopAnimating()
                     time.isHidden = true
                     slider_ring.isHidden = true
                     slider_button.isHidden = true
                     slider_shown = false
+                    button.alpha = 1.0
                     webView.evaluateJavaScript("window.resetLayers();")
                 } else {
                     move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width, y: 209))
-                    slider_ring.isHidden = false
+                    activityIndicator.startAnimating()
+                    button.alpha = 0.5
 
                     let webkitFunction = """
 window.downloadForecast(function() {
@@ -90,7 +94,11 @@ window.downloadForecast(function() {
             time.text = formatter.string(from: currentdate)
             slider_button.isHidden = false
             slider_shown = true
+            slider_ring.isHidden = false
             time.isHidden = false
+            button.isHidden = false
+            activityIndicator.stopAnimating()
+            button.alpha = 1
         }
 
         if action == "forecastInvalid" {
@@ -98,6 +106,14 @@ window.downloadForecast(function() {
             slider_ring.isHidden = true
             slider_shown = false
             time.isHidden = true
+        }
+
+        if action == "hideDrawer" {
+            button.isHidden = true
+        }
+
+        if action == "showDrawer" {
+            button.isHidden = false
         }
 
         if action == "openSettingsView" {
@@ -114,6 +130,7 @@ window.downloadForecast(function() {
         self.view.addSubview(slider_button!)
         self.view.addSubview(button!)
         self.view.addSubview(time!)
+        self.view.addSubview(activityIndicator!)
 
         time.isHidden = true
         time.layer.masksToBounds = true

@@ -47,6 +47,8 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
             case .authorizedAlways:
                 NSLog("Location: Always")
                 startSignificantChangeLocationUpdates()
+            @unknown default:
+                NSLog("Location: unknown case")
             }
         } else {
             NSLog("Location services are not enabled")
