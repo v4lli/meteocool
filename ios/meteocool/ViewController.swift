@@ -133,7 +133,7 @@ window.downloadForecast(function() {
         super.viewDidLoad()
 
         // disable scrolling & bouncing effects
-        webView.scrollView.isScrollEnabled = false
+        webView.scrollView.isScrollEnabled = true
         webView.scrollView.bounces = false
 
         toggleLightMode()
