@@ -50,11 +50,13 @@
                                 <rect key="contentStretch" x="1" y="1" width="1" height="1"/>
                                 <color key="color" cocoaTouchSystemColor="darkTextColor"/>
                             </activityIndicatorView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0 min" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTS-em-eiA">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 min" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTS-em-eiA">
                                 <rect key="frame" x="177" y="113" width="60" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.4760928750038147" green="0.58250075578689575" blue="0.72943240404129028" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="HZE-aZ-CkT"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -63,9 +65,12 @@
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="aOD-KT-ksP" firstAttribute="top" secondItem="eLq-EE-HwW" secondAttribute="top" id="4bD-5Z-ZyV"/>
+                            <constraint firstItem="BTS-em-eiA" firstAttribute="centerX" secondItem="aOD-KT-ksP" secondAttribute="centerX" id="H0g-a1-ugA"/>
+                            <constraint firstItem="BTS-em-eiA" firstAttribute="top" secondItem="eLq-EE-HwW" secondAttribute="top" constant="69" id="NF7-5V-BnW"/>
                             <constraint firstItem="aOD-KT-ksP" firstAttribute="leading" secondItem="eLq-EE-HwW" secondAttribute="leading" id="PZO-yj-6qD"/>
                             <constraint firstItem="aOD-KT-ksP" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" id="X8a-Bx-Qhm"/>
                             <constraint firstItem="eLq-EE-HwW" firstAttribute="trailing" secondItem="aOD-KT-ksP" secondAttribute="trailing" id="XWC-b0-Lf8"/>
+                            <constraint firstItem="BTS-em-eiA" firstAttribute="top" secondItem="eLq-EE-HwW" secondAttribute="top" constant="69" id="jSg-OH-TiC"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="eLq-EE-HwW"/>
                     </view>
@@ -79,7 +84,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <gestureRecognizer id="VUV-Tz-dat"/>
+                <gestureRecognizer id="VUV-Tz-dat" customClass="CustomGestureRecognizer" customModule="meteocool" customModuleProvider="target"/>
             </objects>
             <point key="canvasLocation" x="52.173913043478265" y="34.151785714285715"/>
         </scene>

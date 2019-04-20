@@ -59,7 +59,6 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
         if (drawerState == .OPEN) {
             button.setImage(UIImage(named: "Slider_Handle"), for: [])
             button.frame = originalButtonPosition
-            //CGRect(x: button.frame.origin.x+(button.frame.width/2), y: button.frame.origin.y, width: button.frame.width/2, height: button.frame.height)
         }
         activityIndicator.stopAnimating()
         drawerState = .CLOSED
@@ -111,6 +110,8 @@ window.downloadForecast(function() {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         let action = String(describing: message.body)
 
+        // XXX convert to switch/case
+
         if message.name == "timeHandler" {
             self.currentdate = NSDate(timeIntervalSince1970: Double(action)!) as Date
         }
@@ -131,7 +132,6 @@ window.downloadForecast(function() {
         }
 
         if action == "forecastDownloaded" {
-            //print("forecast finished downloading")
             time.text = formatter.string(from: Date())
             drawer_open_finish()
         }
@@ -140,8 +140,14 @@ window.downloadForecast(function() {
             drawer_close()
         }
 
-        if action == "openSettingsView" {
-            // XXX implement me
+        if action == "enableScrolling" {
+            webView.scrollView.isScrollEnabled = true
+            webView.scrollView.bounces = true
+        }
+
+        if action == "disableScrolling" {
+            webView.scrollView.isScrollEnabled = false
+            webView.scrollView.bounces = false
         }
     }
 
