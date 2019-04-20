@@ -77,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return
             }
 
-            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+            if let json = ((try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]) as [String : Any]??) {
                 if let errorMessage = json?["error"] as? String {
                     NSLog("ERROR: \(errorMessage)")
                 }
