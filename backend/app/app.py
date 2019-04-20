@@ -189,7 +189,8 @@ def save_location_to_backend(data):
             "token": token
         }
         key = {"token": token}
-        if token != "anon":
+
+        if token != "anon" and not "ignore" in data:
             db.collection.update(key, insert_data, upsert=True)
             logging.warn("inserted new client data: %s" % insert_data)
 
@@ -234,7 +235,8 @@ def save_location_to_backend(data):
             "device": device_str,
             "deviceTimestamp": timestamp
         }
-        db.pressure.insert(pressure_data)
+        if not "ignore" in data:
+            db.pressure.insert(pressure_data)
         logging.warn("inserted new barometric data: %s" % pressure_data)
 
     return jsonify(success=True)
