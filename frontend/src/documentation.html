@@ -76,9 +76,9 @@ href="#x1-140002.2.3" id="QQ2-1-19">Generierung von Vorschaubildern</a></span>
 href="#x1-150002.3" id="QQ2-1-20">Backend</a></span>
 <br /> <span class="subsubsectionToc" >2.3.1 <a 
 href="#x1-160002.3.1" id="QQ2-1-22">Öffentliche REST API</a></span>
-<br /> <span class="subsectionToc" >2.4 <a 
+<br /><span class="subsectionToc" >2.4 <a 
 href="#x1-170002.4" id="QQ2-1-23">Tileserver</a></span>
-<br /> <span class="subsectionToc" >2.5 <a 
+<br /><span class="subsectionToc" >2.5 <a 
 href="#x1-180002.5" id="QQ2-1-24">Frontend</a></span>
 <br /> <span class="sectionToc" >3 <a 
 href="#x1-190003" id="QQ2-1-25">Mobile Anwendungen</a></span>
@@ -141,6 +141,9 @@ src="radarverbund.jpg" alt="PIC"
  />
 <br />    <div class="caption" 
 ><span class="id">Abbildung 1:</span><span class="content">Radarverbund des DWD mit Abdeckung; Bildquelle: &copy; <a href="http://dwd.de">DWD</a></span></div><!--tex4ht:label?: x1-70011 -->                                                 </div>
+
+
+
 <!--l. 110--><p class="noindent" >Die Radardaten werden ca. alle 5 Minuten durch den Deutschen Wetterdienst zur
 Verfügung gestellt und besitzen eine räumliche Auﬂösung von 1x1 km pro Pixel.
 <span class="cite">[<a 
@@ -148,11 +151,11 @@ href="#Xdwdradar">1</a>]</span>
 </p><!--l. 114--><p class="indent" >  meteocool verarbeitet bereits die sogenannte <span 
 class="ectt-1095">composite</span>-Variante der Radardaten. In dieser
 vorverarbeiteten Version wurden bereits die Aufnahmen aller Stationen im Radarverbund zu
-einem nationalen Gitter kombiniert. Im vom DWD für diesen Zweck deﬁnierten
+einem nationalen Gitter kombiniert. Im vom DWD für diesen Zweck definierten
 Run-Length-Encoding-Verfahren sind für diesen Wert 8 Bit pro Pixel vorgesehen.
 <span class="cite">[<a 
 href="#Xdwdbufr">2</a>]</span>
-</p><!--l. 121--><p class="indent" >  Die Regen-Intensitäten liegen pro Pixel in einer eigens vom DWD deﬁnierten Einheit
+</p><!--l. 121--><p class="indent" >  Die Regen-Intensitäten liegen pro Pixel in einer eigens vom DWD definierten Einheit
 “<span 
 class="ecti-1095">RVP6</span>” vor. Vor der Weiterverarbeitung werden die Werte in die gebräuchlichere
 Einheit dbZ (Dämpfung relativ zum Faktor Z; logarithmische Skala, dimensionslos
@@ -165,6 +168,63 @@ die im Folgenden beschriebenen Verarbeitungsschritte transformiert.
 </p><!--l. 133--><p class="noindent" >
 
 </p>
+
+
+<div class="tcolorbox">
+<h5>Geographische Projektionen</h5>
+<div class="tcolorboxInner">
+<p class="noindent" >Da die Erde eine Kugel ist, ist zur korrekten Darstellung ebendieser auf einer zweidiemensionalen
+Karte eine mathematische Projektion notwendig. In der Geographie gibt es eine Vielzahl
+<span class="footnote-mark"><a 
+href="techdoc2.html#fn1x0"><sup class="textsuperscript">1</sup></a></span><a 
+ id="x1-2f1"></a> an
+gebräuchlichen Projektionen mit unterschiedlichen Eigenschaften:
+</p>
+     <ul class="itemize1">
+     <li class="itemize"><span 
+class="ecbx-1095">Plate Carree </span>(ESRI:53001): zylindrische Projektion, welche die Erdoberﬂäche
+     in  Rechtecke  mit  parallel  verlaufenden  Kanten  einteilt.  Zu  Navigations-  oder
+     Referenzzwecken ist sie aufgrund ihrer ungenauigkeit ungeeignet. Sie wird oft zur
+     Visualisierung globaler Daten verwendet. <span class="cite">[<span 
+class="ecbx-1095">?</span>]</span>
+     </li>
+     <li class="itemize"><span 
+class="ecbx-1095">Mollweide-Projektion </span>(ESRI:54009):  ﬂächentreue  Projektion,  Darstellung  als
+     Ellipse. Breitenkreise stellen parallel Linien dar, Meridiane werden (bis auf den
+     Mittelmeridian) als Ellipse dargestellt. <span class="cite">[<span 
+class="ecbx-1095">?</span>]</span>
+     </li>
+     <li class="itemize"><span 
+class="ecbx-1095">Web Mercator Projektion </span>(EPSG:3857): Spezialfall der Mercator-Projektion,
+     einer zylindrischen Projektion, die in der Nähe des Equators relativ genau ist (d.h.
+     keine/sehr geringe <span 
+class="ecbx-1095">Winkelverzerrung </span>vorweist).<br 
+class="newline" />Dies führt z.B. dazu, dass der Afrikanische Kontinent genau so groß erscheint wie
+     der Inselstaat Island.
+     <!--l. 76--><p class="noindent" >Diese Projektion wird von sogut wie allen Karten- und Navigationsdiensten für
+     Endnutzer  verwendet.  Sie  wird  umgangssprachlich  auch  als  <span 
+class="ecti-1095">Google  Projektion</span>
+     bezeichnet. <span class="cite">[<span 
+class="ecbx-1095">?</span>]</span></p></li></ul>
+<!--l. 82--><p class="indent" >  <img 
+src="projections.png" alt="PIC"  
+ /> <a 
+ id="x1-1doc"></a>
+</p><!--l. 86--><p class="noindent" ><span 
+class="ecti-1095">Von links: Plate Carree, Mollweide, Web Mercator;
+Bildquelle <a
+             href="https://en.wikipedia.org/wiki/List_of_map_projections#Table_of_projections">Wikipedia</a> (CC BY-SA 3.0)</span>
+</p><!--l. 91--><p class="indent" >  Jede Projektion wird im <span 
+class="ecti-1095">GIS-Jargon </span>mit eine sog. EPSG-Nummer oder ESRI-Nummer
+identifiziert. Dies erleichtert das Arbeiten bzw. Konvertieren zwischen Projektionen, da sich
+hinter jeder EPSG-Nummer eine Vielzahl an mathematischen Parametern verbirgt, die zur
+Definition des jeweiligen Koordinatensystems notwendig sind.
+</p>
+</div>
+</div>
+
+
+
   <h5 class="subsubsectionHead"><span class="titlemark">2.1.1 </span> <a 
  id="x1-80002.1.1"></a>Visualisierung</h5>
 <!--l. 136--><p class="noindent" >Um die Radardaten auf einer zwei-dimensionalen Karte verständlich darzustellen, müssen die
@@ -227,7 +287,7 @@ href="techdoc4.html#fn3x0"><sup class="textsuperscript">3</sup></a></span><a
 zu <span 
 class="ecti-1095">Web Mercator </span>geändert wurde, muss das resultierende Bild zudem noch an einem
 Referenzpunkt in einem globalen Koordinatensystem angehängt werden. Besagte Eckpunkte
-liefert der DWD in seiner oﬃziellen Dokumentation. <span class="cite">[<a 
+liefert der DWD in seiner offiziellen Dokumentation. <span class="cite">[<a 
 href="#Xgeoref">5</a>]</span>
 </p><!--l. 193--><p class="indent" >  Zur ﬂexiblen, endgeräteunabhängigen Auslieferung der Bilddaten werden die Radardaten
 schließlich in das Container-Format <span 
@@ -297,7 +357,7 @@ class="ectt-1095">x</span>- und <span
 class="ectt-1095">y</span>-Index
 umgerechnet werden. Danach kann der Zugriff auf die dritte Dimension (Regenintensität)
 erfolgen.
-</p><!--l. 302--><p class="indent" >  Verschiedene Parameter der Benachrichtung sind per REST-API konﬁgurierbar. Dazu
+</p><!--l. 302--><p class="indent" >  Verschiedene Parameter der Benachrichtung sind per REST-API konfigurierbar. Dazu
 gehören unter anderen:
 </p>
      <ul class="itemize1">
@@ -311,11 +371,11 @@ class="ecti-1095">false positives</span>)
      </li>
      <li class="itemize">Intensität,  ab  der  eine  Benachrichtigung  gewünscht  ist  (Nieselregen,  Regen,
      Starkregen, Hagel, ...)</li></ul>
-<!--l. 318--><p class="indent" >  Neben den über die API konﬁgurierbaren Parametern nimmt der Server diverse
+<!--l. 318--><p class="indent" >  Neben den über die API konfigurierbaren Parametern nimmt der Server diverse
 Optimierungen bezüglich des Benachrichtigungsverhaltens vor. Der Hintergrund dabei ist, dass
 Smartphone-Benutzer Apps mit übermäßig vielen (irrelevanten) Push-Benachrichtigungen
 schnell wieder de-installieren. In einer Beta-Testphase wurden folgende Probleme
-identiﬁziert:
+identifiziert:
      </p><ol  class="enumerate1" >
      <li class="enumerate" id="x1-11004x1">Wenn der Benutzer sich schnell durch eine Regenfront bewegt (z.B. Auto oder Zug)
      meldet sein Smartphone des Öfteren einen neuen Standort (Punkt auf der Strecke),
@@ -434,27 +494,14 @@ class="ecti-1095">Key-Value-Store</span>-Datenbank
 href="techdoc11.html#fn10x0"><sup class="textsuperscript">10</sup></a></span><a 
  id="x1-15001f10"></a>.
 </p>
-  <hr class="figure" /><div class="figure" 
->
 
-<a 
- id="x1-150026"></a>
-
-<!--l. 445--><p class="noindent" ><img 
-src="component.png" alt="PIC"  
- />
-<br /> </p><div class="caption" 
-><span class="id">Abbildung 6: </span><span  
-class="content">Die zentralle Rolle des Backends im UML Komponentendiagramm</span></div><!--tex4ht:label?: x1-150026 -->
-
-  </div><hr class="endfigure" />
-  <h5 class="subsubsectionHead"><span class="titlemark">2.3.1 </span> <a 
+<h5 class="subsubsectionHead"><span class="titlemark">2.3.1 </span> <a 
  id="x1-160002.3.1"></a>Öffentliche REST API</h5>
 <!--l. 451--><p class="noindent" >Die von den Endgeräten initierte Kommunikation mit dem Backend wird über eine
 REST-basierte HTTP API abgehandelt.
-</p><!--l. 456--><p class="indent" >  Endgeräte identiﬁzieren sich gegenüber dem Server anhand eines Tokens. Dieses Token
+</p><!--l. 456--><p class="indent" >  Endgeräte identifizieren sich gegenüber dem Server anhand eines Tokens. Dieses Token
 generiert das mobile Betriebssystem beim ersten Start der App. Es dient gleichzeitig der
-Identiﬁzierung gegenüber der API für Push-Benachrichtigungen von Apple bzw.
+Identifizierung gegenüber der API für Push-Benachrichtigungen von Apple bzw.
 Google.
 </p><!--l. 462--><p class="indent" >  Das Token ist insofern nicht sicherheitsrelevant, als dass anhand des Tokens keine
 Informationen über das Gerät, den Nutzer oder seinen Standort abgefragt werden
@@ -508,7 +555,7 @@ u.a.:
 href="techdoc14.html#fn13x0"><sup class="textsuperscript">13</sup></a></span><a 
  id="x1-18002f13"></a>
      trifft ein: Client zeigt Benachrichtigung über <span 
-class="ecti-1095">Javascript Desktop Notiﬁcation API</span>.</li></ul>
+class="ecti-1095">Javascript Desktop Notification API</span>.</li></ul>
 <!--l. 536--><p class="indent" >  Desweiteren verwendet die Oberﬂäche die <span 
 class="ecti-1095">Google</span>
 <span 
@@ -543,14 +590,14 @@ stehen diese Funktionalitäten nicht zur Verfügung.
 class="ecti-1095">Software</span>
 <span 
 class="ecti-1095">Engineering </span>zum Einsatz.
-</p><!--l. 563--><p class="indent" >  Da es sich um ein Open Source Projekt handelt, ﬁndet die Verwaltung von Bugs und
+</p><!--l. 563--><p class="indent" >  Da es sich um ein Open Source Projekt handelt, findet die Verwaltung von Bugs und
 Feature-Requests öffentlich über github Issues statt. Dies birgt eine relativ geringe
 Einstiegshürde für Nutzer und Beitragende.
 </p><!--l. 568--><p class="noindent" >
 </p>
   <h4 class="subsectionHead"><span class="titlemark">4.1 </span> <a 
  id="x1-210004.1"></a>CI</h4>
-<!--l. 570--><p class="noindent" >Eine gitlab-CI-Instanz kompiliert und veriﬁziert automatisch für jeden Commit das
+<!--l. 570--><p class="noindent" >Eine gitlab-CI-Instanz kompiliert und verifiziert automatisch für jeden Commit das
 JavaScript-Frontend.
 </p><!--l. 573--><p class="indent" >  Eine Integration der anderen Komponenten (insbesondere der Docker Container) steht noch
 aus.
@@ -596,7 +643,7 @@ erstellt:
 </p><!--l. 648--><p class="indent" >
      </p><ol  class="enumerate1" >
      <li 
-  class="enumerate" id="x1-23002x1">Auslesen und ﬁltern der Daten aus MongoDB (zu SQL ähnliche Abfragesprache
+  class="enumerate" id="x1-23002x1">Auslesen und filtern der Daten aus MongoDB (zu SQL ähnliche Abfragesprache
      “pymongo”)
      </li>
      <li 
@@ -634,7 +681,7 @@ src="isobar.png" alt="PIC"
 ><span class="id">Abbildung 7:  </span><span  
 class="content">Erste  Auswertung  der  Barometriedaten  über  12  Stunden.  Zu  sehen
 ist eine Heatmap (hellblau bis grüne Punkte) um lokale Häufungen der Messpunkte
-zu  identiﬁzieren;  die  Isobaren  (“Höhenlinien”)  zeigen  (vermeintliche;  interpolierte)
+zu  identifizieren;  die  Isobaren  (“Höhenlinien”)  zeigen  (vermeintliche;  interpolierte)
 Unterschiede des Luftdrucks an.</span></div><!--tex4ht:label?: x1-230117 -->
 
   </div><hr class="endfigure" />
@@ -649,7 +696,7 @@ Unterschiede des Luftdrucks an.</span></div><!--tex4ht:label?: x1-230117 -->
  [1]<span class="bibsp">   </span></span> <a href="https://www.dwd.de/EN/ourservices/radar_products/radar_products.html" id="Xdwdradar">Deutscher Wetterdienst, 11.03.2019</a>
    </p>
    <p class="bibitem" ><span class="biblabel">
- [2]<span class="bibsp">   </span></span>
+ [2]<span class="bibsp"></span></span>
    <a href="https://www.dwd.de/DE/leistungen/radarprodukte/formatbeschreibung_sweep_reflektivitaet.pdf" id="Xdwdbufr">BUFR Dateiformat des Precipitation- und Volumen-Scans der Reﬂektivität am Radarstandort, Michael Mott, 2015, Deutscher Wetterdienst</a>
    </p>
    <p class="bibitem" ><span class="biblabel">
@@ -663,41 +710,24 @@ Unterschiede des Luftdrucks an.</span></div><!--tex4ht:label?: x1-230117 -->
    </p>
    <p class="bibitem" ><span class="biblabel">
  [6]<span class="bibsp">   </span></span><a 
- id="Xmbtiles"></a>speciﬁcation documents for the MBTiles tileset format <br 
-class="newline" /><span 
-class="ectt-1095">https://github.com/mapbox/mbtiles-spec</span>
+ id="Xmbtiles" href="https://github.com/mapbox/mbtiles-spec">specification documents for the MBTiles tileset format</a><br 
+class="newline" />
 
    </p>
    <p class="bibitem" ><span class="biblabel">
  [7]<span class="bibsp">   </span></span><a 
- id="Xcarree"></a>Plate Carree-Projektion, GEOVLEX, MLU Halle-Wittenberg <br 
-class="newline" /><span 
-class="ectt-1095">http://mars.geographie.uni-halle.de/mlucampus/geoglossar</span><br 
-class="newline" /><span 
-class="ectt-1095">/terme_datenblatt.php?terme=Plate%20Carree-Projektion</span>
+          id="Xcarree" href="http://mars.geographie.uni-halle.de/mlucampus/geoglossar/terme_datenblatt.php?terme=Plate%20Carree-Projektion">Plate Carree-Projektion, GEOVLEX, MLU Halle-Wittenberg</a><br 
+class="newline" />
    </p>
    <p class="bibitem" ><span class="biblabel">
  [8]<span class="bibsp">   </span></span><a 
- id="Xmollweide"></a>Weisstein, Eric W. “Mollweide Projection.”  From MathWorld–A Wolfram Web
-   Resource. <br 
-class="newline" /><span 
-class="ectt-1095">http://mars.geographie.uni-halle.de/mlucampus/geoglossar/</span><br 
-class="newline" /><span 
-class="ectt-1095">terme_datenblatt.php?terme=Plate%20Carree-Projektion</span>
+ id="Xmollweide">Weisstein, Eric W. “Mollweide Projection.”  From
+ MathWorld–A Wolfram Web Resource</a>
    </p>
    <p class="bibitem" ><span class="biblabel">
  [9]<span class="bibsp">   </span></span><a 
- id="Xnowcast"></a>Nowcasting-Verfahren, Deutscher Wetterdienst <br 
-class="newline" /><span 
-class="ectt-1095">https://www.dwd.de/DE/forschung/wettervorhersage/met_fachverfahren</span><br 
-class="newline" /><span 
-class="ectt-1095">/nowcasting/nowcasting_node.html</span>
-   </p>
-   <p class="bibitem" ><span class="biblabel">
- [10]<span class="bibsp">   </span></span><a 
- id="Xbarometry"></a>Luftdruckänderungen                 und                 ihre                 Bedeutung,
-   <span 
-class="ectt-1095">http://www.bohlken.net/luftdruck2.htm</span>
+ id="Xnowcast" href="https://www.dwd.de/DE/forschung/wettervorhersage/met_fachverfahren/nowcasting/nowcasting_node.html">Nowcasting-Verfahren, Deutscher Wetterdienst </a>
+</span>
    </p>
    <p class="bibitem" ><span class="biblabel">
  [11]<span class="bibsp">   </span></span><a 

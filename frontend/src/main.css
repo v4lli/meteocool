@@ -238,3 +238,26 @@ hr {
 .caption {
 	font-size: 85%;
 }
+
+.tcolorbox {
+	background-color: #bbe7ed;
+	padding: 5px;
+	border-radius: 14px;
+	margin-bottom: 12px;
+}
+
+.tcolorbox h5 {
+	margin-left: 20px;
+	margin-top: 3px;
+}
+
+.tcolorbox img {
+	width: 100%;
+}
+
+.tcolorbox .tcolorboxInner {
+	background-color: #f8f9fa;
+	padding: 25px;
+	padding-bottom: 10px;
+	border-radius: 0 0 14px 14px;
+}
