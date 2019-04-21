@@ -183,7 +183,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     }
 
     func postLocation(location: CLLocation, pressure: Float) {
-        let tokenValue = self.token ?? "anon2"
+        let tokenValue = self.token ?? "anon"
 
         let locationDict = [
             "lat": location.coordinate.latitude as Double,
