@@ -8,6 +8,13 @@ import random
 import threading
 import uuid
 
+hooks = None
+try:
+    import hooks
+    hooks = True
+except ImportError:
+    hooks = False
+
 import websocket
 from pymongo import MongoClient
 from pyproj import Proj, transform
@@ -238,6 +245,13 @@ def save_location_to_backend(data):
         if not "ignore" in data:
             db.pressure.insert(pressure_data)
         logging.warn("inserted new barometric data: %s" % pressure_data)
+
+    if hooks:
+        try:
+            hooks.insert(data)
+        except Exception as e:
+            logging.error("hooks enabled but execution failed: %s" % e)
+            pass
 
     return jsonify(success=True)
 

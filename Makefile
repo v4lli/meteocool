@@ -4,6 +4,8 @@ dev:
 	docker-compose -f docker-compose-dev.yml build
 
 prod:
+	test -d private || git clone git@github.com:v4lli/meteocool-private.git private
+	test -d private && make -C private/ BASE=$$(pwd)
 	docker-compose -f docker-compose.yml build
 
 prodrestart:
