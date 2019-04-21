@@ -199,7 +199,8 @@ def save_location_to_backend(data):
 
         if token != "anon" and not "ignore" in data:
             db.collection.update(key, insert_data, upsert=True)
-            logging.warn("inserted new client data: %s" % insert_data)
+            logging.warn("inserted new client data for %s: %s" % (token,
+                insert_data))
 
     try:
         altitude = data["altitude"]
@@ -211,7 +212,7 @@ def save_location_to_backend(data):
         logging.warn("request does not include barometric parameters: %s" % e)
     else:
         invalidKey = None
-        if not isinstance(altitude, float):
+        if not isinstance(altitude, float) and not isinstance(altitude, int):
             invalidKey = "altitude"
         if not isinstance(verticalAccuracy, int) and not isinstance(verticalAccuracy, float):
             invalidKey = "verticalAccuracy"
