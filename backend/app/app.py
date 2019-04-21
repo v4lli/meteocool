@@ -8,12 +8,12 @@ import random
 import threading
 import uuid
 
-hooks = None
+hooksEnabled = None
 try:
     import hooks
-    hooks = True
+    hooksEnabled = True
 except ImportError:
-    hooks = False
+    hooksEnabled = False
 
 import websocket
 from pymongo import MongoClient
@@ -71,6 +71,8 @@ def clear_notification():
             return jsonify(success=False)
         db.collection.update_one({"_id": obj["_id"]}, {"$set": {"ios_onscreen": False}})
         logging.warn("Updated session for %s", str(data))
+        if hooksEnabled:
+            hooks.post_clear(token, data["from"])
     return jsonify(success=True)
 
 
@@ -247,9 +249,9 @@ def save_location_to_backend(data):
             db.pressure.insert(pressure_data)
         logging.warn("inserted new barometric data: %s" % pressure_data)
 
-    if hooks:
+    if hooksEnabled:
         try:
-            hooks.insert(data)
+            hooks.post_insert(data, travelmode_speed)
         except Exception as e:
             logging.error("hooks enabled but execution failed: %s" % e)
             pass
