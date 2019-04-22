@@ -621,8 +621,9 @@ if (!widgetMode) {
 }
 
 // forecast button
+var playButton;
 if (!widgetMode) {
-  var playButton = document.createElement("button");
+  playButton = document.createElement("button");
   playButton.classList.add("play");
   playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
   var playButtonScript = function (e) {
@@ -916,5 +917,14 @@ window.resetLayers = function () {
 };
 
 document.getElementById("logolinkhref").href = window.location.href;
+
+window.hidePlayButton = function() {
+  playButton.style.display="none";
+}
+
+window.showPlayButton = function() {
+  playButton.style.display="";
+}
+
 
 /* vim: set ts=2 sw=2 expandtab: */

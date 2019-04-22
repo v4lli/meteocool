@@ -186,6 +186,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
             }
 
             // XXX decide if new location is better than the previous one. does apple guarantee this??
+            // XXX apparently not
             self.lastReceivedLocation = location
             if (!background) {
                 for observer in observers {

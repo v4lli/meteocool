@@ -49,6 +49,8 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
             button.setImage(UIImage(named: "Slider_Handle_open"), for: [])
             activityIndicator.stopAnimating()
             drawerState = .OPEN
+            // XXX workaround until we tie the play button to the wheel
+            webView.evaluateJavaScript("window.hidePlayButton();")
         }
     }
 
@@ -64,6 +66,8 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
         }
         activityIndicator.stopAnimating()
         drawerState = .CLOSED
+        // XXX workaround until we tie the play button to the wheel
+        webView.evaluateJavaScript("window.showPlayButton();")
     }
 
     @IBAction func slider_show_button(sender: AnyObject) {
