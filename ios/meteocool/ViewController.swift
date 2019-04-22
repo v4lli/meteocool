@@ -2,9 +2,11 @@ import UIKit
 import UIKit.UIGestureRecognizer
 import WebKit
 import CoreLocation
+import OnboardKit
 
 class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, LocationObserver{
     let buttonsize = 19.0 as CGFloat
+    let lightmode = UIColor(red: 0xf8/255.0, green: 0xf9/255.0, blue: 0xfa/255.0, alpha: 1.0)
 
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var slider_ring: UIImageView!
@@ -98,7 +100,6 @@ window.downloadForecast(function() {
 
     func toggleLightMode() {
         // #f8f9fa = non-darkmode titelbar color
-        let lightmode = UIColor(red: 0xf8/255.0, green: 0xf9/255.0, blue: 0xfa/255.0, alpha: 1.0)
         UIApplication.shared.statusBarView?.backgroundColor = lightmode
     }
 
@@ -151,6 +152,52 @@ window.downloadForecast(function() {
         }
     }
 
+    private func showAlert(_ completion: @escaping (_ success: Bool, _ error: Error?) -> Void) {
+        let alert = UIAlertController(title: "Allow Notifications?",
+                                      message: "Habitat wants to send you notifications",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+            completion(true, nil)
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            completion(false, nil)
+        })
+        presentedViewController?.present(alert, animated: true)
+    }
+
+    lazy var onboardingPages: [OnboardPage] = {
+        let pageOne = OnboardPage(title: "Hi there!\n\n\n",
+                                  imageName: "ob_rain_sun",
+                                  description: "The meteocool project is an ongoing effort to make freely available meteorological data useful to everyone.\n\nWe process and aggregate data from different sources and try to visualize them in an intuitive way.")
+
+        let pageTwo = OnboardPage(title: "Nowcasting",
+                    imageName: "ob_jacket",
+                    description: "We use a super-accurate forecast model (a so-called \"nowcast\") which predicts the path and extent of rain clouds based on factors like wind, air pressure and lightning activity.\n\nObviously, more distant time steps are less accurate. But in our experience, at least the first 45 minutes are pretty spot-on.")
+
+        let pageThree = OnboardPage(title: "Notifications",
+                                  imageName: "ob_notifications",
+                                  description: "Based on this data, do you want us to notify you ahead of rain at your location?\n\nWe put a lot of effort into making the notifications non-intrusive. They disappear automatically as soon as it stops raining.",
+                                  advanceButtonTitle: "Later",
+                                  actionButtonTitle: "Enable Notifications",
+                                  action: { [weak self] completion in
+                                    self?.showAlert(completion) }
+                                )
+
+        let pageFour = OnboardPage(title: "Location",
+                                    imageName: "ob_location",
+                                    description: "Choose \"Always\" in the Location Permission pop-up if you want notifications to work!\n\nBut don't worry, this won't drain your battery. See for yourself in the iOS Settings after a day or two.",
+                                    advanceButtonTitle: "Later",
+                                    actionButtonTitle: "Enable Location Services",
+                                    action: { [weak self] completion in
+                                        self?.showAlert(completion) })
+
+        let pageFive = OnboardPage(title: "Go outside and play!",
+                                   imageName: "ob_free",
+                                   description: "This service is completely free and open source. It's run and built by volunteers in their free time.\n\nWe don't want your money; just tell your friends or send us feedback!")
+
+        return [pageOne, pageTwo, pageThree, pageFour, pageFive]
+    }()
+
     override func loadView() {
         super.loadView()
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
@@ -192,6 +239,19 @@ window.downloadForecast(function() {
 
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         SharedLocationUpdater.addObserver(observer: self)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "onboardingDone") == nil) {
+            let tintColor = UIColor(red: 137.0/255.0, green: 181.0/255.0, blue: 187.0/255.0, alpha: 1.00)
+            let appearanceConfiguration = OnboardViewController.AppearanceConfiguration(tintColor: tintColor, backgroundColor: lightmode)
+            let onboardingVC = OnboardViewController(pageItems: onboardingPages, appearanceConfiguration: appearanceConfiguration)
+            onboardingVC.modalPresentationStyle = .formSheet
+            onboardingVC.presentFrom(self, animated: true)
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "onboardingDone")
+        }
     }
 
     @objc func willEnterForeground() {
