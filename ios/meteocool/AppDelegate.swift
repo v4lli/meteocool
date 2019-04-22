@@ -5,14 +5,12 @@ import CoreMotion
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    var notificationManager: NotificationManager!
     var pushToken: String?
     lazy var altimeter = CMAltimeter()
     var pressure: Double = 0.0
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        self.notificationManager = NotificationManager.init()
         return true
     }
 
@@ -28,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-        self.notificationManager.clearNotifications()
+        SharedNotificationManager.clearNotifications()
 
         // XXX call this only when there are >0 notifications on launch! saves 1 useless request.
         acknowledgeNotification(retry: true, from: "foreground")
@@ -45,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let clear_all = userInfo["clear_all"] as? Bool {
             if (clear_all) {
-                self.notificationManager.clearNotifications()
+                SharedNotificationManager.clearNotifications()
                 acknowledgeNotification(retry: true, from: "push")
 
                 UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "alert")

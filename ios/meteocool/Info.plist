@@ -25,9 +25,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We want notify you ahead of rain or snow at your current location.</string>
+	<string>We want notify you ahead of rain or snow at your current location. Choose "Always" if you want Push Notifications to work.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We want notify you ahead of rain or snow at your current location.</string>
+	<string>We want notify you ahead of rain or snow at your current location. Choose "Always" if you want Push Notifications to work.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Display your own location on the weather map.</string>
 	<key>UIBackgroundModes</key>

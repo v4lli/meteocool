@@ -31,6 +31,9 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     /// default accuracy for monitoring significant location changes
     private let backgroundAccuracy = kCLLocationAccuracyKilometer
 
+    /// populated with the completion handler from the onboarding thing
+    var authCompletionHandler: ((Bool, Error?) -> Void)?
+
     /// constructor
     override init() {
         super.init()
@@ -58,8 +61,34 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    func requestAuthorization() {
+    func requestAuthorization(_ completion: @escaping (_ success: Bool, _ error: Error?) -> Void) {
+        authCompletionHandler = completion
         locationManager.requestAlwaysAuthorization()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if let authCompletionHandler = authCompletionHandler {
+            switch status {
+            case .notDetermined:
+                locationManager.requestAlwaysAuthorization()
+                break
+            case .authorizedWhenInUse:
+                locationManager.startUpdatingLocation()
+                break
+            case .authorizedAlways:
+                locationManager.startUpdatingLocation()
+                break
+            case .restricted:
+                // restricted by e.g. parental controls. User can't enable Location Services
+                break
+            case .denied:
+                // user denied your app access to Location Services, but can grant access from Settings.app
+                break
+            default:
+                break
+            }
+            authCompletionHandler(true, nil)
+        }
     }
 
     // =============== Observer pattern ===========

@@ -179,21 +179,19 @@ window.downloadForecast(function() {
                                   description: "Based on this data, do you want us to notify you ahead of rain at your location?\n\nWe put a lot of effort into making the notifications non-intrusive. They disappear automatically as soon as it stops raining.",
                                   advanceButtonTitle: "Later",
                                   actionButtonTitle: "Enable Notifications",
-                                  action: { [weak self] completion in
-                                    SharedLocationUpdater.requestAuthorization() }
-                                )
+                                  action: { [weak self] completion in SharedNotificationManager.registerForPushNotifications(completion) })
 
         let pageFour = OnboardPage(title: "Location",
                                     imageName: "ob_location",
                                     description: "Choose \"Always\" in the Location Permission pop-up if you want notifications to work!\n\nBut don't worry, this won't drain your battery. See for yourself in the iOS Settings after a day or two.",
                                     advanceButtonTitle: "Later",
                                     actionButtonTitle: "Enable Location Services",
-                                    action: { [weak self] completion in
-                                        self?.showAlert(completion) })
+                                    action: { [weak self] completion in SharedLocationUpdater.requestAuthorization(completion) })
 
         let pageFive = OnboardPage(title: "Go outside and play!",
                                    imageName: "ob_free",
-                                   description: "This service is completely free and open source. It's run and built by volunteers in their free time.\n\nWe don't want your money; just tell your friends or send us feedback!")
+                                   description: "This service is completely free and open source. It's run and built by volunteers in their free time.\n\nWe don't want your money; just tell your friends or send us feedback!",
+                                    advanceButtonTitle: "Finish")
 
         return [pageOne, pageTwo, pageThree, pageFour, pageFive]
     }()
