@@ -180,7 +180,7 @@ window.downloadForecast(function() {
                                   advanceButtonTitle: "Later",
                                   actionButtonTitle: "Enable Notifications",
                                   action: { [weak self] completion in
-                                    self?.showAlert(completion) }
+                                    SharedLocationUpdater.requestAuthorization() }
                                 )
 
         let pageFour = OnboardPage(title: "Location",

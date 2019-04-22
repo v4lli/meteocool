@@ -34,10 +34,13 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     /// constructor
     override init() {
         super.init()
-
         locationManager.delegate = self
-        locationManager.requestAlwaysAuthorization()
+        NotificationCenter.default.addObserver(self, selector: #selector(LocationUpdater.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(LocationUpdater.willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+        printAuthorizationStatus()
+    }
 
+    func printAuthorizationStatus() {
         if CLLocationManager.locationServicesEnabled() {
             switch CLLocationManager.authorizationStatus() {
             case .notDetermined, .restricted, .denied:
@@ -53,9 +56,10 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         } else {
             NSLog("Location services are not enabled")
         }
+    }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(LocationUpdater.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(LocationUpdater.willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+    func requestAuthorization() {
+        locationManager.requestAlwaysAuthorization()
     }
 
     // =============== Observer pattern ===========
