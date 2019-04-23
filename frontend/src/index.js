@@ -929,6 +929,11 @@ window.showPlayButton = function() {
 $(document).ready(function() {
   if(window.location.href.indexOf('#about') != -1) {
     $('#about').modal('show');
+    if (DeviceDetect.isIos()) {
+      $('#appModal').style.display="none";
+      // XXX re-enable once the scrolling is enabled
+      $('#documentationLink').style.display="none";
+    }
   }
 });
 

@@ -27,13 +27,13 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="modal-body" style="padding: 30px;">
+          <div class="modal-body">
             <h3>Legend</h3>
             <p><img src="./legend_big.png" id="legend" alt="Color Mapping/Legend"></p>
             <p>Shown is the scale from 0 dbZ up to 65 dbZ.</p>
             <h3>Credits</h3>
             <p>This project would not have been possible without the help from a few great people:</p>
-            <img src="volunteers.png" alt="not actually the volunteers" style="float: right; padding-left: 10px; width: 45%;">
+            <img src="volunteers.png" class="volunteers" alt="not actually the volunteers">
             <ul>
               <li>General stuff: <a href="https://github.com/pew">Jonas</a>, <a href="https://github.com/NessArt">NessArt</a>
               <li>iOS App: Thanks to <a href="https://mauracher.eu/">Florian Mauracher</a>, Nina Loser</li>
@@ -61,7 +61,7 @@
             </button>
           </div>
           <div class="modal-body justify">
-            <img src="./ios-lockscreen.png" style="float: right; width: 35%; margin-left: 2%; margin-bottom: 2%;" alt="iOS Screenshots">
+            <img src="./ios-lockscreen.png" class="lockscreen" alt="iOS Screenshots">
             <h5>Accurate Push Notifications</h5>
             <p>meteocool can notify you about incoming rain or snow
             at your current whereabouts. Your phone automatically
@@ -79,11 +79,12 @@
             storm &mdash; that's up to you.</p>
 
             <h5>Completely Free on iOS and Android</h5>
-            The official meteocool App is available on the Apple App Store and the Google Play Store.
+            The official meteocool App is available on the Apple
+            App Store. The Android App is <a href="https://github.com/v4lli/meteocool/releases/tag/v0.1">currently being beta-tested</a>.
 
-            <div id="appstoreBtns" style="clear: right; width: 100%; text-align: center;">
-              <img src="./download-on-appstore.png" style="width: 20%; margin: 2%;" alt="Download the iOS app on Apple App Store">
-              <img src="./download-on-playstore.png" style="width: 25%; margin: 2%;" alt="Download the Android App on the Play Store">
+            <div id="appstoreBtns">
+              <img src="./download-on-appstore.png" alt="Download the iOS app on Apple App Store">
+              <!--img src="./download-on-playstore.png" style="width: 25%; margin: 2%;" alt="Download the Android App on the Play Store"-->
             </div>
 
             <p>Please note that some of the latest features might
@@ -91,11 +92,6 @@
             change that, <a
             href="https://github.com/v4lli/meteocool/issues?q=is%3Aissue+is%3Aopen+label%3Aandroid">we're
             looking for contributors</a>.</p>
-            <!--p>This feature obviously requires you to provide us
-            with your current location. No other information besides
-            your location data, accuracy and an anonymous, random
-            token associated with your web browser will be
-            processed.</p-->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -155,7 +151,7 @@
         <ul class="navbar-nav ml-auto">
           <li class="nav-item"><a id="toggleMode" class="nav-link">dark mode</a></li>
           <li class="nav-item"><a id="documentationLink" class="nav-link" href="/documentation.html">documentation</a></li>
-          <!--li class="nav-item"><a id="appModal" class="nav-link" data-toggle="modal" data-target="#appModal">mobile apps</a></li-->
+          <li class="nav-item"><a id="appModal" class="nav-link" data-toggle="modal" data-target="#appModal">mobile apps</a></li>
           <li class="nav-item"><a class="nav-link" data-toggle="modal" data-target="#about">about</a></li>
         </ul>
       </div>

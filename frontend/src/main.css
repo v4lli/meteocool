@@ -261,3 +261,31 @@ hr {
 	padding-bottom: 10px;
 	border-radius: 0 0 14px 14px;
 }
+
+.modal-body {
+	padding: 30px;
+}
+
+.modal-body .volunteers {
+	float: right;
+	padding-left: 10px;
+	width: 45%;
+}
+
+.modal-body .lockscreen {
+	float: right;
+	width: 35%;
+	margin-left: 2%;
+	margin-bottom: 2%;
+}
+
+#appstoreBtns {
+	clear: right;
+	width: 100%;
+	text-align: center;
+}
+
+#appstoreBtns img {
+	width: 20%;
+	margin: 2%;
+}
