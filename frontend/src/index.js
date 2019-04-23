@@ -926,5 +926,10 @@ window.showPlayButton = function() {
   playButton.style.display="";
 }
 
+$(document).ready(function() {
+  if(window.location.href.indexOf('#about') != -1) {
+    $('#about').modal('show');
+  }
+});
 
 /* vim: set ts=2 sw=2 expandtab: */
