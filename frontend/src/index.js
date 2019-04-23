@@ -927,13 +927,13 @@ window.showPlayButton = function() {
 }
 
 $(document).ready(function() {
+  if (DeviceDetect.isIos()) {
+    $('#topMenu')[1].children[1].style.display = "none";
+    $('#topMenu')[1].children[2].style.display = "none";
+    // XXX re-enable once the scrolling is enabled
+  }
   if(window.location.href.indexOf('#about') != -1) {
     $('#about').modal('show');
-    if (DeviceDetect.isIos()) {
-      $('#appModalLi').style.display="none";
-      // XXX re-enable once the scrolling is enabled
-      $('#documentationLinkLi').style.display="none";
-    }
   }
 });
 
