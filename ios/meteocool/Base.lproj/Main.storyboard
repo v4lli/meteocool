@@ -44,9 +44,8 @@
                                     <action selector="slider_show_buttonWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fbi-Qv-ZGG"/>
                                 </connections>
                             </button>
-                            <activityIndicatorView hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="KcY-U7-JEH">
+                            <activityIndicatorView hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="KcY-U7-JEH">
                                 <rect key="frame" x="312" y="62" width="20" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <rect key="contentStretch" x="1" y="1" width="1" height="1"/>
                                 <color key="color" cocoaTouchSystemColor="darkTextColor"/>
                             </activityIndicatorView>
@@ -64,13 +63,14 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <constraints>
+                            <constraint firstItem="aOD-KT-ksP" firstAttribute="top" secondItem="KcY-U7-JEH" secondAttribute="bottom" constant="-38" id="0AD-qv-zDH"/>
                             <constraint firstItem="aOD-KT-ksP" firstAttribute="top" secondItem="eLq-EE-HwW" secondAttribute="top" id="4bD-5Z-ZyV"/>
                             <constraint firstItem="BTS-em-eiA" firstAttribute="centerX" secondItem="aOD-KT-ksP" secondAttribute="centerX" id="H0g-a1-ugA"/>
                             <constraint firstItem="BTS-em-eiA" firstAttribute="top" secondItem="eLq-EE-HwW" secondAttribute="top" constant="69" id="NF7-5V-BnW"/>
                             <constraint firstItem="aOD-KT-ksP" firstAttribute="leading" secondItem="eLq-EE-HwW" secondAttribute="leading" id="PZO-yj-6qD"/>
                             <constraint firstItem="aOD-KT-ksP" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" id="X8a-Bx-Qhm"/>
-                            <constraint firstItem="eLq-EE-HwW" firstAttribute="trailing" secondItem="aOD-KT-ksP" secondAttribute="trailing" id="XWC-b0-Lf8"/>
-                            <constraint firstItem="BTS-em-eiA" firstAttribute="top" secondItem="eLq-EE-HwW" secondAttribute="top" constant="69" id="jSg-OH-TiC"/>
+                            <constraint firstItem="aOD-KT-ksP" firstAttribute="trailing" secondItem="eLq-EE-HwW" secondAttribute="trailing" id="XWC-b0-Lf8"/>
+                            <constraint firstItem="KcY-U7-JEH" firstAttribute="leading" secondItem="aOD-KT-ksP" secondAttribute="trailing" constant="-102" id="oDd-dR-YcU"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="eLq-EE-HwW"/>
                     </view>
