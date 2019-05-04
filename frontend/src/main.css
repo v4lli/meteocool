@@ -293,3 +293,8 @@ hr {
 .clickable {
 	cursor: pointer;
 }
+
+.appstore {
+	width: 250px;
+	height: 83px;
+}
