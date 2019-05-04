@@ -40,6 +40,7 @@ services:
       - DB_CONN="mongodb://mongo:27017/"
     depends_on:
       - mongo
+      - web
 
   dwd:
     build: backend/dwd
@@ -72,7 +73,7 @@ services:
       - dwd:/data
       - ${PWD}/tileserver-gl-meteocool/config:/etc/ts
     depends_on:
-      - dwd
+      - web
 
 volumes:
   dwd:
