@@ -289,3 +289,7 @@ hr {
 	width: 20%;
 	margin: 2%;
 }
+
+.clickable {
+	cursor: pointer;
+}

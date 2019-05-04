@@ -300,11 +300,14 @@ var geolocation = new Geolocation({
   projection: view.getProjection()
 });
 
-var isV2 = (window.location.search.indexOf("mobile=ios2") !== -1);
+var isV2 = (window.location.search.indexOf("mobile=ios2") !== -1) && DeviceDetect.isIos();
 var isAndroid = (window.location.search.indexOf("mobile=android") !== -1);
 
 if (!window.location.hash && !isV2 && !isAndroid) {
-  geolocation.setTracking(true);
+  // wtf is this XXX
+  if (window.location.pathname !== "/privacy.html" && window.location.pathname !== "/documentation.html") {
+    geolocation.setTracking(true);
+  }
 }
 
 // handle geolocation error.
@@ -916,7 +919,9 @@ window.resetLayers = function () {
   window.forecastNo = -1;
 };
 
-document.getElementById("logolinkhref").href = window.location.href;
+if (window.location.pathname !== "/documentation.html" && window.location.pathname !== "/privacy.html") {
+  document.getElementById("logolinkhref").href = window.location.href;
+}
 
 window.hidePlayButton = function() {
   playButton.style.display="none";
@@ -927,13 +932,18 @@ window.showPlayButton = function() {
 }
 
 $(document).ready(function() {
-  if (DeviceDetect.isIos()) {
-    $('#topMenu')[1].children[1].style.display = "none";
-    $('#topMenu')[1].children[2].style.display = "none";
+  if (isV2) {
+    $('#topMenu')[0].children[1].style.display = "none";
+    $('#topMenu')[0].children[2].style.display = "none";
     // XXX re-enable once the scrolling is enabled
   }
   if(window.location.href.indexOf('#about') != -1) {
     $('#about').modal('show');
+  }
+  if (isV2 && (window.location.href.indexOf("documentation.html") != -1)) {
+      window.webkit.messageHandlers["scriptHandler"].postMessage("enableScrolling");
+  } else if (isV2) {
+      window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
   }
 });
 

@@ -18,7 +18,7 @@
     <meta name="description" content="Free and open source, mobile first weather radar + lightning visualization for Central Europe." />
   </head>
   <body>
-    <div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true">
+    <div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="about" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -83,7 +83,7 @@
             App Store. The Android App is <a href="https://github.com/v4lli/meteocool/releases/tag/v0.1">currently being beta-tested</a>.
 
             <div id="appstoreBtns">
-              <img src="./download-on-appstore.png" alt="Download the iOS app on Apple App Store">
+              <a href="https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623"><img src="./download-on-appstore.png" alt="Download the iOS app on Apple App Store"></a>
               <!--img src="./download-on-playstore.png" style="width: 25%; margin: 2%;" alt="Download the Android App on the Play Store"-->
             </div>
 
@@ -149,10 +149,10 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto" id="topMenu">
-          <li class="nav-item"><a id="toggleMode" class="nav-link">dark mode</a></li>
-          <li class="nav-item"><a id="documentationLink" class="nav-link" href="/documentation.html">documentation</a></li>
-          <li class="nav-item"><a id="appModal" class="nav-link" data-toggle="modal" data-target="#appModal">mobile apps</a></li>
-          <li class="nav-item"><a class="nav-link" data-toggle="modal" data-target="#about">about</a></li>
+          <li class="nav-item"><a class="nav-link" id="toggleMode">dark mode</a></li>
+          <li class="nav-item"><a class="nav-link" href="/documentation.html">documentation</a></li>
+          <li class="nav-item"><a href="#" class="nav-link clickable" data-toggle="modal" data-target="#appModal">mobile apps</a></li>
+          <li class="nav-item"><a href="#" class="nav-link clickable" data-toggle="modal" data-target="#about">about</a></li>
         </ul>
       </div>
     </nav>
