@@ -219,9 +219,15 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     func postLocation(location: CLLocation, pressure: Float) {
         let tokenValue = self.token ?? "anon"
 
+        var lang = "en"
+        if let bundle_lang = Bundle.main.preferredLocalizations.first {
+            lang = bundle_lang
+        }
+
         let locationDict = [
             "lat": location.coordinate.latitude as Double,
             "lon": location.coordinate.longitude as Double,
+            "lang": lang,
             "altitude": location.altitude as Double,
             "accuracy": location.horizontalAccuracy as Double,
             "verticalAccuracy": location.verticalAccuracy as Double,
