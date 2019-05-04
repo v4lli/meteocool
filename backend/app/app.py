@@ -218,7 +218,7 @@ def save_location_to_backend(data):
             invalidKey = "altitude"
         if not isinstance(verticalAccuracy, int) and not isinstance(verticalAccuracy, float):
             invalidKey = "verticalAccuracy"
-        if not isinstance(pressure, float):
+        if not isinstance(pressure, float) and not isinstance(pressure, int):
             invalidKey = "pressure"
         if not isinstance(timestamp, float):
             if isinstance(timestamp, int):
