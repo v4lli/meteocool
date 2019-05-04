@@ -575,6 +575,7 @@ window.isMonitoring = false;
 
 if (isV2) {
   window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
+  window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocationImplicit");
   window.isMonitoring = true;
 }
 
@@ -598,6 +599,7 @@ if (!widgetMode && !isAndroid) {
     button.addEventListener("click", function () {
       if (window.isMonitoring) {
         window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
+        window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocationExplicit");
         window.map.getView().animate({ center: window.userLocation, zoom: 10 });
       } else {
         window.webkit.messageHandlers["scriptHandler"].postMessage("stopMonitoringLocation");
