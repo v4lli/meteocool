@@ -198,7 +198,7 @@ window.downloadForecast(function() {
                                     description: "Choose \"Always\" in the location permission pop-up if you want notifications to work!\n\nBut don't worry, this won't drain your battery. See for yourself in the iOS Settings after a day or two.",
                                     advanceButtonTitle: "Later",
                                     actionButtonTitle: "Enable Location Services",
-                                    action: { [weak self] completion in SharedLocationUpdater.requestAuthorization(completion) })
+                                    action: { [weak self] completion in SharedLocationUpdater.requestAuthorization(completion, notDetermined: true) })
 
         let pageFive = OnboardPage(title: "Go outside and play!",
                                    imageName: "ob_free",
@@ -213,7 +213,13 @@ window.downloadForecast(function() {
                                description: "meteocool is much better with location data! Choose \"Always\" in the permission pop-up if you also want notifications.\n\nDon't worry, this won't drain your battery.",
                                advanceButtonTitle: "",
                                actionButtonTitle: "Enable Location Services",
-                               action: { [self] completion in SharedLocationUpdater.requestAuthorization(completion) })
+                               action: {[self] completion in
+                                SharedLocationUpdater.requestAuthorization(completion, notDetermined: false)})
+
+    let locationNagSorry = OnboardPage(title: "We'll shut up now",
+                                  imageName: "ob_location",
+                                  description: "We won't ask you again about notifications or location permissions!\n\nIf you change your mind, go to System Settings > Privacy > meteocool.",
+                                  advanceButtonTitle: "Done")
 
     override func loadView() {
         super.loadView()
@@ -272,7 +278,7 @@ window.downloadForecast(function() {
         } else {
             if (!self.onboardingOnThisRun && CLLocationManager.authorizationStatus() == .notDetermined) {
                 if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "nagDone") == nil) {
-                    let nagVC = OnboardViewController(pageItems: [locationNag], appearanceConfiguration: appearanceConfiguration)
+                    let nagVC = OnboardViewController(pageItems: [locationNag, locationNagSorry], appearanceConfiguration: appearanceConfiguration)
                     nagVC.modalPresentationStyle = .formSheet
                     nagVC.presentFrom(self, animated: true)
                     UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "nagDone")

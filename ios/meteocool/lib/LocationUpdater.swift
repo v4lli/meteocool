@@ -61,41 +61,40 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    func requestAuthorization(_ completion: @escaping (_ success: Bool, _ error: Error?) -> Void) {
+    func requestAuthorization(_ completion: @escaping (_ success: Bool, _ error: Error?) -> Void, notDetermined: Bool) {
         authCompletionHandler = completion
         locationManager.requestAlwaysAuthorization()
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
-            if let authCompletionHandler = self.authCompletionHandler {
-                authCompletionHandler(true, nil)
-            }
-            self.authCompletionHandler = nil
-        })
+        if (!notDetermined) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
+                print("completing lost completion handler")
+                if let authCompletionHandler = self.authCompletionHandler {
+                    authCompletionHandler(true, nil)
+                }
+                self.authCompletionHandler = nil
+            })
+        }
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if let authCompletionHandler = authCompletionHandler {
             switch status {
             case .notDetermined:
-                authCompletionHandler(false, nil)
                 locationManager.requestAlwaysAuthorization()
                 break
             case .authorizedWhenInUse:
-                authCompletionHandler(true, nil)
                 locationManager.startUpdatingLocation()
                 break
             case .authorizedAlways:
-                authCompletionHandler(true, nil)
                 locationManager.startUpdatingLocation()
                 break
             case .restricted:
-                authCompletionHandler(false, nil)
                 break
             case .denied:
-                authCompletionHandler(false, nil)
                 break
             default:
                 break
             }
+            authCompletionHandler(true, nil)
         }
         authCompletionHandler = nil
     }
@@ -110,13 +109,21 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         if (explicit) {
             if (CLLocationManager.authorizationStatus() == .notDetermined) {
                 requestAuthorization({(_,_) in
+                    print("CB")
                     if CLLocationManager.authorizationStatus() == .authorizedAlways || CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
                         self.requestLocation(observer: observer, explicit: false)
                     }
                     if CLLocationManager.authorizationStatus() == .authorizedAlways {
+                        print("CB always")
+
                         SharedNotificationManager.registerForPushNotifications({(_,_) in return})
                     }
-                })
+                }, notDetermined: true)
+            }
+            if (CLLocationManager.authorizationStatus() == .denied) {
+                if let url = NSURL(string: UIApplication.openSettingsURLString) as URL? {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
             }
         }
 
