@@ -205,10 +205,11 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
                 pressure.getPressure(completion: {
                     pressure in self.postLocationDeferred(location: location, pressure: pressure)  })
                 self.lastPostedLocation = location
-
-                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.latitude, forKey: "lat")
-                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.longitude, forKey: "lon")
             }
+
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.latitude, forKey: "lat")
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.longitude, forKey: "lon")
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(location.coordinate.longitude, forKey: "accuracy")
 
             // XXX decide if new location is better than the previous one. does apple guarantee this??
             // XXX apparently not
