@@ -583,7 +583,7 @@ if (isV2) {
 if (!widgetMode) {
   var button = document.createElement("button");
   button.classList.add("locate-me-btn");
-  button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
+  button.innerHTML = "<img class=\"\" id=\"pulse\" src=\"./baseline_location_searching_white_48dp.png\">";
 }
 
 if (!widgetMode && !isAndroid) {
@@ -598,12 +598,14 @@ if (!widgetMode && !isAndroid) {
   if (isV2) {
     button.addEventListener("click", function () {
       if (window.isMonitoring) {
-        window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
+        $("#pulse").addClass("pulse");
+        window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation"); // old API, may 2019
         window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocationExplicit");
         if (window.userLocation != null) {
           window.map.getView().animate({ center: window.userLocation, zoom: 10 });
         }
       } else {
+        $("#pulse").removeClass("pulse");
         window.webkit.messageHandlers["scriptHandler"].postMessage("stopMonitoringLocation");
       }
       window.isMonitoring = !window.isMonitoring;
