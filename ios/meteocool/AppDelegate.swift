@@ -5,9 +5,6 @@ import CoreMotion
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    var pushToken: String?
-    lazy var altimeter = CMAltimeter()
-    var pressure: Double = 0.0
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -46,15 +43,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 SharedNotificationManager.clearNotifications()
                 acknowledgeNotification(retry: true, from: "push")
 
-                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "alert")
-                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "message")
+                /*UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "alert")
+                UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.removeObject(forKey: "message")*/
             }
         }
         completionHandler(.newData)
     }
 
     func acknowledgeNotification(retry: Bool, from: String) {
-        guard let token = pushToken else {
+        guard let token = SharedNotificationManager.getToken() else {
             //NSLog("acknowledgeNotification: no push token")
             if (retry) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
@@ -91,8 +88,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return String(format: "%02.2hhx", data)
         }.joined()
         NSLog("Device Token: \(token)")
-        SharedLocationUpdater.token = token
-        self.pushToken = token
+        SharedNotificationManager.setToken(token: token)
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {

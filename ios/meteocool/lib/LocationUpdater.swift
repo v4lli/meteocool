@@ -25,8 +25,6 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     private var lastPostedLocation: CLLocation?
     // the last received location (might not have been reported to the backend)
     private var lastReceivedLocation: CLLocation?
-    // XXX device push token - should go somewhere else
-    var token: String?
 
     /// default accuracy for monitoring significant location changes
     private let backgroundAccuracy = kCLLocationAccuracyKilometer
@@ -109,13 +107,10 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         if (explicit) {
             if (CLLocationManager.authorizationStatus() == .notDetermined) {
                 requestAuthorization({(_,_) in
-                    print("CB")
                     if CLLocationManager.authorizationStatus() == .authorizedAlways || CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
                         self.requestLocation(observer: observer, explicit: false)
                     }
                     if CLLocationManager.authorizationStatus() == .authorizedAlways {
-                        print("CB always")
-
                         SharedNotificationManager.registerForPushNotifications({(_,_) in return})
                     }
                 }, notDetermined: true)
@@ -237,7 +232,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     // interface methods to the backend
     func postLocationDeferred(location: CLLocation, pressure: Float) {
         // XXX not sure we need this hack... if there is no token, don't use background location stuff
-        if token != nil {
+        if SharedNotificationManager.getToken() != nil {
             postLocation(location: location, pressure: pressure)
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
@@ -247,7 +242,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     }
 
     func postLocation(location: CLLocation, pressure: Float) {
-        let tokenValue = self.token ?? "anon"
+        let tokenValue = SharedNotificationManager.getToken() ?? "anon"
 
         var lang = "en"
         if let bundle_lang = Bundle.main.preferredLocalizations.first {
