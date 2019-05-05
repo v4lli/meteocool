@@ -614,7 +614,9 @@ if (!widgetMode && !isAndroid) {
 }
 
 if (isAndroid) {
-  button.addEventListener("click", function() { Android.injectLocation(); }, false);
+  button.addEventListener("click", function () {
+    Android.injectLocation(); // eslint-disable-line no-undef
+  }, false);
 }
 
 if (!widgetMode) {
@@ -894,7 +896,7 @@ window.smartDownloadAndPlay = function () {
 // enableActivityIndicator();
 
 window.userLocation = null;
-window.injectLocation = function (lat, lon, accuracy, zoom=false) {
+window.injectLocation = function (lat, lon, accuracy, zoom = false) {
   var center = fromLonLat([lon, lat]);
   window.userLocation = center;
   if (zoom || !haveZoomed) {
@@ -927,36 +929,36 @@ if (window.location.pathname !== "/documentation.html" && window.location.pathna
   document.getElementById("logolinkhref").href = window.location.href;
 }
 
-window.hidePlayButton = function() {
-  playButton.style.display="none";
-}
+window.hidePlayButton = function () {
+  playButton.style.display = "none";
+};
 
-window.showPlayButton = function() {
-  playButton.style.display="";
-}
+window.showPlayButton = function () {
+  playButton.style.display = "";
+};
 
-$(document).ready(function() {
+$(document).ready(function () {
   if (isV2) {
-    $('#topMenu')[0].children[1].style.display = "none";
-    $('#topMenu')[0].children[2].style.display = "none";
+    $("#topMenu")[0].children[1].style.display = "none";
+    $("#topMenu")[0].children[2].style.display = "none";
     // XXX re-enable once the scrolling is enabled
   }
-  if(window.location.href.indexOf('#about') != -1) {
-    $('#about').modal('show');
+  if (window.location.href.indexOf("#about") !== -1) {
+    $("#about").modal("show");
   }
-  if (isV2 && (window.location.href.indexOf("documentation.html") != -1)) {
-      window.webkit.messageHandlers["scriptHandler"].postMessage("enableScrolling");
+  if (isV2 && (window.location.href.indexOf("documentation.html") !== -1)) {
+    window.webkit.messageHandlers["scriptHandler"].postMessage("enableScrolling");
   } else if (isV2) {
-      window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
+    window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
   }
 });
 
 // lazy load images in modal
-$('#about').on("show.bs.modal", function () {
-    $('.lazy_load').each(function(){
-        var img = $(this);
-        img.attr('src', img.data('src'));
-    });
+$("#about").on("show.bs.modal", function () {
+  $(".lazy_load").each(function () {
+    var img = $(this);
+    img.attr("src", img.data("src"));
+  });
 });
 
 /* vim: set ts=2 sw=2 expandtab: */
