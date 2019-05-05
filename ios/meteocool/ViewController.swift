@@ -29,6 +29,14 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     var currentdate = Date()
     let formatter = DateFormatter()
 
+    func drawer_show() {
+        button.isHidden = false
+    }
+
+    func drawer_hide() {
+        button.isHidden = true
+    }
+
     func drawer_open() {
         if (drawerState == .CLOSED) {
             activityIndicator.startAnimating()
@@ -162,19 +170,14 @@ window.downloadForecast(function() {
             webView.scrollView.isScrollEnabled = false
             webView.scrollView.bounces = false
         }
-    }
 
-    private func showAlert(_ completion: @escaping (_ success: Bool, _ error: Error?) -> Void) {
-        let alert = UIAlertController(title: "Allow Notifications?",
-                                      message: "Habitat wants to send you notifications",
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            completion(true, nil)
-        })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            completion(false, nil)
-        })
-        presentedViewController?.present(alert, animated: true)
+        if action == "drawerHide" {
+            drawer_hide()
+        }
+
+        if action == "drawerShow" {
+            drawer_show()
+        }
     }
 
     lazy var onboardingPages: [OnboardPage] = {
@@ -216,9 +219,9 @@ window.downloadForecast(function() {
                                action: {[self] completion in
                                 SharedLocationUpdater.requestAuthorization(completion, notDetermined: false)})
 
-    let locationNagSorry = OnboardPage(title: "We'll shut up now",
+    let locationNagSorry = OnboardPage(title: "We'll shut up now.",
                                   imageName: "ob_location",
-                                  description: "We won't ask you again about notifications or location permissions!\n\nIf you change your mind, go to System Settings > Privacy > meteocool.",
+                                  description: "We won't ask you again about permissions!\n\nIf you change your mind, go to System Settings > Privacy > meteocool.",
                                   advanceButtonTitle: "Done")
 
     override func loadView() {
@@ -244,6 +247,7 @@ window.downloadForecast(function() {
         let gesture = CustomGestureRecognizer(target: self, action: nil)
         gesture.setView(viewing: self)
         view.addGestureRecognizer(gesture)
+        drawer_hide()
     }
 
     override func viewDidLoad() {
