@@ -15,6 +15,8 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     @IBOutlet weak var time: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
+    var onboardingOnThisRun = false
+
     enum DrawerStates {
         case CLOSED
         case LOADING
@@ -128,10 +130,16 @@ window.downloadForecast(function() {
             toggleLightMode()
         }
 
-        if action == "startMonitoringLocation" {
-            SharedLocationUpdater.requestLocation(observer: self)
+        if action == "startMonitoringLocationExplicit" {
+            SharedLocationUpdater.requestLocation(observer: self, explicit: true)
             SharedLocationUpdater.startAccurateLocationUpdates()
         }
+
+        if action == "startMonitoringLocationImplicit" {
+            SharedLocationUpdater.requestLocation(observer: self, explicit: false)
+            SharedLocationUpdater.startAccurateLocationUpdates()
+        }
+
         if action == "stopMonitoringLocation" {
             SharedLocationUpdater.stopAccurateLocationUpdates()
         }
@@ -200,6 +208,13 @@ window.downloadForecast(function() {
         return [pageOne, pageTwo, pageThree, pageFour, pageFive]
     }()
 
+    let locationNag = OnboardPage(title: "Location",
+                               imageName: "ob_location",
+                               description: "meteocool is much better with location data! Choose \"Always\" in the permission pop-up if you also want notifications.\n\nDon't worry, this won't drain your battery.",
+                               advanceButtonTitle: "",
+                               actionButtonTitle: "Enable Location Services",
+                               action: { [self] completion in SharedLocationUpdater.requestAuthorization(completion) })
+
     override func loadView() {
         super.loadView()
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
@@ -246,13 +261,23 @@ window.downloadForecast(function() {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        let tintColor = UIColor(red: 137.0/255.0, green: 181.0/255.0, blue: 187.0/255.0, alpha: 1.00)
+        let appearanceConfiguration = OnboardViewController.AppearanceConfiguration(tintColor: tintColor, backgroundColor: lightmode)
         if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "onboardingDone") == nil) {
-            let tintColor = UIColor(red: 137.0/255.0, green: 181.0/255.0, blue: 187.0/255.0, alpha: 1.00)
-            let appearanceConfiguration = OnboardViewController.AppearanceConfiguration(tintColor: tintColor, backgroundColor: lightmode)
             let onboardingVC = OnboardViewController(pageItems: onboardingPages, appearanceConfiguration: appearanceConfiguration)
             onboardingVC.modalPresentationStyle = .formSheet
             onboardingVC.presentFrom(self, animated: true)
             UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "onboardingDone")
+            self.onboardingOnThisRun = true
+        } else {
+            if (!self.onboardingOnThisRun && CLLocationManager.authorizationStatus() == .notDetermined) {
+                if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "nagDone") == nil) {
+                    let nagVC = OnboardViewController(pageItems: [locationNag], appearanceConfiguration: appearanceConfiguration)
+                    nagVC.modalPresentationStyle = .formSheet
+                    nagVC.presentFrom(self, animated: true)
+                    UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "nagDone")
+                }
+            }
         }
     }
 

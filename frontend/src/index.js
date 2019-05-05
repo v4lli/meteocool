@@ -600,7 +600,9 @@ if (!widgetMode && !isAndroid) {
       if (window.isMonitoring) {
         window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
         window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocationExplicit");
-        window.map.getView().animate({ center: window.userLocation, zoom: 10 });
+        if (window.userLocation != null) {
+          window.map.getView().animate({ center: window.userLocation, zoom: 10 });
+        }
       } else {
         window.webkit.messageHandlers["scriptHandler"].postMessage("stopMonitoringLocation");
       }

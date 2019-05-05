@@ -64,31 +64,40 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     func requestAuthorization(_ completion: @escaping (_ success: Bool, _ error: Error?) -> Void) {
         authCompletionHandler = completion
         locationManager.requestAlwaysAuthorization()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
+            if let authCompletionHandler = self.authCompletionHandler {
+                authCompletionHandler(true, nil)
+            }
+            self.authCompletionHandler = nil
+        })
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if let authCompletionHandler = authCompletionHandler {
             switch status {
             case .notDetermined:
+                authCompletionHandler(false, nil)
                 locationManager.requestAlwaysAuthorization()
                 break
             case .authorizedWhenInUse:
+                authCompletionHandler(true, nil)
                 locationManager.startUpdatingLocation()
                 break
             case .authorizedAlways:
+                authCompletionHandler(true, nil)
                 locationManager.startUpdatingLocation()
                 break
             case .restricted:
-                // restricted by e.g. parental controls. User can't enable Location Services
+                authCompletionHandler(false, nil)
                 break
             case .denied:
-                // user denied your app access to Location Services, but can grant access from Settings.app
+                authCompletionHandler(false, nil)
                 break
             default:
                 break
             }
-            authCompletionHandler(true, nil)
         }
+        authCompletionHandler = nil
     }
 
     // =============== Observer pattern ===========
@@ -96,7 +105,21 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         observers.append(observer)
     }
 
-    func requestLocation(observer: LocationObserver) {
+    // executed when the user taps the locate-me button
+    func requestLocation(observer: LocationObserver, explicit: Bool) {
+        if (explicit) {
+            if (CLLocationManager.authorizationStatus() == .notDetermined) {
+                requestAuthorization({(_,_) in
+                    if CLLocationManager.authorizationStatus() == .authorizedAlways || CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+                        self.requestLocation(observer: observer, explicit: false)
+                    }
+                    if CLLocationManager.authorizationStatus() == .authorizedAlways {
+                        SharedNotificationManager.registerForPushNotifications({(_,_) in return})
+                    }
+                })
+            }
+        }
+
         if let location = self.lastReceivedLocation {
             observer.notify(location: location)
         } else {
