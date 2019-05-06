@@ -958,7 +958,7 @@ $(document).ready(function () {
 });
 
 // lazy load images in modal
-$("#about").on("show.bs.modal", function () {
+$("#appModal").on("show.bs.modal", function () {
   $(".lazy_load").each(function () {
     var img = $(this);
     img.attr("src", img.data("src"));
