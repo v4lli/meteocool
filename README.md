@@ -10,6 +10,8 @@ avoid upcoming weather - that's up to you.
 meteocool currently uses radar data provided by DWD and realtime lightning
 information from the awesome blitzortung.org project.
 
+[![Download on the Appstore](https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png)](https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623)
+
 ## Features
 
 * **Automatic Map Updates:** the biggest inconvenience with most weather radar
@@ -28,9 +30,9 @@ information from the awesome blitzortung.org project.
 * **iOS App:** a native iOS app provides battery-efficient background
   location services to provide accurate rain notifications without any user
   interaction.
-  
+
 ![iOS Push Notifications](/doc/ios-lockscreen.png?raw=true "iOS Push notifications with preview")
- 
+
 
 # Development
 
