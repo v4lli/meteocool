@@ -14,6 +14,8 @@ import org.unimplemented.meteocool.security.Validator
 import com.google.firebase.iid.FirebaseInstanceId
 import org.jetbrains.anko.doAsync
 import org.unimplemented.meteocool.location.WebAppInterface
+import org.unimplemented.meteocool.onboarding.OnboardingFragment
+import org.unimplemented.meteocool.onboarding.Startup
 import org.unimplemented.meteocool.utility.JSONClearPost
 import org.unimplemented.meteocool.utility.NetworkUtility
 import org.unimplemented.meteocool.service.UploadLocationService
@@ -23,8 +25,17 @@ class Meteocool : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
+
         setContentView(R.layout.activity_meteocool)
+        PreferenceManager.getDefaultSharedPreferences(this).apply {
+            // Check if we need to display our OnboardingFragment
+            if (!getBoolean(OnboardingFragment.IS_ONBOARD_COMPLETED, false)) {
+                // The user hasn't seen the OnboardingFragment yet, so show it
+                startActivity(Intent(this@Meteocool, Startup::class.java))
+            }
+        }
+
+        supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
 
         Validator.checkAndroidPermissions(this.applicationContext, this)
 

@@ -28,6 +28,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+                android:name=".onboarding.Startup"
+                android:enabled="true"
+                android:exported="true">
+        </activity>
+
+
         <service
                 android:name=".service.MyFirebaseMessagingService">
             <intent-filter>
