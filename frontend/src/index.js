@@ -950,8 +950,10 @@ $(document).ready(function () {
   }
   if (isV2 && (window.location.href.indexOf("documentation.html") !== -1)) {
     window.webkit.messageHandlers["scriptHandler"].postMessage("enableScrolling");
+    window.webkit.messageHandlers["scriptHandler"].postMessage("drawerHide");
   } else if (isV2) {
     window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
+    window.webkit.messageHandlers["scriptHandler"].postMessage("drawerShow");
   }
 });
 

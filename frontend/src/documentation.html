@@ -82,10 +82,8 @@ href="#x1-170002.4" id="QQ2-1-23">Tileserver</a></span>
 href="#x1-180002.5" id="QQ2-1-24">Frontend</a></span>
 <br /> <span class="sectionToc" >3 <a 
 href="#x1-190003" id="QQ2-1-25">Mobile Anwendungen</a></span>
-<br /> <span class="sectionToc" >5 <a 
+<br /> <span class="sectionToc" >4 <a 
 href="#x1-230005" id="QQ2-1-29">Auswertung der Barometriedaten</a></span>
-<br /> <span class="sectionToc" >6 <a 
-href="#x1-240006" id="QQ2-1-31">Quellen &#x0026; Abbildungen</a></span>
   </div>
 
 <!--l. 52--><p class="noindent" >
@@ -578,70 +576,7 @@ class="ecti-1095">Push-Benachrichtigungen </span>nutzen zu können. Für reine W
 stehen diese Funktionalitäten nicht zur Verfügung.
 </p><!--l. 558--><p class="noindent" >
 </p>
-  <h3 class="sectionHead"><span class="titlemark">5 </span> <a 
- id="x1-230005"></a>Auswertung der Barometriedaten</h3>
-<!--l. 604--><p class="noindent" >Die im Rahmen der <span 
-class="ecti-1095">Praxisbegleitenden Lehrveranstaltung </span>implementierte Funktionalität zur
-Erfassung von barometrischen Daten innerhalb der meteocool-App wurde inzwischen unter ca.
-15 Beta-Testern ausgerollt.
-</p><!--l. 630--><p class="indent" >  Wie bereits vermutet wäre zur ﬂächendeckenden Messung eine größere Anzahl an Nutzern
-notwendig. Dies liegt insbesondere daran, dass die zeitliche Auﬂösung ansonsten zu gering für
-meteorologische Zwecke ist.
-</p><!--l. 635--><p class="indent" >  Ein beachtlicher Teil der Messungen können zudem Aufgrund von zu geringer
-räumlicher Genauigkeit (insbesondere der vertikalen Genauigkeit) nicht verwertet werden.
-Dies wurde jedoch insofern im Voraus beachtet, als dass die Information über die
-absolute Höhe dem GPS-Empfänger entnommen und mit an das Backend gesendet
-wurde.
-</p><!--l. 644--><p class="indent" >  Um erste qualitative Aussagen über die seit der PBLV angefallenen Daten treffen zu
-können, wurde eine entsprechende graphische Auswertung (Python-Script) der Daten
-erstellt:
-</p><!--l. 648--><p class="indent" >
-     </p><ol  class="enumerate1" >
-     <li 
-  class="enumerate" id="x1-23002x1">Auslesen und filtern der Daten aus MongoDB (zu SQL ähnliche Abfragesprache
-     “pymongo”)
-     </li>
-     <li 
-  class="enumerate" id="x1-23004x2">Normalisierung  der  Druckmessungen  auf  Meeresspiegel;  dies  ist  notwendig,  da
-     die relative Höhe eines Nutzers eine große Rolle spielt (Hochhäuser etc.). Dazu
-     notwendig: Information über Temperatur (Abfrage über DWD OpenData-Portal).
-
-     </li>
-     <li 
-  class="enumerate" id="x1-23006x3">Interpolation mittels <span 
-class="ecti-1095">Radialer Basisfunktion </span>über die Bibliothek <span 
-class="ecti-1095">metpy</span>
-     </li>
-     <li 
-  class="enumerate" id="x1-23008x4">Generierung   von   sog.   <span 
-class="ecbx-1095">Isobaren   </span>(vergleichbar   mit   Höhenlinien   aus   der
-     Kartographie) mit <span 
-class="ecti-1095">metpy </span>und <span 
-class="ecti-1095">matplotlib</span>
-     </li>
-     <li 
-  class="enumerate" id="x1-23010x5">Konvertierung und Geo-Referezierung der Isobaren in ein mit OpenLayers (siehe
-     <a 
-href="#x1-180002.5">2.5<!--tex4ht:ref: frontend --></a>) kompatibles Format (GeoJSON)</li></ol>
-  <hr class="figure" /><div class="figure" 
->
-
-<a 
- id="x1-230117"></a>
-
-<!--l. 661--><p class="noindent" ><img 
-src="isobar.png" alt="PIC"  
- />
-<br /> </p><div class="caption" 
-><span class="id">Abbildung 7:  </span><span  
-class="content">Erste  Auswertung  der  Barometriedaten  über  12  Stunden.  Zu  sehen
-ist eine Heatmap (hellblau bis grüne Punkte) um lokale Häufungen der Messpunkte
-zu  identifizieren;  die  Isobaren  (“Höhenlinien”)  zeigen  (vermeintliche;  interpolierte)
-Unterschiede des Luftdrucks an.</span></div><!--tex4ht:label?: x1-230117 -->
-
-  </div><hr class="endfigure" />
-
-  <h3 class="sectionHead"><span class="titlemark">6 </span> <a 
+<h3 class="sectionHead"><span class="titlemark">4 </span> <a 
  id="x1-240006"></a>Referenzen</h3>
 <!--l. 675--><p class="noindent" >
 </p>
