@@ -7,6 +7,8 @@ services:
   mongo:
     image: mongo
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
     volumes:
       - meteo_mongo_db:/data/db
 

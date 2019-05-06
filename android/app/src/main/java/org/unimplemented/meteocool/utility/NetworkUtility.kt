@@ -9,8 +9,8 @@ import java.net.URL
 class NetworkUtility{
 companion object {
 
-    private const val REST_URL = "https://meteocool.unimplemented.org/post_location"
-    private const val CLEAR_URL = "https://meteocool.unimplemented.org/clear_notification"
+    private const val REST_URL = "https://meteocool.com/post_location"
+    private const val CLEAR_URL = "https://meteocool.com/clear_notification"
 
     private fun buildJSONString(json : JSONPost) : String{
         val gsonBuilder = Gson().newBuilder().create()

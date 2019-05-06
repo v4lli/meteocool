@@ -1,4 +1,4 @@
-wradlib
+wradlib==1.2.1
 gdal
 geojson
 pillow
@@ -11,3 +11,4 @@ ipython
 pillow
 six
 matplotlib
+pyfcm

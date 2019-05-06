@@ -21,9 +21,9 @@ import { DeviceDetect } from "./modules/device-detect.js";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import { Map, View, Geolocation, Feature } from "ol";
 import { defaults as defaultControls, OverviewMap } from "ol/control.js";
-import { fromLonLat, toLonLat } from "ol/proj.js";
+import { fromLonLat } from "ol/proj.js";
 
-import logoBig from "../assets/android-chrome-512x512.png";
+import logoBig from "../assets/android-chrome-512x512.png"; // eslint-disable-line no-unused-vars
 
 const safeAreaInsets = require("safe-area-insets");
 
@@ -33,10 +33,12 @@ window.$ = $;
 function lastUpdatedFn () {
   var elem = document.getElementById("updatedTime");
 
-  if (window.lastUpdatedServer) {
-    elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer) + " ago";
-  } else {
-    elem.innerHTML = "<span style='color: #ff0000;'>connection error</span>";
+  if (elem) {
+    if (window.lastUpdatedServer) {
+      elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer) + " ago";
+    } else {
+      elem.innerHTML = "<span style='color: #ff0000;'>connection error</span>";
+    }
   }
 }
 setTimeout(lastUpdatedFn, 10000);
@@ -107,8 +109,6 @@ var attribution = new Attribution({
   collapsible: false
 });
 if (DeviceDetect.isIos()) {
-  document.getElementById("browserPushMenu").style.display = "none";
-
   attribution.setCollapsible(true);
   attribution.setCollapsed(true);
 }
@@ -122,34 +122,74 @@ var dimensions = () => {
   let mapEl;
 
   mapEl = document.getElementById("map");
-  navEl = document.getElementById("navbar").clientHeight;
+  if (document.getElementById("navbar").style.display === "none") {
+    navEl = 0;
+  } else {
+    navEl = document.getElementById("navbar").clientHeight;
+  }
+
   browserHeight = window.innerHeight;
-  mapEl.style.height = browserHeight - navEl + safeAreaInsets.top + "px";
+
+  if (window.location.pathname === "/privacy.html" || window.location.pathname === "/documentation.html") {
+    mapEl.style.height = navEl;
+  } else {
+    mapEl.style.height = browserHeight - navEl + safeAreaInsets.top + "px";
+  }
 };
-dimensions();
 
 // ================
 // OpenLayers setup
 // ================
 
+var positionFeature = new Feature();
+positionFeature.setStyle(new Style({
+  image: new CircleStyle({
+    radius: 8,
+    fill: new Fill({
+      color: "#3399CC"
+    }),
+    stroke: new Stroke({
+      color: "#fff",
+      width: 2.5
+    })
+  })
+}));
+
 // configuration/defaults
 var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
-// var rotation = 0;
+var widgetMode = false;
+
+if (window.location.pathname === "/privacy.html" || window.location.pathname === "/documentation.html") {
+  widgetMode = true;
+}
 
 if (window.location.hash !== "") {
   // try to restore center, zoom-level and rotation from the URL
-  var hash = window.location.hash.replace("#map=", "");
-  var parts = hash.split("/");
-  if (parts.length === 4) {
-    zoom = parseInt(parts[0], 10);
-    center = [
-      parseFloat(parts[1]),
-      parseFloat(parts[2])
-    ];
-    // rotation = parseFloat(parts[3]);
+  if (window.location.hash.includes("#widgetMap")) {
+    // XXX deduplicate with other case
+    var hash = window.location.hash.replace("#widgetMap=", "");
+    var parts = hash.split("/");
+    if (parts.length === 4) {
+      zoom = parseInt(parts[0], 10);
+      center = fromLonLat([
+        parseFloat(parts[2]),
+        parseFloat(parts[1])
+      ]);
+      widgetMode = true;
+      document.getElementById("navbar").style.display = "none";
+      positionFeature.setGeometry(center ? new Point(center) : null);
+    }
+  } else {
+    var hashM = window.location.hash.replace("#map=", "");
+    var partsM = hashM.split("/");
+    if (partsM.length === 4) {
+      zoom = parseInt(partsM[0], 10);
+      center = [ parseFloat(partsM[1]), parseFloat(partsM[2]) ];
+    }
   }
 }
+dimensions();
 
 //
 // DARK MODE
@@ -158,8 +198,11 @@ if (window.location.hash !== "") {
 var toggleButton = document.getElementById("toggleMode");
 var navbar = document.getElementById("navbar");
 
-var lightTiles; // 'undefined' will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
-var darkTiles = "https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.pbf";
+// XXX use retina tiles if possible!
+// https://openlayers.org/en/latest/examples/xyz-retina.html?mode=raw
+// https://github.com/CartoDB/basemap-styles
+var lightTiles = "https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png"; // 'undefined' will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
+var darkTiles = "https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png";
 
 // light view is default
 var viewMode = true;
@@ -186,17 +229,29 @@ var view = new View({
   minzoom: 5
 });
 
+var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\" target=\"_blank\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\" target=\"_blank\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">OSM</a> &#169; <a href=\"https://carto.com/attribution/\" target=\"_blank\">CARTO</a>";
+
+if (!widgetMode) {
+  baseAttributions = baseAttributions + " | <a href=\"#\" onclick=\"$('#impressumModal').modal('show'); return false;\">Impressum</a>";
+}
+
+if (window.location.pathname === "/privacy.html" || window.location.pathname === "/documentation.html") {
+  baseAttributions = "";
+}
+
+var darkAttributions = "";
+
 window.map = new Map({
   target: "map",
   layers: [
     new TileLayer({
       source: new OSM({
         url: viewMode ? lightTiles : darkTiles,
-        attributions: "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\">OSM</a> contributors."
+        attributions: viewMode ? baseAttributions : baseAttributions + darkAttributions
       })
     })
   ],
-  controls: defaultControls({ attribution: false }).extend([
+  controls: widgetMode ? [attribution] : defaultControls({ attribution: false }).extend([
     new OverviewMap(),
     attribution
   ]),
@@ -208,16 +263,30 @@ var toggleViewMode = () => {
   viewMode = !viewMode;
   var newLayer = new TileLayer({
     source: new OSM({
-      url: viewMode ? lightTiles : darkTiles
+      url: viewMode ? lightTiles : darkTiles,
+      attributions: viewMode ? baseAttributions : baseAttributions + darkAttributions
     })
   });
   window.map.getLayers().setAt(0, newLayer);
 };
 
-toggleButton.onclick = () => {
-  toggleViewMode();
-  toggleHTMLfixMe();
-};
+function toggleIOSBar () {
+  if (DeviceDetect.isIos()) {
+    if (viewMode) {
+      window.webkit.messageHandlers["scriptHandler"].postMessage("lightmode");
+    } else {
+      window.webkit.messageHandlers["scriptHandler"].postMessage("darkmode");
+    }
+  }
+}
+
+if (toggleButton) {
+  toggleButton.onclick = () => {
+    toggleViewMode();
+    toggleHTMLfixMe();
+    toggleIOSBar();
+  };
+}
 
 //
 // Geolocation (showing the user's position)
@@ -231,8 +300,14 @@ var geolocation = new Geolocation({
   projection: view.getProjection()
 });
 
-if (!window.location.hash) {
-  geolocation.setTracking(true);
+var isV2 = (window.location.search.indexOf("mobile=ios2") !== -1) && DeviceDetect.isIos();
+var isAndroid = (window.location.search.indexOf("mobile=android") !== -1);
+
+if (!window.location.hash && !isV2 && !isAndroid) {
+  // wtf is this XXX
+  if (window.location.pathname !== "/privacy.html" && window.location.pathname !== "/documentation.html") {
+    geolocation.setTracking(true);
+  }
 }
 
 // handle geolocation error.
@@ -297,20 +372,6 @@ window.addEventListener("popstate", function (event) {
   dimensions();
 });
 
-var positionFeature = new Feature();
-positionFeature.setStyle(new Style({
-  image: new CircleStyle({
-    radius: 6,
-    fill: new Fill({
-      color: "#3399CC"
-    }),
-    stroke: new Stroke({
-      color: "#fff",
-      width: 2
-    })
-  })
-}));
-
 /* eslint-disable */
 /*
  * Need to disable this stylechecker warning because the VectorLayer constructor
@@ -364,6 +425,8 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
     return style;
   }
 });
+vl.setZIndex(100);
+window.map.addLayer(vl);
 
 // timer every 10 sec
 // {
@@ -379,7 +442,7 @@ geolocation.on("change:position", function () {
   var coordinates = geolocation.getPosition();
   positionFeature.setGeometry(coordinates ? new Point(coordinates) : null);
   if (window.location.hash !== "" && !haveZoomed) {
-    window.map.getView().animate({ center: coordinates, zoom: 10 });
+    window.map.getView().animate({ center: coordinates, zoom: 9 });
     haveZoomed = true;
   }
 });
@@ -389,7 +452,7 @@ geolocation.on("change:position", function () {
 //
 
 var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var websocketUrl = "/tile";
+var websocketUrl = "https://meteocool.com/tile";
 // if (process.env.NODE_ENV === "production") {
 tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 // }
@@ -401,7 +464,7 @@ window.currentLayer = false;
 // field and use it for the "last updated" feature.
 function manualTileUpdate (removePrevious) {
   var elem = document.getElementById("updatedTime");
-  elem.innerHTML = "checking...";
+  if (elem) { elem.innerHTML = "checking..."; }
 
   $.getJSON({
     dataType: "json",
@@ -425,7 +488,15 @@ function manualTileUpdate (removePrevious) {
         layer = false;
       });
 
+      if (isV2) {
+        window.webkit.messageHandlers["scriptHandler"].postMessage("forecastInvalid");
+      }
+
       updateTimestamp(new Date(data.version * 1000));
+      // XXX this is actually API version v3....
+      if (isV2) {
+        window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
+      }
     }
   });
 }
@@ -461,8 +532,16 @@ socket.on("lightning", function (data) {
   strikemgr.addStrike(data["lon"], data["lat"]);
 });
 
+window.sock = socket;
+
 socket.on("map_update", function (data) {
   updateTimestamp(new Date(data.version * 1000));
+
+  // XXX actually V3
+  if (isV2) {
+    window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
+    window.webkit.messageHandlers["scriptHandler"].postMessage("forecastInvalid");
+  }
 
   var newLayer = new TileLayer({
     source: new TileJSON({
@@ -471,58 +550,103 @@ socket.on("map_update", function (data) {
     }),
     opacity: reflectivityOpacity
   });
+
+  // invalidate old forecast
+  if (window.playInPorgress) {
+    // pause playback
+    window.smartDownloadAndPlay();
+    window.resetLayers();
+  }
+
   // first add & fetch the new layer, then remove the old one to avoid
   // having no layer at all at some point.
   window.map.addLayer(newLayer);
   window.map.removeLayer(window.currentLayer);
   window.currentLayer = newLayer;
-  // invalidate old forecast
-  var wasActive = false;
-  if (window.playInPorgress) {
-    // pause playback
-    window.smartDownloadAndPlay();
-    wasActive = true;
-  }
+
+  // reset internal forecast state
   window.forecastDownloaded = false;
   window.forecastLayers.forEach(function (layer) {
     layer = false;
   });
-  if (wasActive) { window.smartDownloadAndPlay(); }
 });
+
+window.isMonitoring = false;
+
+if (isV2) {
+  window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
+  window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocationImplicit");
+  window.isMonitoring = true;
+}
 
 // locate me button
-var button = document.createElement("button");
-button.classList.add("locate-me-btn");
-button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
-var locateMe = function (e) {
-  var coordinates = geolocation.getPosition();
-  geolocation.setTracking(true);
-  window.map.getView().animate({ center: coordinates, zoom: 10 });
-};
-button.addEventListener("click", locateMe, false);
-var element = document.createElement("div");
-element.className = "locate-me ol-unselectable ol-control";
-element.appendChild(button);
-var locateControl = new Control({
-  element: element
-});
-window.map.addControl(locateControl);
+if (!widgetMode) {
+  var button = document.createElement("button");
+  button.classList.add("locate-me-btn");
+  button.innerHTML = "<img src=\"./baseline_location_searching_white_48dp.png\">";
+}
+
+if (!widgetMode && !isAndroid) {
+  var locateMe = function (e) {
+    var coordinates = geolocation.getPosition();
+    if (coordinates) {
+      geolocation.setTracking(true);
+      window.map.getView().animate({ center: coordinates, zoom: 10 });
+    }
+  };
+
+  if (isV2) {
+    button.addEventListener("click", function () {
+      if (window.isMonitoring) {
+        window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
+        window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocationExplicit");
+        if (window.userLocation != null) {
+          window.map.getView().animate({ center: window.userLocation, zoom: 10 });
+        }
+      } else {
+        window.webkit.messageHandlers["scriptHandler"].postMessage("stopMonitoringLocation");
+      }
+      window.isMonitoring = !window.isMonitoring;
+    }, false);
+  } else {
+    button.addEventListener("click", locateMe, false);
+  }
+}
+
+if (isAndroid) {
+  button.addEventListener("click", function () {
+    Android.injectLocation(); // eslint-disable-line no-undef
+  }, false);
+}
+
+if (!widgetMode) {
+  var element = document.createElement("div");
+  element.className = "locate-me ol-unselectable ol-control";
+  element.appendChild(button);
+  var locateControl = new Control({
+    element: element
+  });
+  window.map.addControl(locateControl);
+}
 
 // forecast button
-var playButton = document.createElement("button");
-playButton.classList.add("play");
-playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
-var playButtonScript = function (e) {
-  window.smartDownloadAndPlay();
-};
-playButton.addEventListener("click", playButtonScript, false);
-var playElement = document.createElement("div");
-playElement.className = "play ol-unselectable ol-control";
-playElement.appendChild(playButton);
-var playControl = new Control({
-  element: playElement
-});
-window.map.addControl(playControl);
+var playButton;
+if (!widgetMode) {
+  playButton = document.createElement("button");
+  playButton.classList.add("play");
+  playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
+  var playButtonScript = function (e) {
+    window.smartDownloadAndPlay();
+  };
+  playButton.addEventListener("click", playButtonScript, false);
+  var playElement = document.createElement("div");
+  playElement.className = "play ol-unselectable ol-control";
+  playElement.appendChild(playButton);
+  var playControl = new Control({
+    element: playElement
+  });
+  window.map.addControl(playControl);
+}
 
 // https://stackoverflow.com/a/44579732/10272994
 // resize for orientationchange
@@ -562,73 +686,10 @@ window.addEventListener("resize", function () {
   }
 });
 
-/* push notifications */
-var pushLink = document.getElementById("toggleNotifyLink");
-var pushLink2 = document.getElementById("toggleNotifyLink2");
-var pushCheckbox = document.getElementById("toggleNotifyCheckbox");
-
-pushLink.onclick = () => {
-  pushCheckbox.checked = !pushCheckbox.checked;
-  pushCheckbox.onchange();
-};
-pushLink2.onclick = () => {
-  pushCheckbox.checked = !pushCheckbox.checked;
-  pushCheckbox.onchange();
-};
-
-var pushSocket;
-
-pushCheckbox.onchange = () => {
-  var checked = pushCheckbox.checked;
-  if (!Notification) { return; }
-
-  if (checked) {
-    console.log("registering push notification...");
-    pushSocket = io.connect("/rain_notify_browser");
-
-    var ahead = parseInt(document.getElementById("aheadSelect").value);
-    var coordinates = geolocation.getPosition();
-    if (!coordinates) {
-      console.log("no geolocation");
-      $("#geoLocationModal").modal();
-      return;
-    }
-    var currentLonLat = toLonLat(coordinates);
-
-    pushSocket.on("notify", function (data) {
-      /* eslint-disable no-new */
-      /* This is a browser API! I didn't want to "use new for side effects"! */
-      new Notification(data.title, {
-        "icon": logoBig,
-        "body": data.body,
-        "requireInteraction": true,
-        "vibrate": [200, 100, 200]
-      });
-      /* eslint-enable */
-    });
-
-    pushSocket.emit("register", {
-      "lat": currentLonLat[1],
-      "lon": currentLonLat[0],
-      "ahead": ahead,
-      "intensity": 10,
-      "accuracy": 1.0
-    });
-
-    if (Notification.permission !== "granted") { Notification.requestPermission(); }
-
-    var notifyText = "You will be notified " + ahead + " minutes before it rains!";
-    /* eslint-disable no-new */
-    /* This is a browser API! I didn't want to "use new for side effects"! */
-    new Notification(notifyText, {
-      "icon": logoBig
-    });
-    /* eslint-enable */
-  } else {
-    console.log("unregistering...");
-    socket.emit("unregister", {});
-  }
-};
+if (widgetMode) {
+  attribution.setCollapsible(false);
+  attribution.setCollapsed(false);
+}
 
 // openlayers in-flight tile detection from
 // https://stackoverflow.com/questions/33061221/ensuring-all-tiles-are-loaded-in-open-layers-3-xyz-source/45054387#45054387
@@ -667,7 +728,7 @@ function whenMapIsReady (callback) {
   if (window.map.get("ready")) { callback(); } else { window.map.once("change:ready", whenMapIsReady.bind(null, callback)); }
 }
 
-window.forecastLayers = [false, false, false, false, false, false];
+window.forecastLayers = [false, false, false, false, false, false, false, false, false];
 window.forecastNo = -1;
 window.numInFlightTiles = 0;
 
@@ -675,9 +736,9 @@ function downloadForecast (cb) {
   var ahead;
   let forecastArrayIdx = 0;
 
-  for (ahead = 5; ahead <= 30; ahead += 5) {
+  for (ahead = 5; ahead <= 45; ahead += 5) {
     let idx = forecastArrayIdx;
-    /* javascript: because who the fuck need proper printf? */
+    /* javascript: because who the fuck needs proper printf? */
     var numStr;
     if (ahead === 5) {
       numStr = "05";
@@ -739,39 +800,57 @@ function playForecast () {
       window.forecastNo++;
       window.map.addLayer(window.forecastLayers[window.forecastNo]);
       window.map.removeLayer(window.currentLayer);
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 0:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 1:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 2:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 3:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 4:
       window.map.addLayer(window.forecastLayers[++window.forecastNo]);
       window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
       window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 750);
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
       break;
     case 5:
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
+      break;
+    case 6:
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
+      break;
+    case 7:
+      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
+      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
+      window.forecastNo++;
+      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
+      break;
+    case 8:
       window.map.addLayer(window.currentLayer);
       window.map.removeLayer(window.forecastLayers[window.forecastNo]);
       window.forecastNo = -1;
@@ -815,5 +894,71 @@ window.smartDownloadAndPlay = function () {
 };
 
 // enableActivityIndicator();
+
+window.userLocation = null;
+window.injectLocation = function (lat, lon, accuracy, zoom = false) {
+  var center = fromLonLat([lon, lat]);
+  window.userLocation = center;
+  if (zoom || !haveZoomed) {
+    haveZoomed = true;
+    window.map.getView().animate({ center: center, zoom: 9 });
+  }
+  positionFeature.setGeometry(center ? new Point(center) : null);
+};
+
+window.setForecastLayer = function (num) {
+  if (num === window.forecastNo) { return; }
+  if (!window.forecastDownloaded) { return; }
+
+  if (!window.playInPorgress) {
+    window.map.removeLayer(window.currentLayer);
+  }
+
+  window.map.addLayer(window.forecastLayers[num]);
+  window.map.removeLayer(window.forecastLayers[window.forecastNo]);
+  window.forecastNo = num;
+};
+
+window.resetLayers = function () {
+  window.map.addLayer(window.currentLayer);
+  window.map.removeLayer(window.forecastLayers[window.forecastNo]);
+  window.forecastNo = -1;
+};
+
+if (window.location.pathname !== "/documentation.html" && window.location.pathname !== "/privacy.html") {
+  document.getElementById("logolinkhref").href = window.location.href;
+}
+
+window.hidePlayButton = function () {
+  playButton.style.display = "none";
+};
+
+window.showPlayButton = function () {
+  playButton.style.display = "";
+};
+
+$(document).ready(function () {
+  if (isV2) {
+    $("#topMenu")[0].children[1].style.display = "none";
+    $("#topMenu")[0].children[2].style.display = "none";
+    // XXX re-enable once the scrolling is enabled
+  }
+  if (window.location.href.indexOf("#about") !== -1) {
+    $("#about").modal("show");
+  }
+  if (isV2 && (window.location.href.indexOf("documentation.html") !== -1)) {
+    window.webkit.messageHandlers["scriptHandler"].postMessage("enableScrolling");
+  } else if (isV2) {
+    window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
+  }
+});
+
+// lazy load images in modal
+$("#about").on("show.bs.modal", function () {
+  $(".lazy_load").each(function () {
+    var img = $(this);
+    img.attr("src", img.data("src"));
+  });
+});
 
 /* vim: set ts=2 sw=2 expandtab: */

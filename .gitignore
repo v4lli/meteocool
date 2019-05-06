@@ -183,3 +183,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+private
+backend/app/hooks.py

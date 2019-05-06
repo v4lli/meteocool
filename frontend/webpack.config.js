@@ -32,8 +32,15 @@ module.exports = {
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
       template: 'src/index.html',
-      favicon: 'assets/favicon.ico',
-      inject: true
+      favicon: 'assets/favicon.ico'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'privacy.html',
+      template: 'src/privacy.html'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'documentation.html',
+      template: 'src/documentation.html'
     }),
     new MiniCssExtractPlugin({
       filename: "main.css"

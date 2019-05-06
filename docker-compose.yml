@@ -40,6 +40,7 @@ services:
       - DB_CONN="mongodb://mongo:27017/"
     depends_on:
       - mongo
+      - web
 
   dwd:
     build: backend/dwd
@@ -47,11 +48,16 @@ services:
     environment:
       - TZ="Europe/Berlin"
       - DB_CONN="mongodb://mongo:27017/"
+    env_file:
+      - /etc/meteocool_env
     volumes:
       - dwd:/data
       - pushpreview:/pushpreview
       - /etc/meteocool/apns.json:/etc/apns.json
       - /etc/meteocool/authkey.p8:/etc/authkey.p8
+    tmpfs:
+      - /scratch
+      - /forecast
     depends_on:
       - app
       - mongo
@@ -67,7 +73,7 @@ services:
       - dwd:/data
       - ${PWD}/tileserver-gl-meteocool/config:/etc/ts
     depends_on:
-      - dwd
+      - web
 
 volumes:
   dwd:

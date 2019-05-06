@@ -1,6 +1,6 @@
 # meteocool
 
-[meteocool](https://meteocool.unimplemented.org/) is a free GIS
+[meteocool](https://meteocool.com/) is a free GIS
 visualisation & aggregation platform with focus on thunderstorms.
 Optimized for mobile devices, you can use it to both chase or
 avoid upcoming weather - that's up to you.

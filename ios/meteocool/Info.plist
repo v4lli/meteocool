@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Meteocool</string>
+	<string>meteocool</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -17,17 +17,19 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.1</string>
+	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>13</string>
+	<string>21</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Provide realtime weather alerts</string>
+	<string>We want notify you ahead of rain or snow at your current location. Choose "Always" if you want Push Notifications to work.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We want notify you ahead of rain or snow at your current location. Choose "Always" if you want Push Notifications to work.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Display location on map</string>
+	<string>Display your own location on the weather map.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
@@ -44,8 +46,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>

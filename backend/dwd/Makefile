@@ -4,25 +4,27 @@ OUT := tmp
 
 mbtiles:
 	rm -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
+	mkdir -p /scratch/tmp
 	# transforms binary runlength format to a 1100x900 px bitmap
-	time python3 dwd2png.py tmp/raa01-wx_10000-latest-dwd---bin \
-		tmp/raa01-wx_10000-latest-dwd.png
+	time python3 dwd2png.py /scratch/raa01-wx_10000-latest-dwd---bin \
+		/scratch/raa01-wx_10000-latest-dwd.png
 	# the worldfile defines where and how big the bitmap map in the target srs
-	cp worldfile tmp/raa01-wx_10000-latest-dwd.wld
+	cp worldfile /scratch/raa01-wx_10000-latest-dwd.wld
 	# set the source srs http://docs.wradlib.org/en/latest/notebooks/radolan/radolan_grid.html
 	gdal_translate -a_srs "+proj=stere +lat_0=90 +lat_ts=90 +lon_0=10 +k=0.93301270189 +x_0=0 +y_0=0 +a=6370040 +b=6370040 +to_meter=1000 +no_defs" \
-		tmp/raa01-wx_10000-latest-dwd.png tmp/raa01-wx_10000-latest-dwd-srs.png
+		/scratch/raa01-wx_10000-latest-dwd.png /scratch/raa01-wx_10000-latest-dwd-srs.png
 	# set the target srs to EPSG:3857 (standard web mercator)
 	gdalwarp -overwrite -of gtiff -t_srs EPSG:3857 \
-		tmp/raa01-wx_10000-latest-dwd-srs.png tmp/raa01-wx_10000-latest-dwd-final.tif
+		/scratch/raa01-wx_10000-latest-dwd-srs.png /scratch/raa01-wx_10000-latest-dwd-final.tif
 	# process forecasts concurrently
 	nice -n 15 make -C . push &
 	# convert to mbtiles
 	/usr/local/bin/gdal2mbtiles --version "$$(date +%s)" --min-resolution=6 \
-		--max-resolution=10 tmp/raa01-wx_10000-latest-dwd-final.tif \
-		/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
-	mv -f /tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles \
+		--max-resolution=10 /scratch/raa01-wx_10000-latest-dwd-final.tif \
+		/scratch/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
+	mv -f /scratch/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles \
 		$(OUT)/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
+	rm -r /scratch/*
 
 tag: update
 	mkdir -p ~/meteocool_tags/
@@ -55,23 +57,27 @@ cron: mbtiles
 push:
 	sleep 1
 	@# download forecast
-	rm -rf tmp/forecast*
-	mkdir tmp/forecast
+	rm -rf /forecast/tmp/forecast*
+	mkdir -p /forecast/tmp/forecast
 	wget --no-verbose \
 		https://opendata.dwd.de/weather/radar/composit/fx/FX_LATEST.tar.bz2 \
-		-O tmp/forecast.tar.bz2
-	tar -C tmp/forecast -xjf tmp/forecast.tar.bz2
-	bash -c 'for f in $$PWD/tmp/forecast/FX*_0{05,10,15,20,25,30}_*; do make -C fc_preview/ FC_FILE=$$f; done'
-	mv tmp/forecast/FX*_005_*.mbtiles /data/FX_005-latest.mbtiles
-	mv tmp/forecast/FX*_010_*.mbtiles /data/FX_010-latest.mbtiles
-	mv tmp/forecast/FX*_015_*.mbtiles /data/FX_015-latest.mbtiles
-	mv tmp/forecast/FX*_020_*.mbtiles /data/FX_020-latest.mbtiles
-	mv tmp/forecast/FX*_025_*.mbtiles /data/FX_025-latest.mbtiles
-	mv tmp/forecast/FX*_030_*.mbtiles /data/FX_030-latest.mbtiles
+		-O /forecast/tmp/forecast.tar.bz2
+	tar -C /forecast/tmp/forecast -xjf /forecast/tmp/forecast.tar.bz2
+	bash -c 'for f in /forecast/tmp/forecast/FX*_0{05,10,15,20,25,30,35,40,45}_*; do nice -n 1 make -C fc_preview/ FC_FILE=$$f & done; wait'
+	mv /forecast/tmp/forecast/FX*_005_*.mbtiles /data/FX_005-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_010_*.mbtiles /data/FX_010-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_015_*.mbtiles /data/FX_015-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_020_*.mbtiles /data/FX_020-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_025_*.mbtiles /data/FX_025-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_030_*.mbtiles /data/FX_030-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_035_*.mbtiles /data/FX_035-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_040_*.mbtiles /data/FX_040-latest.mbtiles
+	mv /forecast/tmp/forecast/FX*_045_*.mbtiles /data/FX_045-latest.mbtiles
 	nc -z tileserver 10001 || true
 	sleep 2
-	python3 push.py tmp/forecast/ \
+	python3 push.py /forecast/tmp/forecast/ \
 		http://app:5000/internal/trigger_browser_notification || true
+	rm -rf /forecast/tmp/forecast*
 
 
 update:
@@ -79,7 +85,7 @@ update:
 	rm -f tmp/raa01-wx_10000-latest-dwd---bin
 	wget --no-verbose \
 		https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin \
-		-O tmp/raa01-wx_10000-latest-dwd---bin
+		-O /scratch/raa01-wx_10000-latest-dwd---bin
 
 clean:
 	rm -rf tmp/

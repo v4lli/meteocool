@@ -15,48 +15,35 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-startup-image" href="./apple-launch.png">
-
+    <meta name="description" content="Free and open source, mobile first weather radar + lightning visualization for Central Europe." />
   </head>
   <body>
-    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalTitle" aria-hidden="true">
+    <div class="modal fade" id="about" tabindex="-1" role="dialog" aria-labelledby="about" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="aboutModalTitle">About meteocool</h5>
+            <h3 class="modal-title" id="aboutModalTitle">About meteocool</h3>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <h2>Legend</h2>
-            <p><img src="./legend_big.png" id="legend"></p>
+            <h3>Legend</h3>
+            <p><img src="./legend_big.png" id="legend" alt="Color Mapping/Legend"></p>
             <p>Shown is the scale from 0 dbZ up to 65 dbZ.</p>
-            <h2>Push Notifications</h2>
-            <p>meteocool can notify you about incoming rain at your
-            current location. The prediction service is based on
-            models provided by DWD. Notification set for the
-            distant future (in weather prediction terms: more than 15
-            minutes) may be inaccurate, especially for locally
-            developing thunderstorms (common in the summer).
-            </p>
-            <p>This feature obviously requires you to provide us
-            with your current location. No other information besides
-            your location data, accuracy and an anonymous, random
-            token associated with your web browser will be
-            processed.</p>
-            <h2>Credits</h2>
-            <p>meteocool was created by a few cool dudes. so here
-            go the credits:</p>
+            <h3>Credits</h3>
+            <p>This project would not have been possible without the help from a few great people:</p>
+            <img src="volunteers.png" class="volunteers" alt="not actually the volunteers">
             <ul>
-              <li>DWD</li>
-              <li>bootstrap</li>
-              <li>openlayers</li>
-              <li>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> and Egor Rumyantsev from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> are licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></li>
+              <li>General stuff: <a href="https://github.com/pew">Jonas</a>, <a href="https://github.com/NessArt">NessArt</a>
+              <li>iOS App: Thanks to <a href="https://mauracher.eu/">Florian Mauracher</a>, Nina Loser</li>
+              <li>Android App: currently <a href="https://github.com/v4lli/meteocool/releases/tag/v0.1">in Beta</a>, maintained by Jeremias Wiedmann</li>
+              <li>Icons and adapted artwork made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> (Logo, iOS Onboarding) and Egor Rumyantsev from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> (licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>)</li>
             </ul>
-            <p><a href="https://github.com/v4lli/meteocool">Fork me on Github</a> and <a href="https://github.com/v4lli/meteocool/issues" target="_blank">report (or fix) an issue</a>.
-            <h2>Fine Print</h2>
-            Check out our <a href="./privacy.html">Privacy Policy</a>.
-            </p>
+            <p>Want to help as well? Check out <a href="https://github.com/v4lli/meteocool">the repo on GitHub</a> (specifically the <a
+              href="https://github.com/v4lli/meteocool/issues">unresolved Issues</a>) and <a href="https://github.com/v4lli/meteocool/issues" target="_blank">report (or fix) an issue</a>.</p>
+            <h3>Fine Print</h3>
+            Check out our <a href="./privacy.html">Privacy Policy</a> and the <a href="#" onclick="$('#impressumModal').modal('show'); return false;">Imprint</a>.
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -64,18 +51,82 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="geoLocationModal" tabindex="-1" role="dialog" aria-labelledby="geoLocationModal" aria-hidden="true">
+    <div class="modal fade" id="appModal" tabindex="-1" role="dialog" aria-labelledby="appModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="appModalTitle">iOS and Android Apps</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body justify">
+            <img class="lazy_load lockscreen" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAZCAQAAACbHsZYAAAAGElEQVR42mNkqGcgCjCOKhxVOKpw2CkEAPMqDIG+SnPkAAAAAElFTkSuQmCC" data-src="./ios-lockscreen.png" alt="iOS Lockscreen"/>
+            <h5>Accurate Push Notifications</h5>
+            <p>meteocool can notify you about incoming rain or snow
+            at your current whereabouts. Your phone automatically
+            recognizes location changes and starts monitoring that location &mdash; no interaction necessary!</p>
+
+            <p>The prediction is based on the extremely accurate
+            <i>nowcast</i> models provided by DWD (up to 120 minutes
+            into the future).</p>
+
+            <h5>Concise Weather Radar</h5>
+            <p>Our concise and beautiful weather radar supports you
+            in spotting and classifying severe weather situations
+            by aggregating data from multiple meteorological
+            sources.</p><p> Stay dry or get into the eye of the
+            storm &mdash; that's up to you.</p>
+
+            <h5>Completely Free on iOS and Android</h5>
+            The official meteocool App is available on the Apple
+            App Store. The Android App is <a href="https://github.com/v4lli/meteocool/releases/tag/v0.1">currently being beta-tested</a>.
+
+            <div id="appstoreBtns">
+              <a href="https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623">
+                <img class="lazy_load appstore" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAZCAQAAACbHsZYAAAAGElEQVR42mNkqGcgCjCOKhxVOKpw2CkEAPMqDIG+SnPkAAAAAElFTkSuQmCC" data-src="./download-on-appstore.png" alt="Download the iOS app on the Apple App Store."/>
+              </a>
+              <!--img src="./download-on-playstore.png" style="width: 25%; margin: 2%;" alt="Download the Android App on the Play Store"-->
+            </div>
+
+            <p>Please note that some of the latest features might
+            not yet be available on Android.  If you'd like to
+            change that, <a
+            href="https://github.com/v4lli/meteocool/issues?q=is%3Aissue+is%3Aopen+label%3Aandroid">we're
+            looking for contributors</a>.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="impressumModal" tabindex="-1" role="dialog" aria-labelledby="impressumModal" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="aboutModalTitle">Enable Geolocation First</h5>
+            <h3 class="modal-title" id="impressumModalTitle">Impressum</h3>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            Please enable the <i>geolocation</i> functionality fist
-            (cross-hair control in the upper left corner of the map).
+            Angaben gem&auml;&szlig; &sect;5 TMG:<br>
+            <blockquote>
+            Valentin Dornauer<br>
+            c/o AutorenServices.de<br>
+            Birkenallee 24<br>
+            36037 Fulda<br>
+            meteocool@unimplemented.org
+            </blockquote>
+            <hr />
+            <p>Unser Angebot enth&auml;lt Links zu externen Webseiten Dritter, auf
+            deren Inhalte wir keinen Einfluss haben. F&uuml;r externe Inhalte
+            wird kein Gew&auml;hr &uuml;bernommen. F&uuml;r die Inhalte der
+            verlinkten Seiten ist der jeweilige Anbieter oder Betreiber der
+            Seiten verantwortlich.</p>
+            <hr />
+            <p>Bitte beachten Sie zudem unsere <a href="/privacy.html">Datenschutzerkl&auml;rung</a>.</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -88,7 +139,7 @@
       <div id="spacer"></div>
       <div id="compositBar">
         <div id="logolink">
-          <a class="navbar-brand mr-auto mt-2 mt-lg-0" href="/">
+          <a class="navbar-brand mr-auto mt-2 mt-lg-0" href="/" id="logolinkhref">
             <img src="./android-chrome-512x512.png" width="30" height="30" class="d-inline-block align-top" alt="meteocool logo">
           </a>
         </div>
@@ -99,25 +150,11 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item"><span class="navbar-text" id="updatedTime"></span></li>
-          <li class="nav-item"><a id="toggleMode" class="nav-link">dark mode</a></li>
-          <li class="nav-item" id="browserPushMenu" style="display: none;"><span style="float: left; display: inline; cursor: pointer;">
-              <input type="checkbox" id="toggleNotifyCheckbox"><a id="toggleNotifyLink" class="nav-link" style="display: inline;"> tell me </a><select id="aheadSelect">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15" selected>15</option>
-                <option value="20">20</option>
-                <option value="25">25</option>
-                <option value="30">30</option>
-                <option value="35">35</option>
-                <option value="40">40</option>
-                <option value="45">45</option>
-                <option value="50">50</option>
-                <option value="55">55</option>
-                <option value="60">60</option>
-              </select><a id="toggleNotifyLink2" class="nav-link" style="display: inline;"> minutes before it rains</a></span></li>
-              <li class="nav-item"><a class="nav-link" href="javascript:void();" data-toggle="modal" data-target="#aboutModal">about</a></li>
+        <ul class="navbar-nav ml-auto" id="topMenu">
+          <li class="nav-item"><a class="nav-link" id="toggleMode">dark mode</a></li>
+          <li class="nav-item"><a class="nav-link" href="/documentation.html">documentation</a></li>
+          <li class="nav-item"><a href="#" class="nav-link clickable" data-toggle="modal" data-target="#appModal">mobile apps</a></li>
+          <li class="nav-item"><a href="#" class="nav-link clickable" data-toggle="modal" data-target="#about">about</a></li>
         </ul>
       </div>
     </nav>

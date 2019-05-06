@@ -35,7 +35,6 @@
 .ol-touch .play {
 	padding-top: constant(safe-area-inset-top);
 	top: 48px;
-	background-color: red !important;
 }
 
 .ol-rotate {
@@ -46,7 +45,7 @@
 
 .ol-touch .ol-rotate {
 	padding-top: constant(safe-area-inset-top) !important;
-	top: 94px !important;
+	top: 84px !important;
 }
 
 #toggleMode {
@@ -108,3 +107,194 @@
 	width: 100%;
 }
 
+blockquote {
+	padding-top: 16px;
+	padding-bottom: 16px;
+	padding-left: 24px;
+	font-style: italic;
+}
+
+hr {
+	width: 75%;
+}
+
+#body {
+	padding-left: 15%;
+	padding-right: 15%;
+	padding-top: 70px;
+	padding-bottom: 0;
+	margin-bottom: 0;
+	background-color: rgb(248, 249, 250);
+	text-align: center;
+	width: 100%;
+}
+
+#bodywrap {
+	max-width: 750px;
+	text-align: justify;
+	margin:0 auto;
+}
+
+.warning {
+	padding: 1%;
+	padding-top: 2%;
+	padding-bottom: 1%;
+	padding-left: 6%;
+	padding-right: 5%;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	background-color: #fbecb6;
+	border-radius: 15px;
+}
+
+.deflag {
+	background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDUgMyI+DQo8cGF0aCBkPSJtMCwwaDV2M2gtNXoiLz4NCjxwYXRoIGZpbGw9IiNkMDAiIGQ9Im0wLDFoNXYyaC01eiIvPg0KPHBhdGggZmlsbD0iI2ZmY2UwMCIgZD0ibTAsMmg1djFoLTV6Ii8+DQo8L3N2Zz4NCg==');
+	width: 170px;
+	height: 150px;
+	background-size: 100% auto;
+	background-repeat: no-repeat;
+	background-position: left top;
+	float: left;
+	margin-top: 15px;
+	margin-right: 50px;
+}
+
+.logoglow {
+	background-color: rgba(255, 255, 255, 0.9);
+	border-radius: 4px;
+	box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.9);
+	display: inline-block;
+	padding: 0;
+	padding-bottom: 2px;
+}
+
+.subsectionHead {
+	margin-top: 2rem;
+}
+
+.sectionHead {
+	margin-top: 3rem;
+}
+
+.titlemark {
+	margin-right: 10px;
+}
+
+.wrapfig-l {
+	float: left;
+	width: 50%;
+	margin-right: 2%;
+	margin-bottom: 2%;
+}
+
+.wrapfig-l img {
+	width: 100%;
+	height: 100%;
+}
+
+.figure {
+	width: 100%;
+}
+
+.figure img {
+	width: 100%;
+	height: 100%;
+}
+
+.wrapfig-r {
+	float: right;
+	width: 50%;
+	margin-left: 2%;
+	margin-bottom: 2%;
+}
+
+.wrapfig-r img {
+	width: 100%;
+	height: 100%;
+}
+
+.inline_legend {
+	width: 80%;
+}
+
+.justify {
+	text-align: justify;
+	font-size: 90%;
+}
+
+.footer {
+	width: 100%;
+	text-align: center;
+	font-size: 80%;
+	color: rgb(30,30,30);
+	margin-top: 30px;
+	padding-bottom: 20px;
+}
+
+.caption, .ecti-1095 {
+	font-style: italic;
+}
+
+.caption {
+	font-size: 85%;
+}
+
+.tcolorbox {
+	background-color: #bbe7ed;
+	padding: 5px;
+	border-radius: 14px;
+	margin-bottom: 12px;
+}
+
+.tcolorbox h5 {
+	margin-left: 20px;
+	margin-top: 3px;
+}
+
+.tcolorbox img {
+	width: 100%;
+}
+
+.tcolorbox .tcolorboxInner {
+	background-color: #f8f9fa;
+	padding: 25px;
+	padding-bottom: 10px;
+	border-radius: 0 0 14px 14px;
+}
+
+.modal-body {
+	padding: 30px;
+}
+
+.modal-body .volunteers {
+	float: right;
+	padding-left: 10px;
+	width: 45%;
+}
+
+.modal-body .lockscreen {
+	float: right;
+	width: 35%;
+	margin-left: 2%;
+	margin-bottom: 2%;
+}
+
+#appstoreBtns {
+	clear: right;
+	width: 100%;
+	text-align: center;
+}
+
+#appstoreBtns img {
+	width: 20%;
+	margin: 2%;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.appstore {
+	width: 250px;
+	height: 83px;
+}

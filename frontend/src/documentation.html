@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>dokucool :D</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <meta name="apple-mobile-web-app-title" content="meteocool">
+    <meta name="application-name" content="meteocool">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-startup-image" href="./apple-launch.png">
+
+  </head>
+  <body>
+    <div id="map" style="position: absolute; top: 0; left: 0; height: 57px; width: 100%; z-index: 0;"></div>
+    <nav id="navbar" class="navbar navbar-expand-lg navbar-light" style="position: absolute; top: 0; left: 0; width: 100%; z-index: 100000;">
+      <div id="clockbg"></div>
+      <div id="spacer"></div>
+      <div id="compositBar">
+        <div id="logolink">
+          <a class="navbar-brand mr-auto mt-2 mt-lg-0" href="/?mobile=ios2">
+            <img src="./android-chrome-512x512.png" width="30" height="30" class="d-inline-block align-top" alt="meteocool logo">
+          </a>
+        </div>
+        <div id="logotext" style="padding-top: 6px; padding-left: 14px;"><div class="logoglow">meteocool</div></div></div>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto"> <li class="nav-item bg-light" style="height: 100%; "><a id="documentationLink" class="nav-link" href="/?mobile=ios2">&laquo; map view</a></li> </ul>
+      </div>
+    </nav>
+    <div id="body"><div id="bodywrap">
+      <div class="warning">
+        <div class="deflag"></div>
+        <div>
+          <h4>Documentation</h4>
+          <p>The meteocool technical documentation is currently only available in German! Sorry.</p>
+          <p>You can help by <a href="https://github.com/v4lli/meteocool/blob/master/frontend/src/documentation.html" target="_blank">translating it on Github</a>.</p>
+        </div>
+      </div>
+
+
+  <h3 class="likesectionHead"><a 
+ id="x1-1000"></a>Inhaltsverzeichnis</h3>
+  <div class="tableofcontents">
+  <span class="sectionToc" >1 <a 
+href="#x1-20001" id="QQ2-1-2">Anwendungsfälle</a></span>
+<br /> <span class="subsectionToc" >1.1 <a 
+href="#x1-30001.1" id="QQ2-1-3">Regen-Radar</a></span>
+<br /> <span class="subsectionToc" >1.2 <a 
+href="#x1-40001.2" id="QQ2-1-4">Vorab-Benachrichtigungen</a></span>
+<br /> <span class="sectionToc" >2 <a 
+href="#x1-60002" id="QQ2-1-6">Architektur</a></span>
+<br /> <span class="subsectionToc" >2.1 <a 
+href="#x1-70002.1" id="QQ2-1-7">Verarbeitung von Radardaten</a></span>
+<br /> <span class="subsubsectionToc" >2.1.1 <a 
+href="#x1-80002.1.1" id="QQ2-1-9">Visualisierung</a></span>
+<br /> <span class="subsubsectionToc" >2.1.2 <a 
+href="#x1-90002.1.2" id="QQ2-1-11">Geo-Referencing</a></span>
+<br /> <span class="subsubsectionToc" >2.1.3 <a 
+href="#x1-100002.1.3" id="QQ2-1-13">Nowcast-Daten</a></span>
+<br /> <span class="subsectionToc" >2.2 <a 
+href="#x1-110002.2" id="QQ2-1-14">Vorab-Benachrichtigungen</a></span>
+<br /> <span class="subsubsectionToc" >2.2.1 <a 
+href="#x1-120002.2.1" id="QQ2-1-16">Reisemodus</a></span>
+<br /> <span class="subsubsectionToc" >2.2.2 <a 
+href="#x1-130002.2.2" id="QQ2-1-17">Aktualität von Benachrichtigungen</a></span>
+<br /> <span class="subsubsectionToc" >2.2.3 <a 
+href="#x1-140002.2.3" id="QQ2-1-19">Generierung von Vorschaubildern</a></span>
+<br /> <span class="subsectionToc" >2.3 <a 
+href="#x1-150002.3" id="QQ2-1-20">Backend</a></span>
+<br /> <span class="subsubsectionToc" >2.3.1 <a 
+href="#x1-160002.3.1" id="QQ2-1-22">Öffentliche REST API</a></span>
+<br /><span class="subsectionToc" >2.4 <a 
+href="#x1-170002.4" id="QQ2-1-23">Tileserver</a></span>
+<br /><span class="subsectionToc" >2.5 <a 
+href="#x1-180002.5" id="QQ2-1-24">Frontend</a></span>
+<br /> <span class="sectionToc" >3 <a 
+href="#x1-190003" id="QQ2-1-25">Mobile Anwendungen</a></span>
+<br /> <span class="sectionToc" >4 <a 
+href="#x1-200004" id="QQ2-1-26">Software Engineering</a></span>
+<br /><span class="subsectionToc" >4.1 <a 
+href="#x1-210004.1" id="QQ2-1-27">CI</a></span>
+<br /><span class="subsectionToc" >4.2 <a 
+href="#x1-220004.2" id="QQ2-1-28">Skalierbarkeit</a></span>
+<br /> <span class="sectionToc" >5 <a 
+href="#x1-230005" id="QQ2-1-29">Auswertung der Barometriedaten</a></span>
+<br /> <span class="sectionToc" >6 <a 
+href="#x1-240006" id="QQ2-1-31">Quellen &#x0026; Abbildungen</a></span>
+  </div>
+
+<!--l. 52--><p class="noindent" >
+</p>
+  <h3 class="sectionHead"><span class="titlemark">1 </span> <a 
+ id="x1-20001"></a>Anwendungsfälle</h3>
+<!--l. 54--><p class="noindent" >
+</p>
+  <h4 class="subsectionHead"><span class="titlemark">1.1 </span> <a 
+ id="x1-30001.1"></a>Regen-Radar</h4>
+<!--l. 56--><p class="noindent" >Die zentrale Funktionalität von meteocool besteht in der Visualisierung von wetterbezogenen
+Daten. Dabei liegt der Fokus auf mobilen Endgeräten und einer darauf optimierten Oberﬂäche.
+Insbesondere zeigt die Anwendung asynchron eintreffende Daten (Radardaten, Blitze, andere
+Ereignisse) ohne ein &#x0022;neuladen&#x0022; der Seite an.
+</p><!--l. 63--><p class="noindent" >
+</p>
+  <h4 class="subsectionHead"><span class="titlemark">1.2 </span> <a 
+ id="x1-40001.2"></a>Vorab-Benachrichtigungen</h4>
+<!--l. 65--><p class="noindent" >Die bei der Verarbeitung der Wetterdaten
+anfallenden Artefakte werden genutzt, um
+relativ genaue, kurzfristige und lokale Benachrichtigungen über Wetterumschwünge an mobile
+Endgeräte zuzustellen.
+</p><!--l. 70--><p class="indent" >  Besonders bei sich kurzfristig entwickelnden Tiefdrucklagen (Sommergewittern) können
+derartige Informationen nicht dem normalen Wetterbericht entnommen werden.
+</p><!--l. 74--><p class="noindent" >
+</p>
+
+<p class="noindent" > </p>
+  <h3 class="sectionHead"><span class="titlemark">2 </span> <a 
+ id="x1-60002"></a>Architektur</h3>
+<!--l. 87--><p class="noindent" >Die Verarbeitung und Speicherung von Wetter- und Nutzerdaten aus asynchronen Quellen
+bedarf einer Kombination aus verschiedenen Diensten und Softwaresystemen. Die Umsetzung
+erfolgt daher in Form von <span 
+class="ecti-1095">Microservices</span>. Diese erleichtern den administrativen Umgang
+gegenüber monolithischen Systemen stark. Ebenfalls können so z.B. Anforderungen an die
+Verfügbarkeit leichter umgesetzt werden (siehe <a 
+href="#x1-220004.2">4.2<!--tex4ht:ref: scalability --></a>).
+</p><!--l. 97--><p class="indent" >  Im Vordergrund steht die Verarbeitung von Radardaten. Auf den daraus resultierenden
+Artefakten basieren die meisten Funktionen der Plattform.
+</p><!--l. 101--><p class="noindent" >
+</p>
+  <h4 class="subsectionHead"><span class="titlemark">2.1 </span> <a 
+ id="x1-70002.1"></a>Verarbeitung von Radardaten</h4>
+  <div class="wrapfig-l"><a 
+ id="x1-70011"></a><img 
+src="radarverbund.jpg" alt="PIC"  
+ />
+<br />    <div class="caption" 
+><span class="id">Abbildung 1:</span><span class="content">Radarverbund des DWD mit Abdeckung; Bildquelle: &copy; <a href="http://dwd.de">DWD</a></span></div><!--tex4ht:label?: x1-70011 -->                                                 </div>
+
+
+
+<!--l. 110--><p class="noindent" >Die Radardaten werden ca. alle 5 Minuten durch den Deutschen Wetterdienst zur
+Verfügung gestellt und besitzen eine räumliche Auﬂösung von 1x1 km pro Pixel.
+<span class="cite">[<a 
+href="#Xdwdradar">1</a>]</span>
+</p><!--l. 114--><p class="indent" >  meteocool verarbeitet bereits die sogenannte <span 
+class="ectt-1095">composite</span>-Variante der Radardaten. In dieser
+vorverarbeiteten Version wurden bereits die Aufnahmen aller Stationen im Radarverbund zu
+einem nationalen Gitter kombiniert. Im vom DWD für diesen Zweck definierten
+Run-Length-Encoding-Verfahren sind für diesen Wert 8 Bit pro Pixel vorgesehen.
+<span class="cite">[<a 
+href="#Xdwdbufr">2</a>]</span>
+</p><!--l. 121--><p class="indent" >  Die Regen-Intensitäten liegen pro Pixel in einer eigens vom DWD definierten Einheit
+“<span 
+class="ecti-1095">RVP6</span>” vor. Vor der Weiterverarbeitung werden die Werte in die gebräuchlichere
+Einheit dbZ (Dämpfung relativ zum Faktor Z; logarithmische Skala, dimensionslos
+<span class="cite">[<a 
+href="#Xnws">3</a>]</span>).
+</p><!--l. 128--><p class="indent" >  Die Radardaten werden automatisch vom DWD Opendata FTP Server abgeholt und mit
+dem abhängigkeitsbasierten Build-System <span 
+class="ecbx-1095">GNU Make </span>und diversen Python-Skripten durch
+die im Folgenden beschriebenen Verarbeitungsschritte transformiert.
+</p><!--l. 133--><p class="noindent" >
+
+</p>
+
+
+<div class="tcolorbox">
+<h5>Geographische Projektionen</h5>
+<div class="tcolorboxInner">
+<p class="noindent" >Da die Erde eine Kugel ist, ist zur korrekten Darstellung ebendieser auf einer zweidiemensionalen
+Karte eine mathematische Projektion notwendig. In der Geographie gibt es eine Vielzahl
+<span class="footnote-mark"><a 
+href="techdoc2.html#fn1x0"><sup class="textsuperscript">1</sup></a></span><a 
+ id="x1-2f1"></a> an
+gebräuchlichen Projektionen mit unterschiedlichen Eigenschaften:
+</p>
+     <ul class="itemize1">
+     <li class="itemize"><span 
+class="ecbx-1095">Plate Carree </span>(ESRI:53001): zylindrische Projektion, welche die Erdoberﬂäche
+     in  Rechtecke  mit  parallel  verlaufenden  Kanten  einteilt.  Zu  Navigations-  oder
+     Referenzzwecken ist sie aufgrund ihrer ungenauigkeit ungeeignet. Sie wird oft zur
+     Visualisierung globaler Daten verwendet. <span class="cite">[<span 
+class="ecbx-1095">?</span>]</span>
+     </li>
+     <li class="itemize"><span 
+class="ecbx-1095">Mollweide-Projektion </span>(ESRI:54009):  ﬂächentreue  Projektion,  Darstellung  als
+     Ellipse. Breitenkreise stellen parallel Linien dar, Meridiane werden (bis auf den
+     Mittelmeridian) als Ellipse dargestellt. <span class="cite">[<span 
+class="ecbx-1095">?</span>]</span>
+     </li>
+     <li class="itemize"><span 
+class="ecbx-1095">Web Mercator Projektion </span>(EPSG:3857): Spezialfall der Mercator-Projektion,
+     einer zylindrischen Projektion, die in der Nähe des Equators relativ genau ist (d.h.
+     keine/sehr geringe <span 
+class="ecbx-1095">Winkelverzerrung </span>vorweist).<br 
+class="newline" />Dies führt z.B. dazu, dass der Afrikanische Kontinent genau so groß erscheint wie
+     der Inselstaat Island.
+     <!--l. 76--><p class="noindent" >Diese Projektion wird von sogut wie allen Karten- und Navigationsdiensten für
+     Endnutzer  verwendet.  Sie  wird  umgangssprachlich  auch  als  <span 
+class="ecti-1095">Google  Projektion</span>
+     bezeichnet. <span class="cite">[<span 
+class="ecbx-1095">?</span>]</span></p></li></ul>
+<!--l. 82--><p class="indent" >  <img 
+src="projections.png" alt="PIC"  
+ /> <a 
+ id="x1-1doc"></a>
+</p><!--l. 86--><p class="noindent" ><span 
+class="ecti-1095">Von links: Plate Carree, Mollweide, Web Mercator;
+Bildquelle <a
+             href="https://en.wikipedia.org/wiki/List_of_map_projections#Table_of_projections">Wikipedia</a> (CC BY-SA 3.0)</span>
+</p><!--l. 91--><p class="indent" >  Jede Projektion wird im <span 
+class="ecti-1095">GIS-Jargon </span>mit eine sog. EPSG-Nummer oder ESRI-Nummer
+identifiziert. Dies erleichtert das Arbeiten bzw. Konvertieren zwischen Projektionen, da sich
+hinter jeder EPSG-Nummer eine Vielzahl an mathematischen Parametern verbirgt, die zur
+Definition des jeweiligen Koordinatensystems notwendig sind.
+</p>
+</div>
+</div>
+
+
+
+  <h5 class="subsubsectionHead"><span class="titlemark">2.1.1 </span> <a 
+ id="x1-80002.1.1"></a>Visualisierung</h5>
+<!--l. 136--><p class="noindent" >Um die Radardaten auf einer zwei-dimensionalen Karte verständlich darzustellen, müssen die
+Daten im Sinne einer dritten Dimension visualisiert werden. Dazu wurde zunächst ein einfaches
+Verfahren gewählt, welches die Intensitäten zwischen 0 dbZ (Annahme: kein Regen) und 65
+dbZ (extremer Starkregen/Hagel) farblich kodiert.
+</p><!--l. 142--><p class="indent" >  Um bei einer zukünftigen Erhöhung der derzeit 256 Intensitäts-Stufen ﬂexibel reagieren zu
+können, wurde, anstatt einer statischen Palette, ein linearer Farbverlauf innerhalb jeder der
+acht Farbstufen der Skala implementiert:
+</p><!--l. 147--><p class="indent" >  Die Grundfarben <span class="footnote-mark"><a 
+href="techdoc2.html#fn1x0"><sup class="textsuperscript">1</sup></a></span><a 
+ id="x1-8001f1"></a>
+werden im RGB-Farbformat angegeben. Ein Python-Script konvertiert diese ins
+HSL-Farbmodell und schwächt die L-Komponente (<span 
+class="ecti-1095">Lightness</span>) nach rechts hin ab.
+</p><!--l. 152--><p class="indent" >  Dem Betrachter soll der dunklere Farbton eine höhere Sturmintensität signalisieren.
+</p>
+  <hr class="figure" /><div class="figure" 
+>
+
+<a 
+ id="x1-80022"></a>
+
+<!--l. 157--><p class="noindent" ><img 
+src="legend.png" alt="PIC"  
+ />
+<br /> </p><div class="caption" 
+><span class="id">Abbildung 2: </span><span  
+class="content">Aus Grundfarben generierte Legende</span></div><!--tex4ht:label?: x1-80022 -->
+
+  </div><hr class="endfigure" />
+
+  <h5 class="subsubsectionHead"><span class="titlemark">2.1.2 </span> <a 
+ id="x1-90002.1.2"></a>Geo-Referencing</h5>
+  <div class="wrapfig-r"><a 
+ id="x1-90013"></a><img 
+src="reflectivity_raw.png" alt="PIC"  
+ />
+<br />                            <div class="caption" 
+><span class="id">Abbildung 3:
+</span><span  
+class="content">Radardaten  nach  Einfärbung,  vor
+der Georeferenzierung</span></div><!--tex4ht:label?: x1-90013 -->                 </div>
+<!--l. 174--><p class="noindent" >Das Radarkomposit liegt nun als mehrkanaliges Rasterbild (<a 
+href="#x1-90013">3<!--tex4ht:ref: fig:reflectivity_raw --></a>) in der vom DWD
+vorgegebenen Auﬂösung von 1100x900 km (= Pixel) vor. Das Radarbild muss nun in
+eine einheitliche Projektion überführt werden, so dass es ohne Verzerrungen über
+vorhandenes Kartenmaterial gelegt werden kann. Da das Kartenmaterial von
+OpenStreetMap<span class="footnote-mark"><a 
+href="techdoc3.html#fn2x0"><sup class="textsuperscript">2</sup></a></span><a 
+ id="x1-9002f2"></a>
+in der <span 
+class="ecbx-1095">Web Mercator Projektion </span><span class="cite">[<a 
+href="#Xwebmercator">4</a>]</span> vorliegt, sollen die Radardaten ebenfalls in diese
+Projektion umgewandelt werden.
+</p><!--l. 183--><p class="indent" >  Nachdem die Projektion mit einem Tool aus der
+GDAL-Bibliothek<span class="footnote-mark"><a 
+href="techdoc4.html#fn3x0"><sup class="textsuperscript">3</sup></a></span><a 
+ id="x1-9003f3"></a>
+zu <span 
+class="ecti-1095">Web Mercator </span>geändert wurde, muss das resultierende Bild zudem noch an einem
+Referenzpunkt in einem globalen Koordinatensystem angehängt werden. Besagte Eckpunkte
+liefert der DWD in seiner offiziellen Dokumentation. <span class="cite">[<a 
+href="#Xgeoref">5</a>]</span>
+</p><!--l. 193--><p class="indent" >  Zur ﬂexiblen, endgeräteunabhängigen Auslieferung der Bilddaten werden die Radardaten
+schließlich in das Container-Format <span 
+class="ectt-1095">.mbtiles </span>verpackt, welche eine Aufteilung der
+Radardaten in einzelne Kacheln in verschiedenen Auﬂösungen (<span 
+class="ecti-1095">Zoom-Stufen</span>) vorsieht.
+<span class="cite">[<a 
+href="#Xmbtiles">6</a>]</span>
+</p>
+  <h5 class="subsubsectionHead"><span class="titlemark">2.1.3 </span> <a 
+ id="x1-100002.1.3"></a>Nowcast-Daten</h5>
+<!--l. 254--><p class="noindent" >Neben den aktuellen Radardaten stellt der DWD auch alle 5 Minuten einen sogenannten
+<span 
+class="ecti-1095">Nowcast </span>bereit. Dabei handelt es sich um zeitlich interpolierte Satellitenbilder (im gleichen
+Format wie im vorherigen Schritt behandelte “live” Radarbild). <span 
+class="ecti-1095">Nowcast</span>-Vorhersagen sind
+zeitlich meist auf wenige Stunden begrenzt, besitzen allerdings eine wesentlich höhere
+Genauigkeit als globale Wettermodelle, die (aufgrund ihrer Komplexität) nur alle 3-12 Stunden
+neu berechnet werden. <span class="cite">[<a 
+href="#Xnowcast">9</a>]</span>
+</p><!--l. 263--><p class="indent" >  Die Integration dieser Vorhersage ermöglicht dem Benutzer der App die Bestimmung von
+Zugrichtung und Abregenverhalten von Regenwolken und Gewittern. Sie basieren auf
+Windrichtung, Luftdruck und anderen lokalen Messungen, welche örtlich vom DWD
+vorgenommen und verarbeitet werden.
+
+</p><!--l. 269--><p class="indent" >  Die Vorhersagen liegen in einem kleineren Gitter von 900x900 km in 24
+Dateien<span class="footnote-mark"><a 
+href="techdoc5.html#fn4x0"><sup class="textsuperscript">4</sup></a></span><a 
+ id="x1-10001f4"></a>
+vor (d.h. bis zu 120 Minuten akkurater Vorhersagen). Die Verarbeitung verläuft analog zu den
+in <a 
+href="#x1-90002.1.2">2.1.2<!--tex4ht:ref: georef --></a> erläuterten Radardaten.
+</p>
+  <h4 class="subsectionHead"><span class="titlemark">2.2 </span> <a 
+ id="x1-110002.2"></a>Vorab-Benachrichtigungen</h4>
+<!--l. 276--><p class="noindent" >Wurden relativ früh im Entwicklungsprozess sog. Push-Benachrichtigungen (siehe Punkt <a 
+href="#x1-190003">3<!--tex4ht:ref: ios --></a>)
+implementiert.
+</p><!--l. 279--><p class="indent" >  Die zugrundeliegende Idee ist, dass die mobile Anwendung im
+Hintergrund eine grobe, aktuelle Position des jeweiligen Nutzers
+anonym<span class="footnote-mark"><a 
+href="techdoc6.html#fn5x0"><sup class="textsuperscript">5</sup></a></span><a 
+ id="x1-11001f5"></a>
+an den meteocool-Server übermittelt. Bei der darauffolgenden, regelmäßigen Verarbeitung
+neuer Nowcast-Daten (wie in <a 
+href="#x1-100002.1.3">2.1.3<!--tex4ht:ref: nowcast --></a> beschrieben), werden die Vorhersagen anhand der zuvor
+übermittelten Positionen auf Regen überprüft.
+</p>
+  <hr class="figure" /><div class="figure" 
+>
+
+<a 
+ id="x1-110024"></a>
+
+<!--l. 290--><p class="noindent" ><img 
+src="meteocool_notify_2x.png" alt="PIC"  
+ />
+<br /> </p><div class="caption" 
+><span class="id">Abbildung 4: </span><span  
+class="content">Kontrollﬂuss bei der Zustellung von Push-Benachrichtigungen</span></div><!--tex4ht:label?: x1-110024 -->
+
+  </div><hr class="endfigure" />
+<!--l. 295--><p class="indent" >  Technisch betrachtet lässt sich das 900x900 km Gitter als dreidimensionales Array
+betrachten. Um die vorhergesagte Intensität an einer GPS-Koordinate bestimmen zu können,
+müssen die GPS-Koordinaten vom Latitude/Longitude-Format (WSG84) in ein <span 
+class="ectt-1095">x</span>- und <span 
+class="ectt-1095">y</span>-Index
+umgerechnet werden. Danach kann der Zugriff auf die dritte Dimension (Regenintensität)
+erfolgen.
+</p><!--l. 302--><p class="indent" >  Verschiedene Parameter der Benachrichtung sind per REST-API konfigurierbar. Dazu
+gehören unter anderen:
+</p>
+     <ul class="itemize1">
+     <li class="itemize">GPS-Koordinaten des zu überwachenden Ortes
+     </li>
+     <li class="itemize">Horizontale Genauigkeit des Standorts
+     </li>
+     <li class="itemize">Zeitintervall  der  Vorabbenachrichtigung  (5  bis  120  Minuten;  kleinere  Werte
+     bedeuten weniger <span 
+class="ecti-1095">false positives</span>)
+     </li>
+     <li class="itemize">Intensität,  ab  der  eine  Benachrichtigung  gewünscht  ist  (Nieselregen,  Regen,
+     Starkregen, Hagel, ...)</li></ul>
+<!--l. 318--><p class="indent" >  Neben den über die API konfigurierbaren Parametern nimmt der Server diverse
+Optimierungen bezüglich des Benachrichtigungsverhaltens vor. Der Hintergrund dabei ist, dass
+Smartphone-Benutzer Apps mit übermäßig vielen (irrelevanten) Push-Benachrichtigungen
+schnell wieder de-installieren. In einer Beta-Testphase wurden folgende Probleme
+identifiziert:
+     </p><ol  class="enumerate1" >
+     <li class="enumerate" id="x1-11004x1">Wenn der Benutzer sich schnell durch eine Regenfront bewegt (z.B. Auto oder Zug)
+     meldet sein Smartphone des Öfteren einen neuen Standort (Punkt auf der Strecke),
+     für den der Nutzer einige Minuten später benachrichtigt wird.
+     <!--l. 332--><p class="noindent" >Dies kann ggf. dazu führen, dass sich eine Menge an Benachrichtungen auf dem
+     Bildschirm des Smartphones ansammeln, die für den reisenden Nutzer nicht relevant
+     sind.
+     </p><!--l. 337--><p class="noindent" ><span 
+class="cmsy-10x-x-109">⇒ </span>Punkt <a 
+href="#x1-120002.2.1">2.2.1<!--tex4ht:ref: travel --></a>
+     </p></li>
+     <li class="enumerate" id="x1-11006x2"><p  class="noindent" >Bei  kurzen  Schauern  kann  es  sein,  dass  der  Nutzer  nichts  vom  Gewitter
+     mitbekommt, z.B. weil er sich in einem Gebäude aufhält (vor allem nachts). In
+     diesem Fall interessieren ihn die Benachrichtungen nicht, wenn es bereits wieder
+     aufgehört hat zu regnen.</p>
+     <!--l. 344--><p class="noindent" ><span 
+class="cmsy-10x-x-109">⇒ </span>Punkt <a 
+href="#x1-130002.2.2">2.2.2<!--tex4ht:ref: clearing --></a>
+
+     </p></li>
+     <li 
+  class="enumerate" id="x1-11008x3">Vor allem unterwegs kann man aus Gründen der Verkehrssicherheit sein Handy
+     nicht immer benutzen, um die Satellitenbilder einzusehen.
+     <!--l. 349--><p class="noindent" ><span 
+class="cmsy-10x-x-109">⇒ </span>Punkt <a 
+href="#x1-140002.2.3">2.2.3<!--tex4ht:ref: pushpreview --></a></p></li></ol>
+  <h5 class="subsubsectionHead"><span class="titlemark">2.2.1 </span> <a 
+ id="x1-120002.2.1"></a>Reisemodus</h5>
+<!--l. 355--><p class="noindent" >Um dem Benutzer keine Benachrichtungen zuzustellen, solange er sich schneller als eine gewisse
+Geschwindigkeit bewegt (aktuell 25 km/h), ist es notwendig, serverseitig zu erkennen, ob sich
+der Benutzer fortbewegt.
+</p><!--l. 361--><p class="indent" >  Dazu gibt es verschiedene Möglichkeiten. Die einfachste besteht darin, die Daten der IMU
+(<span 
+class="ecti-1095">Intertial Measurement Unit</span>) des Smartphones auszulesen. Da diese aber, besonders im
+geringen Geschwindigkeitsbereich, oft ungenau ist, wurde entschieden, diesen zunächst nicht in
+die Berechnung der Benutzergeschwindigkeit aufzunehmen.
+</p><!--l. 370--><p class="indent" >  Eine zuverlässigere Aussage über die Geschwindgkeit des Benutzers lässt sich über die
+letzten zwei GPS-Koordinaten und entsprechende Zeitstempel berechnen. Um zu keinem
+Zeitpunkt mehr als eine Position pro Nutzer speichern zu müssen (Datenschutz bzw.
+-sparsamkeit laut DSGVO <span class="cite">[<a 
+href="#Xdsgvo">11</a>]</span>) wird die aktuelle Geschwindigkeit zum Zeitpunkt der
+Übermittlung des neuen Standorts neu berechnet.
+</p><!--l. 377--><p class="indent" >  Dazu wird die Luftlinie zwischen der alten und der neuen Koordinate auf der Oberﬂäche
+einer Kugel berechnet und durch die Zeitdifferenz der zwei Ortsangaben geteilt. Es
+ergibt sich die Geschwindigkeit in km/h, welche mit in der Datenbank gespeichert
+wird.
+</p><!--l. 382--><p class="indent" >  Die Backend-Komponente, welche die Push-Benachrichtungen versendet, prüft bei der
+nächsten Verarbeitung von Radardaten, ob der Wert unterhalb eines besitmmten Grenzwerts
+(25 km/h) liegt. Zuvor wird noch ein Wert von der gespeicherten Geschwindigkeit abgezogen,
+der von der seit dem letzten Update verstrichenen Zeit und der zuvor berechneten
+Geschwindigkeit abhängt (sog. <span 
+class="ecti-1095">cool-off </span>-Funktion).
+</p><!--l. 389--><p class="noindent" >
+</p>
+  <h5 class="subsubsectionHead"><span class="titlemark">2.2.2 </span> <a 
+ id="x1-130002.2.2"></a>Aktualität von Benachrichtigungen</h5>
+<!--l. 392--><p class="noindent" >Um das Usability-Problem der <span 
+class="ecti-1095">veralteten Benachrichtigungen </span>zu beheben, wurden sog. <span 
+class="ecti-1095">silent- </span>bzw.
+<span 
+class="ecti-1095">data pushes</span><span class="footnote-mark"><a 
+href="techdoc7.html#fn6x0"><sup class="textsuperscript">6</sup></a></span><a 
+ id="x1-13001f6"></a>
+implementiert.
+
+</p><!--l. 398--><p class="indent" >  Diese werden vom Backend an ein Client-Gerät gesendet, sobald das Gewitter,
+für das zuvor eine Push-Nachricht gesendet wurde, wieder abgezogen ist. Mittels
+APNS<span class="footnote-mark"><a 
+href="techdoc8.html#fn7x0"><sup class="textsuperscript">7</sup></a></span><a 
+ id="x1-13002f7"></a> bzw.
+Google Firebase<span class="footnote-mark"><a 
+href="techdoc9.html#fn8x0"><sup class="textsuperscript">8</sup></a></span><a 
+ id="x1-13003f8"></a>
+wird auf dem Client-Gerät ein Teilprogramm ausgeführt, welches alle aktuell auf dem Display
+angezeigten Benachrichtigungen löscht und eine Information darüber an das Backend
+sendet.
+</p>
+  <div class="wrapfig-r"><a 
+ id="x1-130045"></a><img 
+src="ios-lockscreen.png" alt="PIC"  
+ />
+<br /> <div class="caption" 
+><span class="id">Abbildung 5: </span><span  
+class="content">Von links: Push-Benachrichtigung
+im  gesperrten  Zustand,  Push-Benachrichtigung
+nach <span 
+class="ecti-1095">force touch</span></span></div><!--tex4ht:label?: x1-130045 -->                                       </div>
+<!--l. 417--><p class="indent" >  Die Information darüber, ob es aufgehört hat zu regnen, wird dem aktuellen Radarbild alle 5
+Minuten entnommen.
+</p>
+  <h5 class="subsubsectionHead"><span class="titlemark">2.2.3 </span> <a 
+ id="x1-140002.2.3"></a>Generierung von Vorschaubildern</h5>
+<!--l. 423--><p class="noindent" >Um die mit dem Smartphone notwendige Interaktion gering zu halten, wurden in der iOS App
+sog. <span 
+class="ecti-1095">Media Attachments </span>implementiert. So ist es möglich, neben einer sonst rein textuellen
+Benachrichtigung auch Bilder (u.a.) auf dem Display anzuzeigen.
+</p><!--l. 430--><p class="indent" >  Auf modernen iOS-Geräten (iPhone 6S und aufwärts) besteht zudem
+die Möglichkeit auch im gesperrten Zustand durch die sog. <span 
+class="ecti-1095">force</span>
+<span 
+class="ecti-1095">touch</span>-Geste<span class="footnote-mark"><a 
+href="techdoc10.html#fn9x0"><sup class="textsuperscript">9</sup></a></span><a 
+ id="x1-14001f9"></a>
+einen bildschirmfüllende Kartenausschnitt anzuzeigen.
+</p>
+  <h4 class="subsectionHead"><span class="titlemark">2.3 </span> <a 
+ id="x1-150002.3"></a>Backend</h4>
+<!--l. 438--><p class="noindent" >Neben der zuvor beschriebenen Wetterdaten- und Push-Komponente (zusammengefasst zum
+<span 
+class="ecti-1095">dwd</span>-Container) verwaltet der <span 
+class="ecti-1095">app</span>-Container alle Interaktionen mit Endgeräten. Zur persistenten
+Speicherung und als Interface zur Push-Komponente dient eine Instanz der <span 
+class="ecti-1095">Key-Value-Store</span>-Datenbank
+
+“MongoDB”<span class="footnote-mark"><a 
+href="techdoc11.html#fn10x0"><sup class="textsuperscript">10</sup></a></span><a 
+ id="x1-15001f10"></a>.
+</p>
+
+<h5 class="subsubsectionHead"><span class="titlemark">2.3.1 </span> <a 
+ id="x1-160002.3.1"></a>Öffentliche REST API</h5>
+<!--l. 451--><p class="noindent" >Die von den Endgeräten initierte Kommunikation mit dem Backend wird über eine
+REST-basierte HTTP API abgehandelt.
+</p><!--l. 456--><p class="indent" >  Endgeräte identifizieren sich gegenüber dem Server anhand eines Tokens. Dieses Token
+generiert das mobile Betriebssystem beim ersten Start der App. Es dient gleichzeitig der
+Identifizierung gegenüber der API für Push-Benachrichtigungen von Apple bzw.
+Google.
+</p><!--l. 462--><p class="indent" >  Das Token ist insofern nicht sicherheitsrelevant, als dass anhand des Tokens keine
+Informationen über das Gerät, den Nutzer oder seinen Standort abgefragt werden
+können.
+</p>
+
+<h4 class="subsectionHead"><span class="titlemark">2.4 </span> <a 
+ id="x1-170002.4"></a>Tileserver</h4>
+<!--l. 484--><p class="noindent" >Um die in Kapitel <a 
+href="#x1-80002.1.1">2.1.1<!--tex4ht:ref: visual --></a> generierten mbtiles-Archivdateien über eine einheitliche API
+anzubieten kommt ein sog. Tileserver zum einsatz. Tileserver sind Softwarekomponenten, die
+Kartematerial über eine Netzwerkschnittstelle zur Verfügung stellen. Gebräuchliche
+Schnittstellen wie WTMS (XML-basiert) und GeoJSON (JavaScript Object Notation)
+ermöglichen es so Bilddaten kachelbasiert (partiell) abrufen zu können.
+</p><!--l. 494--><p class="indent" >  Es existieren verschiedene freie Tileserver-Implementierungen. Sie unterscheiden sich
+hauptsächlich im Technologie-Stack, auf dem sie basieren. meteocool verwendet hierzu die in
+Node.js implementierte Software <span 
+class="ectt-1095">tileserver-gl</span>, da die Schnittstelle zum in <a 
+href="#x1-70002.1">2.1<!--tex4ht:ref: dwd --></a> beschriebenen
+<span 
+class="ecti-1095">dwd</span>-Container am einfachen realisierbar war.
+
+</p><!--l. 500--><p class="noindent" >
+</p>
+  <h4 class="subsectionHead"><span class="titlemark">2.5 </span> <a 
+ id="x1-180002.5"></a>Frontend</h4>
+<!--l. 503--><p class="noindent" >Die plattformübergreifende, HTML5-basierte Web-Oberﬂäche basiert auf dem Mapping-Framework
+<span 
+class="ecti-1095">OpenLayers</span><span class="footnote-mark"><a 
+href="techdoc13.html#fn12x0"><sup class="textsuperscript">12</sup></a></span><a 
+ id="x1-18001f12"></a>.
+OpenLayers ist ein in JavaScript geschriebenes Framework, um Kartenmaterial ﬂexibel und
+über diverse Anbindungen (Backends) im Browser darzustellen. Eine der wichtigsten
+Abstraktionen von OpenLayers besteht in der Übereinanderlagerung von sog. Layern. So ist es
+z.B. mit geringem Aufwand möglich, mehrere Layer aus verschiedenen Quellen geographisch
+korrekt übereinanderzulegen und mit ihnen zu interagieren.
+</p><!--l. 512--><p class="indent" >  Auf ein komplexes GUI-Framework (Angular, Vue, etc.) wurde verzichtet, da die App fast
+ausschließlich aus der Kartenansicht besteht.
+</p><!--l. 517--><p class="indent" >  Zur Interaktion mit dem Backend baut der Browser nach dem Aufruf der meteocool-Startseite
+eine WebSockets-Verbindung zum Backend hin auf. Über diese Verbindung werden
+asynchron durch das Backend ausgelöste Informationen an die Clients übertragen,
+u.a.:
+</p>
+     <ul class="itemize1">
+     <li class="itemize">Aktualisierte Radardaten stehen zur Verfügung: Client lädt Wolken-Layer erneut,
+     </li>
+     <li class="itemize">Blitz-Event (Koordinaten und Intensität): Client zeigt visuellen Marker auf Karte
+     an,
+     </li>
+     <li class="itemize">Push-Benachrichtigung<span class="footnote-mark"><a 
+href="techdoc14.html#fn13x0"><sup class="textsuperscript">13</sup></a></span><a 
+ id="x1-18002f13"></a>
+     trifft ein: Client zeigt Benachrichtigung über <span 
+class="ecti-1095">Javascript Desktop Notification API</span>.</li></ul>
+<!--l. 536--><p class="indent" >  Desweiteren verwendet die Oberﬂäche die <span 
+class="ecti-1095">Google</span>
+<span 
+class="ecti-1095">Workbox</span><span class="footnote-mark"><a 
+href="techdoc15.html#fn14x0"><sup class="textsuperscript">14</sup></a></span><a 
+ id="x1-18003f14"></a>
+Bibliothek, um meteocool so zu einer sogenannten <span 
+class="ecbx-1095">Progressive Web App </span>(PWA) zu machen.
+Durch die Verwendung von modernen Webtechnologien wie <span 
+class="ecti-1095">Service Workers </span>und <span 
+class="ecti-1095">Local Storage</span>
+
+wird auf diese Weise die Geschwindigkeit sowie die Resilienz gegenüber (kurzzeitigen)
+Ausfällen der Netzwerkverbindung erhöht und die Verwendung von mobilen Daten
+reduziert.
+</p>
+  <h3 class="sectionHead"><span class="titlemark">3 </span> <a 
+ id="x1-190003"></a>Mobile Anwendungen</h3>
+<!--l. 547--><p class="noindent" >Durch die beschriebenen Optimierungen an der HTML5-Oberﬂäche kann sie nun als Grundlage
+für eine “native” Anwendung verwendet werden.
+</p><!--l. 551--><p class="indent" >  Für die zwei populärsten mobilen Betriebssysteme, iOS und Android, wurde jeweils eine App
+entwickelt. Dies ist notwendig, um nativ vom Betriebssytem bereitgestellte Schnittstellen wie
+<span 
+class="ecti-1095">Background Location </span>und <span 
+class="ecti-1095">Push-Benachrichtigungen </span>nutzen zu können. Für reine Web-Apps
+stehen diese Funktionalitäten nicht zur Verfügung.
+</p><!--l. 558--><p class="noindent" >
+</p>
+  <h3 class="sectionHead"><span class="titlemark">4 </span> <a 
+ id="x1-200004"></a>Software Engineering</h3>
+<!--l. 560--><p class="noindent" >Bei der Entwicklung kommen diverse Tools und Vorgehensweisen aus dem Bereich des <span 
+class="ecti-1095">Software</span>
+<span 
+class="ecti-1095">Engineering </span>zum Einsatz.
+</p><!--l. 563--><p class="indent" >  Da es sich um ein Open Source Projekt handelt, findet die Verwaltung von Bugs und
+Feature-Requests öffentlich über github Issues statt. Dies birgt eine relativ geringe
+Einstiegshürde für Nutzer und Beitragende.
+</p><!--l. 568--><p class="noindent" >
+</p>
+  <h4 class="subsectionHead"><span class="titlemark">4.1 </span> <a 
+ id="x1-210004.1"></a>CI</h4>
+<!--l. 570--><p class="noindent" >Eine gitlab-CI-Instanz kompiliert und verifiziert automatisch für jeden Commit das
+JavaScript-Frontend.
+</p><!--l. 573--><p class="indent" >  Eine Integration der anderen Komponenten (insbesondere der Docker Container) steht noch
+aus.
+</p><!--l. 576--><p class="noindent" >
+</p>
+  <h4 class="subsectionHead"><span class="titlemark">4.2 </span> <a 
+ id="x1-220004.2"></a>Skalierbarkeit</h4>
+<!--l. 579--><p class="noindent" >Die Skalierbarkeit der hier beschriebenen Dienste, besonders in Bezug auf Nutzer- und
+Zugriffszahlen, ist durch die Architektur, bestehend aus periodisch aktualisierten, statischen
+
+Dateien, bereits relativ ausgeprägt.
+</p><!--l. 584--><p class="indent" >  Statische Resourcen einer Webseite – also ebendiese, welche nicht speziell für jeden Nutzer
+einzeln durch ein serverseitiges Programm erzeugt werden – lassen sich sehr gut
+zwischenspeichern <span 
+class="ecti-1095">(cachen)</span>.
+</p><!--l. 588--><p class="indent" >  Falls dies notwendig werden sollte, ist noch offen, ob zu diesem Zweck ein Cloud-Provider
+(z.B. Cloudﬂare) vorgeschaltet wird oder eine einfache andere Variante des Load-Balancings
+verwendet werden wird (z.B. Round Robin DNS).
+</p><!--l. 595--><p class="indent" >  Die Abfertigung der Radardaten und Push-Benachrichtigungen geschieht, unabhängig
+von der Zugriffszahl, nur ein einziges Mal pro Zeiteinheit. Falls die Anzahl an zu
+benachrichtigenden Clients stark zunehmen sollte, wäre eine Message-Queue denkbar. Die
+relativ aufwändige Verarbeitung von rohen Radardaten könnte so einfach auf beliebig viele
+Instanzen aufgeteilt werden.
+</p><!--l. 602--><p class="noindent" >
+</p>
+  <h3 class="sectionHead"><span class="titlemark">5 </span> <a 
+ id="x1-230005"></a>Auswertung der Barometriedaten</h3>
+<!--l. 604--><p class="noindent" >Die im Rahmen der <span 
+class="ecti-1095">Praxisbegleitenden Lehrveranstaltung </span>implementierte Funktionalität zur
+Erfassung von barometrischen Daten innerhalb der meteocool-App wurde inzwischen unter ca.
+15 Beta-Testern ausgerollt.
+</p><!--l. 630--><p class="indent" >  Wie bereits vermutet wäre zur ﬂächendeckenden Messung eine größere Anzahl an Nutzern
+notwendig. Dies liegt insbesondere daran, dass die zeitliche Auﬂösung ansonsten zu gering für
+meteorologische Zwecke ist.
+</p><!--l. 635--><p class="indent" >  Ein beachtlicher Teil der Messungen können zudem Aufgrund von zu geringer
+räumlicher Genauigkeit (insbesondere der vertikalen Genauigkeit) nicht verwertet werden.
+Dies wurde jedoch insofern im Voraus beachtet, als dass die Information über die
+absolute Höhe dem GPS-Empfänger entnommen und mit an das Backend gesendet
+wurde.
+</p><!--l. 644--><p class="indent" >  Um erste qualitative Aussagen über die seit der PBLV angefallenen Daten treffen zu
+können, wurde eine entsprechende graphische Auswertung (Python-Script) der Daten
+erstellt:
+</p><!--l. 648--><p class="indent" >
+     </p><ol  class="enumerate1" >
+     <li 
+  class="enumerate" id="x1-23002x1">Auslesen und filtern der Daten aus MongoDB (zu SQL ähnliche Abfragesprache
+     “pymongo”)
+     </li>
+     <li 
+  class="enumerate" id="x1-23004x2">Normalisierung  der  Druckmessungen  auf  Meeresspiegel;  dies  ist  notwendig,  da
+     die relative Höhe eines Nutzers eine große Rolle spielt (Hochhäuser etc.). Dazu
+     notwendig: Information über Temperatur (Abfrage über DWD OpenData-Portal).
+
+     </li>
+     <li 
+  class="enumerate" id="x1-23006x3">Interpolation mittels <span 
+class="ecti-1095">Radialer Basisfunktion </span>über die Bibliothek <span 
+class="ecti-1095">metpy</span>
+     </li>
+     <li 
+  class="enumerate" id="x1-23008x4">Generierung   von   sog.   <span 
+class="ecbx-1095">Isobaren   </span>(vergleichbar   mit   Höhenlinien   aus   der
+     Kartographie) mit <span 
+class="ecti-1095">metpy </span>und <span 
+class="ecti-1095">matplotlib</span>
+     </li>
+     <li 
+  class="enumerate" id="x1-23010x5">Konvertierung und Geo-Referezierung der Isobaren in ein mit OpenLayers (siehe
+     <a 
+href="#x1-180002.5">2.5<!--tex4ht:ref: frontend --></a>) kompatibles Format (GeoJSON)</li></ol>
+  <hr class="figure" /><div class="figure" 
+>
+
+<a 
+ id="x1-230117"></a>
+
+<!--l. 661--><p class="noindent" ><img 
+src="isobar.png" alt="PIC"  
+ />
+<br /> </p><div class="caption" 
+><span class="id">Abbildung 7:  </span><span  
+class="content">Erste  Auswertung  der  Barometriedaten  über  12  Stunden.  Zu  sehen
+ist eine Heatmap (hellblau bis grüne Punkte) um lokale Häufungen der Messpunkte
+zu  identifizieren;  die  Isobaren  (“Höhenlinien”)  zeigen  (vermeintliche;  interpolierte)
+Unterschiede des Luftdrucks an.</span></div><!--tex4ht:label?: x1-230117 -->
+
+  </div><hr class="endfigure" />
+
+  <h3 class="sectionHead"><span class="titlemark">6 </span> <a 
+ id="x1-240006"></a>Referenzen</h3>
+<!--l. 675--><p class="noindent" >
+</p>
+<!--l. 675--><p class="noindent" >
+   </p><div class="thebibliography">
+   <p class="bibitem" ><span class="biblabel">
+ [1]<span class="bibsp">   </span></span> <a href="https://www.dwd.de/EN/ourservices/radar_products/radar_products.html" id="Xdwdradar">Deutscher Wetterdienst, 11.03.2019</a>
+   </p>
+   <p class="bibitem" ><span class="biblabel">
+ [2]<span class="bibsp"></span></span>
+   <a href="https://www.dwd.de/DE/leistungen/radarprodukte/formatbeschreibung_sweep_reflektivitaet.pdf" id="Xdwdbufr">BUFR Dateiformat des Precipitation- und Volumen-Scans der Reﬂektivität am Radarstandort, Michael Mott, 2015, Deutscher Wetterdienst</a>
+   </p>
+   <p class="bibitem" ><span class="biblabel">
+     [3]<span class="bibsp">   </span></span><a href="https://w1.weather.gov/glossary/index.php?letter=d" id="Xnws">National Weather Service Glossary, 11.03.2019</a>
+   </p>
+   <p class="bibitem" ><span class="biblabel">
+ [4]<span class="bibsp">   </span></span><a id="Xwebmercator" href="https://epsg.io/3857">EPSG:3857 - WGS 84 / Pseudo-Mercator</a>
+   </p>
+   <p class="bibitem" ><span class="biblabel">
+     [5]<span class="bibsp">   </span></span><a id="Xgeoref" href="https://github.com/v4lli/meteocool/blob/master/doc/radolan_radvor_op_komposit_format_pdf.pdf">Beschreibung des Kompositverfahrens, April 2018, Deutscher Wetterdienst</a>
+   </p>
+   <p class="bibitem" ><span class="biblabel">
+ [6]<span class="bibsp">   </span></span><a 
+ id="Xmbtiles" href="https://github.com/mapbox/mbtiles-spec">specification documents for the MBTiles tileset format</a><br 
+class="newline" />
+
+   </p>
+   <p class="bibitem" ><span class="biblabel">
+ [7]<span class="bibsp">   </span></span><a 
+          id="Xcarree" href="http://mars.geographie.uni-halle.de/mlucampus/geoglossar/terme_datenblatt.php?terme=Plate%20Carree-Projektion">Plate Carree-Projektion, GEOVLEX, MLU Halle-Wittenberg</a><br 
+class="newline" />
+   </p>
+   <p class="bibitem" ><span class="biblabel">
+ [8]<span class="bibsp">   </span></span><a 
+ id="Xmollweide">Weisstein, Eric W. “Mollweide Projection.”  From
+ MathWorld–A Wolfram Web Resource</a>
+   </p>
+   <p class="bibitem" ><span class="biblabel">
+ [9]<span class="bibsp">   </span></span><a 
+ id="Xnowcast" href="https://www.dwd.de/DE/forschung/wettervorhersage/met_fachverfahren/nowcasting/nowcasting_node.html">Nowcasting-Verfahren, Deutscher Wetterdienst </a>
+</span>
+   </p>
+   <p class="bibitem" ><span class="biblabel">
+ [11]<span class="bibsp">   </span></span><a 
+ id="Xdsgvo"></a>Art. 5, EU-DSGVO</p></div>
+<!--l. 697--><p class="noindent" >
+</p>
+
+<div class="footer">&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\" target=\"_blank\">DWD</a> &#169; <a
+    href=\"http://en.blitzortung.org/contact.php\" target=\"_blank\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\"
+    target=\"_blank\">OpenStreetMap</a> contributors &#169; <a href=\"https://carto.com/attribution/\" target=\"_blank\">CARTO</a> &#169; meteocool Contributors</div>
+
+      </div></div>
+  </body>
+</html>
+<!-- vim: set ts=2 sw=2 expandtab: -->

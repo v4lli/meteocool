@@ -8,7 +8,7 @@ import sys
 import json
 import glob
 import logging
-from gobiko.apns.exceptions import BadDeviceToken
+from gobiko.apns.exceptions import BadDeviceToken, Unregistered
 from gobiko.apns import APNsClient
 from pymongo import MongoClient
 from scipy.spatial import distance
@@ -18,8 +18,11 @@ from wradlib.trafo import rvp_to_dbz
 import smopy
 import random
 import string
+import datetime
 from PIL.Image import composite, blend
 from PIL import Image
+from pyfcm import FCMNotification
+from dwdTemperature import dwdTemperature
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
@@ -27,7 +30,9 @@ def closest_node(node, nodes):
     closest_index = distance.cdist([node], nodes).argmin()
     return closest_index
 
-def dbz_to_str_pure(dbz):
+def dbz_to_str_pure(dbz,lat,lon):
+    rain_snow = rain_or_snow(lat,lon)
+
     if dbz > 65:
         return "Large hail"
     if dbz > 60:
@@ -35,19 +40,19 @@ def dbz_to_str_pure(dbz):
     if dbz > 55:
         return "Small hail"
     if dbz > 47:
-        return "Extreme rain"
+        return "Extreme %s" % rain_snow
     if dbz > 40:
-        return "Heavy rain"
+        return "Heavy %s" % rain_snow
     if dbz > 35:
-        return "Intense rain"
+        return "Intense %s" % rain_snow
     if dbz > 30:
-        return "More intense rain"
+        return "More intense %s" % rain_snow
     if dbz > 25:
-        return "Rain"
+        return "Rain" if rain_snow == "rain" else "Snow"
     if dbz > 20:
-        return "Light rain"
+        return "Light %s" % rain_snow
     if dbz > 15:
-        return "Drizzle"
+        return "Drizzle" if rain_snow == "rain" else "Snowflakes"
     if dbz > 0:
         # ???
         return "Mist"
@@ -58,14 +63,32 @@ def dbz_to_str_pure(dbz):
         # ???
         return "Extremely light mist"
     if dbz <= -31:
-        return "No rain"
+        return "No %s" % rain_snow
 
-def dbz_to_str(dbz, lower_case=False):
+
+dwdTemp = dwdTemperature()
+dwdTemp.get_stations()
+
+def rain_or_snow(lat,lon):
+    current_temperature = None
+    try:
+        station_id = dwdTemp.find_next_station(lat, lon)
+        current_temperature = dwdTemp.get_current_temperature(station_id)
+    except ConnectionRefusedError as e:
+        logging.error("DWD reports ConnectionRefusedError: %s" % e)
+        pass
+
+    if current_temperature and current_temperature <= 0:
+        return "snow"
+    else:
+        return "rain"
+
+def dbz_to_str(dbz, lat, lon, lower_case=False):
     intensity = None
     if lower_case:
-        intensity = dbz_to_str_pure(dbz).lower()
+        intensity = dbz_to_str_pure(dbz,lat,lon).lower()
     else:
-        intensity = dbz_to_str_pure(dbz)
+        intensity = dbz_to_str_pure(dbz,lat,lon)
 
     return "%s (%d dbZ)" % (intensity, dbz)
 
@@ -102,7 +125,7 @@ def generate_preview(lat, lon):
     #out.crop((100,100, 668,668)).save("/pushpreview/%s.png" % random_name, format="png", optimize=True)
     out.save(pathspec, format="png", optimize=True)
 
-    return "https://meteocool.unimplemented.org%s" % pathspec
+    return "https://meteocool.com%s" % pathspec
 
 if __name__ == "__main__":
     # programm parameters
@@ -123,6 +146,11 @@ if __name__ == "__main__":
             auth_key_filepath=config["auth_key_filepath"],
             use_sandbox=config["use_sandbox"]
         )
+
+    # Android push setup. The API key comes from the environment.
+    fcm = None
+    if os.getenv('FCM_API_KEY', None):
+        fcm = FCMNotification()
 
     # mongodb setup
     db_client = MongoClient("mongodb://mongo:27017/")
@@ -162,13 +190,13 @@ if __name__ == "__main__":
             intensity = document["intensity"]
             ios_onscreen = document["ios_onscreen"]
             source = document["source"]
+            last_updated = document["last_updated"]
         except KeyError as e:
             print("Invalid key line: %s" % e)
             continue
 
-        #if token == "1be97aefdddbb164bd1ba0fa98655772887f38450ac324472c4c5000c1bb3348":
-        #    intensity = -33
-        #    ios_onscreen = False
+        if token == "anon" or token == "anon2":
+            continue
 
         # overwrite instensity for everyone
         intensity = 18
@@ -177,12 +205,38 @@ if __name__ == "__main__":
             logging.error("%s: invalid ahead value" % doc_id)
             continue
 
+        # TRAVEL MODE DETECTION
+        try:
+            travelmodeSpeed = document["travelmode_speed"]
+            travelmodeAccuracy = document["travelmode_accuracy"]
+        except KeyError as e:
+            logging.warn("travel mode not supported for this client")
+        else:
+            # if the interpolated speed is still above ~20 km/h, don't push
+            # XXX accuracy beachten
+            m_diff = (datetime.datetime.utcnow()-last_updated).total_seconds() / 60
+            # cool down by 0.35 km/h per minute
+            interpolatedSpeed = max(travelmodeSpeed - m_diff*0.35, 0)
+            if interpolatedSpeed > 10:
+                logging.warn("%s: not pushing for client because of too high interpolated speed %f (orig=%f)" % (token, interpolatedSpeed, travelmodeSpeed))
+                continue
+            else:
+                logging.warn("interpolatedSpeed=%f < 20km/h -> OK" % interpolatedSpeed)
+
         # XXX check lat/lon against the bounds of the dwd data here
         # to avoid useless calculations here
 
         # user position in grid
         result = closest_node((lon, lat), linearized_grid)
         xy = (int(result / gridsize), int(result % gridsize))
+
+        # if xy lies on one of the outermost tiles, ignore. hotfix for bug #113 (will be
+        # obsoleted by rewrite).
+        if ((xy[0] == 0 and xy[1] == 0) or
+            (xy[0] == gridsize-1 and xy[1] == gridsize-1) or
+            (xy[0] == 0 and xy[1] == gridsize-1) or
+            (xy[0] == gridsize-1 and xy[1] == 0)):
+            logging.warn("NOT PUSHING for client %s because it's outside the grid: %f,%f", token, lat, lon)
 
         # get forecasted value from grid
         data = forecast_maps[ahead]
@@ -194,7 +248,8 @@ if __name__ == "__main__":
             while timeframe > 0:
                 previous_intensity = rvp_to_dbz(forecast_maps[timeframe][0][xy[0]][xy[1]])
                 if previous_intensity >= intensity:
-                    logging.warn("%s: no match for old ahead value, but %d >= %d for lower ahead=%d!" % (token, previous_intensity, intensity, timeframe))
+                    logging.warn("%s: no match for old ahead value, but %d >= %d for lower ahead=%d!" % (token,
+                        previous_intensity, intensity, timeframe))
                     reported_intensity = previous_intensity
                     ahead = timeframe
                 timeframe -= 5
@@ -202,8 +257,29 @@ if __name__ == "__main__":
         logging.warn("%d >? %d" % (reported_intensity, intensity))
         if reported_intensity >= intensity:
             logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (token, reported_intensity, intensity, ahead, source))
+
+            # fancy message generation
+            max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, xy, ahead, intensity)
+            message_dict = {
+                "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity,lat,lon), ahead),
+                "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
+                    dbz_to_str(max_intensity, lat, lon, lower_case=True), peak_mins, total_mins)
+            }
+            if max_intensity == reported_intensity:
+                message_dict["body"] = "No duration estimate; possibly just a little shower."
+
             if source == "browser":
                 requests.post(browser_notify_url, json={"token": token, "ahead": ahead})
+            elif source == "android":
+                if fcm and not ios_onscreen:
+                    result = fcm.notify_single_device(registration_id=token,
+                            message_title=message_dict["title"],
+                            message_body=message_dict["body"],
+                            message_icon="rain")
+                    collection.update({"_id": doc_id}, {"$set": {"ios_onscreen": True}})
+                    logging.warn("%s: Delivered android push notification with result=%s" % (token, result))
+                else:
+                    logging.error("FCM support not enabled")
             elif source == "ios":
                 # https://developer.apple.com/library/archive/documentation/NetworkingInternet/
                 # Conceptual/RemoteNotificationsPG/PayloadKeyReference.html#//apple_ref/doc/uid/TP40008194-CH17-SW1
@@ -212,23 +288,20 @@ if __name__ == "__main__":
                     # acknowledged (app was opened or we successfully deleted the
                     # last one).
                     if not ios_onscreen:
-                        max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, xy, ahead, intensity)
-                        message_dict = {
-                            "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity), ahead),
-                            "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
-                                dbz_to_str(max_intensity, lower_case=True), peak_mins, total_mins)
-                        }
+                        # push preview maps
                         extra_dict = {}
                         preview_url = generate_preview(lat, lon)
                         if preview_url:
                             logging.warn("generated push preview at %s" % preview_url)
                             extra_dict["preview"] = preview_url
-                        if max_intensity == reported_intensity:
-                            message_dict["body"] = "No duration estimate; possibly just a little shower."
                         try:
-                            apns.send_message(token, message_dict, badge=0, sound="pulse.aiff", extra=extra_dict, mutable_content=True, category="WeatherAlert")
+                            apns.send_message(token, message_dict, badge=0,
+                                    sound="pulse.aiff", extra=extra_dict, mutable_content=True, category="WeatherAlert")
                         except BadDeviceToken:
                             logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", token)
+                            collection.remove(doc_id)
+                        except Unregistered:
+                            logging.warn("%s: sending iOS notification failed with Unregistered, removing push client", token)
                             collection.remove(doc_id)
                         else:
                             logging.warn("%s: sent iOS notification", token)
@@ -245,14 +318,24 @@ if __name__ == "__main__":
             if ios_onscreen:
                 # rain has stopped and the notification is (possibly) still
                 # displayed on the device.
-                try:
-                    apns.send_message(token, None, badge=0, content_available=True, extra={"clear_all": True})
-                except BadDeviceToken:
-                    logging.warn("%s: silent iOS notification failed with BadDeviceToken, removing push client", token)
-                    collection.remove(doc_id)
+                if source == "ios":
+                    try:
+                        apns.send_message(token, None, badge=0, content_available=True, extra={"clear_all": True})
+                    except BadDeviceToken:
+                        logging.warn("%s: silent iOS notification failed with BadDeviceToken, removing push client", token)
+                        collection.remove(doc_id)
+                    except Unregistered:
+                        logging.warn("%s: silent iOS notification failed with Unregistered, removing push client", token)
+                        collection.remove(doc_id)
+                    else:
+                        logging.warn("%s: sent silent notification" % token)
+                        collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
+                elif source == "android":
+                    result = fcm.single_device_data_message(registration_id=token, data_message={"clear_all": True})
+                    logging.warn("%s: Delivered android data push with result=%s" % (token, result))
+                    collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
                 else:
-                    logging.warn("%s: sent silent notification" % token)
-                    collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": True} })
+                    logging.error("%s: Unsupported source" % token)
         cnt = cnt + 1
 
     logging.warn("===> Processed %d total clients" % cnt)

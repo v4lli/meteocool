@@ -20,7 +20,7 @@ import org.unimplemented.meteocool.location.WebAppInterface
 class MapFragment : Fragment(){
 
     companion object {
-        private const val WEB_URL = "https://meteocool.unimplemented.org/?mobile=android"
+        private const val WEB_URL = "https://meteocool.com/?mobile=android"
     }
 
     private var mWebView : WebView? = null
