@@ -950,13 +950,15 @@ $(document).ready(function () {
   }
   if (isV2 && (window.location.href.indexOf("documentation.html") !== -1)) {
     window.webkit.messageHandlers["scriptHandler"].postMessage("enableScrolling");
+    window.webkit.messageHandlers["scriptHandler"].postMessage("drawerHide");
   } else if (isV2) {
     window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
+    window.webkit.messageHandlers["scriptHandler"].postMessage("drawerShow");
   }
 });
 
 // lazy load images in modal
-$("#about").on("show.bs.modal", function () {
+$("#appModal").on("show.bs.modal", function () {
   $(".lazy_load").each(function () {
     var img = $(this);
     img.attr("src", img.data("src"));
