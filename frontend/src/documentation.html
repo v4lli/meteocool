@@ -82,12 +82,6 @@ href="#x1-170002.4" id="QQ2-1-23">Tileserver</a></span>
 href="#x1-180002.5" id="QQ2-1-24">Frontend</a></span>
 <br /> <span class="sectionToc" >3 <a 
 href="#x1-190003" id="QQ2-1-25">Mobile Anwendungen</a></span>
-<br /> <span class="sectionToc" >4 <a 
-href="#x1-200004" id="QQ2-1-26">Software Engineering</a></span>
-<br /><span class="subsectionToc" >4.1 <a 
-href="#x1-210004.1" id="QQ2-1-27">CI</a></span>
-<br /><span class="subsectionToc" >4.2 <a 
-href="#x1-220004.2" id="QQ2-1-28">Skalierbarkeit</a></span>
 <br /> <span class="sectionToc" >5 <a 
 href="#x1-230005" id="QQ2-1-29">Auswertung der Barometriedaten</a></span>
 <br /> <span class="sectionToc" >6 <a 
@@ -583,45 +577,6 @@ class="ecti-1095">Background Location </span>und <span
 class="ecti-1095">Push-Benachrichtigungen </span>nutzen zu können. Für reine Web-Apps
 stehen diese Funktionalitäten nicht zur Verfügung.
 </p><!--l. 558--><p class="noindent" >
-</p>
-  <h3 class="sectionHead"><span class="titlemark">4 </span> <a 
- id="x1-200004"></a>Software Engineering</h3>
-<!--l. 560--><p class="noindent" >Bei der Entwicklung kommen diverse Tools und Vorgehensweisen aus dem Bereich des <span 
-class="ecti-1095">Software</span>
-<span 
-class="ecti-1095">Engineering </span>zum Einsatz.
-</p><!--l. 563--><p class="indent" >  Da es sich um ein Open Source Projekt handelt, findet die Verwaltung von Bugs und
-Feature-Requests öffentlich über github Issues statt. Dies birgt eine relativ geringe
-Einstiegshürde für Nutzer und Beitragende.
-</p><!--l. 568--><p class="noindent" >
-</p>
-  <h4 class="subsectionHead"><span class="titlemark">4.1 </span> <a 
- id="x1-210004.1"></a>CI</h4>
-<!--l. 570--><p class="noindent" >Eine gitlab-CI-Instanz kompiliert und verifiziert automatisch für jeden Commit das
-JavaScript-Frontend.
-</p><!--l. 573--><p class="indent" >  Eine Integration der anderen Komponenten (insbesondere der Docker Container) steht noch
-aus.
-</p><!--l. 576--><p class="noindent" >
-</p>
-  <h4 class="subsectionHead"><span class="titlemark">4.2 </span> <a 
- id="x1-220004.2"></a>Skalierbarkeit</h4>
-<!--l. 579--><p class="noindent" >Die Skalierbarkeit der hier beschriebenen Dienste, besonders in Bezug auf Nutzer- und
-Zugriffszahlen, ist durch die Architektur, bestehend aus periodisch aktualisierten, statischen
-
-Dateien, bereits relativ ausgeprägt.
-</p><!--l. 584--><p class="indent" >  Statische Resourcen einer Webseite – also ebendiese, welche nicht speziell für jeden Nutzer
-einzeln durch ein serverseitiges Programm erzeugt werden – lassen sich sehr gut
-zwischenspeichern <span 
-class="ecti-1095">(cachen)</span>.
-</p><!--l. 588--><p class="indent" >  Falls dies notwendig werden sollte, ist noch offen, ob zu diesem Zweck ein Cloud-Provider
-(z.B. Cloudﬂare) vorgeschaltet wird oder eine einfache andere Variante des Load-Balancings
-verwendet werden wird (z.B. Round Robin DNS).
-</p><!--l. 595--><p class="indent" >  Die Abfertigung der Radardaten und Push-Benachrichtigungen geschieht, unabhängig
-von der Zugriffszahl, nur ein einziges Mal pro Zeiteinheit. Falls die Anzahl an zu
-benachrichtigenden Clients stark zunehmen sollte, wäre eine Message-Queue denkbar. Die
-relativ aufwändige Verarbeitung von rohen Radardaten könnte so einfach auf beliebig viele
-Instanzen aufgeteilt werden.
-</p><!--l. 602--><p class="noindent" >
 </p>
   <h3 class="sectionHead"><span class="titlemark">5 </span> <a 
  id="x1-230005"></a>Auswertung der Barometriedaten</h3>
