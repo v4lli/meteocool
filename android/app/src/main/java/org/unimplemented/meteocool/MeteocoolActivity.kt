@@ -20,7 +20,7 @@ import org.unimplemented.meteocool.utility.NetworkUtility
 import org.unimplemented.meteocool.service.UploadLocationService
 
 
-class Meteocool : AppCompatActivity() {
+class MeteocoolActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +30,7 @@ class Meteocool : AppCompatActivity() {
             // Check if we need to display our OnboardingFragment
             if (!getBoolean(Onboarding.IS_ONBOARD_COMPLETED, false)) {
                 // The user hasn't seen the OnboardingFragment yet, so show it
-                startActivity(Intent(this@Meteocool, Onboarding::class.java))
+                startActivity(Intent(this@MeteocoolActivity, Onboarding::class.java))
             }
         }
 

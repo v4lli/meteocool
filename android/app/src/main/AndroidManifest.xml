@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Meteocool"></activity>
+        <activity android:name=".MeteocoolActivity"></activity>
 
         <activity
                 android:name=".onboarding.Onboarding"
