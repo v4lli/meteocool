@@ -46,7 +46,12 @@ dependencies {
     implementation "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
     implementation "org.jetbrains.anko:anko-appcompat-v7-coroutines:$anko_version"
 
+    //JSON library
     implementation 'com.google.code.gson:gson:2.8.5'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

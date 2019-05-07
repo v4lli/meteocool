@@ -19,7 +19,7 @@ class Onboarding : AppIntro2(){
         val sliderPage = SliderPage()
         sliderPage.title = getString(R.string.title_slide1)
         sliderPage.description = getString(R.string.description_slide1)
-        sliderPage.imageDrawable = R.drawable.jacket
+        sliderPage.imageDrawable = R.drawable.icon_83
         sliderPage.bgColor = getColor(R.color.colorPrimary)
         sliderPage.descColor = getColor(R.color.textColor)
         sliderPage.titleColor = getColor(R.color.textColor)
