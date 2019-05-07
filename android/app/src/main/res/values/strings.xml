@@ -5,4 +5,18 @@
     <string name="notifications_admin_channel_description">meteocool</string>
     <string name="notifications_admin_channel_id">meteocool</string>
     <string name="default_notification_channel_id">meteocool</string>
+
+
+    <!-- Onboarding -->
+    <string name="title_slide1">Hi there!</string>
+    <string name="title_slide2">Nowcasting</string>
+    <string name="title_slide3">Notifications</string>
+    <string name="title_slide4">Location</string>
+    <string name="title_slide5">Go outside and play!</string>
+
+    <string name="description_slide1">The meteocool project is an ongoing effort to make freely available meteorological data useful to everyone.\n\nWe process and aggregate data from different sources and try to visualize them in an intuitive way.</string>
+    <string name="description_slide2">We use a super-accurate forecast model (a so-called \"nowcast\") which predicts the path and extent of rain clouds based on factors like wind, air pressure and lightning activity.\n\nObviously, more distant time steps are less accurate. But in our experience, at least the first 45 minutes are pretty spot-on.</string>
+    <string name="description_slide3">Based on this data, do you want us to notify you ahead of rain at your location?\n\nWe put a lot of effort into making the notifications non-intrusive. They disappear as soon as it stops raining.</string>
+    <string name="description_slide4">Choose \"Always\" in the location permission pop-up if you want notifications to work!\n\nBut do not worry, this will not drain your battery. See for yourself in the iOS Settings after a day or two.</string>
+    <string name="description_slide5">This service is completely free and open source. It is run and built by volunteers in their free time.\n\nWe do not want your money, just tell your friends or send us feedback!</string>
 </resources>
