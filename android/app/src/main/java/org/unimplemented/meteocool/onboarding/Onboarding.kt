@@ -16,6 +16,8 @@ class Onboarding : AppIntro2(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Glide
+
         val sliderPage = SliderPage()
         sliderPage.title = getString(R.string.title_slide1)
         sliderPage.description = getString(R.string.description_slide1)
