@@ -14,8 +14,7 @@ import org.unimplemented.meteocool.security.Validator
 import com.google.firebase.iid.FirebaseInstanceId
 import org.jetbrains.anko.doAsync
 import org.unimplemented.meteocool.location.WebAppInterface
-import org.unimplemented.meteocool.onboarding.OnboardingFragment
-import org.unimplemented.meteocool.onboarding.Startup
+import org.unimplemented.meteocool.onboarding.OnboardingActivity
 import org.unimplemented.meteocool.utility.JSONClearPost
 import org.unimplemented.meteocool.utility.NetworkUtility
 import org.unimplemented.meteocool.service.UploadLocationService
@@ -31,7 +30,7 @@ class Meteocool : AppCompatActivity() {
             // Check if we need to display our OnboardingFragment
             if (!getBoolean(OnboardingFragment.IS_ONBOARD_COMPLETED, false)) {
                 // The user hasn't seen the OnboardingFragment yet, so show it
-                startActivity(Intent(this@Meteocool, Startup::class.java))
+                startActivity(Intent(this@Meteocool, OnboardingActivity::class.java))
             }
         }
 

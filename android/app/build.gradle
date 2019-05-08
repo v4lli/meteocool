@@ -10,7 +10,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "org.unimplemented.meteocool"
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -48,7 +48,11 @@ dependencies {
     implementation "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
     implementation "org.jetbrains.anko:anko-appcompat-v7-coroutines:$anko_version"
 
+    // JSON library
     implementation 'com.google.code.gson:gson:2.8.5'
+
+    // Onboarding screen
+    implementation 'com.github.AppIntro:AppIntro:4.2.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

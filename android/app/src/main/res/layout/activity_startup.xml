@@ -5,5 +5,5 @@
              android:id="@+id/fragmentContainer"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".onboarding.Startup">
+             tools:context=".onboarding.OnboardingActivity">
 </FrameLayout>
