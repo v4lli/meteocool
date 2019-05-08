@@ -1,5 +1,6 @@
 package org.unimplemented.meteocool.onboarding
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.github.paolorotolo.appintro.AppIntro
@@ -17,10 +18,11 @@ class OnboardingActivity : AppIntro() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val sliderPage1 = SliderPage()
         sliderPage1.title = getString(R.string.onboarding_title1)
         sliderPage1.description = getString(R.string.onboarding_description1)
-        sliderPage1.imageDrawable = R.drawable.volunteers
+        sliderPage1.imageDrawable = R.drawable.volunteers_c
         sliderPage1.bgColor = resources.getColor(R.color.colorPrimary)
         sliderPage1.titleColor = resources.getColor(R.color.textColor)
         sliderPage1.descColor = resources.getColor(R.color.textColor)
@@ -52,21 +54,31 @@ class OnboardingActivity : AppIntro() {
         val sliderPage5 = SliderPage()
         sliderPage5.title = getString(R.string.onboarding_title5)
         sliderPage5.description = getString(R.string.onboarding_description5)
-        sliderPage5.imageDrawable = R.drawable.sun_rain_composit_3x2
+        sliderPage5.imageDrawable = R.drawable.sun_rain_composit_4
         sliderPage5.bgColor = resources.getColor(R.color.colorPrimary)
         sliderPage5.titleColor = resources.getColor(R.color.textColor)
         sliderPage5.descColor = resources.getColor(R.color.textColor)
 
         setBarColor(resources.getColor(R.color.cloudAccent));
         setSeparatorColor(resources.getColor(R.color.textColor));
+        showSkipButton(false)
 
         addSlide(AppIntroFragment.newInstance(sliderPage1))
         addSlide(AppIntroFragment.newInstance(sliderPage2))
         addSlide(AppIntroFragment.newInstance(sliderPage3))
         addSlide(AppIntroFragment.newInstance(sliderPage4))
         addSlide(AppIntroFragment.newInstance(sliderPage5))
-        Log.d("LANGUAGE", Locale.getDefault().displayLanguage)
     }
 
+    override fun onDonePressed() {
+        super.onDonePressed()
+        finish()
+    }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        // user cannot just skip the intro once
+        finish()
+        startActivity(Intent(this, OnboardingActivity::class.java))
+    }
 }

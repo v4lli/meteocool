@@ -7,14 +7,14 @@
     <string name="default_notification_channel_id">meteocool</string>
 
     <string name="onboarding_title1">Servus!</string>
-    <string name="onboarding_title2">Vorhersage</string>
+    <string name="onboarding_title2">Sturmjäger/in oder Couchpotatoe?</string>
     <string name="onboarding_title3">Benachrichtigungen</string>
     <string name="onboarding_title4">Standort</string>
     <string name="onboarding_title5">Geh raus und genieß die Sonne!</string>
 
-    <string name="onboarding_description1">Kein Regenradar wie jedes andere. Es ist kostenfrei, werbungsfrei und Open-Source.</string>
-    <string name="onboarding_description2">Du willst im Trockenen draußen sein?\n Informiere dich über die aktuelle und zukünftige Lage der Regenwolken.</string>
+    <string name="onboarding_description1">Kein Regenradar wie jedes andere. Es ist werbungsfrei und kostenfrei.</string>
+    <string name="onboarding_description2">Informiere dich über die aktuelle und zukünftige Lage der Regenwolken und Gewitter.</string>
     <string name="onboarding_description3">Lasse dich durch Push-Nachrichten über kommenden Niederschlag informieren.</string>
     <string name="onboarding_description4">Aktiviere jetzt deinen Standortzugriff, um Push-Nachrichten zu erhalten.</string>
-    <string name="onboarding_description5">Erzähle es deinen Freunden und Freundinnen und gib uns Feedback!</string>
+    <string name="onboarding_description5">Erzähle es deinen Bekannten und gib uns Feedback!</string>
 </resources>
