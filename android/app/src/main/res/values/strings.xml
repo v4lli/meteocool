@@ -5,4 +5,8 @@
     <string name="notifications_admin_channel_description">meteocool</string>
     <string name="notifications_admin_channel_id">meteocool</string>
     <string name="default_notification_channel_id">meteocool</string>
+
+    <string name="onboarding_title1">Servus!</string>
+
+    <string name="onboarding_description1">Du willst über kommenden Niederschlag an deiner Position informiert werden?</string>
 </resources>

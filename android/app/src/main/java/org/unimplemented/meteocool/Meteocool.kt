@@ -25,15 +25,12 @@ class Meteocool : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_meteocool)
         PreferenceManager.getDefaultSharedPreferences(this).apply {
-            // Check if we need to display our OnboardingFragment
-            if (!getBoolean(OnboardingFragment.IS_ONBOARD_COMPLETED, false)) {
-                // The user hasn't seen the OnboardingFragment yet, so show it
+            if (!getBoolean(OnboardingActivity.IS_ONBOARD_COMPLETED, false)) {
                 startActivity(Intent(this@Meteocool, OnboardingActivity::class.java))
             }
         }
-
+        setContentView(R.layout.activity_meteocool)
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
 
         Validator.checkAndroidPermissions(this.applicationContext, this)

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title1">Hi there!</string>
+
+
+
+    <string name="onboarding_description1">You want to get notified about rainfall at your position?</string>
+
+</resources>
