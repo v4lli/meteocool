@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="onboarding_title1">Hi there!</string>
-    <string name="onboarding_title2">Notifications</string>
-    <string name="onboarding_title3">Location</string>
+    <string name="onboarding_title2">Stormchaser or Couchpotatoe?</string>
+    <string name="onboarding_title3">Notifications</string>
     <string name="onboarding_title4">Location</string>
-    <string name="onboarding_title5">Location</string>
+    <string name="onboarding_title5">Go outside and enjoy the sun!</string>
 
 
 
-    <string name="onboarding_description1">You want to get notified about rainfall at your location?</string>
-    <string name="onboarding_description2">Get informed about upcoming rainfall with push messages.</string>
-    <string name="onboarding_description3">Now activate your location access to receive push messages.</string>
+    <string name="onboarding_description1">No rain radar like any other. It is free of advertising and free of charge.</string>
+    <string name="onboarding_description2">Inform yourself about the current and future situation of the rain clouds and
+        thunderstorms.</string>
+    <string name="onboarding_description3">Get informed about upcoming rainfall with push messages.</string>
     <string name="onboarding_description4">Now activate your location access to receive push messages.</string>
-    <string name="onboarding_description5">Now activate your location access to receive push messages.</string>
+    <string name="onboarding_description5">Tell your friends and give us feedback!</string>
 
 </resources>
