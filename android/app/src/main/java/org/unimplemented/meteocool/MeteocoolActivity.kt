@@ -26,16 +26,15 @@ class MeteocoolActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        PreferenceManager.getDefaultSharedPreferences(this).apply {
 
-            if (!getBoolean(OnboardingActivity.IS_ONBOARD_COMPLETED, false)) {
-                startActivity(Intent(this@MeteocoolActivity, OnboardingActivity::class.java))
-            }
+        if(!isOnboardingCompleted()) {
+            startActivity(Intent(this@MeteocoolActivity, OnboardingActivity::class.java))
+        }else{
+            Validator.checkAndroidPermissions(this.applicationContext, this)
         }
+
         setContentView(R.layout.activity_meteocool)
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
-
-        Validator.checkAndroidPermissions(this.applicationContext, this)
 
         Intent(this, UploadLocationService::class.java).also { intent ->
             startService(intent)
@@ -76,6 +75,10 @@ class MeteocoolActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    private fun isOnboardingCompleted() : Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(OnboardingActivity.IS_ONBOARD_COMPLETED, false)
     }
 }
 
