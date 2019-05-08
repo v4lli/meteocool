@@ -5,5 +5,10 @@
              android:id="@+id/fragmentContainer"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
+<<<<<<< HEAD
              tools:context=".onboarding.Onboarding">
 </FrameLayout>
+=======
+             tools:context=".onboarding.OnboardingActivity">
+</FrameLayout>
+>>>>>>> 8cdadb84ad6d3f1a1935ddb58a80f31d72ac70fb
