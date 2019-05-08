@@ -1,17 +1,14 @@
 package org.unimplemented.meteocool.onboarding
 
-import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
-import android.util.Log
 import com.github.paolorotolo.appintro.AppIntro
 import com.github.paolorotolo.appintro.AppIntroFragment
 import com.github.paolorotolo.appintro.model.SliderPage
 import org.unimplemented.meteocool.R
 import org.unimplemented.meteocool.security.Validator
-import java.util.*
 
 
 class OnboardingActivity : AppIntro() {
