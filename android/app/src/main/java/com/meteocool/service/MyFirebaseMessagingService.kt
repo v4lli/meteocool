@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool.service
+package com.meteocool.service
 
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -6,8 +6,8 @@ import com.google.firebase.messaging.RemoteMessage
 import android.app.NotificationManager
 import android.content.Context
 import com.google.firebase.iid.FirebaseInstanceId
-import org.unimplemented.meteocool.utility.JSONClearPost
-import org.unimplemented.meteocool.utility.NetworkUtility
+import com.meteocool.utility.JSONClearPost
+import com.meteocool.utility.NetworkUtility
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {

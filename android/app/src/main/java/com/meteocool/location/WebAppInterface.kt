@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool.location
+package com.meteocool.location
 
 import android.Manifest
 import android.content.Context
@@ -6,11 +6,9 @@ import android.content.pm.PackageManager
 import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
-import org.unimplemented.meteocool.R
 
 /** Instantiate the interface and set the comntext */
 class WebAppInterface(private val mContext: Context, private val mWebView: WebView) {
@@ -33,7 +31,7 @@ class WebAppInterface(private val mContext: Context, private val mWebView: WebVi
                 Log.d("JSINJECT", string)
                 mWebView.post({
                     run  {
-                        mWebView.evaluateJavascript(string, { value ->
+                        mWebView.evaluateJavascript(string, { _ ->
                             Log.d("JSINJECT", string)
                         })
                     }

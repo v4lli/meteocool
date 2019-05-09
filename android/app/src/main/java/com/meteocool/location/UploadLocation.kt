@@ -1,10 +1,10 @@
-package org.unimplemented.meteocool.location
+package com.meteocool.location
 
 import android.os.AsyncTask
 import android.util.Log
 import com.google.firebase.iid.FirebaseInstanceId
-import org.unimplemented.meteocool.utility.JSONPost
-import org.unimplemented.meteocool.utility.NetworkUtility
+import com.meteocool.utility.JSONPost
+import com.meteocool.utility.NetworkUtility
 
 class UploadLocation: AsyncTask<android.location.Location, Unit, Unit>(){
     override fun doInBackground(vararg params: android.location.Location?) {

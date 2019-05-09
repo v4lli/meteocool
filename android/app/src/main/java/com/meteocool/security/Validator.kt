@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool.security
+package com.meteocool.security
 
 import android.Manifest
 import android.app.Activity

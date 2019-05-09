@@ -1,10 +1,9 @@
-package org.unimplemented.meteocool.service
+package com.meteocool.service
 
 import android.Manifest
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -14,8 +13,7 @@ import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
-import org.jetbrains.anko.defaultSharedPreferences
-import org.unimplemented.meteocool.location.UploadLocation
+import com.meteocool.location.UploadLocation
 
 class UploadLocationService : Service(){
 
@@ -41,12 +39,12 @@ class UploadLocationService : Service(){
         super.onStartCommand(intent, flags, startId)
         Log.e("UploadLocationService", "onStartCommand")
 
-        val locationManager = getSystemService(Service.LOCATION_SERVICE) as (LocationManager)
+        val locationManager = getSystemService(LOCATION_SERVICE) as (LocationManager)
         val locationListener = MyLocationListener()
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            return Service.START_STICKY
+            return START_STICKY
         }
 
         locationManager.requestLocationUpdates(
@@ -60,7 +58,7 @@ class UploadLocationService : Service(){
             MIN_DISTANCE_LOCATION_UPDATE_METER, locationListener)
 
         Log.d("UploadLocationService", "Update requested in onStartCommand")
-        return Service.START_STICKY
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? {

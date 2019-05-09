@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool.service
+package com.meteocool.service
 
 import android.preference.PreferenceManager
 import android.util.Log

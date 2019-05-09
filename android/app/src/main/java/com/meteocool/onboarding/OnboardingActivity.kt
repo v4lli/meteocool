@@ -1,20 +1,21 @@
-package org.unimplemented.meteocool.onboarding
+package com.meteocool.onboarding
 
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import com.github.paolorotolo.appintro.AppIntro
 import com.github.paolorotolo.appintro.AppIntroFragment
 import com.github.paolorotolo.appintro.model.SliderPage
-import org.unimplemented.meteocool.R
-import org.unimplemented.meteocool.security.Validator
+import com.meteocool.R
+import com.meteocool.security.Validator
 
 
 class OnboardingActivity : AppIntro() {
 
     companion object{
-        val IS_ONBOARD_COMPLETED = "is_onboard_completed"
+        const val IS_ONBOARD_COMPLETED = "is_onboard_completed"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,44 +25,44 @@ class OnboardingActivity : AppIntro() {
         sliderPage1.title = getString(R.string.onboarding_title1)
         sliderPage1.description = getString(R.string.onboarding_description1)
         sliderPage1.imageDrawable = R.drawable.volunteers_c
-        sliderPage1.bgColor = resources.getColor(R.color.colorPrimary)
-        sliderPage1.titleColor = resources.getColor(R.color.textColor)
-        sliderPage1.descColor = resources.getColor(R.color.textColor)
+        sliderPage1.bgColor = ContextCompat.getColor(this, R.color.colorPrimary)
+        sliderPage1.titleColor = ContextCompat.getColor(this, R.color.textColor)
+        sliderPage1.descColor = ContextCompat.getColor(this, R.color.textColor)
 
         val sliderPage2 = SliderPage()
         sliderPage2.title = getString(R.string.onboarding_title2)
         sliderPage2.description = getString(R.string.onboarding_description2)
         sliderPage2.imageDrawable = R.drawable.jacket
-        sliderPage2.bgColor = resources.getColor(R.color.colorPrimary)
-        sliderPage2.titleColor = resources.getColor(R.color.textColor)
-        sliderPage2.descColor = resources.getColor(R.color.textColor)
+        sliderPage2.bgColor = ContextCompat.getColor(this, R.color.colorPrimary)
+        sliderPage2.titleColor = ContextCompat.getColor(this, R.color.textColor)
+        sliderPage2.descColor = ContextCompat.getColor(this, R.color.textColor)
 
         val sliderPage3 = SliderPage()
         sliderPage3.title = getString(R.string.onboarding_title3)
         sliderPage3.description = getString(R.string.onboarding_description3)
         sliderPage3.imageDrawable = R.drawable.bell
-        sliderPage3.bgColor = resources.getColor(R.color.colorPrimary)
-        sliderPage3.titleColor = resources.getColor(R.color.textColor)
-        sliderPage3.descColor = resources.getColor(R.color.textColor)
+        sliderPage3.bgColor = ContextCompat.getColor(this, R.color.colorPrimary)
+        sliderPage3.titleColor = ContextCompat.getColor(this, R.color.textColor)
+        sliderPage3.descColor = ContextCompat.getColor(this, R.color.textColor)
 
         val sliderPage4 = SliderPage()
         sliderPage4.title = getString(R.string.onboarding_title4)
         sliderPage4.description = getString(R.string.onboarding_description4)
         sliderPage4.imageDrawable = R.drawable.maps_and_location
-        sliderPage4.bgColor = resources.getColor(R.color.colorPrimary)
-        sliderPage4.titleColor = resources.getColor(R.color.textColor)
-        sliderPage4.descColor = resources.getColor(R.color.textColor)
+        sliderPage4.bgColor = ContextCompat.getColor(this, R.color.colorPrimary)
+        sliderPage4.titleColor = ContextCompat.getColor(this, R.color.textColor)
+        sliderPage4.descColor = ContextCompat.getColor(this, R.color.textColor)
 
         val sliderPage5 = SliderPage()
         sliderPage5.title = getString(R.string.onboarding_title5)
         sliderPage5.description = getString(R.string.onboarding_description5)
         sliderPage5.imageDrawable = R.drawable.sun_rain_composit_4
-        sliderPage5.bgColor = resources.getColor(R.color.colorPrimary)
-        sliderPage5.titleColor = resources.getColor(R.color.textColor)
-        sliderPage5.descColor = resources.getColor(R.color.textColor)
+        sliderPage5.bgColor = ContextCompat.getColor(this, R.color.colorPrimary)
+        sliderPage5.titleColor = ContextCompat.getColor(this, R.color.textColor)
+        sliderPage5.descColor = ContextCompat.getColor(this, R.color.textColor)
 
-        setBarColor(resources.getColor(R.color.cloudAccent));
-        setSeparatorColor(resources.getColor(R.color.textColor));
+        setBarColor(ContextCompat.getColor(this, R.color.cloudAccent))
+        setSeparatorColor(ContextCompat.getColor(this, R.color.textColor))
         showSkipButton(false)
 
         addSlide(AppIntroFragment.newInstance(sliderPage1))

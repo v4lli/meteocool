@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.unimplemented.meteocool" >
+          xmlns:tools="http://schemas.android.com/tools" package="com.meteocool">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
 
     <!-- Needed only if your app targets Android 5.0 (API level 21) or higher. -->
-    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature android:name="android.hardware.location.gps"/>
 
     <application
         android:allowBackup="true"
@@ -15,39 +15,51 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:debuggable="false">
         <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing"
-                   android:value="false" />
-
+                   android:value="false"/>
 
 
         <activity android:name=".SplashActivity" android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".MeteocoolActivity"></activity>
+        <activity android:name=".MeteocoolActivity">
+
+            <tools:validation testUrl="http://meteocool.com"/>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="http"
+                    android:host="meteocool.com"
+                />
+            </intent-filter>
+        </activity>
 
         <activity
-                android:name=".onboarding.OnboardingActivity"
-                android:enabled="true"
-                android:exported="true">
+            android:name=".onboarding.OnboardingActivity"
+            android:enabled="true"
+            android:exported="false">
         </activity>
 
 
         <service
-                android:name=".service.MyFirebaseMessagingService">
+            android:name=".service.MyFirebaseMessagingService"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
         <service android:name=".service.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
 

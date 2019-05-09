@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool
+package com.meteocool
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -10,15 +10,15 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.webkit.WebView
 
-import org.unimplemented.meteocool.security.Validator
+import com.meteocool.security.Validator
 import com.google.firebase.iid.FirebaseInstanceId
 import org.jetbrains.anko.doAsync
-import org.unimplemented.meteocool.location.WebAppInterface
+import com.meteocool.location.WebAppInterface
 
-import org.unimplemented.meteocool.onboarding.OnboardingActivity
-import org.unimplemented.meteocool.utility.JSONClearPost
-import org.unimplemented.meteocool.utility.NetworkUtility
-import org.unimplemented.meteocool.service.UploadLocationService
+import com.meteocool.onboarding.OnboardingActivity
+import com.meteocool.utility.JSONClearPost
+import com.meteocool.utility.NetworkUtility
+import com.meteocool.service.UploadLocationService
 
 
 class MeteocoolActivity : AppCompatActivity() {
@@ -46,6 +46,8 @@ class MeteocoolActivity : AppCompatActivity() {
         cancelNotifications()
 
     }
+
+
 
     override fun onStart() {
         super.onStart()

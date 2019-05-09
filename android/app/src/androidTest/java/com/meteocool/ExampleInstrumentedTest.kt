@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool
+package com.meteocool
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

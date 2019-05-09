@@ -1,10 +1,11 @@
-package org.unimplemented.meteocool
+package com.meteocool
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import java.util.*
@@ -27,11 +28,12 @@ class MapFragment : Fragment(){
         webSettings?.databaseEnabled = true
         webSettings?.setGeolocationEnabled(true)
 
+
         val locale = when(Locale.getDefault().displayLanguage.compareTo(Locale.GERMAN.displayLanguage)){
             0 -> "&lang=de"
             else -> "&lang=en"
         }
-        mWebView?.loadUrl(WEB_URL+locale)
+        mWebView?.loadUrl(WEB_URL +locale)
         // Force links and redirects to open in the WebView instead of in a browser
         mWebView?.webViewClient = WebViewClient()
         return view

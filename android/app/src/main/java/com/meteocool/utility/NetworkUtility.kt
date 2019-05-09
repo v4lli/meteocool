@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool.utility
+package com.meteocool.utility
 
 import android.util.Log
 import com.google.gson.Gson

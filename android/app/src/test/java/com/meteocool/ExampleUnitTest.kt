@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool
+package com.meteocool
 
 import org.junit.Test
 

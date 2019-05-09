@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool.utility
+package com.meteocool.utility
 
  data class JSONClearPost(val token : String,
                          val from : String) : JSON()

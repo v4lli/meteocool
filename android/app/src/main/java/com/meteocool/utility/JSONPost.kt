@@ -1,4 +1,4 @@
-package org.unimplemented.meteocool.utility
+package com.meteocool.utility
 
 data class JSONPost(val lat : Double,
                     val lon : Double,
