@@ -30,7 +30,7 @@ class UploadLocation: AsyncTask<android.location.Location, Unit, Unit>(){
                 "android",
                 15,
                 10
-            )
+            ), NetworkUtility.POST_CLIENT_DATA_URL
         )
     }
 }

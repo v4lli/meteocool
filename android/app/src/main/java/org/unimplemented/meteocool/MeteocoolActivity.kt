@@ -67,11 +67,12 @@ class MeteocoolActivity : AppCompatActivity() {
                 token = "no token"
             }
             doAsync {
-                NetworkUtility.sendClearPostRequest(
+                NetworkUtility.sendPostRequest(
                     JSONClearPost(
                         token,
                         "backend"
-                    )
+                    ),
+                    NetworkUtility.CLEAR_URL
                 )
             }
         }

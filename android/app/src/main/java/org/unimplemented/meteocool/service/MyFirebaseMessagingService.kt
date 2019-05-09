@@ -29,11 +29,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         notificationManager.cancelAll()
         var token =  FirebaseInstanceId.getInstance().token
         if(token==null) {token = "no token"}
-        NetworkUtility.sendClearPostRequest(
+        NetworkUtility.sendPostRequest(
             JSONClearPost(
                 token,
                 "backend"
-            )
+            ), NetworkUtility.CLEAR_URL
         )
     }
 
