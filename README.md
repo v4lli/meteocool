@@ -17,6 +17,8 @@ information from the awesome blitzortung.org project.
 
 ## Features
 
+<img src="/doc/ios-lockscreen.png?raw=true" alt="iOS Notifications" width="50%" align="right">
+
 * **Automatic Map Updates:** the biggest inconvenience with most weather radar
   visualisations is out-of-date data. Meteocool notifies its clients as
   soon as new radar data becomes available and the client tries
@@ -33,8 +35,6 @@ information from the awesome blitzortung.org project.
 * **iOS & Android Apps:** native iOS and Android apps provide battery-efficient
   background location services to allow for accurate rain notifications without
   user interaction.
-
-![iOS Push Notifications](/doc/ios-lockscreen.png?raw=true "iOS Push notifications with preview")
 
 
 # Development
