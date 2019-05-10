@@ -7,13 +7,18 @@ apply plugin: 'kotlin-android-extensions'
 
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\jerem\\Google Drive\\PlayStore\\meteocool.jks')
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.meteocool"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
