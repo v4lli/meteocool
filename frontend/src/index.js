@@ -1,3 +1,6 @@
+// my sincere apologies to anyone reading this source code. I promise to
+// refactor this piece of crap some time soon(TM).
+//
 import "./main.css";
 import "ol/ol.css";
 
@@ -731,6 +734,7 @@ function whenMapIsReady (callback) {
 }
 
 window.forecastLayers = [false, false, false, false, false, false, false, false, false];
+window.forecastLayerTimes = [false, false, false, false, false, false, false, false, false];
 window.forecastNo = -1;
 window.numInFlightTiles = 0;
 
@@ -765,6 +769,7 @@ function downloadForecast (cb) {
           opacity: 0
         });
         window.forecastLayers[idx] = newLayer;
+        window.forecastLayerTimes[idx] = data["version"];
         // This starts the tile download process:
         window.map.set("ready", false);
         window.map.addLayer(newLayer);
@@ -793,8 +798,11 @@ window.playInPorgress = false;
 function playForecast () {
   if (!(window.forecastLayers[0] && window.forecastLayers[1] && window.forecastLayers[2])) {
     console.log("not all forecasts downloaded yet");
-    console.log(window.forecastLayers);
     return;
+  }
+
+  if (window.forecastNo >= 0) {
+    console.log(window.forecastLayerTimes[window.forecastNo]);
   }
 
   switch (window.forecastNo) {
@@ -964,5 +972,7 @@ $("#appModal").on("show.bs.modal", function () {
     img.attr("src", img.data("src"));
   });
 });
+
+
 
 /* vim: set ts=2 sw=2 expandtab: */

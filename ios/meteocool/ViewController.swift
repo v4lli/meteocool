@@ -43,6 +43,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
             button.alpha = 0.5
             move_slider_button(pointToMove: CGPoint.init(x: UIScreen.main.bounds.width, y: 209))
             drawerState = .LOADING
+            button.isEnabled = false
         }
         if (originalButtonPosition == nil) {
             originalButtonPosition = button.frame
@@ -61,6 +62,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
             drawerState = .OPEN
             // XXX workaround until we tie the play button to the wheel
             webView.evaluateJavaScript("window.hidePlayButton();")
+            button.isEnabled = true
         }
     }
 
