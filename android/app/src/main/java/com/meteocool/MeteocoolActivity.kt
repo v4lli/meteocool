@@ -19,6 +19,7 @@ import com.meteocool.onboarding.OnboardingActivity
 import com.meteocool.utility.JSONClearPost
 import com.meteocool.utility.NetworkUtility
 import com.meteocool.service.UploadLocationService
+import org.jetbrains.anko.support.v4.startService
 
 
 class MeteocoolActivity : AppCompatActivity() {
@@ -36,9 +37,9 @@ class MeteocoolActivity : AppCompatActivity() {
         setContentView(R.layout.activity_meteocool)
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
 
-        Intent(this, UploadLocationService::class.java).also { intent ->
+        /*Intent(this, UploadLocationService::class.java).also { intent ->
             startService(intent)
-        }
+        }*/
 
         val preference = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         Log.d("Preferences", preference.getString("FIREBASE_TOKEN", "error"))

@@ -44,7 +44,7 @@ class UploadLocationService : Service(){
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            return START_STICKY
+            return START_NOT_STICKY
         }
 
         locationManager.requestLocationUpdates(
