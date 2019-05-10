@@ -10,10 +10,10 @@ avoid upcoming weather - that's up to you.
 meteocool currently uses radar data provided by DWD and realtime lightning
 information from the awesome blitzortung.org project.
 
-<table border="0">
- <tr align="center" border="0">
-  <td border="0" style="width: 49%"><a href="https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png" alt="Download on Apple Appstore"></a></td>
-  <td border="0" style="width: 49%"><a href="https://play.google.com/store/apps/details?id=com.meteocool"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-playstore.png" alt="Download on Google Play Store"></a></td>
+<table border="0" style="border: 0;">
+ <tr align="center" border="0" style="border: 0;">
+  <td border="0" style="width: 49%" style="border: 0;"><a href="https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png" style="width: 49%" alt="Download on Apple Appstore"></a></td>
+  <td border="0" style="width: 49%" style="border: 0;"><a href="https://play.google.com/store/apps/details?id=com.meteocool"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-playstore.png" style="width: 49%" alt="Download on Google Play Store"></a></td>
  </tr>
 </table>
 
