@@ -221,7 +221,8 @@ if __name__ == "__main__":
                 logging.warn("%s: not pushing for client because of too high interpolated speed %f (orig=%f)" % (token, interpolatedSpeed, travelmodeSpeed))
                 continue
             else:
-                logging.warn("interpolatedSpeed=%f < 20km/h -> OK" % interpolatedSpeed)
+                #logging.warn("interpolatedSpeed=%f < 20km/h -> OK" % interpolatedSpeed)
+                pass
 
         # XXX check lat/lon against the bounds of the dwd data here
         # to avoid useless calculations here
