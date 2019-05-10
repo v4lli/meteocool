@@ -297,6 +297,13 @@ hr {
 .appstore {
 	width: 250px;
 	height: 83px;
+	object-fit: scale-down;
+}
+
+.playstore {
+	width: 646px;
+	height: 250px;
+	object-fit: scale-down;
 }
 
 .pulse {
