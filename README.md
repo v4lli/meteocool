@@ -12,8 +12,8 @@ information from the awesome blitzortung.org project.
 
 <table border="0">
  <tr align="center">
-  <td>[![Download on the Appstore](https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png)](https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623)</td>
-  <td>[![Download on the Play Store](https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-playstore.png)](https://play.google.com/store/apps/details?id=com.meteocool)</td>
+  <td><a href="https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png" alt="Download on Apple Appstore"></a></td>
+  <td><a href="https://play.google.com/store/apps/details?id=com.meteocool"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-playstore.png" alt="Download on Google Play Store"></a></td>
  </tr>
 </table>
 
