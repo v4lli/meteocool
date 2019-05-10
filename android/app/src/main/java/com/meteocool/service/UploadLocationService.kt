@@ -18,8 +18,8 @@ import com.meteocool.location.UploadLocation
 class UploadLocationService : Service(){
 
     companion object {
-        private const val MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS : Long = 600000
-        private const val MIN_DISTANCE_LOCATION_UPDATE_METER : Float = 500f
+        private const val MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS : Long = 1800000
+        private const val MIN_DISTANCE_LOCATION_UPDATE_METER : Float = 1000f
         private const val TWO_MINUTES: Long = 1000 * 60 * 2
         private const val BROADCAST_ACTION = "UploadLocationService start"
     }
@@ -126,7 +126,7 @@ class UploadLocationService : Service(){
                 UploadLocation().execute(location)
                 sendBroadcast(intent)
                 lastKnownLocation = location
-                Toast.makeText(applicationContext,"Location pushed",Toast.LENGTH_LONG).show()
+                Log.d("LocationListener", "Location successfully pushed")
             }else{
                 Log.d("LocationListener", "${location.longitude}/${location.latitude} is not better")
             }
