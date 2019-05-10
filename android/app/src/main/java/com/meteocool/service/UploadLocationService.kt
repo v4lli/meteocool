@@ -18,8 +18,9 @@ import com.meteocool.location.UploadLocation
 class UploadLocationService : Service(){
 
     companion object {
-        private const val MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS : Long = 1800000
-        private const val MIN_DISTANCE_LOCATION_UPDATE_METER : Float = 1000f
+        private const val MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS : Long = 1000 * 60 * 60 * 5
+        private const val PASSIVE_MIN_TIME_INTERVAL : Long = 1000 * 60 * 5
+        private const val MIN_DISTANCE_LOCATION_UPDATE_METER : Float = 500f
         private const val TWO_MINUTES: Long = 1000 * 60 * 2
         private const val BROADCAST_ACTION = "UploadLocationService start"
     }
@@ -42,10 +43,17 @@ class UploadLocationService : Service(){
         val locationManager = getSystemService(LOCATION_SERVICE) as (LocationManager)
         val locationListener = MyLocationListener()
 
+        Log.e("UploadLocationService", "afterListener")
+
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             return START_NOT_STICKY
         }
+
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+            PASSIVE_MIN_TIME_INTERVAL,
+            MIN_DISTANCE_LOCATION_UPDATE_METER, locationListener)
 
         locationManager.requestLocationUpdates(
             LocationManager.NETWORK_PROVIDER,

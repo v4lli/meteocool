@@ -1,15 +1,13 @@
 package com.meteocool.location
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.preference.PreferenceManager
-import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
 import com.meteocool.R
+import com.meteocool.security.Validator
 
 /** Instantiate the interface and set the comntext */
 class WebAppInterface(private val mContext: Context, private val mWebView: WebView) {
@@ -19,8 +17,8 @@ class WebAppInterface(private val mContext: Context, private val mWebView: WebVi
 
         val preferenceManager = PreferenceManager.getDefaultSharedPreferences(mContext)
 
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
+        if(Validator.isLocationPermissionGranted(mContext)) {
+
             val lat = preferenceManager.getFloat("latitude", -1f)
             val lon = preferenceManager.getFloat("longitude", -1f)
             val acc = preferenceManager.getFloat("accuracy", -1f)
