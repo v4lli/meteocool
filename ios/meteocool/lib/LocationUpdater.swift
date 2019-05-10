@@ -63,6 +63,8 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         authCompletionHandler = completion
         locationManager.requestAlwaysAuthorization()
         if (!notDetermined) {
+            // XXX this crap needs to go into the completion handler by the ONLY caller that ever sets this awfully named
+            // second parameter to false. WTF WAS I THINKING
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
                 print("completing lost completion handler")
                 if let authCompletionHandler = self.authCompletionHandler {
@@ -84,6 +86,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
                 break
             case .authorizedAlways:
                 locationManager.startUpdatingLocation()
+                SharedNotificationManager.registerForPushNotifications({(_,_) in })
                 break
             case .restricted:
                 break
@@ -109,9 +112,6 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
                 requestAuthorization({(_,_) in
                     if CLLocationManager.authorizationStatus() == .authorizedAlways || CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
                         self.requestLocation(observer: observer, explicit: false)
-                    }
-                    if CLLocationManager.authorizationStatus() == .authorizedAlways {
-                        SharedNotificationManager.registerForPushNotifications({(_,_) in return})
                     }
                 }, notDetermined: true)
             }
