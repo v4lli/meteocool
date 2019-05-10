@@ -294,23 +294,16 @@ hr {
 	cursor: pointer;
 }
 
-.appstore {
-	width: 250px;
-	height: 83px;
-	object-fit: scale-down;
-}
-
-.playstore {
-	width: 646px;
-	height: 250px;
+.store {
+	height: 160px;
 	object-fit: scale-down;
 }
 
 .pulse {
-  animation: pulse 3s infinite;
-  animation-direction: alternate;
-  -webkit-animation-name: pulse;
-  animation-name: pulse;
+	animation: pulse 3s infinite;
+	animation-direction: alternate;
+	-webkit-animation-name: pulse;
+	animation-name: pulse;
 }
 
 @-webkit-keyframes pulse {
