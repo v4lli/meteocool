@@ -11,9 +11,9 @@ meteocool currently uses radar data provided by DWD and realtime lightning
 information from the awesome blitzortung.org project.
 
 <table border="0">
- <tr align="center">
-  <td><a href="https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png" alt="Download on Apple Appstore"></a></td>
-  <td><a href="https://play.google.com/store/apps/details?id=com.meteocool"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-playstore.png" alt="Download on Google Play Store"></a></td>
+ <tr align="center" border="0">
+  <td border="0" style="width: 49%"><a href="https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png" alt="Download on Apple Appstore"></a></td>
+  <td border="0" style="width: 49%"><a href="https://play.google.com/store/apps/details?id=com.meteocool"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-playstore.png" alt="Download on Google Play Store"></a></td>
  </tr>
 </table>
 
