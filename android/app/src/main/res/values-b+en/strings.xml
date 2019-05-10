@@ -21,4 +21,6 @@
     <string name="onboarding_description4">Now activate your location access to receive push messages.</string>
     <string name="onboarding_description5">Tell your friends and give us feedback!</string>
 
+    <string name="gps_button_toast">Bad GPS signal.</string>
+
 </resources>

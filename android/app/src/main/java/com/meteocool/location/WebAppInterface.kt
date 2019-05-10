@@ -9,6 +9,7 @@ import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
+import com.meteocool.R
 
 /** Instantiate the interface and set the comntext */
 class WebAppInterface(private val mContext: Context, private val mWebView: WebView) {
@@ -37,7 +38,7 @@ class WebAppInterface(private val mContext: Context, private val mWebView: WebVi
                     }
                 })
             }else{
-                Toast.makeText(mContext, "Location null", Toast.LENGTH_SHORT).show()
+                Toast.makeText(mContext, R.string.gps_button_toast, Toast.LENGTH_SHORT).show()
             }
         }
     }

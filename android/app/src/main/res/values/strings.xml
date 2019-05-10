@@ -23,4 +23,6 @@
     </string>
     <string name="onboarding_description5">Erzähle es deinen Bekannten und gib uns Feedback!</string>
 
+    <string name="gps_button_toast">Schlechtes GPS-Signal.</string>
+
 </resources>
