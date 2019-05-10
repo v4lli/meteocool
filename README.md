@@ -10,7 +10,12 @@ avoid upcoming weather - that's up to you.
 meteocool currently uses radar data provided by DWD and realtime lightning
 information from the awesome blitzortung.org project.
 
-[![Download on the Appstore](https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png)](https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623)
+<table border="0">
+ <tr align="center">
+  <td>[![Download on the Appstore](https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png)](https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623)</td>
+  <td>[![Download on the Play Store](https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-playstore.png)](https://play.google.com/store/apps/details?id=com.meteocool)</td>
+ </tr>
+</table>
 
 ## Features
 
@@ -27,9 +32,9 @@ information from the awesome blitzortung.org project.
 * **Progressive Web App:** responsive, connectivity independent and app-like.
   Add a shortcut to your iOS or Android Home Screen to use meteocool in
   "app mode".
-* **iOS App:** a native iOS app provides battery-efficient background
-  location services to provide accurate rain notifications without any user
-  interaction.
+* **iOS & Android Apps:** native iOS and Android apps provide battery-efficient
+  background location services to allow for accurate rain notifications without
+  user interaction.
 
 ![iOS Push Notifications](/doc/ios-lockscreen.png?raw=true "iOS Push notifications with preview")
 
@@ -77,8 +82,6 @@ local development setup you also need the other containers.
 ## Install
 
 ### docker-compose
-
-the way to go. 2018.
 
 install `docker-compose` and use `make dev`. For development purposes, use the docker-compose-dev.yml file.
 
