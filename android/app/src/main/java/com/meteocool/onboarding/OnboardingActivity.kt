@@ -10,6 +10,7 @@ import com.github.paolorotolo.appintro.AppIntroFragment
 import com.github.paolorotolo.appintro.model.SliderPage
 import com.meteocool.R
 import com.meteocool.security.Validator
+import com.meteocool.service.UploadLocationService
 
 
 class OnboardingActivity : AppIntro() {
@@ -79,6 +80,9 @@ class OnboardingActivity : AppIntro() {
         PreferenceManager.getDefaultSharedPreferences(this).edit().apply {
             putBoolean(IS_ONBOARD_COMPLETED, true)
             apply()
+        }
+        Intent(this, UploadLocationService::class.java).also { intent ->
+            startService(intent)
         }
     }
 
