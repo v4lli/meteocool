@@ -36,6 +36,7 @@ information from the awesome blitzortung.org project.
   background location services to allow for accurate rain notifications without
   user interaction.
 
+<img width="100%" alt="Screenshot 2019-05-11 13 33 19" src="https://user-images.githubusercontent.com/1577223/57573080-444bb380-7423-11e9-935d-2a990f5026f6.png">
 
 # Development
 

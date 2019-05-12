@@ -280,7 +280,10 @@ if __name__ == "__main__":
                     collection.update({"_id": doc_id}, {"$set": {"ios_onscreen": True}})
                     logging.warn("%s: Delivered android push notification with result=%s" % (token, result))
                 else:
-                    logging.error("FCM support not enabled")
+                    if fcm:
+                        logging.warn("%s: not re-pushing, old not acknowledged" % (token))
+                    else:
+                        logging.error("FCM support not enabled")
             elif source == "ios":
                 # https://developer.apple.com/library/archive/documentation/NetworkingInternet/
                 # Conceptual/RemoteNotificationsPG/PayloadKeyReference.html#//apple_ref/doc/uid/TP40008194-CH17-SW1
@@ -330,10 +333,13 @@ if __name__ == "__main__":
                         collection.remove(doc_id)
                     else:
                         logging.warn("%s: sent silent notification" % token)
-                        collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
+                        #collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
+                        # XXX notification handling would improve if we remember here how many silent pushes were sent,
+                        # and e.g. reset ios_onscreen to False if more than ~30 pushes were ignored.
                 elif source == "android":
                     result = fcm.single_device_data_message(registration_id=token, data_message={"clear_all": True})
                     logging.warn("%s: Delivered android data push with result=%s" % (token, result))
+                    # XXX this needs to be removed as soon as jeremias fixes the android app :)
                     collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
                 else:
                     logging.error("%s: Unsupported source" % token)
