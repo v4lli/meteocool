@@ -216,7 +216,6 @@ var toggleHTMLfixMe = () => {
 
   for (let index = 0; index < mclight.length; index++) {
     const element = mclight[index];
-    console.log(element)
     if (element.classList.contains("bg-dark")) {
       element.classList.remove("bg-dark", "text-white");
     } else {
