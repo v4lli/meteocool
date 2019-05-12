@@ -220,14 +220,13 @@ var toggleHTMLfixMe = () => {
       element.classList.remove("bg-dark", "text-white");
     } else {
       element.classList.add("bg-dark", "text-white");
-
     }
   }
   if (navbar.classList.contains("navbar-light")) {
     navbar.classList.remove("navbar-light", "bg-dark", "text-white");
     navbar.classList.add("navbar-dark", "bg-dark", "text-white");
   } else {
-    navbar.classList.remove("navbar-dark", "bg-dark", "text-white")
+    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
     navbar.classList.add("navbar-light");
   }
 };
