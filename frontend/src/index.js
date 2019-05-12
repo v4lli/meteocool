@@ -200,6 +200,7 @@ dimensions();
 
 var toggleButton = document.getElementById("toggleMode");
 var navbar = document.getElementById("navbar");
+var mclight = document.getElementsByClassName("modal-content");
 
 // XXX use retina tiles if possible!
 // https://openlayers.org/en/latest/examples/xyz-retina.html?mode=raw
@@ -212,12 +213,22 @@ var viewMode = true;
 
 var toggleHTMLfixMe = () => {
   toggleButton.innerHTML = viewMode ? "dark mode" : "light mode";
+
+  for (let index = 0; index < mclight.length; index++) {
+    const element = mclight[index];
+    if (element.classList.contains("bg-dark")) {
+      element.classList.remove("bg-dark", "text-white");
+    } else {
+      element.classList.add("bg-dark", "text-white");
+
+    }
+  }
   if (navbar.classList.contains("navbar-light")) {
-    navbar.classList.remove("navbar-light", "bg-light");
+    navbar.classList.remove("navbar-light", "bg-dark", "text-white");
     navbar.classList.add("navbar-dark", "bg-dark", "text-white");
   } else {
-    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
-    navbar.classList.add("navbar-light", "bg-light");
+    navbar.classList.remove("navbar-dark", "bg-dark", "text-white")
+    navbar.classList.add("navbar-light");
   }
 };
 
