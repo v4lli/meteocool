@@ -20,6 +20,7 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.requestAuthorization(options: [.alert, .sound, .badge]) {
             (granted, _) in
             NSLog("Permission granted: \(granted)")
+            // XXX just forward granted to the other completionhandler?
             guard granted else {
                 completion(false, nil)
                 return

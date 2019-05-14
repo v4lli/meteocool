@@ -10,9 +10,14 @@ avoid upcoming weather - that's up to you.
 meteocool currently uses radar data provided by DWD and realtime lightning
 information from the awesome blitzortung.org project.
 
-[![Download on the Appstore](https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png)](https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623)
+ <a href="https://itunes.apple.com/de/app/meteocool-rain-radar/id1438364623"><img src="https://raw.githubusercontent.com/v4lli/meteocool/master/frontend/assets/download-on-appstore.png" style="width: 49%; float: left;" alt="Download on Apple Appstore"></a>
+<a href="https://play.google.com/store/apps/details?id=com.meteocool"><img src="https://user-images.githubusercontent.com/1577223/57536457-84883480-7344-11e9-899d-c31ac124917c.png" style="width: 49%" alt="Download on Google Play Store"></a>
+ </tr>
+</table>
 
 ## Features
+
+<img src="/doc/ios-lockscreen.png?raw=true" alt="iOS Notifications" width="50%" align="right">
 
 * **Automatic Map Updates:** the biggest inconvenience with most weather radar
   visualisations is out-of-date data. Meteocool notifies its clients as
@@ -27,12 +32,11 @@ information from the awesome blitzortung.org project.
 * **Progressive Web App:** responsive, connectivity independent and app-like.
   Add a shortcut to your iOS or Android Home Screen to use meteocool in
   "app mode".
-* **iOS App:** a native iOS app provides battery-efficient background
-  location services to provide accurate rain notifications without any user
-  interaction.
+* **iOS & Android Apps:** native iOS and Android apps provide battery-efficient
+  background location services to allow for accurate rain notifications without
+  user interaction.
 
-![iOS Push Notifications](/doc/ios-lockscreen.png?raw=true "iOS Push notifications with preview")
-
+<img width="100%" alt="Screenshot 2019-05-11 13 33 19" src="https://user-images.githubusercontent.com/1577223/57573080-444bb380-7423-11e9-935d-2a990f5026f6.png">
 
 # Development
 
@@ -77,8 +81,6 @@ local development setup you also need the other containers.
 ## Install
 
 ### docker-compose
-
-the way to go. 2018.
 
 install `docker-compose` and use `make dev`. For development purposes, use the docker-compose-dev.yml file.
 
