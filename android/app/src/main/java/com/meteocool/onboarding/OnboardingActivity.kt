@@ -81,9 +81,7 @@ class OnboardingActivity : AppIntro() {
             putBoolean(IS_ONBOARD_COMPLETED, true)
             apply()
         }
-        Intent(this, UploadLocationService::class.java).also { intent ->
-            startService(intent)
-        }
+
     }
 
     override fun onBackPressed() {

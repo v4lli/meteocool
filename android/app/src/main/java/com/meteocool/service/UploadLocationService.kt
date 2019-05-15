@@ -18,14 +18,12 @@ import com.meteocool.location.UploadLocation
 class UploadLocationService : Service(){
 
     companion object {
-        private const val MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS : Long = 1000 * 60 * 60 * 5
+        private const val MIN_TIME_INTERVAL_LOCATION_UPDATE_MILIS : Long = 1000 * 10 // 1000 * 60 * 60 * 5
         private const val PASSIVE_MIN_TIME_INTERVAL : Long = 1000 * 60 * 5
         private const val MIN_DISTANCE_LOCATION_UPDATE_METER : Float = 500f
         private const val TWO_MINUTES: Long = 1000 * 60 * 2
-        private const val BROADCAST_ACTION = "UploadLocationService start"
     }
 
-    private var intent : Intent? = null
 
     /**
      * Will be called when service starts
@@ -33,23 +31,32 @@ class UploadLocationService : Service(){
     override fun onCreate() {
         super.onCreate()
         Log.d("UploadLocationService", "Created")
-        intent = Intent(BROADCAST_ACTION)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Log.e("UploadLocationService", "onStartCommand")
+        if(intent == null){
+            Log.e("UploadLocationService", "intent null")
+            return START_STICKY
+        }
+
 
         val locationManager = getSystemService(LOCATION_SERVICE) as (LocationManager)
         val locationListener = MyLocationListener()
-
-        Log.e("UploadLocationService", "afterListener")
-
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             return START_NOT_STICKY
         }
+
+//            val lastLocation =  locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
+//            Log.d("Location", lastLocation.toString())
+//            UploadLocation().execute(lastLocation)
+//            val preferenceManager = PreferenceManager.getDefaultSharedPreferences(this)
+//            preferenceManager.edit().putFloat("latitude", lastLocation.latitude.toFloat()).apply()
+//            preferenceManager.edit().putFloat("longitude", lastLocation.longitude.toFloat()).apply()
+//            preferenceManager.edit().putFloat("accuracy", lastLocation.accuracy).apply()
 
         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
             PASSIVE_MIN_TIME_INTERVAL,
@@ -131,8 +138,8 @@ class UploadLocationService : Service(){
             storeInPreference(location)
             if (isBetterLocation(location, lastKnownLocation) ) {
                 Log.d("LocationListener", "${location.longitude}/${location.latitude} is better")
-                UploadLocation().execute(location)
-                sendBroadcast(intent)
+                BackgroundService.enqueueWork(applicationContext, Intent(applicationContext, BackgroundService::class.java ))
+                //UploadLocation().execute(location)
                 lastKnownLocation = location
                 Log.d("LocationListener", "Location successfully pushed")
             }else{
