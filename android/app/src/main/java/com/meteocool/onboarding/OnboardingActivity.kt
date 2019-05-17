@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat
 import com.github.paolorotolo.appintro.AppIntro
 import com.github.paolorotolo.appintro.AppIntroFragment
 import com.github.paolorotolo.appintro.model.SliderPage
+import com.meteocool.MeteocoolActivity
 import com.meteocool.R
 import com.meteocool.security.Validator
 import com.meteocool.service.UploadLocationService
@@ -81,6 +82,7 @@ class OnboardingActivity : AppIntro() {
             putBoolean(IS_ONBOARD_COMPLETED, true)
             apply()
         }
+        startActivity(Intent(this, MeteocoolActivity::class.java))
 
     }
 

@@ -138,7 +138,6 @@ class UploadLocationService : Service(){
             storeInPreference(location)
             if (isBetterLocation(location, lastKnownLocation) ) {
                 Log.d("LocationListener", "${location.longitude}/${location.latitude} is better")
-                BackgroundService.enqueueWork(applicationContext, Intent(applicationContext, BackgroundService::class.java ))
                 //UploadLocation().execute(location)
                 lastKnownLocation = location
                 Log.d("LocationListener", "Location successfully pushed")

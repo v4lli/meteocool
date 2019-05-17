@@ -57,21 +57,19 @@
             </intent-filter>
         </service>
 
-        <service
-                android:name=".service.BackgroundService"
-                android:permission="android.permission.BIND_JOB_SERVICE"
-                android:exported="true">
-        </service>
-
         <service android:name=".service.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
 
-        <service
-            android:name=".service.UploadLocationService"
-            android:exported="false"/>
+        <receiver android:name=".location.LocationUpdatesBroadcastReceiver"
+                  android:exported="true">
+            <intent-filter>
+                <action android:name="com.meteocool.backgroundlocationupdates.action.ACTION_PROCESS_UPDATES" />
+            </intent-filter>
+        </receiver>
+
 
 
     </application>
