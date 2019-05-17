@@ -155,7 +155,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         /**
          * The desired interval for location updates. Inexact. Updates may be more or less frequent.
          */
-        private const val UPDATE_INTERVAL = (20 * 60 * 1000).toLong()
+        private const val UPDATE_INTERVAL = (15 * 60 * 1000).toLong()
 
         /**
          * The fastest rate for active location updates. Updates will never be more frequent
