@@ -7,7 +7,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.util.Log
 import android.webkit.WebView
@@ -22,17 +21,14 @@ import com.meteocool.location.LocationUpdatesBroadcastReceiver
 import org.jetbrains.anko.doAsync
 import com.meteocool.location.WebAppInterface
 
-import com.meteocool.onboarding.OnboardingActivity
 import com.meteocool.security.Validator
 import com.meteocool.utility.JSONClearPost
 import com.meteocool.utility.NetworkUtility
 
 
-class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-    }
 
     private val pendingIntent: PendingIntent
         get() {
@@ -57,6 +53,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
             Log.d("Location", "Start Fused")
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             createLocationRequest()
+            requestLocationUpdates()
         }
 
         setContentView(R.layout.activity_meteocool)
@@ -69,11 +66,26 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
 
     }
 
+    /**
+     * Handles the Request Updates button and requests start of location updates.
+     */
+    fun requestLocationUpdates() {
+        try {
+            Log.i(TAG, "Starting location updates")
+            mFusedLocationClient!!.requestLocationUpdates(
+                mLocationRequest, pendingIntent)
 
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+
+    }
 
     override fun onStart() {
         super.onStart()
-
+        if(Validator.isLocationPermissionGranted(this)) {
+            requestLocationUpdates()
+        }
         val mWebView : WebView = findViewById(R.id.webView)
         mWebView.addJavascriptInterface(WebAppInterface(this, mWebView), "Android")
     }
@@ -128,7 +140,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         // Sets the fastest rate for active location updates. This interval is exact, and your
         // application will never receive updates faster than this value.
         mLocationRequest!!.fastestInterval = FASTEST_UPDATE_INTERVAL
-        mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        mLocationRequest!!.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
 
         // Sets the maximum time when batched location updates are delivered. Updates may be
         // delivered sooner than this interval.
@@ -143,7 +155,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         /**
          * The desired interval for location updates. Inexact. Updates may be more or less frequent.
          */
-        private const val UPDATE_INTERVAL = (10 * 1000).toLong()
+        private const val UPDATE_INTERVAL = (20 * 60 * 1000).toLong()
 
         /**
          * The fastest rate for active location updates. Updates will never be more frequent

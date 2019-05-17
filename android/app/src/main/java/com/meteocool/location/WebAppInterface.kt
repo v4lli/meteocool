@@ -19,15 +19,11 @@ class WebAppInterface(private val mContext: Context, private val mWebView: WebVi
 
         if(Validator.isLocationPermissionGranted(mContext)) {
 
-            val lat = preferenceManager.getFloat("latitude", -1f)
-            val lon = preferenceManager.getFloat("longitude", -1f)
-            val acc = preferenceManager.getFloat("accuracy", -1f)
+            val lastLocation = LocationResultHelper.getSavedLocationResult(mContext)
 
-            if(lat >= 0.0) {
+            if(lastLocation[0] >= 0.0) {
                 Log.d("JSINJECT", "entered")
-                val string = "window.injectLocation($lat, $lon, $acc, true);"
-                //val mWebView : WebView = View(mContext).findViewById(R.id.webView)
-                Log.d("JSINJECT", string)
+                val string = "window.injectLocation($lastLocation[0] , $lastLocation[1] , $lastLocation[2] , true);"
                 mWebView.post({
                     run  {
                         mWebView.evaluateJavascript(string, { _ ->

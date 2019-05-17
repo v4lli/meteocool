@@ -43,7 +43,7 @@
         </activity>
 
         <activity
-            android:name=".onboarding.OnboardingActivity"
+            android:name=".OnboardingActivity"
             android:enabled="true"
             android:exported="false">
         </activity>
@@ -63,10 +63,10 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".location.LocationUpdatesBroadcastReceiver"
+        <receiver android:name="com.meteocool.location.LocationUpdatesBroadcastReceiver"
                   android:exported="true">
             <intent-filter>
-                <action android:name="com.meteocool.backgroundlocationupdates.action.ACTION_PROCESS_UPDATES" />
+                <action android:name="com.meteocool.location.LocationUpdatesBroadcastReceiver.ACTION_PROCESS_UPDATES" />
             </intent-filter>
         </receiver>
 

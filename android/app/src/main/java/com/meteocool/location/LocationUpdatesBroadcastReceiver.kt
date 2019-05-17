@@ -14,6 +14,7 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver(){
     companion object {
         private const val TAG = "LUBroadcastReceiver"
         internal const val ACTION_PROCESS_UPDATES = "com.meteocool.backgroundlocationupdates.action" + ".PROCESS_UPDATES"
+
     }
 
     override fun onReceive(context: Context, intent: Intent?) {
@@ -22,23 +23,12 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver(){
             if (ACTION_PROCESS_UPDATES == action) {
                 val result = LocationResult.extractResult(intent)
                 if (result != null) {
-                    //UploadLocation().execute(result.lastLocation)
-                    //Toast.makeText(, "$result", Toast.LENGTH_SHORT).show()
                     val location = result.lastLocation
-                    val locationResultHelper = LocationResultHelper(
-                        context, location)
-
-                    locationResultHelper.showLocationViaToast()
-
-//                    val locations = result.locations
-//                    val locationResultHelper = LocationResultHelper(
-//                        context!!, locations
-//                    )
-//                    // Save the location data to SharedPreferences.
-//                    locationResultHelper.saveResults()
-//                    // Show notification with the location data.
-//                    //locationResultHelper.showNotification()
-//                    Log.i(TAG, LocationResultHelper.getSavedLocationResult(context))
+                    UploadLocation().execute(location)
+                    val locationResultHelper = LocationResultHelper(context, location)
+                    // Save the location data to SharedPreferences.
+                    locationResultHelper.saveResults()
+                    Log.i(TAG, LocationResultHelper.getSavedLocationResult(context).toString())
                 }
             }
         }
