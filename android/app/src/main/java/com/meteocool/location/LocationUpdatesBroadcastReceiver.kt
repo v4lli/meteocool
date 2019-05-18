@@ -14,7 +14,6 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver(){
     companion object {
         private const val TAG = "LUBroadcastReceiver"
         internal const val ACTION_PROCESS_UPDATES = "com.meteocool.backgroundlocationupdates.action" + ".PROCESS_UPDATES"
-        private var lastLocation : Location? = null
     }
 
 
@@ -27,16 +26,13 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver(){
                 if (result != null) {
 
                     val location = result.lastLocation
-                    if(lastLocation != null){
-                        if(lastLocation!!.latitude != location.latitude && lastLocation!!.longitude != location.latitude){
+                    val lastLocation = LocationResultHelper.getSavedLocationResult(context)
+                        if(lastLocation[0] != location.latitude.toFloat() && lastLocation[1] != location.latitude.toFloat()){
                             Log.i("Location", "$location is better than $lastLocation")
                             UploadLocation().execute(location)
                         }else{
                             Log.i("Location", "$location is not better than $lastLocation")
                         }
-                    }
-                    Log.i("Location", "$lastLocation is null")
-                    lastLocation = location
                     val locationResultHelper = LocationResultHelper(context, location)
                     // Save the location data to SharedPreferences.
                     locationResultHelper.saveResults()
