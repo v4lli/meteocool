@@ -74,20 +74,21 @@ class OnboardingActivity : AppIntro() {
 
     override fun onDonePressed() {
         super.onDonePressed()
-        finish()
         PreferenceManager.getDefaultSharedPreferences(this).edit().apply {
             putBoolean(IS_ONBOARD_COMPLETED, true)
             apply()
         }
         startActivity(Intent(this, MeteocoolActivity::class.java))
+        finish()
+
 
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
         // user cannot just skip the intro once
-        finish()
         startActivity(Intent(this, OnboardingActivity::class.java))
+        finish()
     }
 
     override fun onSlideChanged(oldFragment: Fragment?, newFragment: Fragment?) {
