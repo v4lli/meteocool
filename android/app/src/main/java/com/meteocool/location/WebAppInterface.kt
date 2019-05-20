@@ -21,7 +21,7 @@ class WebAppInterface(private val mContext: Context, private val mWebView: WebVi
 
             val lastLocation = LocationResultHelper.getSavedLocationResult(mContext)
 
-            if(lastLocation[0] >= 0.0) {
+            if(lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_LAT) >= 0.0) {
                 Log.d("JSINJECT", "entered")
                 val string = "window.injectLocation($lastLocation[0] , $lastLocation[1] , $lastLocation[2] , true);"
                 mWebView.post({
