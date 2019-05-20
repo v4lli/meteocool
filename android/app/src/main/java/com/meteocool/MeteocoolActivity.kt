@@ -88,6 +88,21 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         }
         val mWebView : WebView = findViewById(R.id.webView)
         mWebView.addJavascriptInterface(WebAppInterface(this, mWebView), "Android")
+
+        var token = FirebaseInstanceId.getInstance().token
+        if (token == null) {
+            token = "no token"
+            return
+        }
+        doAsync {
+            NetworkUtility.sendPostRequest(
+                JSONClearPost(
+                    token,
+                    "foreground"
+                ),
+                NetworkUtility.CLEAR_URL
+            )
+        }
     }
 
     override fun onResume() {
@@ -117,12 +132,13 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
             var token = FirebaseInstanceId.getInstance().token
             if (token == null) {
                 token = "no token"
+                return
             }
             doAsync {
                 NetworkUtility.sendPostRequest(
                     JSONClearPost(
                         token,
-                        "backend"
+                        "background"
                     ),
                     NetworkUtility.CLEAR_URL
                 )
