@@ -4,6 +4,7 @@ package com.meteocool.location;
 import android.content.Context
 import android.location.Location
 import android.preference.PreferenceManager
+import android.util.Log
 
 /**
  * Class to process location results.
@@ -24,6 +25,8 @@ internal class LocationResultHelper(private val mContext: Context, private val m
 
     companion object {
 
+        private const val TAG = "LocationResultHelper"
+
         const val KEY_LOCATION_UPDATES_RESULT_LAT = "location-update-result-latitude"
         const val KEY_LOCATION_UPDATES_RESULT_LON = "location-update-result-longitude"
         const val KEY_LOCATION_UPDATES_RESULT_ACC = "location-update-result-accuracy"
@@ -40,7 +43,8 @@ internal class LocationResultHelper(private val mContext: Context, private val m
 
         fun getDistanceToLastLocation(newLocation : Location, context: Context) : Float{
             val distance = FloatArray(1)
-            Location.distanceBetween(newLocation.latitude, newLocation.longitude, getSavedLocationResult(context).getValue(KEY_LOCATION_UPDATES_RESULT_LAT).toDouble(), getSavedLocationResult(context).getValue(KEY_LOCATION_UPDATES_RESULT_LAT).toDouble() , distance)
+            Location.distanceBetween(newLocation.latitude, newLocation.longitude, getSavedLocationResult(context).getValue(KEY_LOCATION_UPDATES_RESULT_LAT).toDouble(), getSavedLocationResult(context).getValue(KEY_LOCATION_UPDATES_RESULT_LON).toDouble() , distance)
+            Log.d(TAG, "Calculated distance: ${distance[0]}")
             return distance[0]
         }
     }

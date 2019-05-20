@@ -23,7 +23,10 @@ class WebAppInterface(private val mContext: Context, private val mWebView: WebVi
 
             if(lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_LAT) >= 0.0) {
                 Log.d("JSINJECT", "entered")
-                val string = "window.injectLocation($lastLocation[0] , $lastLocation[1] , $lastLocation[2] , true);"
+                val lat = lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_LAT)
+                val lon = lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_LON)
+                val acc = lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_ACC)
+                val string = "window.injectLocation($lat , $lon , $acc , true);"
                 mWebView.post({
                     run  {
                         mWebView.evaluateJavascript(string, { _ ->

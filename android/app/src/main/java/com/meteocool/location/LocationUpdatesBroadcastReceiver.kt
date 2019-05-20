@@ -23,11 +23,13 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver(){
                 if (result != null) {
                     val location = result.lastLocation
                     val lastLocation = LocationResultHelper.getSavedLocationResult(context)
-                       if(getDistanceToLastLocation(location, context) > 499f){
-                            Log.i("Location", "$location is better than $lastLocation")
+                    val isDistanceBiggerThan500F = getDistanceToLastLocation(location, context) > 499f
+                       if(isDistanceBiggerThan500F){
+                            Log.i(TAG, "$isDistanceBiggerThan500F")
+                            Log.i(TAG, "$location is better than $lastLocation")
                             UploadLocation().execute(location)
                         }else{
-                            Log.i("Location", "$location is not better than $lastLocation")
+                            Log.i(TAG, "$location is not better than $lastLocation")
                         }
                     val locationResultHelper = LocationResultHelper(context, location)
                     // Save the location data to SharedPreferences.
