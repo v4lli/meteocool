@@ -180,6 +180,21 @@ window.downloadForecast(function() {
         if action == "drawerShow" {
             drawer_show()
         }
+        
+        if action == "playStarted" {
+            print("playStarted")
+            time.text = formatter.string(from: Date())
+            time.isHidden = false
+        }
+        
+        if action == "playStatus"{
+            //playstatus
+        }
+        
+        if action == "playFinished"{
+            print("playFinished")
+            time.isHidden = true
+        }
     }
 
     lazy var onboardingPages: [OnboardPage] = {
