@@ -474,7 +474,7 @@ tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd
 
 var reflectivityOpacity = 0.5;
 
-window.lm = new LayerManager(map, tileUrl, null, 9, reflectivityOpacity, isV2);
+window.lm = new LayerManager(window.map, tileUrl, null, 9, reflectivityOpacity, isV2);
 
 // manually download tileJSON using jquery, so we can extract the "version"
 // field and use it for the "last updated" feature.
@@ -483,7 +483,7 @@ function manualTileUpdate () {
   if (elem) { elem.innerHTML = "checking..."; }
   window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
 }
-window.manualTileUpdateFn = function(p) { manualTileUpdate(); };
+window.manualTileUpdateFn = function (p) { manualTileUpdate(); };
 manualTileUpdate();
 
 // we can now later call removeLayer(currentLayer), then update it with the new
@@ -505,7 +505,7 @@ socket.on("map_update", function (data) {
   // update the relative time at the top of the page
   updateTimestamp(new Date(data.version * 1000));
 
-  lm.switchMainLayer(new TileLayer({
+  window.lm.switchMainLayer(new TileLayer({
     source: new TileJSON({
       tileJSON: data,
       crossOrigin: "anonymous"
@@ -517,7 +517,6 @@ socket.on("map_update", function (data) {
   if (isV2) {
     window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
   }
-
 });
 
 window.isMonitoring = false;
@@ -586,7 +585,7 @@ if (!widgetMode) {
   playButton = document.createElement("button");
   playButton.classList.add("play");
   playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
-  playButton.addEventListener("click", (e) => {window.lm.smartDownloadAndPlay(e)}, false);
+  playButton.addEventListener("click", (e) => { window.lm.smartDownloadAndPlay(e); }, false);
   var playElement = document.createElement("div");
   playElement.className = "play ol-unselectable ol-control";
   playElement.appendChild(playButton);
@@ -658,8 +657,8 @@ window.map.on("postrender", function (evt) {
 window.map.set("ready", false);
 
 // hooks for forecast control
-window.downloadForecast = function() { window.lm.downloadForecast(); };
-window.playForecast = function() { window.lm.playForecast(); };
+window.downloadForecast = function () { window.lm.downloadForecast(); };
+window.playForecast = function () { window.lm.playForecast(); };
 window.smartDownloadAndPlay = function () { window.lm.smartDownloadAndPlay(); };
 window.setForecastLayer = function (num) { window.lm.setForecastLayer(num); };
 

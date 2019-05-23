@@ -1,3 +1,4 @@
+import $ from "jquery";
 import TileJSON from "ol/source/TileJSON.js";
 import TileLayer from "ol/layer/Tile.js";
 
@@ -10,12 +11,12 @@ function whenMapIsReady (map, callback) {
 }
 
 export class LayerManager {
-  constructor(map, mainTileUrl, forecastTileUrl, numForecastLayers, opacity, enableIOSHooks) {
+  constructor (map, mainTileUrl, forecastTileUrl, numForecastLayers, opacity, enableIOSHooks) {
     this.numForecastLayers = numForecastLayers;
     this.forecastLayers = new Array(numForecastLayers);
     this.forecastDownloaded = false;
     this.mainLayer = false;
-    this.map = map; // is this a reference? i hope so.
+    this.map = map;
     this.numInFlightTiles = 0;
     this.appHandlers = [];
     this.mainTileUrl = mainTileUrl;
@@ -23,27 +24,27 @@ export class LayerManager {
     this.currentForecastNo = -1;
 
     if (enableIOSHooks) {
-      this.appHandlers.push(function(handler, action) {
+      this.appHandlers.push(function (handler, action) {
         window.webkit.messageHandlers[handler].postMessage(action);
       });
     }
   }
 
-  hook(handler, action) {
-    this.appHandlers.forEach(function(h) {
+  hook (handler, action) {
+    this.appHandlers.forEach(function (h) {
       h(handler, action);
     });
   }
 
-  playInProgress() {
+  playInProgress () {
     return this.currentForecastNo !== -1;
   }
 
-  getInFlightTiles() {
+  getInFlightTiles () {
     return this.numInFlightTiles;
   }
 
-  smartDownloadAndPlay() {
+  smartDownloadAndPlay () {
     if (this.playInProgress()) {
       clearTimeout(this.activeForecastTimeout);
       document.getElementById("nowcastIcon").src = "./player-play.png";
@@ -68,7 +69,7 @@ export class LayerManager {
     }
   }
 
-  switchMainLayer(newLayer) {
+  switchMainLayer (newLayer) {
     // invalidate old forecast
     if (this.playInProgress()) {
       // pause playback (toggle)
@@ -86,7 +87,7 @@ export class LayerManager {
 
   // invalidate (i.e. throw away) downloaded forecast stuff AND reset map to a
   // defined state.
-  invalidateLayers() {
+  invalidateLayers () {
     this.forecastDownloaded = false;
     this.forecastLayers.forEach(function (layer) {
       if (layer) {
@@ -102,7 +103,7 @@ export class LayerManager {
     if (!this.forecastDownloaded) { return; }
 
     if (this.playInProgress()) {
-      //this.map.removeLayer(this.mainLayer);
+      // this.map.removeLayer(this.mainLayer);
       this.smartDownloadAndPlay();
     }
 
@@ -111,7 +112,7 @@ export class LayerManager {
     this.currentForecastNo = num;
   }
 
-  clear() {
+  clear () {
     this.map.getLayers().forEach((layer) => {
       this.map.removeLayer(layer);
     });
@@ -119,13 +120,13 @@ export class LayerManager {
 
   // bring map back to a defined state, without touching the forecast stuff
 
-  playForecast(e) {
+  playForecast (e) {
     if (!this.forecastDownloaded) {
       console.log("not all forecasts downloaded yet");
       return;
     }
 
-    if (this.currentForecastNo == this.forecastLayers.length - 1) {
+    if (this.currentForecastNo === this.forecastLayers.length - 1) {
       // we're past the last downloaded layer, so end the play
       this.map.addLayer(this.mainLayer);
       this.map.removeLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
@@ -136,7 +137,7 @@ export class LayerManager {
       return;
     }
 
-    if(this.currentForecastNo < 0) {
+    if (this.currentForecastNo < 0) {
       // play not yet in progress, remove main layer
       this.map.removeLayer(this.mainLayer);
     } else {
@@ -146,10 +147,10 @@ export class LayerManager {
     this.currentForecastNo++;
     this.map.addLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
     this.hook("layerTimeHandler", this.forecastLayers[this.currentForecastNo]["version"]);
-    this.activeForecastTimeout = window.setTimeout(() => {this.playForecast();}, 600);
+    this.activeForecastTimeout = window.setTimeout(() => { this.playForecast(); }, 600);
   }
 
-  removeForecast() {
+  removeForecast () {
     if (this.currentForecastNo >= 0) {
       this.map.removeLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
     }
@@ -157,12 +158,10 @@ export class LayerManager {
     this.currentForecastNo = -1;
   }
 
-  downloadForecast(cb) {
-    var ahead;
+  downloadForecast (cb) {
     let forecastArrayIdx = 0;
 
     this.layersFinishedCounter = 0;
-    let self = this;
     for (var ahead = 5; ahead <= 5 * this.numForecastLayers; ahead += 5) {
       // capture the idx to make it available inside the callback
       let idx = forecastArrayIdx;
@@ -187,14 +186,14 @@ export class LayerManager {
             crossOrigin: "anonymous",
             transition: 0
           });
-          source.on("tileloadstart", () => { ++self.numInFlightTiles; });
-          source.on("tileloadend",  () => { --self.numInFlightTiles; });
+          source.on("tileloadstart", () => { ++this.numInFlightTiles; });
+          source.on("tileloadend", () => { --this.numInFlightTiles; });
           var newLayer = new TileLayer({
             source: source,
             opacity: 0
           });
 
-          this.forecastLayers[idx] = {"layer": newLayer, "version": data["version"]};
+          this.forecastLayers[idx] = { "layer": newLayer, "version": data["version"] };
           // This starts the tile download process:
           this.map.set("ready", false);
           this.map.addLayer(newLayer);
@@ -218,22 +217,21 @@ export class LayerManager {
     }
   }
 
-  downloadMainTiles(cb) {
-    let self = this;
+  downloadMainTiles (cb) {
     $.getJSON({
       dataType: "json",
-      url: self.mainTileUrl,
-      success: function(data) {
-        self.switchMainLayer(new TileLayer({
+      url: this.mainTileUrl,
+      success: (data) => {
+        this.switchMainLayer(new TileLayer({
           source: new TileJSON({
             tileJSON: data,
             crossOrigin: "anonymous",
             transition: 0
           }),
-          opacity: self.opacity
+          opacity: this.opacity
         }));
 
-        self.hook("timeHandler", data.version.toString());
+        this.hook("timeHandler", data.version.toString());
         if (cb) { cb(data); }
       }
     });
