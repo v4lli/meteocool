@@ -35,6 +35,8 @@ const safeAreaInsets = require("safe-area-insets");
 window.jQuery = $;
 window.$ = $;
 
+var dd = new DeviceDetect();
+
 function lastUpdatedFn () {
   var elem = document.getElementById("updatedTime");
 
@@ -135,7 +137,7 @@ var dimensions = () => {
 
   browserHeight = window.innerHeight;
 
-  if (window.location.pathname === "/privacy.html" || window.location.pathname === "/documentation.html") {
+  if (dd.isAuxPage()) {
     mapEl.style.height = navEl;
   } else {
     mapEl.style.height = browserHeight - navEl + safeAreaInsets.top + "px";
@@ -163,11 +165,6 @@ positionFeature.setStyle(new Style({
 // configuration/defaults
 var zoom = 6;
 var center = fromLonLat([10.447683, 51.163375]);
-var widgetMode = false;
-
-if (window.location.pathname === "/privacy.html" || window.location.pathname === "/documentation.html") {
-  widgetMode = true;
-}
 
 if (window.location.hash !== "") {
   // try to restore center, zoom-level and rotation from the URL
@@ -181,7 +178,6 @@ if (window.location.hash !== "") {
         parseFloat(parts[2]),
         parseFloat(parts[1])
       ]);
-      widgetMode = true;
       document.getElementById("navbar").style.display = "none";
       positionFeature.setGeometry(center ? new Point(center) : null);
     }
@@ -246,11 +242,11 @@ var view = new View({
 
 var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\" target=\"_blank\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\" target=\"_blank\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">OSM</a> &#169; <a href=\"https://carto.com/attribution/\" target=\"_blank\">CARTO</a>";
 
-if (!widgetMode) {
+if (!dd.isWidgetMode()) {
   baseAttributions = baseAttributions + " | <a href=\"#\" onclick=\"$('#impressumModal').modal('show'); return false;\">Impressum</a>";
 }
 
-if (window.location.pathname === "/privacy.html" || window.location.pathname === "/documentation.html") {
+if (dd.isAuxPage()) {
   baseAttributions = "";
 }
 
@@ -266,7 +262,7 @@ window.map = new Map({
       })
     })
   ],
-  controls: widgetMode ? [attribution] : defaultControls({ attribution: false }).extend([
+  controls: dd.isWidgetMode() ? [attribution] : defaultControls({ attribution: false }).extend([
     new OverviewMap(),
     attribution
   ]),
@@ -315,12 +311,9 @@ var geolocation = new Geolocation({
   projection: view.getProjection()
 });
 
-var isV2 = (window.location.search.indexOf("mobile=ios2") !== -1) && DeviceDetect.isIos();
-var isAndroid = (window.location.search.indexOf("mobile=android") !== -1);
-
-if (!window.location.hash && !isV2 && !isAndroid) {
+if (!window.location.hash && !DeviceDetect.getIosAPILevel() >= 2 && !DeviceDetect.getAndroidAPILevel() >= 1) {
   // wtf is this XXX
-  if (window.location.pathname !== "/privacy.html" && window.location.pathname !== "/documentation.html") {
+  if (!dd.isAuxPage()) {
     geolocation.setTracking(true);
   }
 }
@@ -474,7 +467,7 @@ tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd
 
 var reflectivityOpacity = 0.5;
 
-window.lm = new LayerManager(window.map, tileUrl, null, 9, reflectivityOpacity, isV2);
+window.lm = new LayerManager(window.map, tileUrl, null, 9, reflectivityOpacity, DeviceDetect.getIosAPILevel() >= 2);
 
 // manually download tileJSON using jquery, so we can extract the "version"
 // field and use it for the "last updated" feature.
@@ -502,9 +495,6 @@ window.sock = socket;
 
 // called when new cloud layers are available
 socket.on("map_update", function (data) {
-  // update the relative time at the top of the page
-  updateTimestamp(new Date(data.version * 1000));
-
   window.lm.switchMainLayer(new TileLayer({
     source: new TileJSON({
       tileJSON: data,
@@ -513,28 +503,32 @@ socket.on("map_update", function (data) {
     opacity: reflectivityOpacity
   }));
 
+  // update the relative time at the top of the page
+  updateTimestamp(new Date(data.version * 1000));
+
   // XXX actually V3
-  if (isV2) {
+  if (DeviceDetect.getIosAPILevel() >= 2) {
     window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
   }
 });
 
 window.isMonitoring = false;
 
-if (isV2) {
+if (DeviceDetect.getIosAPILevel() >= 2) {
   window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation");
   window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocationImplicit");
   window.isMonitoring = true;
 }
 
 // locate me button
-if (!widgetMode) {
+if (!dd.isWidgetMode()) {
   var button = document.createElement("button");
   button.classList.add("locate-me-btn");
+  button.title = "Locate Me";
   button.innerHTML = "<img class=\"\" id=\"pulse\" src=\"./baseline_location_searching_white_48dp.png\">";
 }
 
-if (!widgetMode && !isAndroid) {
+if (!dd.isWidgetMode() && !DeviceDetect.getAndroidAPILevel() >= 1) {
   var locateMe = function (e) {
     var coordinates = geolocation.getPosition();
     if (coordinates) {
@@ -543,7 +537,7 @@ if (!widgetMode && !isAndroid) {
     }
   };
 
-  if (isV2) {
+  if (DeviceDetect.getIosAPILevel() >= 2) {
     button.addEventListener("click", function () {
       if (window.isMonitoring) {
         $("#pulse").addClass("pulse");
@@ -563,27 +557,29 @@ if (!widgetMode && !isAndroid) {
   }
 }
 
-if (isAndroid) {
+if (DeviceDetect.getAndroidAPILevel() >= 1) {
   button.addEventListener("click", function () {
     Android.injectLocation(); // eslint-disable-line no-undef
   }, false);
 }
 
-if (!widgetMode) {
+if (!dd.isWidgetMode()) {
   var element = document.createElement("div");
   element.className = "locate-me ol-unselectable ol-control";
   element.appendChild(button);
-  var locateControl = new Control({
-    element: element
-  });
-  window.map.addControl(locateControl);
+  window.map.addControl(
+    new Control({
+      element: element
+    }));
 }
 
 // forecast button
 var playButton;
-if (!widgetMode) {
+if (!dd.isWidgetMode()) {
   playButton = document.createElement("button");
   playButton.classList.add("play");
+  playButton.title = "Play Forecast";
+  // XXX set attributes via dom instead of innerHTML
   playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
   playButton.addEventListener("click", (e) => { window.lm.smartDownloadAndPlay(e); }, false);
   var playElement = document.createElement("div");
@@ -633,14 +629,16 @@ window.addEventListener("resize", function () {
   }
 });
 
-if (widgetMode) {
+// always show attributions in widget mode
+if (dd.isWidgetMode()) {
   attribution.setCollapsible(false);
   attribution.setCollapsed(false);
 }
 
+//
 // openlayers in-flight tile detection from
 // https://stackoverflow.com/questions/33061221/ensuring-all-tiles-are-loaded-in-open-layers-3-xyz-source/45054387#45054387
-
+//
 window.map.on("postrender", function (evt) {
   if (!evt.frameState) { return; }
 
@@ -653,7 +651,6 @@ window.map.on("postrender", function (evt) {
   var ready = window.lm.getInFlightTiles() === 0 && numHeldTiles === 0;
   if (window.map.get("ready") !== ready) { window.map.set("ready", ready); }
 });
-
 window.map.set("ready", false);
 
 // hooks for forecast control
@@ -681,12 +678,13 @@ window.injectLocation = function (lat, lon, accuracy, zoom = false) {
   positionFeature.setGeometry(center ? new Point(center) : null);
 };
 
-if (window.location.pathname !== "/documentation.html" && window.location.pathname !== "/privacy.html") {
+// Keep URL parameters on "reload"
+if (!dd.isAuxPage()) {
   document.getElementById("logolinkhref").href = window.location.href;
 }
 
 $(document).ready(function () {
-  if (isV2) {
+  if (DeviceDetect.getIosAPILevel() >= 2) {
     $("#topMenu")[0].children[1].style.display = "none";
     $("#topMenu")[0].children[2].style.display = "none";
     // XXX re-enable once the scrolling is enabled
@@ -694,10 +692,10 @@ $(document).ready(function () {
   if (window.location.href.indexOf("#about") !== -1) {
     $("#about").modal("show");
   }
-  if (isV2 && (window.location.href.indexOf("documentation.html") !== -1)) {
+  if (DeviceDetect.getIosAPILevel() >= 2 && (window.location.href.indexOf("documentation.html") !== -1)) {
     window.webkit.messageHandlers["scriptHandler"].postMessage("enableScrolling");
     window.webkit.messageHandlers["scriptHandler"].postMessage("drawerHide");
-  } else if (isV2) {
+  } else if (DeviceDetect.getIosAPILevel() >= 2) {
     window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
     window.webkit.messageHandlers["scriptHandler"].postMessage("drawerShow");
   }

@@ -140,6 +140,7 @@ export class LayerManager {
     if (this.currentForecastNo < 0) {
       // play not yet in progress, remove main layer
       this.map.removeLayer(this.mainLayer);
+      this.hook("scriptHandler", "playStarted");
     } else {
       // remove previous layer
       this.map.removeLayer(this.forecastLayers[this.currentForecastNo]["layer"]);

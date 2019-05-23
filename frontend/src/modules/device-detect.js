@@ -1,4 +1,14 @@
 export class DeviceDetect {
+  constructor () {
+    // detect widget mode
+    this.auxPages = ["privacy.html", "documentation.html"];
+    this.widgetMode = this.isAuxPage();
+    if (window.location.hash) {
+      if (window.location.hash.includes("#widgetMap")) {
+        this.widgetMode = true;
+      }
+    }
+  }
   static isIos () {
     const userAgent = window.navigator.userAgent.toLowerCase();
     return /iphone|ipad|ipod/.test(userAgent);
@@ -10,6 +20,34 @@ export class DeviceDetect {
 
   static isiPhoneWithNotch () {
     return this.isIos() && this.isInStandaloneMode() && /iPhone X/.test(this.getiPhoneModel());
+  }
+
+  isWidgetMode () {
+    console.log(this.widgetMode);
+    return this.widgetMode;
+  }
+
+  isAuxPage () {
+    return this.auxPages.some((s) => {
+      return "/" + s === window.location.pathname;
+    });
+  }
+
+  static getAndroidAPILevel () {
+    if (window.location.search.indexOf("mobile=android") !== -1) {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+
+  static getIosAPILevel () {
+    if (DeviceDetect.isIos()) {
+      if (window.location.search.indexOf("mobile=ios2") !== -1) {
+        return 2;
+      }
+    }
+    return -1;
   }
 
   static getiPhoneModel () {
@@ -46,3 +84,5 @@ export class DeviceDetect {
     }
   }
 }
+
+/* vim: set ts=2 sw=2 expandtab: */
