@@ -1,6 +1,6 @@
 // my sincere apologies to anyone reading this source code. I promise to
 // refactor this piece of crap some time soon(TM).
-//
+
 import "./main.css";
 import "ol/ol.css";
 
@@ -25,6 +25,8 @@ import { Fill, Stroke, Style, Text } from "ol/style";
 import { Map, View, Geolocation, Feature } from "ol";
 import { defaults as defaultControls, OverviewMap } from "ol/control.js";
 import { fromLonLat } from "ol/proj.js";
+import { LayerManager } from "./LayerManager.js";
+import { StrikeManager } from "./StrikeManager.js";
 
 import logoBig from "../assets/android-chrome-512x512.png"; // eslint-disable-line no-unused-vars
 
@@ -471,50 +473,18 @@ tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd
 // }
 
 var reflectivityOpacity = 0.5;
-window.currentLayer = false;
+
+window.lm = new LayerManager(map, tileUrl, null, 9, reflectivityOpacity, isV2);
 
 // manually download tileJSON using jquery, so we can extract the "version"
 // field and use it for the "last updated" feature.
-function manualTileUpdate (removePrevious) {
+function manualTileUpdate () {
   var elem = document.getElementById("updatedTime");
   if (elem) { elem.innerHTML = "checking..."; }
-
-  $.getJSON({
-    dataType: "json",
-    url: tileUrl,
-    success: function (data) {
-      var newLayer = new TileLayer({
-        source: new TileJSON({
-          tileJSON: data,
-          crossOrigin: "anonymous"
-        }),
-        opacity: reflectivityOpacity
-      });
-      window.map.addLayer(newLayer);
-      if (window.currentLayer) { window.map.removeLayer(window.currentLayer); }
-      window.currentLayer = newLayer;
-
-      // force reload of forecast
-      window.forecastDownloaded = false;
-      window.forecastLayers.forEach(function (layer) {
-        window.playInPorgress = false;
-        layer = false;
-      });
-
-      if (isV2) {
-        window.webkit.messageHandlers["scriptHandler"].postMessage("forecastInvalid");
-      }
-
-      updateTimestamp(new Date(data.version * 1000));
-      // XXX this is actually API version v3....
-      if (isV2) {
-        window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
-      }
-    }
-  });
+  window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
 }
-window.manualTileUpdateFn = manualTileUpdate;
-manualTileUpdate(false);
+window.manualTileUpdateFn = function(p) { manualTileUpdate(); };
+manualTileUpdate();
 
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
@@ -522,24 +492,7 @@ const socket = io.connect(websocketUrl);
 
 socket.on("connect", () => console.log("websocket connected"));
 
-class StrikeManager {
-  constructor (maxStrikes) {
-    this.maxStrikes = maxStrikes;
-    this.strikes = [];
-  }
-
-  addStrike (lon, lat) {
-    var lightning = new Feature(new Point([lon, lat]));
-    lightning.setId(new Date().getTime());
-    this.strikes.push(lightning.getId());
-    if (this.strikes.length > this.maxStrikes) {
-      var toRemove = this.strikes.shift();
-      vs.removeFeature(vs.getFeatureById(toRemove));
-    }
-    vs.addFeature(lightning);
-  }
-};
-let strikemgr = new StrikeManager(1337);
+let strikemgr = new StrikeManager(1337, vs);
 
 socket.on("lightning", function (data) {
   strikemgr.addStrike(data["lon"], data["lat"]);
@@ -547,41 +500,24 @@ socket.on("lightning", function (data) {
 
 window.sock = socket;
 
+// called when new cloud layers are available
 socket.on("map_update", function (data) {
+  // update the relative time at the top of the page
   updateTimestamp(new Date(data.version * 1000));
 
-  // XXX actually V3
-  if (isV2) {
-    window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
-    window.webkit.messageHandlers["scriptHandler"].postMessage("forecastInvalid");
-  }
-
-  var newLayer = new TileLayer({
+  lm.switchMainLayer(new TileLayer({
     source: new TileJSON({
       tileJSON: data,
       crossOrigin: "anonymous"
     }),
     opacity: reflectivityOpacity
-  });
+  }));
 
-  // invalidate old forecast
-  if (window.playInPorgress) {
-    // pause playback
-    window.smartDownloadAndPlay();
-    window.resetLayers();
+  // XXX actually V3
+  if (isV2) {
+    window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
   }
 
-  // first add & fetch the new layer, then remove the old one to avoid
-  // having no layer at all at some point.
-  window.map.addLayer(newLayer);
-  window.map.removeLayer(window.currentLayer);
-  window.currentLayer = newLayer;
-
-  // reset internal forecast state
-  window.forecastDownloaded = false;
-  window.forecastLayers.forEach(function (layer) {
-    layer = false;
-  });
 });
 
 window.isMonitoring = false;
@@ -650,10 +586,7 @@ if (!widgetMode) {
   playButton = document.createElement("button");
   playButton.classList.add("play");
   playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
-  var playButtonScript = function (e) {
-    window.smartDownloadAndPlay();
-  };
-  playButton.addEventListener("click", playButtonScript, false);
+  playButton.addEventListener("click", (e) => {window.lm.smartDownloadAndPlay(e)}, false);
   var playElement = document.createElement("div");
   playElement.className = "play ol-unselectable ol-control";
   playElement.appendChild(playButton);
@@ -709,21 +642,6 @@ if (widgetMode) {
 // openlayers in-flight tile detection from
 // https://stackoverflow.com/questions/33061221/ensuring-all-tiles-are-loaded-in-open-layers-3-xyz-source/45054387#45054387
 
-// var activityIndicatorEnabled = false;
-
-// function enableActivityIndicator () {
-//   if (!activityIndicatorEnabled) {
-//     console.log("activity indicator ENABLE");
-//     activityIndicatorEnabled = true;
-//   }
-// }
-// function disableActivityIndicator () {
-//   if (activityIndicatorEnabled) {
-//     console.log("disable indicator DISABLE");
-//     activityIndicatorEnabled = false;
-//   }
-// }
-
 window.map.on("postrender", function (evt) {
   if (!evt.frameState) { return; }
 
@@ -733,187 +651,25 @@ window.map.on("postrender", function (evt) {
     if (wanted.hasOwnProperty(layer)) { numHeldTiles += Object.keys(wanted[layer]).length; }
   }
 
-  var ready = window.numInFlightTiles === 0 && numHeldTiles === 0;
+  var ready = window.lm.getInFlightTiles() === 0 && numHeldTiles === 0;
   if (window.map.get("ready") !== ready) { window.map.set("ready", ready); }
 });
 
 window.map.set("ready", false);
 
-function whenMapIsReady (callback) {
-  if (window.map.get("ready")) { callback(); } else { window.map.once("change:ready", whenMapIsReady.bind(null, callback)); }
-}
+// hooks for forecast control
+window.downloadForecast = function() { window.lm.downloadForecast(); };
+window.playForecast = function() { window.lm.playForecast(); };
+window.smartDownloadAndPlay = function () { window.lm.smartDownloadAndPlay(); };
+window.setForecastLayer = function (num) { window.lm.setForecastLayer(num); };
 
-window.forecastLayers = [false, false, false, false, false, false, false, false, false];
-window.forecastLayerTimes = [false, false, false, false, false, false, false, false, false];
-window.forecastNo = -1;
-window.numInFlightTiles = 0;
-
-function downloadForecast (cb) {
-  var ahead;
-  let forecastArrayIdx = 0;
-
-  for (ahead = 5; ahead <= 45; ahead += 5) {
-    let idx = forecastArrayIdx;
-    /* javascript: because who the fuck needs proper printf? */
-    var numStr;
-    if (ahead === 5) {
-      numStr = "05";
-    } else {
-      numStr = ahead.toString();
-    }
-    let url = "https://a.tileserver.unimplemented.org/data/FX_0" + numStr + "-latest.json";
-    window.finishedCounter = 0;
-    $.getJSON({
-      dataType: "json",
-      url: url,
-      success: function (data) {
-        var source = new TileJSON({
-          tileJSON: data,
-          crossOrigin: "anonymous",
-          transition: 0
-        });
-        source.on("tileloadstart", function () { ++window.numInFlightTiles; });
-        source.on("tileloadend", function () { --window.numInFlightTiles; });
-        var newLayer = new TileLayer({
-          source: source,
-          opacity: 0
-        });
-        window.forecastLayers[idx] = newLayer;
-        window.forecastLayerTimes[idx] = data["version"];
-        // This starts the tile download process:
-        window.map.set("ready", false);
-        window.map.addLayer(newLayer);
-
-        whenMapIsReady(function () {
-          window.finishedCounter++;
-          if (window.finishedCounter === window.forecastLayers.length) {
-            console.log("finished all tiles: " + window.finishedCounter);
-            window.forecastLayers.forEach(function (layer) {
-              if (layer) {
-                window.map.removeLayer(layer);
-                layer.setOpacity(0.5);
-              }
-            });
-            if (cb) { cb(); }
-          }
-        });
-      }
-    });
-    forecastArrayIdx++;
-  }
-}
-
-window.playInPorgress = false;
-
-function playForecast () {
-  if (!(window.forecastLayers[0] && window.forecastLayers[1] && window.forecastLayers[2])) {
-    console.log("not all forecasts downloaded yet");
-    return;
-  }
-
-  if (window.forecastNo >= 0) {
-    console.log(window.forecastLayerTimes[window.forecastNo]);
-  }
-
-  switch (window.forecastNo) {
-    case -1:
-      window.forecastNo++;
-      window.map.addLayer(window.forecastLayers[window.forecastNo]);
-      window.map.removeLayer(window.currentLayer);
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
-      break;
-    case 0:
-      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
-      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
-      window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
-      break;
-    case 1:
-      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
-      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
-      window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
-      break;
-    case 2:
-      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
-      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
-      window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
-      break;
-    case 3:
-      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
-      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
-      window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
-      break;
-    case 4:
-      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
-      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
-      window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
-      break;
-    case 5:
-      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
-      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
-      window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
-      break;
-    case 6:
-      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
-      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
-      window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
-      break;
-    case 7:
-      window.map.addLayer(window.forecastLayers[++window.forecastNo]);
-      window.map.removeLayer(window.forecastLayers[--window.forecastNo]);
-      window.forecastNo++;
-      window.activeForecastTimeout = window.setTimeout(window.playForecast, 600);
-      break;
-    case 8:
-      window.map.addLayer(window.currentLayer);
-      window.map.removeLayer(window.forecastLayers[window.forecastNo]);
-      window.forecastNo = -1;
-      window.playInPorgress = false;
-      document.getElementById("nowcastIcon").src = "./player-play.png";
-      document.getElementById("nowcastIcon").style.display = "";
-      break;
-  }
-}
-
-window.downloadForecast = downloadForecast;
-window.playForecast = playForecast;
-
-window.forecastDownloaded = false;
-window.smartDownloadAndPlay = function () {
-  if (window.playInPorgress) {
-    clearTimeout(window.activeForecastTimeout);
-    window.playInPorgress = false;
-    document.getElementById("nowcastIcon").src = "./player-play.png";
-    document.getElementById("nowcastIcon").style.display = "";
-    return;
-  }
-
-  if (!window.forecastDownloaded) {
-    document.getElementById("nowcastIcon").style.display = "none";
-    document.getElementById("nowcastLoading").style.display = "";
-    window.downloadForecast(function () {
-      document.getElementById("nowcastLoading").style.display = "none";
-      document.getElementById("nowcastIcon").style.display = "";
-      document.getElementById("nowcastIcon").src = "./player-pause.png";
-      window.forecastDownloaded = true;
-      window.playInPorgress = true;
-      window.playForecast();
-    });
-  } else {
-    window.playInPorgress = true;
-    document.getElementById("nowcastIcon").style.display = "";
-    document.getElementById("nowcastIcon").src = "./player-pause.png";
-    playForecast();
-  }
+// interface hooks for apps
+window.hidePlayButton = function () {
+  playButton.style.display = "none";
 };
-
-// enableActivityIndicator();
+window.showPlayButton = function () {
+  playButton.style.display = "";
+};
 
 window.userLocation = null;
 window.injectLocation = function (lat, lon, accuracy, zoom = false) {
@@ -926,36 +682,9 @@ window.injectLocation = function (lat, lon, accuracy, zoom = false) {
   positionFeature.setGeometry(center ? new Point(center) : null);
 };
 
-window.setForecastLayer = function (num) {
-  if (num === window.forecastNo) { return; }
-  if (!window.forecastDownloaded) { return; }
-
-  if (!window.playInPorgress) {
-    window.map.removeLayer(window.currentLayer);
-  }
-
-  window.map.addLayer(window.forecastLayers[num]);
-  window.map.removeLayer(window.forecastLayers[window.forecastNo]);
-  window.forecastNo = num;
-};
-
-window.resetLayers = function () {
-  window.map.addLayer(window.currentLayer);
-  window.map.removeLayer(window.forecastLayers[window.forecastNo]);
-  window.forecastNo = -1;
-};
-
 if (window.location.pathname !== "/documentation.html" && window.location.pathname !== "/privacy.html") {
   document.getElementById("logolinkhref").href = window.location.href;
 }
-
-window.hidePlayButton = function () {
-  playButton.style.display = "none";
-};
-
-window.showPlayButton = function () {
-  playButton.style.display = "";
-};
 
 $(document).ready(function () {
   if (isV2) {
