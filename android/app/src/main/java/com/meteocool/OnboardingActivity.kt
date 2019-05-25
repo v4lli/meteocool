@@ -1,4 +1,4 @@
-package com.meteocool.onboarding
+package com.meteocool
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,9 +8,7 @@ import android.support.v4.content.ContextCompat
 import com.github.paolorotolo.appintro.AppIntro
 import com.github.paolorotolo.appintro.AppIntroFragment
 import com.github.paolorotolo.appintro.model.SliderPage
-import com.meteocool.R
 import com.meteocool.security.Validator
-import com.meteocool.service.UploadLocationService
 
 
 class OnboardingActivity : AppIntro() {
@@ -75,21 +73,21 @@ class OnboardingActivity : AppIntro() {
     }
 
     override fun onDonePressed() {
-        finish()
         PreferenceManager.getDefaultSharedPreferences(this).edit().apply {
             putBoolean(IS_ONBOARD_COMPLETED, true)
             apply()
         }
-        Intent(this, UploadLocationService::class.java).also { intent ->
-            startService(intent)
-        }
+        startActivity(Intent(this, MeteocoolActivity::class.java))
+        finish()
+
+
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
         // user cannot just skip the intro once
-        finish()
         startActivity(Intent(this, OnboardingActivity::class.java))
+        finish()
     }
 
     override fun onSlideChanged(oldFragment: Fragment?, newFragment: Fragment?) {

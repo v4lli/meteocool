@@ -10,7 +10,7 @@ import android.support.v4.content.ContextCompat
 class Validator{
 companion object {
 
-    private const val PERMISSION_REQUEST_LOCATION = 0
+    private const val PERMISSION_REQUEST_LOCATION = 34
 
      fun checkAndroidPermissions(context: Context, activity: Activity) {
         // Here, thisActivity is the current activity

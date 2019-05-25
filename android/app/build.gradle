@@ -9,7 +9,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     signingConfigs {
         release {
-            storeFile file('C:\\Users\\jerem\\Google Drive\\PlayStore\\meteocool.jks')
+           // storeFile file('C:\\Users\\jerem\\Google Drive\\PlayStore\\meteocool.jks')
         }
     }
     compileSdkVersion 28
@@ -56,6 +56,9 @@ dependencies {
 
     // Onboarding screen
     implementation 'com.github.AppIntro:AppIntro:4.2.3'
+
+    // Fused Location Client
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
