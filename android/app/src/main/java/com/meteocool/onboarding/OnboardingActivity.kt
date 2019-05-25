@@ -75,7 +75,6 @@ class OnboardingActivity : AppIntro() {
     }
 
     override fun onDonePressed() {
-        super.onDonePressed()
         finish()
         PreferenceManager.getDefaultSharedPreferences(this).edit().apply {
             putBoolean(IS_ONBOARD_COMPLETED, true)
