@@ -15,6 +15,8 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.FirebaseApp
+import com.google.firebase.database.FirebaseDatabase
 
 import com.google.firebase.iid.FirebaseInstanceId
 import com.meteocool.location.LocationUpdatesBroadcastReceiver
@@ -49,6 +51,10 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (FirebaseApp.getApps(this).isNotEmpty()) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        }
+
         if(Validator.isLocationPermissionGranted(this)) {
             Log.d("Location", "Start Fused")
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -58,18 +64,13 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
 
         setContentView(R.layout.activity_meteocool)
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
-
-        val preference = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        Log.d("Preferences", preference.getString("FIREBASE_TOKEN", "error"))
-
         cancelNotifications()
-
     }
 
     /**
      * Handles the Request Updates button and requests start of location updates.
      */
-    fun requestLocationUpdates() {
+    private fun requestLocationUpdates() {
         try {
             Log.i(TAG, "Starting location updates")
             mFusedLocationClient!!.requestLocationUpdates(
