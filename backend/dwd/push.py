@@ -113,7 +113,8 @@ def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10
 # XXX missing OSM and DWD copyright
 # XXX missing crop
 def generate_preview(lat, lon):
-    osm_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9).to_pil()
+    osm_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9,
+            tileserver="https://cartodb-basemaps-b.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png").to_pil()
     weather_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9,
             tileserver="http://a.tileserver.unimplemented.org/data/FX_015-latest/{z}/{x}/{y}.png").to_pil()
 
