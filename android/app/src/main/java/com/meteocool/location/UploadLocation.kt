@@ -15,6 +15,7 @@ class UploadLocation: AsyncTask<android.location.Location, Unit, Unit>(){
             -1.0f
         }
 
+
         var token =  FirebaseInstanceId.getInstance().token
         if(token==null) {token = "no token"}
         NetworkUtility.sendPostRequest(
