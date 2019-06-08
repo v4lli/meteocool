@@ -3,6 +3,7 @@ ifeq ($(FC_FILE),unknown)
   $(error FC_FILE NOT SET)
 endif
 
+# XXX deduplicate with main makefile.
 $(FC_FILE).mbtiles: $(FC_FILE)
 	time python3 ../dwd2png.py $(FC_FILE) $(FC_FILE).png
 	# the worldfile defines where and how big the bitmap map in the target srs
