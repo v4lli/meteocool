@@ -329,3 +329,29 @@ hr {
     transform: scale(0.8);
   }
 }
+
+.forecastTime {
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
+	position: absolute;
+	text-align: center;
+	z-index: 1000;
+	width: 70px;
+	margin-top: 10px;
+	display: none;
+}
+
+.forecastTimeInner {
+	display: block;
+	margin: 1px;
+	padding: 0;
+	color: #fff;
+	text-align: center;
+	background-color: rgba(0,60,136,.5);
+	border: none;
+	border-radius: 2px;
+	padding-left: 10px;
+	padding-right: 10px;
+}

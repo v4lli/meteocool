@@ -10,6 +10,9 @@ var whenMapIsReady = (map, callback) => {
   }
 }
 
+/**
+ * Manages the reflectivity + forecast layers shown on the map.
+ */
 export class LayerManager {
   constructor (map, mainTileUrl, forecastTileUrl, numForecastLayers, opacity, enableIOSHooks) {
     this.numForecastLayers = numForecastLayers;
@@ -23,6 +26,7 @@ export class LayerManager {
     this.opacity = opacity;
     this.currentForecastNo = -1;
     this.playPaused = false;
+    this.enableIOSHooks = enableIOSHooks;
 
     if (enableIOSHooks) {
       this.appHandlers.push((handler, action) => {
@@ -94,7 +98,7 @@ export class LayerManager {
     this.forecastDownloaded = false;
     this.forecastLayers.forEach((layer) => {
       if (layer) {
-        this.map.removeLayer(layer);
+        this.map.removeLayer(layer["layer"]);
         layer = false;
       }
     });
@@ -137,6 +141,7 @@ export class LayerManager {
       this.playPaused = false;
       document.getElementById("nowcastIcon").src = "./player-play.png";
       document.getElementById("nowcastIcon").style.display = "";
+      $("#forecastTimeWrapper").css("display", "none");
       this.hook("scriptHandler", "playFinished");
   }
 
@@ -152,6 +157,7 @@ export class LayerManager {
       this.map.addLayer(this.mainLayer);
       this.map.removeLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
       this.stopPlay();
+      $("#forecastTimeWrapper").css("display", "none");
       return;
     }
 
@@ -159,13 +165,23 @@ export class LayerManager {
       // play not yet in progress, remove main layer
       this.map.removeLayer(this.mainLayer);
       this.hook("scriptHandler", "playStarted");
+      if (this.enableIOSHooks) {
+        $("#forecastTimeWrapper").css("display", "block");
+      }
     } else {
       // remove previous layer
       this.map.removeLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
     }
     this.currentForecastNo++;
     this.map.addLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
-    this.hook("layerTimeHandler", this.forecastLayers[this.currentForecastNo]["version"]);
+
+    if (this.currentForecastNo >= 0) {
+      let layerTime = (parseInt(this.forecastLayers[this.currentForecastNo]["version"]) + (this.currentForecastNo+1)*5*60)*1000;
+      let dt = new Date(layerTime);
+      let dtStr = ("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2);
+      $(".forecastTimeInner").html(dtStr);
+      this.hook("layerTimeHandler", layerTime);
+    }
     this.activeForecastTimeout = window.setTimeout(() => { this.playForecast(); }, 600);
   }
 
