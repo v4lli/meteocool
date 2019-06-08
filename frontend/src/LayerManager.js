@@ -2,7 +2,7 @@ import $ from "jquery";
 import TileJSON from "ol/source/TileJSON.js";
 import TileLayer from "ol/layer/Tile.js";
 
-function whenMapIsReady (map, callback) {
+var whenMapIsReady = (map, callback) => {
   if (map.get("ready")) {
     callback();
   } else {
@@ -22,22 +22,25 @@ export class LayerManager {
     this.mainTileUrl = mainTileUrl;
     this.opacity = opacity;
     this.currentForecastNo = -1;
+    this.playPaused = false;
 
     if (enableIOSHooks) {
-      this.appHandlers.push(function (handler, action) {
-        window.webkit.messageHandlers[handler].postMessage(action);
+      this.appHandlers.push((handler, action) => {
+        if (handler in window.webkit.messageHandlers)
+          window.webkit.messageHandlers[handler].postMessage(action);
       });
     }
   }
 
   hook (handler, action) {
-    this.appHandlers.forEach(function (h) {
+    console.log("emitting event " + action + " to handler: " + handler);
+    this.appHandlers.forEach((h) => {
       h(handler, action);
     });
   }
 
   playInProgress () {
-    return this.currentForecastNo !== -1;
+    return this.currentForecastNo !== -1 && !this.playPaused;
   }
 
   getInFlightTiles () {
@@ -49,6 +52,7 @@ export class LayerManager {
       clearTimeout(this.activeForecastTimeout);
       document.getElementById("nowcastIcon").src = "./player-play.png";
       document.getElementById("nowcastIcon").style.display = "";
+      this.playPaused = true;
       return;
     }
 
@@ -59,7 +63,6 @@ export class LayerManager {
         document.getElementById("nowcastLoading").style.display = "none";
         document.getElementById("nowcastIcon").style.display = "";
         document.getElementById("nowcastIcon").src = "./player-pause.png";
-        this.forecastDownloaded = true;
         this.playForecast();
       });
     } else {
@@ -72,9 +75,9 @@ export class LayerManager {
   switchMainLayer (newLayer) {
     // invalidate old forecast
     if (this.playInProgress()) {
-      // pause playback (toggle)
       this.removeForecast();
     }
+    this.stopPlay();
     // reset internal forecast state
     this.invalidateLayers();
 
@@ -89,7 +92,7 @@ export class LayerManager {
   // defined state.
   invalidateLayers () {
     this.forecastDownloaded = false;
-    this.forecastLayers.forEach(function (layer) {
+    this.forecastLayers.forEach((layer) => {
       if (layer) {
         this.map.removeLayer(layer);
         layer = false;
@@ -99,41 +102,56 @@ export class LayerManager {
   }
 
   setForecastLayer (num) {
-    if (num === this.currentForecastNo) { return; }
-    if (!this.forecastDownloaded) { return; }
+    if (num === this.currentForecastNo) { return 1; }
+    if (!this.forecastDownloaded) { return 2; }
+    if (this.playInProgress()) { return 3; }
+    if (num > this.numForecastLayers - 1) { return 4; }
 
-    if (this.playInProgress()) {
-      // this.map.removeLayer(this.mainLayer);
-      this.smartDownloadAndPlay();
+    this.playPaused = true;
+
+    if (num == -1) {
+      this.map.addLayer(this.mainLayer);
+    } else {
+      this.map.addLayer(this.forecastLayers[num]["layer"]);
     }
 
-    this.map.addLayer(this.forecastLayers[num]);
-    this.map.removeLayer(this.forecastLayers[this.currentForecastNo]);
+    if (this.currentForecastNo == -1) {
+      this.map.removeLayer(this.mainLayer);
+    } else {
+      this.map.removeLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
+    }
+
     this.currentForecastNo = num;
+    return true;
   }
 
+  // bring map back to a defined state, without touching the forecast stuff
   clear () {
     this.map.getLayers().forEach((layer) => {
       this.map.removeLayer(layer);
     });
   }
 
-  // bring map back to a defined state, without touching the forecast stuff
+  stopPlay() {
+      this.currentForecastNo = -1;
+      this.playPaused = false;
+      document.getElementById("nowcastIcon").src = "./player-play.png";
+      document.getElementById("nowcastIcon").style.display = "";
+      this.hook("scriptHandler", "playFinished");
+  }
 
   playForecast (e) {
     if (!this.forecastDownloaded) {
       console.log("not all forecasts downloaded yet");
       return;
     }
+    this.playPaused = false;
 
     if (this.currentForecastNo === this.forecastLayers.length - 1) {
       // we're past the last downloaded layer, so end the play
       this.map.addLayer(this.mainLayer);
       this.map.removeLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
-      this.currentForecastNo = -1;
-      document.getElementById("nowcastIcon").src = "./player-play.png";
-      document.getElementById("nowcastIcon").style.display = "";
-      this.hook("scriptHandler", "playFinished");
+      this.stopPlay();
       return;
     }
 
@@ -201,7 +219,8 @@ export class LayerManager {
 
           whenMapIsReady(this.map, () => {
             this.layersFinishedCounter++;
-            if (this.layersFinishedCounter === this.forecastLayers.length) {
+            if (this.layersFinishedCounter === this.numForecastLayers) {
+              this.forecastDownloaded = true;
               console.log("finished all tiles: " + this.layersFinishedCounter);
               this.forecastLayers.forEach((layer) => {
                 if (layer) {
