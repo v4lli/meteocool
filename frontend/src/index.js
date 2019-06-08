@@ -64,7 +64,7 @@ function updateTimestamp (lastUpdatedParam) {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js").then(reg => {
-      console.log("SW registered: ", reg);
+      //console.log("SW registered: ", reg);
 
       // Update service worker on page refresh
       // https://redfin.engineering/how-to-fix-the-refresh-button-when-using-service-workers-a8e27af6df68
@@ -229,7 +229,7 @@ var toggleHTMLfixMe = () => {
   }
 };
 
-if (localStorage.getItem("darkMode")) {
+if (!dd.isAuxPage() && localStorage.getItem("darkMode")) {
   viewMode = false;
   toggleHTMLfixMe();
 }
@@ -303,10 +303,10 @@ if (toggleButton) {
 // Geolocation (showing the user's position)
 //
 
-var geolocation = new Geolocation({
+window.geolocation = new Geolocation({
   // enableHighAccuracy must be set to true to have the heading value.
   trackingOptions: {
-    enableHighAccuracy: true
+    enableHighAccuracy: false
   },
   projection: view.getProjection()
 });
@@ -314,12 +314,12 @@ var geolocation = new Geolocation({
 if (!window.location.hash && !DeviceDetect.getIosAPILevel() >= 2 && !DeviceDetect.getAndroidAPILevel() >= 1) {
   // wtf is this XXX
   if (!dd.isAuxPage()) {
-    geolocation.setTracking(true);
+    window.geolocation.setTracking(true);
   }
 }
 
 // handle geolocation error.
-geolocation.on("error", function (error) {
+window.geolocation.on("error", (error) => {
   switch (error.code) {
     case error.PERMISSION_DENIED:
       console.log("User denied the request for Geolocation.");
@@ -332,19 +332,20 @@ geolocation.on("error", function (error) {
       break;
     default:
       console.log("could not get location data, doing nothing like it's 1990");
+      console.log(error);
       break;
   }
 });
 
 var accuracyFeature = new Feature();
-geolocation.on("change:accuracyGeometry", function () {
-  accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+window.geolocation.on("change:accuracyGeometry", () => {
+  accuracyFeature.setGeometry(window.geolocation.getAccuracyGeometry());
   // stop annoying the user after a short time
   // setTimeout(function() {geolocation.on('change:accuracyGeometry', null);}, 1500);
 });
 
 var shouldUpdate = true;
-var updatePermalink = function () {
+window.map.on("moveend", () => {
   if (!shouldUpdate) {
     // do not update the URL when the view was changed in the 'popstate' handler
     shouldUpdate = true;
@@ -363,9 +364,7 @@ var updatePermalink = function () {
     rotation: view.getRotation()
   };
   window.history.pushState(state, "map", hash);
-};
-
-window.map.on("moveend", updatePermalink);
+});
 
 // restore the view state when navigating through the history, see
 // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
@@ -446,8 +445,8 @@ window.map.addLayer(vl);
 // }
 
 var haveZoomed = false;
-geolocation.on("change:position", function () {
-  var coordinates = geolocation.getPosition();
+window.geolocation.on("change:position", () => {
+  var coordinates = window.geolocation.getPosition();
   positionFeature.setGeometry(coordinates ? new Point(coordinates) : null);
   if (window.location.hash !== "" && !haveZoomed) {
     window.map.getView().animate({ center: coordinates, zoom: 9 });
@@ -526,19 +525,9 @@ if (!dd.isWidgetMode()) {
   button.classList.add("locate-me-btn");
   button.title = "Locate Me";
   button.innerHTML = "<img class=\"\" id=\"pulse\" src=\"./baseline_location_searching_white_48dp.png\">";
-}
-
-if (!dd.isWidgetMode() && !DeviceDetect.getAndroidAPILevel() >= 1) {
-  var locateMe = function (e) {
-    var coordinates = geolocation.getPosition();
-    if (coordinates) {
-      geolocation.setTracking(true);
-      window.map.getView().animate({ center: coordinates, zoom: 10 });
-    }
-  };
 
   if (DeviceDetect.getIosAPILevel() >= 2) {
-    button.addEventListener("click", function () {
+    button.addEventListener("click", () => {
       if (window.isMonitoring) {
         $("#pulse").addClass("pulse");
         window.webkit.messageHandlers["scriptHandler"].postMessage("startMonitoringLocation"); // old API, may 2019
@@ -552,26 +541,26 @@ if (!dd.isWidgetMode() && !DeviceDetect.getAndroidAPILevel() >= 1) {
       }
       window.isMonitoring = !window.isMonitoring;
     }, false);
+  } else if (DeviceDetect.getAndroidAPILevel() >= 1) {
+    button.addEventListener("click", function () {
+      Android.injectLocation(); // eslint-disable-line no-undef
+    }, false);
   } else {
-    button.addEventListener("click", locateMe, false);
+    // normal, browser based location stuff
+    button.addEventListener("click", (e) => {
+      window.geolocation.setTracking(true);
+      var coordinates = window.geolocation.getPosition();
+      if (coordinates) {
+        window.map.getView().animate({ center: coordinates, zoom: 10 });
+      }
+    }, false);
   }
-}
-
-if (DeviceDetect.getAndroidAPILevel() >= 1) {
-  button.addEventListener("click", function () {
-    Android.injectLocation(); // eslint-disable-line no-undef
-  }, false);
-}
-
-if (!dd.isWidgetMode()) {
   var element = document.createElement("div");
   element.className = "locate-me ol-unselectable ol-control";
   element.appendChild(button);
-  window.map.addControl(
-    new Control({
-      element: element
-    }));
+  window.map.addControl(new Control({element: element}));
 }
+
 
 // forecast button
 var playButton;
@@ -654,10 +643,10 @@ window.map.on("postrender", function (evt) {
 window.map.set("ready", false);
 
 // hooks for forecast control
-window.downloadForecast = function () { window.lm.downloadForecast(); };
-window.playForecast = function () { window.lm.playForecast(); };
-window.smartDownloadAndPlay = function () { window.lm.smartDownloadAndPlay(); };
-window.setForecastLayer = function (num) { window.lm.setForecastLayer(num); };
+window.downloadForecast = (cb) => { window.lm.downloadForecast(cb); };
+window.playForecast = () => { window.lm.playForecast(); };
+window.smartDownloadAndPlay = () => { window.lm.smartDownloadAndPlay(); };
+window.setForecastLayer = (num) => { return window.lm.setForecastLayer(num); };
 
 // interface hooks for apps
 window.hidePlayButton = function () {

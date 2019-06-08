@@ -32,7 +32,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         NetworkUtility.sendPostRequest(
             JSONClearPost(
                 token,
-                "backend"
+                "background"
             ), NetworkUtility.CLEAR_URL
         )
     }

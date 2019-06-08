@@ -23,7 +23,7 @@ export class DeviceDetect {
   }
 
   isWidgetMode () {
-    console.log(this.widgetMode);
+    //console.log(this.widgetMode);
     return this.widgetMode;
   }
 
@@ -48,6 +48,19 @@ export class DeviceDetect {
       }
     }
     return -1;
+  }
+
+  static isApp () {
+    if (DeviceDetect.isIos()) {
+      if (window.location.search.indexOf("mobile=ios2") !== -1) {
+        return true;
+      }
+    } else {
+      if (window.location.search.indexOf("mobile=android") !== -1) {
+        return true;
+      }
+      return false;
+    }
   }
 
   static getiPhoneModel () {
