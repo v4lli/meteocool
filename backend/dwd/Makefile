@@ -75,8 +75,7 @@ push:
 	mv /forecast/tmp/forecast/FX*_045_*.mbtiles /data/FX_045-latest.mbtiles
 	nc -z tileserver 10001 || true
 	sleep 2
-	python3 push.py /forecast/tmp/forecast/ \
-		http://app:5000/internal/trigger_browser_notification || true
+	python3 push.py /forecast/tmp/forecast/
 	rm -rf /forecast/tmp/forecast*
 
 

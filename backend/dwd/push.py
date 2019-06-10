@@ -98,7 +98,7 @@ def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10
     peak_mins = 0
 
     while timeframe <= max_ahead:
-        intensity = rvp_to_dbz(forecast_maps[timeframe][0][xy[0]][xy[1]])
+        intensity = rvp_to_dbz(forecast_maps[timeframe][0][outx][outy])
         if intensity > max_intensity:
             peak_mins = timeframe
             max_intensity = intensity
@@ -131,7 +131,6 @@ def generate_preview(lat, lon):
 if __name__ == "__main__":
     # programm parameters
     radar_files = sys.argv[1]
-    browser_notify_url = sys.argv[2]
 
     # Apple Push setup
     apns_config_file = '/etc/apns.json'
@@ -171,14 +170,8 @@ if __name__ == "__main__":
 
     # wradlib setup
     gridsize = 900
-    radolan_grid_ll = wrl.georef.get_radolan_grid(gridsize, gridsize, wgs84=True)
-    linearized_grid = []
-    for lon in radolan_grid_ll:
-        for lat in lon:
-            linearized_grid.append(lat)
 
-    # iterate through all db entries and push browser events to the app backend,
-    # ios push events to apple
+    # iterate through all db entries and push
     cursor = collection.find({})
     cnt = 0
     for document in cursor:
@@ -225,30 +218,24 @@ if __name__ == "__main__":
                 #logging.warn("interpolatedSpeed=%f < 20km/h -> OK" % interpolatedSpeed)
                 pass
 
-        # XXX check lat/lon against the bounds of the dwd data here
-        # to avoid useless calculations here
-
         # user position in grid
-        result = closest_node((lon, lat), linearized_grid)
-        xy = (int(result / gridsize), int(result % gridsize))
+        outy, outx = wrl.georef.get_radolan_coords(lon, lat)
+        outy = int(outy + 523.4622)
+        outx = int(outx + 4658.645)
 
-        # if xy lies on one of the outermost tiles, ignore. hotfix for bug #113 (will be
-        # obsoleted by rewrite).
-        if ((xy[0] == 0 and xy[1] == 0) or
-            (xy[0] == gridsize-1 and xy[1] == gridsize-1) or
-            (xy[0] == 0 and xy[1] == gridsize-1) or
-            (xy[0] == gridsize-1 and xy[1] == 0)):
+        if outx < 0 or outx >= gridsize or outy < 0 or outy >= gridsize:
             logging.warn("NOT PUSHING for client %s because it's outside the grid: %f,%f", token, lat, lon)
+            continue
 
         # get forecasted value from grid
         data = forecast_maps[ahead]
-        reported_intensity = rvp_to_dbz(forecast_maps[ahead][0][xy[0]][xy[1]])
+        reported_intensity = rvp_to_dbz(forecast_maps[ahead][0][outx][outy])
 
         # also check timeframes BEFORE the configured ahead value
         if reported_intensity < intensity:
             timeframe = ahead - 5
             while timeframe > 0:
-                previous_intensity = rvp_to_dbz(forecast_maps[timeframe][0][xy[0]][xy[1]])
+                previous_intensity = rvp_to_dbz(forecast_maps[timeframe][0][outx][outy])
                 if previous_intensity >= intensity:
                     logging.warn("%s: no match for old ahead value, but %d >= %d for lower ahead=%d!" % (token,
                         previous_intensity, intensity, timeframe))
@@ -261,7 +248,7 @@ if __name__ == "__main__":
             logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (token, reported_intensity, intensity, ahead, source))
 
             # fancy message generation
-            max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, xy, ahead, intensity)
+            max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, [outx, outy], ahead, intensity)
             message_dict = {
                 "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity,lat,lon), ahead),
                 "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
@@ -270,9 +257,7 @@ if __name__ == "__main__":
             if max_intensity == reported_intensity:
                 message_dict["body"] = "No duration estimate; possibly just a little shower."
 
-            if source == "browser":
-                requests.post(browser_notify_url, json={"token": token, "ahead": ahead})
-            elif source == "android":
+            if source == "android":
                 if fcm and not ios_onscreen:
                     result = fcm.notify_single_device(registration_id=token,
                             message_title=message_dict["title"],
@@ -280,6 +265,12 @@ if __name__ == "__main__":
                             message_icon="rain")
                     collection.update({"_id": doc_id}, {"$set": {"ios_onscreen": True}})
                     logging.warn("%s: Delivered android push notification with result=%s" % (token, result))
+                    if "results" in result:
+                        if len(result["results"]) >= 1:
+                            if "error" in result["results"][0]:
+                                if result["results"][0]["error"] == "NotRegistered":
+                                    collection.remove(doc_id)
+                                    logging.warn("%s: removed unregistered client" % (token))
                 else:
                     if fcm:
                         logging.warn("%s: not re-pushing, old not acknowledged" % (token))
@@ -340,8 +331,14 @@ if __name__ == "__main__":
                 elif source == "android":
                     result = fcm.single_device_data_message(registration_id=token, data_message={"clear_all": True})
                     logging.warn("%s: Delivered android data push with result=%s" % (token, result))
+                    if "results" in result:
+                        if len(result["results"]) >= 1:
+                            if "error" in result["results"][0]:
+                                if result["results"][0]["error"] == "NotRegistered":
+                                    collection.remove(doc_id)
+                                    logging.warn("%s: removed unregistered client" % (token))
                     # XXX this needs to be removed as soon as jeremias fixes the android app :)
-                    collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
+                    #collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
                 else:
                     logging.error("%s: Unsupported source" % token)
         cnt = cnt + 1
