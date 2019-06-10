@@ -61,7 +61,7 @@ def clear_notification():
         except KeyError:
             logging.warn("Invalid request: %s", str(data))
             return jsonify(success=False, message="bad request, missing keys")
-        if not isinstance(token, str) or len(token) > 128 or len(token) < 32:
+        if not isinstance(token, str) or len(token) > 256 or len(token) < 32:
             logging.warn("Invalid request: %s", str(data))
             return jsonify(success=False, message="bad token")
 
