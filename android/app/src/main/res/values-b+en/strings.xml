@@ -23,4 +23,17 @@
 
     <string name="gps_button_toast">Bad GPS signal.</string>
 
+    <string name="title_activity_settings">Einstellungen</string>
+
+    <!-- Preference Titles -->
+    <string name="notification_header">Notifications</string>
+    <string name="map_header">Map</string>
+
+    <!-- Push Preferences -->
+    <string name="notification_push_title">Receive push notifications</string>
+
+    <!-- Map Preferences -->
+    <string name="zoom_title">Zoom after start</string>
+    <string name="rotate_title">Rotation of map</string>
+
 </resources>

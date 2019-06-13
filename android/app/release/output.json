@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-[{"outputType":{"type":"APK"},"apkData":{"type":"MAIN","splits":[],"versionCode":4,"versionName":"1.4","enabled":true,"outputFile":"app-release.apk","fullName":"release","baseName":"release"},"path":"app-release.apk","properties":{}}]
-=======
-[{"outputType":{"type":"APK"},"apkData":{"type":"MAIN","splits":[],"versionCode":3,"versionName":"1.3","enabled":true,"outputFile":"app-release.apk","fullName":"release","baseName":"release"},"path":"app-release.apk","properties":{}}]
->>>>>>> 63bc2f9e97f06e905d8c3ce3eaf1efdbcd407e0b
+[{"outputType":{"type":"APK"},"apkData":{"type":"MAIN","splits":[],"versionCode":5,"versionName":"1.5","enabled":true,"outputFile":"app-release.apk","fullName":"release","baseName":"release"},"path":"app-release.apk","properties":{}}]

@@ -24,5 +24,17 @@
     <string name="onboarding_description5">Erzähle es deinen Bekannten und gib uns Feedback!</string>
 
     <string name="gps_button_toast">Schlechtes GPS-Signal.</string>
+    <string name="title_activity_settings">Einstellungen</string>
+
+    <!-- Preference Titles -->
+    <string name="notification_header">Benachrichtigungen</string>
+    <string name="map_header">Karte</string>
+
+    <!-- Push Preferences -->
+    <string name="notification_push_title">Erhalte Push-Nachrichten</string>
+
+    <!-- Map Preferences -->
+    <string name="zoom_title">Zoom nach Start</string>
+    <string name="rotate_title">Rotation der Karte</string>
 
 </resources>
