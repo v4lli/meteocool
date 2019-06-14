@@ -30,8 +30,14 @@ def closest_node(node, nodes):
     closest_index = distance.cdist([node], nodes).argmin()
     return closest_index
 
-def dbz_to_str_pure(dbz,lat,lon):
-    rain_snow = rain_or_snow(lat,lon)
+def dbz_to_str_pure(dbz,lat,lon,lang):
+    if lang == "de":
+        return dbz_to_str_pure_de(dbz,lat,lon,lang)
+    else:
+        return dbz_to_str_pure_en(dbz,lat,lon,lang)
+
+def dbz_to_str_pure_en(dbz,lat,lon,lang):
+    rain_snow = rain_or_snow(lat,lon,lang)
 
     if dbz > 65:
         return "Large hail"
@@ -65,11 +71,43 @@ def dbz_to_str_pure(dbz,lat,lon):
     if dbz <= -31:
         return "No %s" % rain_snow
 
+def dbz_to_str_pure_de(dbz,lat,lon,lang):
+    rain_snow = rain_or_snow(lat,lon,lang)
+
+    if dbz > 65:
+        return "starker Hagel"
+    if dbz > 60:
+        return "Hagel"
+    if dbz > 55:
+        return "kleiner Hagel"
+    if dbz > 47:
+        return "extremer %s" % rain_snow
+    if dbz > 40:
+        return "starker %s" % rain_snow
+    if dbz > 32:
+        return "stärkerer %s" % rain_snow
+    if dbz > 25:
+        return "Regen" if rain_snow == "Regen" else "Schnee"
+    if dbz > 20:
+        return "leichter %s" % rain_snow
+    if dbz > 15:
+        return "Niesel" if rain_snow == "Regen" else "Schneeflöckchen"
+    if dbz > 0:
+        # ???
+        return "Dunst"
+    if dbz > -10:
+        # ???
+        return "leichter Dunst"
+    if dbz > -31:
+        # ???
+        return "Nebel"
+    if dbz <= -31:
+        return "Kein %s" % rain_snow
 
 dwdTemp = dwdTemperature()
 dwdTemp.get_stations()
 
-def rain_or_snow(lat,lon):
+def rain_or_snow(lat,lon,lang):
     current_temperature = None
     try:
         station_id = dwdTemp.find_next_station(lat, lon)
@@ -78,17 +116,22 @@ def rain_or_snow(lat,lon):
         logging.error("DWD reports ConnectionRefusedError: %s" % e)
         pass
 
+    if lang == "de":
+        percip = "Schnee"
+    else:
+        percip = "Regen"
+
     if current_temperature and current_temperature <= 0:
         return "snow"
     else:
         return "rain"
 
-def dbz_to_str(dbz, lat, lon, lower_case=False):
+def dbz_to_str(dbz, lat, lon, lang, lower_case=False):
     intensity = None
     if lower_case:
-        intensity = dbz_to_str_pure(dbz,lat,lon).lower()
+        intensity = dbz_to_str_pure(dbz,lat,lon,lang).lower()
     else:
-        intensity = dbz_to_str_pure(dbz,lat,lon)
+        intensity = dbz_to_str_pure(dbz,lat,lon,lang)
 
     return "%s (%d dbZ)" % (intensity, dbz)
 
@@ -189,6 +232,11 @@ if __name__ == "__main__":
             print("Invalid key line: %s" % e)
             continue
 
+        try:
+            lang = document["lang"]
+        except KeyError as e:
+            lang = "en"
+
         if token == "anon" or token == "anon2":
             continue
 
@@ -246,16 +294,41 @@ if __name__ == "__main__":
         logging.warn("%d >? %d" % (reported_intensity, intensity))
         if reported_intensity >= intensity:
             logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (token, reported_intensity, intensity, ahead, source))
+            continue
 
             # fancy message generation
             max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, [outx, outy], ahead, intensity)
-            message_dict = {
-                "title": "%s expected in %d min!" % (dbz_to_str(reported_intensity,lat,lon), ahead),
-                "body": "Peaks with %s in %d minutes, lasting a total of at least %d min." % (
-                    dbz_to_str(max_intensity, lat, lon, lower_case=True), peak_mins, total_mins)
+
+            if lang == "de":
+                message_dict = {
+                    "title": "{} in {} Min!",
+                    "body": {
+                        with_peak: "Bis hin zu {} in {} Min. Gesamtdauer ca %d Min.",
+                        without_peak: "Gesamtdauer ca. {} Minuten",
+                        no_duration: "Vielleicht nur ein paar Tropfen."
+                    }
+                }
+            else:
+                # en
+                message_dict = {
+                    "title": "{} expected in {} min!",
+                    "body": {
+                        with_peak: "Peaks with {} in {} minutes, lasting a total of at least {} min.",
+                        without_peak: "Duration estimated around {} min.",
+                        no_duration: "No duration estimate; possibly just a little shower."
+                    }
+                }
+
+
+            message_dict_localized = {
+                "title": message_dict["title"].format(dbz_to_str(reported_intensity,lat,lon,lang), ahead),
+                "body": message_dict["body"]["with_peak"].format(dbz_to_str(max_intensity,
+                    lat, lon, lang, lower_case=True), peak_mins, total_mins)
             }
             if max_intensity == reported_intensity:
-                message_dict["body"] = "No duration estimate; possibly just a little shower."
+                message_dict["body"] =  message_dict["body"]["without_peak"].format(total_mins)
+                    if total_mins == 5:
+                        message_dict["body"] =  message_dict["body"]["no_duration"]
 
             if source == "android":
                 if fcm and not ios_onscreen:
@@ -311,6 +384,7 @@ if __name__ == "__main__":
             else:
                 logging.warn("unknown source type %s" % source)
         else:
+            continue
             if ios_onscreen:
                 # rain has stopped and the notification is (possibly) still
                 # displayed on the device.
