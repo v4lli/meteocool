@@ -94,6 +94,13 @@ def post_location():
 def save_location_to_backend(data):
     if not data:
         return jsonify(success=False, message="bad request")
+    try:
+        if data["lang"] == "de":
+            lang = "de"
+        else:
+            lang = "en"
+    except KeyError:
+        lang = "en"
 
     try:
         lat = data["lat"]
@@ -189,6 +196,7 @@ def save_location_to_backend(data):
             "accuracy": accuracy,
             "intensity": intensity,
             "ahead": ahead,
+            "lang": lang,
             "last_updated": datetime.datetime.utcnow(),
             "last_push": datetime.datetime.utcfromtimestamp(0),
             "ios_onscreen": False,
