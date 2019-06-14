@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14810.11" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14766.13"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="meteocool" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aOD-KT-ksP">
+                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
+                            <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Slider_long" translatesAutoresizingMaskIntoConstraints="NO" id="rrm-xV-iBd">
+                                <rect key="frame" x="340" y="176" width="150" height="300"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Slider_point" translatesAutoresizingMaskIntoConstraints="NO" id="2rh-rK-OQM">
+                                <rect key="frame" x="395" y="205" width="19" height="19"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YLM-To-OTW">
+                                <rect key="frame" x="392" y="295" width="24" height="62"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="Slider_Handle">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="slider_show_buttonWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fbi-Qv-ZGG"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="KcY-U7-JEH">
+                                <rect key="frame" x="312" y="62" width="20" height="20"/>
+                                <rect key="contentStretch" x="1" y="1" width="1" height="1"/>
+                                <color key="color" cocoaTouchSystemColor="darkTextColor"/>
+                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 min" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTS-em-eiA">
+                                <rect key="frame" x="177" y="113" width="60" height="21"/>
+                                <color key="backgroundColor" red="0.4760928750038147" green="0.58250075578689575" blue="0.72943240404129028" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="60" id="HZE-aZ-CkT"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="aOD-KT-ksP" firstAttribute="top" secondItem="KcY-U7-JEH" secondAttribute="bottom" constant="-38" id="0AD-qv-zDH"/>
+                            <constraint firstItem="aOD-KT-ksP" firstAttribute="top" secondItem="eLq-EE-HwW" secondAttribute="top" id="4bD-5Z-ZyV"/>
+                            <constraint firstItem="BTS-em-eiA" firstAttribute="centerX" secondItem="aOD-KT-ksP" secondAttribute="centerX" id="H0g-a1-ugA"/>
+                            <constraint firstItem="BTS-em-eiA" firstAttribute="top" secondItem="eLq-EE-HwW" secondAttribute="top" constant="69" id="NF7-5V-BnW"/>
+                            <constraint firstItem="aOD-KT-ksP" firstAttribute="leading" secondItem="eLq-EE-HwW" secondAttribute="leading" id="PZO-yj-6qD"/>
+                            <constraint firstItem="aOD-KT-ksP" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" id="X8a-Bx-Qhm"/>
+                            <constraint firstItem="aOD-KT-ksP" firstAttribute="trailing" secondItem="eLq-EE-HwW" secondAttribute="trailing" id="XWC-b0-Lf8"/>
+                            <constraint firstItem="KcY-U7-JEH" firstAttribute="leading" secondItem="aOD-KT-ksP" secondAttribute="trailing" constant="-102" id="oDd-dR-YcU"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="eLq-EE-HwW"/>
+                    </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="KcY-U7-JEH" id="e6G-op-6Wp"/>
+                        <outlet property="button" destination="YLM-To-OTW" id="enJ-iB-iSY"/>
+                        <outlet property="slider_button" destination="2rh-rK-OQM" id="2p1-dd-7wc"/>
+                        <outlet property="slider_ring" destination="rrm-xV-iBd" id="mRg-B7-dgz"/>
+                        <outlet property="time" destination="BTS-em-eiA" id="pyY-MS-MAP"/>
+                        <outlet property="webView" destination="aOD-KT-ksP" id="bnj-n4-EyD"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <gestureRecognizer id="VUV-Tz-dat" customClass="CustomGestureRecognizer" customModule="meteocool" customModuleProvider="target"/>
+            </objects>
+            <point key="canvasLocation" x="52.173913043478265" y="34.151785714285715"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Slider_Handle" width="403" height="1066"/>
+        <image name="Slider_long" width="3000" height="6000"/>
+        <image name="Slider_point" width="181.5" height="181.5"/>
+    </resources>
+</document>

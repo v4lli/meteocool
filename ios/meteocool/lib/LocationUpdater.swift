@@ -249,6 +249,12 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         if let bundle_lang = Bundle.main.preferredLocalizations.first {
             lang = bundle_lang
         }
+        
+        var language = "en"
+        
+        if Locale.preferredLanguages[0].split(separator: "-")[0] == "de"{
+            language = "de"
+        }
 
         let locationDict = [
             "lat": location.coordinate.latitude as Double,
@@ -264,7 +270,8 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
             "ahead": 15,
             "intensity": 10,
             "source": "ios",
-            "token": tokenValue
+            "token": tokenValue,
+            "lang": language
             ] as [String: Any]
 
         guard let request = NetworkHelper.createJSONPostRequest(dst: "post_location", dictionary: locationDict) else {
