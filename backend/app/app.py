@@ -7,6 +7,7 @@ import logging
 import random
 import threading
 import uuid
+import time
 
 hooksEnabled = None
 try:
@@ -381,6 +382,7 @@ def blitzortung_thread():
         # XXX error handling
         tgtServer = "ws://ws.blitzortung.org:80%d/" % (random.randint(50, 90))
         logging.warn("blitzortung-thread: Connecting to %s..." % tgtServer)
+        time.sleep(3)
         ws = websocket.WebSocketApp(
             tgtServer,
             on_message=on_message,
