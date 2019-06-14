@@ -265,8 +265,7 @@ window.downloadForecast(function() {
         view.addGestureRecognizer(gesture)
         drawer_hide()
         
-        print("Language: ")
-        print(Locale.preferredLanguages[0].split(separator: "-")[0])
+        print("Language: " + Locale.preferredLanguages[0].split(separator: "-")[0])
     }
     
     override func viewDidLoad() {
