@@ -126,57 +126,57 @@ window.downloadForecast(function() {
     /* called from javascript */
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         let action = String(describing: message.body)
-        
+
         // XXX convert to switch/case
-        
+
         if message.name == "timeHandler" {
             self.currentdate = NSDate(timeIntervalSince1970: Double(action)!) as Date
         }
-        
+
         if action == "darkmode" {
             toggleDarkMode()
         }
         if action == "lightmode" {
             toggleLightMode()
         }
-        
+
         if action == "startMonitoringLocationExplicit" {
             SharedLocationUpdater.requestLocation(observer: self, explicit: true)
             SharedLocationUpdater.startAccurateLocationUpdates()
         }
-        
+
         if action == "startMonitoringLocationImplicit" {
             SharedLocationUpdater.requestLocation(observer: self, explicit: false)
             SharedLocationUpdater.startAccurateLocationUpdates()
         }
-        
+
         if action == "stopMonitoringLocation" {
             SharedLocationUpdater.stopAccurateLocationUpdates()
         }
-        
+
         if action == "forecastDownloaded" {
             time.text = formatter.string(from: Date())
             drawer_open_finish()
         }
-        
+
         if action == "forecastInvalid" {
             drawer_close()
         }
-        
+
         if action == "enableScrolling" {
             webView.scrollView.isScrollEnabled = true
             webView.scrollView.bounces = true
         }
-        
+
         if action == "disableScrolling" {
             webView.scrollView.isScrollEnabled = false
             webView.scrollView.bounces = false
         }
-        
+
         if action == "drawerHide" {
             drawer_hide()
         }
-        
+
         if action == "drawerShow" {
             drawer_show()
         }
