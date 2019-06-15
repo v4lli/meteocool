@@ -249,14 +249,6 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
         if let bundle_lang = Bundle.main.preferredLocalizations.first {
             lang = bundle_lang
         }
-        
-        var language = "en"
-        
-        if Locale.preferredLanguages[0].split(separator: "-")[0] == "de"{
-            language = "de"
-        }
-        
-        print (language)
 
         let locationDict = [
             "lat": location.coordinate.latitude as Double,

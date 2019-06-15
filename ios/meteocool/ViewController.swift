@@ -118,7 +118,7 @@ window.downloadForecast(function() {
         // #f8f9fa = non-darkmode titelbar color
         UIApplication.shared.statusBarView?.backgroundColor = lightmode
     }
-    
+
     func notify(location: CLLocation) {
         webView.evaluateJavaScript("window.injectLocation(\(location.coordinate.latitude), \(location.coordinate.longitude), \(location.horizontalAccuracy));")
     }
@@ -308,7 +308,7 @@ window.downloadForecast(function() {
             }
         }
     }
-    
+
     @objc func willEnterForeground() {
         // reload tiles if app resumes from background
         webView.evaluateJavaScript("window.manualTileUpdateFn(true);")
