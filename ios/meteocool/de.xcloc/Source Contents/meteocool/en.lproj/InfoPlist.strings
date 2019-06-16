@@ -1,0 +1,10 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "meteocool";
+/* Bundle name */
+"CFBundleName" = "meteocool";
+/* Privacy - Location Always and When In Use Usage Description */
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "We want notify you ahead of rain or snow at your current location. Choose \"Always\" if you want Push Notifications to work.";
+/* Privacy - Location Always Usage Description */
+"NSLocationAlwaysUsageDescription" = "We want notify you ahead of rain or snow at your current location. Choose \"Always\" if you want Push Notifications to work.";
+/* Privacy - Location When In Use Usage Description */
+"NSLocationWhenInUseUsageDescription" = "Display your own location on the weather map.";

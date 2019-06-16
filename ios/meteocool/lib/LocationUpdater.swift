@@ -264,7 +264,7 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
             "ahead": 15,
             "intensity": 10,
             "source": "ios",
-            "token": tokenValue
+            "token": tokenValue,
             ] as [String: Any]
 
         guard let request = NetworkHelper.createJSONPostRequest(dst: "post_location", dictionary: locationDict) else {
