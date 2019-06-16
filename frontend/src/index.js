@@ -18,6 +18,8 @@ import Attribution from "ol/control/Attribution";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
+import dateFnGerman from "date-fns/locale/de";
+import dateFnEnglish from "date-fns/locale/en";
 import io from "socket.io-client";
 import { Cluster } from "ol/source.js";
 import { DeviceDetect } from "./DeviceDetect.js";
@@ -28,6 +30,7 @@ import { defaults as defaultControls, OverviewMap } from "ol/control.js";
 import { fromLonLat } from "ol/proj.js";
 import { LayerManager } from "./LayerManager.js";
 import { StrikeManager } from "./StrikeManager.js";
+import { Workbox } from "workbox-window";
 
 import logoBig from "../assets/android-chrome-512x512.png"; // eslint-disable-line no-unused-vars
 
@@ -38,12 +41,28 @@ window.$ = $;
 
 var dd = new DeviceDetect();
 
+// german localization - since we have very few string, do this manually
+// instead of using another crappy library.
+var lang = "en";
+var dfnLocale = dateFnEnglish;
+if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.language.split('-')[0] == "de") {
+  $("#localizedLastUpdated").text("Aktualisiert");
+  $("#updatedTime").text("nie!");
+  $("#openSettings").text("Einstellungen");
+  $("#toggleMode").text("Dark Mode");
+  $("#localizedDocumentation").text("Dokumentation");
+  $("#localizedApps").text("Android & iPhone");
+  $("#localizedAbout").text("Über meteocool");
+  lang = "de";
+  dfnLocale = dateFnGerman;
+}
+
 function lastUpdatedFn () {
   var elem = document.getElementById("updatedTime");
 
   if (elem) {
     if (window.lastUpdatedServer) {
-      elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer) + " ago";
+      elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer, {locale: dfnLocale, addSuffix: true}) + ".";
     } else {
       elem.innerHTML = "<span style='color: #ff0000;'>connection error</span>";
     }
@@ -60,48 +79,6 @@ function updateTimestamp (lastUpdatedParam) {
 // ===================
 // Environment & Setup
 // ===================
-
-// Register service worker
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").then(reg => {
-      // console.log("SW registered: ", reg);
-
-      // Update service worker on page refresh
-      // https://redfin.engineering/how-to-fix-the-refresh-button-when-using-service-workers-a8e27af6df68
-      function listenForWaitingServiceWorker (reg, callback) {
-        function awaitStateChange () {
-          reg.installing.addEventListener("statechange", function () {
-            if (this.state === "installed") callback(reg);
-          });
-        }
-        if (!reg) return;
-        if (reg.waiting) return callback(reg);
-        if (reg.installing) awaitStateChange();
-        reg.addEventListener("updatefound", awaitStateChange);
-      }
-
-      // Reload once when the new Service Worker starts activating
-      var refreshing;
-      navigator.serviceWorker.addEventListener("controllerchange", function () {
-        console.log("Reloading page for latest content");
-        if (refreshing) return;
-        refreshing = true;
-        window.location.reload();
-      });
-      function promptUserToRefresh (reg) {
-        // Immediately load service worker
-        reg.waiting.postMessage("skipWaiting");
-        // if (window.confirm("New version available! OK to refresh?")) {
-        //  reg.waiting.postMessage('skipWaiting');
-        // }
-      }
-      listenForWaitingServiceWorker(reg, promptUserToRefresh);
-    }).catch(registrationError => {
-      console.log("SW registration failed: ", registrationError);
-    });
-  });
-}
 
 // Detect PWA on iOS for iPhone X UI optimization
 var ipXPWAOpt = () => {
@@ -473,7 +450,7 @@ window.lm = new LayerManager(window.map, tileUrl, null, 9, reflectivityOpacity, 
 // field and use it for the "last updated" feature.
 function manualTileUpdate () {
   var elem = document.getElementById("updatedTime");
-  if (elem) { elem.innerHTML = "checking..."; }
+  if (elem) { elem.innerHTML = "..."; }
   window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
 }
 // for historic reason, this is the hook called by the apps when entering
@@ -708,14 +685,14 @@ $("#appModal").on("show.bs.modal", function () {
 });
 
 // show settings button for certain API levels only
-if (!DeviceDetect.getIosAPILevel() >= 3) {
+if (DeviceDetect.getIosAPILevel() >= 3) {
   $("#openSettings").css("display", "inline");
   $("#openSettings").onclick = () => {
     window.webkit.messageHandlers["settingsHandler"].postMessage("show");
   };
 }
-if (!DeviceDetect.getAndroidAPILevel() >= 2) {
-  $("#openSettings").css("display", "inline");
+if (DeviceDetect.getAndroidAPILevel() >= 2) {
+  $("#openSettings").css("display", "block");
   $("#openSettings").onclick = () => {
     Android.showSettings(); // eslint-disable-line no-undef
   };
@@ -752,5 +729,20 @@ window.injectSettings = (newSettings) => {
     settings.set(key, newSettings[key]);
   }
 };
+
+// Register service worker
+if ("serviceWorker" in navigator) {
+  const wb = new Workbox("sw.js");
+  wb.addEventListener("waiting", (event) => {
+    wb.addEventListener("controlling", (event) => {
+      console.log("Reloading page for latest content");
+      window.location.reload();
+    });
+    wb.messageSW({ type: "SKIP_WAITING" });
+    // Old serviceworker message for migration, can be removed in the future
+    wb.messageSW("SKIP_WAITING");
+  });
+  wb.register();
+}
 
 /* vim: set ts=2 sw=2 expandtab: */

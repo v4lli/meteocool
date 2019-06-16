@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+  <file original="meteocool/Base.lproj/Main.storyboard" source-language="en" target-language="de" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="11.0" build-num="11M336w"/>
+    </header>
+    <body>
+      <trans-unit id="BTS-em-eiA.text" xml:space="preserve">
+        <source>0 min</source>
+        <target>0 min</target>
+        <note>Class = "UILabel"; text = "0 min"; ObjectID = "BTS-em-eiA";</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="meteocool/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="de">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="11.0" build-num="11M336w"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleDisplayName" xml:space="preserve">
+        <source>meteocool</source>
+        <note>Bundle display name</note>
+      </trans-unit>
+      <trans-unit id="CFBundleName" xml:space="preserve">
+        <source>meteocool</source>
+        <note>Bundle name</note>
+      </trans-unit>
+      <trans-unit id="NSLocationAlwaysAndWhenInUseUsageDescription" xml:space="preserve">
+        <source>We want notify you ahead of rain or snow at your current location. Choose "Always" if you want Push Notifications to work.</source>
+        <note>Privacy - Location Always and When In Use Usage Description</note>
+      </trans-unit>
+      <trans-unit id="NSLocationAlwaysUsageDescription" xml:space="preserve">
+        <source>We want notify you ahead of rain or snow at your current location. Choose "Always" if you want Push Notifications to work.</source>
+        <note>Privacy - Location Always Usage Description</note>
+      </trans-unit>
+      <trans-unit id="NSLocationWhenInUseUsageDescription" xml:space="preserve">
+        <source>Display your own location on the weather map.</source>
+        <note>Privacy - Location When In Use Usage Description</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="meteocool/en.lproj/Localizable.strings" datatype="plaintext" source-language="en" target-language="de">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="11.0" build-num="11M336w"/>
+    </header>
+    <body>
+      <trans-unit id="Open" xml:space="preserve">
+        <source>Open</source>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="NotificationContent/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="de">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="11.0" build-num="11M336w"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleDisplayName" xml:space="preserve">
+        <source>NotificationContent</source>
+        <note>Bundle display name</note>
+      </trans-unit>
+      <trans-unit id="CFBundleName" xml:space="preserve">
+        <source>NotificationContent</source>
+        <note>Bundle name</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="NotificationService/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="de">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="11.0" build-num="11M336w"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleDisplayName" xml:space="preserve">
+        <source>NotificationService</source>
+        <note>Bundle display name</note>
+      </trans-unit>
+      <trans-unit id="CFBundleName" xml:space="preserve">
+        <source>NotificationService</source>
+        <note>Bundle name</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Widget/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="de">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="11.0" build-num="11M336w"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleDisplayName" xml:space="preserve">
+        <source>meteocool Mini Map</source>
+        <note>Bundle display name</note>
+      </trans-unit>
+      <trans-unit id="CFBundleName" xml:space="preserve">
+        <source>Widget</source>
+        <note>Bundle name</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
