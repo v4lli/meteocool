@@ -18,15 +18,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
+            app:icon="@drawable/bell"
         app:title="@string/notification_header">
 
         <SwitchPreferenceCompat
             app:key="notification"
             app:title="@string/notification_push_title"/>
 
+        <ListPreference
+                app:key="intensity"
+                app:title="@string/notification_push_level_title"
+                app:entries="@array/notification_intensity_entries"
+                app:entryValues="@array/notification_intensity_values"
+                app:defaultValue="level_drizzle"
+                app:useSimpleSummaryProvider="true"
+                app:dependency="notification"/>
+
+        <ListPreference
+                app:key="notification_time"
+                app:title="@string/notification_time_title"
+                app:entries="@array/notification_time_entries"
+                app:entryValues="@array/notification_time_values"
+                app:defaultValue="15"
+                app:useSimpleSummaryProvider="true"
+                app:dependency="notification"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory
+            app:icon="@drawable/maps_and_location"
         app:title="@string/map_header">
 
         <SwitchPreferenceCompat
@@ -40,6 +60,7 @@
         />
 
     </PreferenceCategory>
+
 
 
 

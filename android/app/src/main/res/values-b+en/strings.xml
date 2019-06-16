@@ -31,6 +31,14 @@
 
     <!-- Push Preferences -->
     <string name="notification_push_title">Receive push notifications</string>
+    <string name="notification_push_level_title">Notification level</string>
+    <string name="level_drizzle">Drizzle</string>
+    <string name="level_rain">Rain</string>
+    <string name="level_heavy_rain">Heavy Rain</string>
+    <string name="level_hail">Hail</string>
+
+    <string name="notification_time_title">Notify time</string>
+
 
     <!-- Map Preferences -->
     <string name="zoom_title">Zoom after start</string>

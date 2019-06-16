@@ -1,12 +1,41 @@
 <resources>
-    <!-- Reply Preference -->
-    <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to all</item>
+    <!-- Notification intensity Preference -->
+    <string-array name="notification_intensity_entries">
+        <item>@string/level_drizzle</item>
+        <item>@string/level_rain</item>
+        <item>@string/level_heavy_rain</item>
+        <item>@string/level_hail</item>
     </string-array>
 
-    <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
+    <string-array name="notification_intensity_values">
+        <item>level_drizzle</item>
+        <item>level_rain</item>
+        <item>level_heavy_rain</item>
+        <item>level_hail</item>
+    </string-array>
+
+    <!-- Reply Preference -->
+    <string-array name="notification_time_entries">
+        <item>5 Min</item>
+        <item>10 Min</item>
+        <item>15 Min</item>
+        <item>20 Min</item>
+        <item>25 Min</item>
+        <item>30 Min</item>
+        <item>35 Min</item>
+        <item>40 Min</item>
+        <item>45 Min</item>
+    </string-array>
+
+    <string-array name="notification_time_values">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+        <item>35</item>
+        <item>40</item>
+        <item>45</item>
     </string-array>
 </resources>
