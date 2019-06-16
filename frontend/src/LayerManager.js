@@ -36,7 +36,7 @@ export class LayerManager {
   }
 
   hook (handler, action) {
-    console.log("emitting event " + action + " to handler: " + handler);
+    // console.log("emitting event " + action + " to handler: " + handler);
     this.appHandlers.forEach((h) => {
       h(handler, action);
     });

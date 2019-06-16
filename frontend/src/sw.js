@@ -1,4 +1,4 @@
-// workbox.setConfig({ debug: true });
+workbox.setConfig({ debug: false });
 
 // Update service worker on page refresh
 addEventListener("message", event => {
