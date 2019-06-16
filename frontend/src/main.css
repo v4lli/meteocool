@@ -291,8 +291,14 @@ hr {
 }
 
 #appstoreBtns img {
-	width: 20%;
+	width: 30%;
 	margin: 2%;
+	margin-top: 0%;
+	margin-bottom: 0%;
+}
+
+#iosBtn {
+	width: 27% !important;
 }
 
 .clickable {

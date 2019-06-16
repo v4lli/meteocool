@@ -166,11 +166,7 @@ die im Folgenden beschriebenen Verarbeitungsschritte transformiert.
 <h5>Geographische Projektionen</h5>
 <div class="tcolorboxInner">
 <p class="noindent" >Da die Erde eine Kugel ist, ist zur korrekten Darstellung ebendieser auf einer zweidiemensionalen
-Karte eine mathematische Projektion notwendig. In der Geographie gibt es eine Vielzahl
-<span class="footnote-mark"><a 
-href="techdoc2.html#fn1x0"><sup class="textsuperscript">1</sup></a></span><a 
- id="x1-2f1"></a> an
-gebräuchlichen Projektionen mit unterschiedlichen Eigenschaften:
+Karte eine mathematische Projektion notwendig. In der Geographie gibt es eine Vielzahl an gebräuchlichen Projektionen mit unterschiedlichen Eigenschaften:
 </p>
      <ul class="itemize1">
      <li class="itemize"><span 
@@ -226,12 +222,8 @@ dbZ (extremer Starkregen/Hagel) farblich kodiert.
 </p><!--l. 142--><p class="indent" >  Um bei einer zukünftigen Erhöhung der derzeit 256 Intensitäts-Stufen ﬂexibel reagieren zu
 können, wurde, anstatt einer statischen Palette, ein linearer Farbverlauf innerhalb jeder der
 acht Farbstufen der Skala implementiert:
-</p><!--l. 147--><p class="indent" >  Die Grundfarben <span class="footnote-mark"><a 
-href="techdoc2.html#fn1x0"><sup class="textsuperscript">1</sup></a></span><a 
- id="x1-8001f1"></a>
-werden im RGB-Farbformat angegeben. Ein Python-Script konvertiert diese ins
-HSL-Farbmodell und schwächt die L-Komponente (<span 
-class="ecti-1095">Lightness</span>) nach rechts hin ab.
+</p><!--l. 147--><p class="indent" >  Die Grundfarben werden im RGB-Farbformat angegeben. Ein Python-Script konvertiert diese ins
+HSL-Farbmodell und schwächt die L-Komponente (<span class="ecti-1095">Lightness</span>) nach rechts hin ab.
 </p><!--l. 152--><p class="indent" >  Dem Betrachter soll der dunklere Farbton eine höhere Sturmintensität signalisieren.
 </p>
   <hr class="figure" /><div class="figure" 
@@ -265,17 +257,14 @@ href="#x1-90013">3<!--tex4ht:ref: fig:reflectivity_raw --></a>) in der vom DWD
 vorgegebenen Auﬂösung von 1100x900 km (= Pixel) vor. Das Radarbild muss nun in
 eine einheitliche Projektion überführt werden, so dass es ohne Verzerrungen über
 vorhandenes Kartenmaterial gelegt werden kann. Da das Kartenmaterial von
-OpenStreetMap<span class="footnote-mark"><a 
-href="techdoc3.html#fn2x0"><sup class="textsuperscript">2</sup></a></span><a 
- id="x1-9002f2"></a>
-in der <span 
-class="ecbx-1095">Web Mercator Projektion </span><span class="cite">[<a 
+OpenStreetMap
+in der
+Web Mercator Projektion </span><span class="cite">[<a 
 href="#Xwebmercator">4</a>]</span> vorliegt, sollen die Radardaten ebenfalls in diese
 Projektion umgewandelt werden.
 </p><!--l. 183--><p class="indent" >  Nachdem die Projektion mit einem Tool aus der
-GDAL-Bibliothek<span class="footnote-mark"><a 
-href="techdoc4.html#fn3x0"><sup class="textsuperscript">3</sup></a></span><a 
- id="x1-9003f3"></a>
+GDAL-Bibliothek
+
 zu <span 
 class="ecti-1095">Web Mercator </span>geändert wurde, muss das resultierende Bild zudem noch an einem
 Referenzpunkt in einem globalen Koordinatensystem angehängt werden. Besagte Eckpunkte
@@ -306,10 +295,7 @@ Windrichtung, Luftdruck und anderen lokalen Messungen, welche örtlich vom DWD
 vorgenommen und verarbeitet werden.
 
 </p><!--l. 269--><p class="indent" >  Die Vorhersagen liegen in einem kleineren Gitter von 900x900 km in 24
-Dateien<span class="footnote-mark"><a 
-href="techdoc5.html#fn4x0"><sup class="textsuperscript">4</sup></a></span><a 
- id="x1-10001f4"></a>
-vor (d.h. bis zu 120 Minuten akkurater Vorhersagen). Die Verarbeitung verläuft analog zu den
+Dateien vor (d.h. bis zu 120 Minuten akkurater Vorhersagen). Die Verarbeitung verläuft analog zu den
 in <a 
 href="#x1-90002.1.2">2.1.2<!--tex4ht:ref: georef --></a> erläuterten Radardaten.
 </p>
@@ -320,9 +306,7 @@ href="#x1-190003">3<!--tex4ht:ref: ios --></a>)
 implementiert.
 </p><!--l. 279--><p class="indent" >  Die zugrundeliegende Idee ist, dass die mobile Anwendung im
 Hintergrund eine grobe, aktuelle Position des jeweiligen Nutzers
-anonym<span class="footnote-mark"><a 
-href="techdoc6.html#fn5x0"><sup class="textsuperscript">5</sup></a></span><a 
- id="x1-11001f5"></a>
+anonym
 an den meteocool-Server übermittelt. Bei der darauffolgenden, regelmäßigen Verarbeitung
 neuer Nowcast-Daten (wie in <a 
 href="#x1-100002.1.3">2.1.3<!--tex4ht:ref: nowcast --></a> beschrieben), werden die Vorhersagen anhand der zuvor
@@ -428,19 +412,14 @@ class="ecti-1095">cool-off </span>-Funktion).
 class="ecti-1095">veralteten Benachrichtigungen </span>zu beheben, wurden sog. <span 
 class="ecti-1095">silent- </span>bzw.
 <span 
-class="ecti-1095">data pushes</span><span class="footnote-mark"><a 
-href="techdoc7.html#fn6x0"><sup class="textsuperscript">6</sup></a></span><a 
- id="x1-13001f6"></a>
+class="ecti-1095">data pushes</span>
 implementiert.
 
 </p><!--l. 398--><p class="indent" >  Diese werden vom Backend an ein Client-Gerät gesendet, sobald das Gewitter,
 für das zuvor eine Push-Nachricht gesendet wurde, wieder abgezogen ist. Mittels
-APNS<span class="footnote-mark"><a 
-href="techdoc8.html#fn7x0"><sup class="textsuperscript">7</sup></a></span><a 
- id="x1-13002f7"></a> bzw.
-Google Firebase<span class="footnote-mark"><a 
-href="techdoc9.html#fn8x0"><sup class="textsuperscript">8</sup></a></span><a 
- id="x1-13003f8"></a>
+APNS
+bzw.
+Google Firebase
 wird auf dem Client-Gerät ein Teilprogramm ausgeführt, welches alle aktuell auf dem Display
 angezeigten Benachrichtigungen löscht und eine Information darüber an das Backend
 sendet.
@@ -468,9 +447,7 @@ Benachrichtigung auch Bilder (u.a.) auf dem Display anzuzeigen.
 die Möglichkeit auch im gesperrten Zustand durch die sog. <span 
 class="ecti-1095">force</span>
 <span 
-class="ecti-1095">touch</span>-Geste<span class="footnote-mark"><a 
-href="techdoc10.html#fn9x0"><sup class="textsuperscript">9</sup></a></span><a 
- id="x1-14001f9"></a>
+class="ecti-1095">touch</span>-Geste
 einen bildschirmfüllende Kartenausschnitt anzuzeigen.
 </p>
   <h4 class="subsectionHead"><span class="titlemark">2.3 </span> <a 
@@ -480,11 +457,7 @@ einen bildschirmfüllende Kartenausschnitt anzuzeigen.
 class="ecti-1095">dwd</span>-Container) verwaltet der <span 
 class="ecti-1095">app</span>-Container alle Interaktionen mit Endgeräten. Zur persistenten
 Speicherung und als Interface zur Push-Komponente dient eine Instanz der <span 
-class="ecti-1095">Key-Value-Store</span>-Datenbank
-
-“MongoDB”<span class="footnote-mark"><a 
-href="techdoc11.html#fn10x0"><sup class="textsuperscript">10</sup></a></span><a 
- id="x1-15001f10"></a>.
+class="ecti-1095">Key-Value-Store</span>-Datenbank “MongoDB”.
 </p>
 
 <h5 class="subsubsectionHead"><span class="titlemark">2.3.1 </span> <a 
@@ -522,9 +495,7 @@ class="ecti-1095">dwd</span>-Container am einfachen realisierbar war.
  id="x1-180002.5"></a>Frontend</h4>
 <!--l. 503--><p class="noindent" >Die plattformübergreifende, HTML5-basierte Web-Oberﬂäche basiert auf dem Mapping-Framework
 <span 
-class="ecti-1095">OpenLayers</span><span class="footnote-mark"><a 
-href="techdoc13.html#fn12x0"><sup class="textsuperscript">12</sup></a></span><a 
- id="x1-18001f12"></a>.
+class="ecti-1095">OpenLayers</span>.
 OpenLayers ist ein in JavaScript geschriebenes Framework, um Kartenmaterial ﬂexibel und
 über diverse Anbindungen (Backends) im Browser darzustellen. Eine der wichtigsten
 Abstraktionen von OpenLayers besteht in der Übereinanderlagerung von sog. Layern. So ist es
@@ -543,22 +514,15 @@ u.a.:
      <li class="itemize">Blitz-Event (Koordinaten und Intensität): Client zeigt visuellen Marker auf Karte
      an,
      </li>
-     <li class="itemize">Push-Benachrichtigung<span class="footnote-mark"><a 
-href="techdoc14.html#fn13x0"><sup class="textsuperscript">13</sup></a></span><a 
- id="x1-18002f13"></a>
-     trifft ein: Client zeigt Benachrichtigung über <span 
+     <li class="itemize">Push-Benachrichtigung trifft ein: Client zeigt Benachrichtigung über <span 
 class="ecti-1095">Javascript Desktop Notification API</span>.</li></ul>
 <!--l. 536--><p class="indent" >  Desweiteren verwendet die Oberﬂäche die <span 
 class="ecti-1095">Google</span>
 <span 
-class="ecti-1095">Workbox</span><span class="footnote-mark"><a 
-href="techdoc15.html#fn14x0"><sup class="textsuperscript">14</sup></a></span><a 
- id="x1-18003f14"></a>
-Bibliothek, um meteocool so zu einer sogenannten <span 
+class="ecti-1095">Workbox</span> Bibliothek, um meteocool so zu einer sogenannten <span 
 class="ecbx-1095">Progressive Web App </span>(PWA) zu machen.
 Durch die Verwendung von modernen Webtechnologien wie <span 
-class="ecti-1095">Service Workers </span>und <span 
-class="ecti-1095">Local Storage</span>
+class="ecti-1095">Service Workers </span>und <span class="ecti-1095">Local Storage</span>
 
 wird auf diese Weise die Geschwindigkeit sowie die Resilienz gegenüber (kurzzeitigen)
 Ausfällen der Netzwerkverbindung erhöht und die Verwendung von mobilen Daten
