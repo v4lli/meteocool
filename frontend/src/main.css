@@ -52,6 +52,11 @@
 	cursor: pointer;
 }
 
+#openSettings {
+	cursor: pointer;
+	display: none;
+}
+
 #navbar #spacer {
 	padding-top: constant(safe-area-inset-top);
 	display: none;

@@ -23,7 +23,6 @@ export class DeviceDetect {
   }
 
   isWidgetMode () {
-    //console.log(this.widgetMode);
     return this.widgetMode;
   }
 
@@ -33,8 +32,14 @@ export class DeviceDetect {
     });
   }
 
+  /*
+   * XXX change the mobile= parameter readout to something more elegant.
+   * This would break if the ifs are re-orderd...
+   */
   static getAndroidAPILevel () {
-    if (window.location.search.indexOf("mobile=android") !== -1) {
+    if (window.location.search.indexOf("mobile=android2") !== -1) {
+      return 2;
+    } else if (window.location.search.indexOf("mobile=android") !== -1) {
       return 1;
     } else {
       return -1;
@@ -43,6 +48,9 @@ export class DeviceDetect {
 
   static getIosAPILevel () {
     if (DeviceDetect.isIos()) {
+      if (window.location.search.indexOf("mobile=ios3") !== -1) {
+        return 3;
+      }
       if (window.location.search.indexOf("mobile=ios2") !== -1) {
         return 2;
       }
@@ -52,10 +60,11 @@ export class DeviceDetect {
 
   static isApp () {
     if (DeviceDetect.isIos()) {
-      if (window.location.search.indexOf("mobile=ios2") !== -1) {
+      if (window.location.search.indexOf("mobile=ios") !== -1) {
         return true;
       }
     } else {
+      // XXX missing double check (like w/ iOS) because of missing isAndroid() method
       if (window.location.search.indexOf("mobile=android") !== -1) {
         return true;
       }
