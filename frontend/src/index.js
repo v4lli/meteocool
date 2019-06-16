@@ -65,7 +65,7 @@ function updateTimestamp (lastUpdatedParam) {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js").then(reg => {
-      //console.log("SW registered: ", reg);
+      // console.log("SW registered: ", reg);
 
       // Update service worker on page refresh
       // https://redfin.engineering/how-to-fix-the-refresh-button-when-using-service-workers-a8e27af6df68
@@ -482,7 +482,7 @@ window.manualTileUpdateFn = (p) => {
   manualTileUpdate();
   if (window.mcSettings["zoomOnForeground"]) {
     if (window.userLocation) {
-      window.map.getView().animate({center: window.userLocation, zoom: 10});
+      window.map.getView().animate({ center: window.userLocation, zoom: 10 });
     }
   }
 };
@@ -568,9 +568,8 @@ if (!dd.isWidgetMode()) {
   var element = document.createElement("div");
   element.className = "locate-me ol-unselectable ol-control";
   element.appendChild(button);
-  window.map.addControl(new Control({element: element}));
+  window.map.addControl(new Control({ element: element }));
 }
-
 
 // forecast button
 var playButton;
@@ -727,13 +726,13 @@ var settings = new Settings({
     "type": "boolean",
     "default": true,
     "cb": (value) => {
-        view = new View({
-          center: map.getView().getCenter(),
-          zoom: map.getView().getZoom(),
-          minzoom: 5,
-          enableRotation: value
-        });
-        map.setView(view);
+      view = new View({
+        center: window.map.getView().getCenter(),
+        zoom: window.map.getView().getZoom(),
+        minzoom: 5,
+        enableRotation: value
+      });
+      window.map.setView(view);
     }
   },
   "zoomOnForeground": {
