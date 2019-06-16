@@ -8,7 +8,7 @@ var whenMapIsReady = (map, callback) => {
   } else {
     map.once("change:ready", whenMapIsReady.bind(null, map, callback));
   }
-}
+};
 
 /**
  * Manages the reflectivity + forecast layers shown on the map.
@@ -30,8 +30,7 @@ export class LayerManager {
 
     if (enableIOSHooks) {
       this.appHandlers.push((handler, action) => {
-        if (handler in window.webkit.messageHandlers)
-          window.webkit.messageHandlers[handler].postMessage(action);
+        if (handler in window.webkit.messageHandlers) { window.webkit.messageHandlers[handler].postMessage(action); }
       });
     }
   }
@@ -113,13 +112,13 @@ export class LayerManager {
 
     this.playPaused = true;
 
-    if (num == -1) {
+    if (num === -1) {
       this.map.addLayer(this.mainLayer);
     } else {
       this.map.addLayer(this.forecastLayers[num]["layer"]);
     }
 
-    if (this.currentForecastNo == -1) {
+    if (this.currentForecastNo === -1) {
       this.map.removeLayer(this.mainLayer);
     } else {
       this.map.removeLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
@@ -136,13 +135,13 @@ export class LayerManager {
     });
   }
 
-  stopPlay() {
-      this.currentForecastNo = -1;
-      this.playPaused = false;
-      document.getElementById("nowcastIcon").src = "./player-play.png";
-      document.getElementById("nowcastIcon").style.display = "";
-      $("#forecastTimeWrapper").css("display", "none");
-      this.hook("scriptHandler", "playFinished");
+  stopPlay () {
+    this.currentForecastNo = -1;
+    this.playPaused = false;
+    document.getElementById("nowcastIcon").src = "./player-play.png";
+    document.getElementById("nowcastIcon").style.display = "";
+    $("#forecastTimeWrapper").css("display", "none");
+    this.hook("scriptHandler", "playFinished");
   }
 
   playForecast (e) {
@@ -176,7 +175,7 @@ export class LayerManager {
     this.map.addLayer(this.forecastLayers[this.currentForecastNo]["layer"]);
 
     if (this.currentForecastNo >= 0) {
-      let layerTime = (parseInt(this.forecastLayers[this.currentForecastNo]["version"]) + (this.currentForecastNo+1)*5*60)*1000;
+      let layerTime = (parseInt(this.forecastLayers[this.currentForecastNo]["version"]) + (this.currentForecastNo + 1) * 5 * 60) * 1000;
       let dt = new Date(layerTime);
       let dtStr = ("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2);
       $(".forecastTimeInner").html(dtStr);

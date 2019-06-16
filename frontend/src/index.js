@@ -20,7 +20,8 @@ import VectorSource from "ol/source/Vector";
 import distanceInWordsToNow from "date-fns/distance_in_words_to_now";
 import io from "socket.io-client";
 import { Cluster } from "ol/source.js";
-import { DeviceDetect } from "./modules/device-detect.js";
+import { DeviceDetect } from "./DeviceDetect.js";
+import { Settings } from "./Settings.js";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import { Map, View, Geolocation, Feature } from "ol";
 import { defaults as defaultControls, OverviewMap } from "ol/control.js";
@@ -64,7 +65,7 @@ function updateTimestamp (lastUpdatedParam) {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js").then(reg => {
-      //console.log("SW registered: ", reg);
+      // console.log("SW registered: ", reg);
 
       // Update service worker on page refresh
       // https://redfin.engineering/how-to-fix-the-refresh-button-when-using-service-workers-a8e27af6df68
@@ -475,7 +476,16 @@ function manualTileUpdate () {
   if (elem) { elem.innerHTML = "checking..."; }
   window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
 }
-window.manualTileUpdateFn = function (p) { manualTileUpdate(); };
+// for historic reason, this is the hook called by the apps when entering
+// foreground.
+window.manualTileUpdateFn = (p) => {
+  manualTileUpdate();
+  if (window.mcSettings["zoomOnForeground"]) {
+    if (window.userLocation) {
+      window.map.getView().animate({ center: window.userLocation, zoom: 10 });
+    }
+  }
+};
 manualTileUpdate();
 
 // we can now later call removeLayer(currentLayer), then update it with the new
@@ -558,9 +568,8 @@ if (!dd.isWidgetMode()) {
   var element = document.createElement("div");
   element.className = "locate-me ol-unselectable ol-control";
   element.appendChild(button);
-  window.map.addControl(new Control({element: element}));
+  window.map.addControl(new Control({ element: element }));
 }
-
 
 // forecast button
 var playButton;
@@ -697,5 +706,51 @@ $("#appModal").on("show.bs.modal", function () {
     img.attr("src", img.data("src"));
   });
 });
+
+// show settings button for certain API levels only
+if (!DeviceDetect.getIosAPILevel() >= 3) {
+  $("#openSettings").css("display", "inline");
+  $("#openSettings").onclick = () => {
+    window.webkit.messageHandlers["settingsHandler"].postMessage("show");
+  };
+}
+if (!DeviceDetect.getAndroidAPILevel() >= 2) {
+  $("#openSettings").css("display", "inline");
+  $("#openSettings").onclick = () => {
+    Android.showSettings(); // eslint-disable-line no-undef
+  };
+}
+
+var settings = new Settings({
+  "mapRotation": {
+    "type": "boolean",
+    "default": true,
+    "cb": (value) => {
+      view = new View({
+        center: window.map.getView().getCenter(),
+        zoom: window.map.getView().getZoom(),
+        minzoom: 5,
+        enableRotation: value
+      });
+      window.map.setView(view);
+    }
+  },
+  "zoomOnForeground": {
+    "type": "boolean",
+    "default": false,
+    "cb": null
+  },
+  "proMode": {
+    "type": "boolean",
+    "default": false,
+    "cb": null
+  }
+});
+
+window.injectSettings = (newSettings) => {
+  for (var key in newSettings) {
+    settings.set(key, newSettings[key]);
+  }
+};
 
 /* vim: set ts=2 sw=2 expandtab: */
