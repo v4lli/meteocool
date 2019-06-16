@@ -159,7 +159,7 @@ if (window.location.hash !== "") {
       document.getElementById("navbar").style.display = "none";
       positionFeature.setGeometry(center ? new Point(center) : null);
     }
-  } else {
+  } else if (window.location.hash.includes("#map")) {
     var hashM = window.location.hash.replace("#map=", "");
     var partsM = hashM.split("/");
     if (partsM.length === 4) {
@@ -667,6 +667,12 @@ $(document).ready(function () {
   if (window.location.href.indexOf("#about") !== -1) {
     $("#about").modal("show");
   }
+  if (window.location.href.indexOf("#apps") !== -1) {
+    $("#appModal").modal("show");
+  }
+  if (window.location.href.indexOf("#impressum") !== -1) {
+    $("#impressumModal").modal("show");
+  }
   if (DeviceDetect.getIosAPILevel() >= 2 && (window.location.href.indexOf("documentation.html") !== -1)) {
     window.webkit.messageHandlers["scriptHandler"].postMessage("enableScrolling");
     window.webkit.messageHandlers["scriptHandler"].postMessage("drawerHide");
@@ -682,6 +688,13 @@ $("#appModal").on("show.bs.modal", function () {
     var img = $(this);
     img.attr("src", img.data("src"));
   });
+  window.history.pushState('appModal', 'meteocool Apps', '/#apps');
+});
+$("#about").on("show.bs.modal", function () {
+  window.history.pushState('about', 'meteocool About', '/#about');
+});
+$("#impressumModal").on("show.bs.modal", function () {
+  window.history.pushState('impressm', 'meteocool Impressum', '/#impressum');
 });
 
 // show settings button for certain API levels only

@@ -32,12 +32,12 @@
             <p><img src="./legend_big.png" id="legend" alt="Color Mapping/Legend"></p>
             <p>Shown is the scale from 0 dbZ up to 65 dbZ.</p>
             <h3>Credits</h3>
-            <p>This project would not have been possible without the help from a few great people:</p>
+            <p>meteocool is maintained by <a href="https://unimplemented.org/">Valentin Dornauer</a>. This project would not have been possible without the help from a few great people:</p>
             <img src="volunteers.png" class="volunteers" alt="not actually the volunteers">
             <ul>
-              <li>General stuff: <a href="https://github.com/pew">Jonas</a>, <a href="https://github.com/NessArt">NessArt</a>
-              <li>iOS App: Thanks to <a href="https://mauracher.eu/">Florian Mauracher</a>, Nina Loser</li>
+              <li>iOS App: Thanks to <a href="https://mauracher.eu/">Florian Mauracher</a>, <a href="https://github.com/nina2244">Nina Loser</a></li>
               <li>Android App: maintained by <a href="https://github.com/Wheedman">Jeremias Wiedmann</a></li>
+              <li>Honourable mentions: <a href="https://github.com/pew">Jonas</a>, <a href="https://github.com/NessArt">NessArt</a>
               <li>Icons and adapted artwork made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> (Logo, iOS Onboarding) and Egor Rumyantsev from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> (licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>)</li>
             </ul>
             <p>Want to help as well? Check out <a href="https://github.com/v4lli/meteocool">the repo on GitHub</a> (specifically the <a
@@ -71,6 +71,11 @@
             <i>nowcast</i> models provided by DWD (up to 120 minutes
             into the future).</p>
 
+            <h5>Unintrusive</h5>
+            <p>We take great care to make the rain alerts as unintrusive as possible.<br/>For example, we won't send you notifications
+            while <a href="/documentation.html#x1-120002.2.1">traveling</a>. If a notification is not acknowledged (for example because you're asleep), it automatically disappears
+            from your phone as soon as it stops raining.</p>
+
             <h5>Concise Weather Radar</h5>
             <p>Our concise and beautiful weather radar supports you
             in spotting and classifying severe weather situations
@@ -79,23 +84,17 @@
             storm &mdash; that's up to you.</p>
 
             <h5>Completely Free on iOS and Android</h5>
-            The official meteocool App is available on the Apple
-            App Store. The Android App is <a href="https://github.com/v4lli/meteocool/releases/tag/v0.1">currently being beta-tested</a>.
+            The official meteocool Apps are available on the Apple App Store and on the Google Play Store. Like any other part of
+            meteocool, they are <a href="https://github.com/v4lli/meteocool"><i>open-source</i></a>.
 
             <div id="appstoreBtns">
               <a href="https://itunes.apple.com/app/meteocool-rain-radar/id1438364623">
-                <img class="lazy_load store" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==" data-src="./download-on-appstore.png" alt="Download the iOS app on the Apple App Store." />
+                <img class="lazy_load store" id="iosBtn" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==" data-src="./download-on-appstore.png" alt="Download the iOS app on the Apple App Store." />
               </a>
               <a href="https://play.google.com/store/apps/details?id=com.meteocool">
                 <img class="lazy_load store" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==" data-src="./download-on-playstore.png" alt="Download the Android App on the Play Store" />
               </a>
             </div>
-
-            <p>Please note that some of the latest features might
-            not yet be available on Android.  If you'd like to
-            change that, <a
-            href="https://github.com/v4lli/meteocool/issues?q=is%3Aissue+is%3Aopen+label%3Aandroid">we're
-            looking for contributors</a>.</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
