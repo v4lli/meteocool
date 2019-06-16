@@ -28,6 +28,7 @@ import { defaults as defaultControls, OverviewMap } from "ol/control.js";
 import { fromLonLat } from "ol/proj.js";
 import { LayerManager } from "./LayerManager.js";
 import { StrikeManager } from "./StrikeManager.js";
+import { Workbox } from "workbox-window";
 
 import logoBig from "../assets/android-chrome-512x512.png"; // eslint-disable-line no-unused-vars
 
@@ -60,48 +61,6 @@ function updateTimestamp (lastUpdatedParam) {
 // ===================
 // Environment & Setup
 // ===================
-
-// Register service worker
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").then(reg => {
-      // console.log("SW registered: ", reg);
-
-      // Update service worker on page refresh
-      // https://redfin.engineering/how-to-fix-the-refresh-button-when-using-service-workers-a8e27af6df68
-      function listenForWaitingServiceWorker (reg, callback) {
-        function awaitStateChange () {
-          reg.installing.addEventListener("statechange", function () {
-            if (this.state === "installed") callback(reg);
-          });
-        }
-        if (!reg) return;
-        if (reg.waiting) return callback(reg);
-        if (reg.installing) awaitStateChange();
-        reg.addEventListener("updatefound", awaitStateChange);
-      }
-
-      // Reload once when the new Service Worker starts activating
-      var refreshing;
-      navigator.serviceWorker.addEventListener("controllerchange", function () {
-        console.log("Reloading page for latest content");
-        if (refreshing) return;
-        refreshing = true;
-        window.location.reload();
-      });
-      function promptUserToRefresh (reg) {
-        // Immediately load service worker
-        reg.waiting.postMessage("skipWaiting");
-        // if (window.confirm("New version available! OK to refresh?")) {
-        //  reg.waiting.postMessage('skipWaiting');
-        // }
-      }
-      listenForWaitingServiceWorker(reg, promptUserToRefresh);
-    }).catch(registrationError => {
-      console.log("SW registration failed: ", registrationError);
-    });
-  });
-}
 
 // Detect PWA on iOS for iPhone X UI optimization
 var ipXPWAOpt = () => {
@@ -752,5 +711,20 @@ window.injectSettings = (newSettings) => {
     settings.set(key, newSettings[key]);
   }
 };
+
+// Register service worker
+if ("serviceWorker" in navigator) {
+  const wb = new Workbox("sw.js");
+  wb.addEventListener("waiting", (event) => {
+    wb.addEventListener("controlling", (event) => {
+      console.log("Reloading page for latest content");
+      window.location.reload();
+    });
+    wb.messageSW({type: "SKIP_WAITING"});
+    // Old serviceworker message for migration, can be removed in the future
+    wb.messageSW("SKIP_WAITING");
+  });
+  wb.register();
+}
 
 /* vim: set ts=2 sw=2 expandtab: */
