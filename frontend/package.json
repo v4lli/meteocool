@@ -5,11 +5,11 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config webpack.config.js --mode production",
-    "build-dev": "webpack --config webpack.config.js --mode development",
+    "build": "webpack --config webpack.config.js --mode production && cp static/* dist/",
+    "build-dev": "webpack --config webpack.config.js --mode development && cp static/* dist/",
     "lint": "eslint src",
     "serve-dev": "npm run build-dev && http-server -g -c0 dist",
-    "serve-release": "npm run build && http-server -g -c0 dist",
+    "serve-prod": "npm run build && http-server -g -c0 dist",
     "start": "webpack-dev-server --config webpack.config.js --mode development --content-base dist",
     "start-dev": "webpack-dev-server --config webpack.config.js --mode development --content-base dist --host 0.0.0.0",
     "start-prod": "webpack-dev-server --config webpack.config.js --mode production --content-base dist --host 0.0.0.0"
