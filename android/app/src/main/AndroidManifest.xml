@@ -18,10 +18,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".settings.SettingsActivity"
-            android:label="@string/title_activity_settings">
-        </activity>
 
         <meta-data
             android:name="android.webkit.WebView.EnableSafeBrowsing"
