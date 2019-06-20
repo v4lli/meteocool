@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.webkit.WebView
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
