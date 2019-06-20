@@ -7,7 +7,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.preference.PreferenceManager
 import android.util.Log
 import android.webkit.WebView
 import com.google.android.gms.common.ConnectionResult
@@ -24,6 +23,7 @@ import org.jetbrains.anko.doAsync
 import com.meteocool.location.WebAppInterface
 
 import com.meteocool.security.Validator
+import com.meteocool.settings.SettingsFragment
 import com.meteocool.utility.JSONClearPost
 import com.meteocool.utility.NetworkUtility
 
@@ -64,6 +64,10 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
 
         setContentView(R.layout.activity_meteocool)
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.settings, SettingsFragment())
+            .commit()
         cancelNotifications()
     }
 
