@@ -53,10 +53,10 @@ playground.xcworkspace
 
 # Carthage
 #
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
 
+Cartfile.resolved
 Carthage/Build
+Carthage/Checkouts
 
 # fastlane
 #
@@ -65,6 +65,7 @@ Carthage/Build
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
 
+Gemfile.lock
 fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
@@ -76,5 +77,3 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
-Carthage/
-Cartfile.resolved
