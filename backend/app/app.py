@@ -76,17 +76,15 @@ def clear_notification():
     return jsonify(success=True)
 
 
-# Public API endpoint, used by mobile devies and browsers to
+# Public API endpoint, used by mobile devies to
 # register notification requests for incoming rain. Expects a
 # JSON dict containing the following keys:
 #  - lat: float
 #  - lon: float
 #  - ahead: int - look n minutes into the future (5 minute steps, max=60)
-#  - source: string - "ios" or "browser"
-#  - token: string - for source=browser, a random identifier
-#    used by the push-handling backend to associate a websocket
-#    connection with a rain notification. for source=ios, a valid
-#    APNS push token.
+#  - source: string - "ios" or "android"
+#  - token: string - for source=ios, a valid APNS push token, for android
+#           a valid android token
 @app.route("/post_location", methods=["POST"])
 def post_location():
     return save_location_to_backend(request.get_json())
@@ -120,7 +118,7 @@ def save_location_to_backend(data):
         if not isinstance(accuracy, float) and not isinstance(accuracy, int):
             logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="invalid accuracy")
-        if source != "browser" and source != "ios" and source != "android":
+        if source != "ios" and source != "android":
             logging.warn("Bad request, invalid key(s): %s" % data)
             return jsonify(success=False, message="bad source")
         if not isinstance(token, str) or len(token) > 192 or len(token) < 32:
@@ -266,56 +264,31 @@ def save_location_to_backend(data):
 
     return jsonify(success=True)
 
+@app.route("/unregister", methods=["POST"])
+def unregister():
+    if not data:
+        return jsonify(success=False, message="bad request")
+    try:
+        token = data["token"]
+    except KeyError:
+        return jsonify(success=False, message="bad request")
+
+    if not isinstance(token, str) or len(token) > 192 or len(token) < 32:
+        logging.warn("Bad request, invalid key(s): %s" % data)
+        return jsonify(success=False, message="bad token")
+
+    obj = db.collection.find_one({"token": str(token)})
+    if not obj or not "_id" in obj:
+        logging.warn("Token %s not found in db", str(token))
+        return jsonify(success=False)
+    db.collection.remove(obj["_id"])
+    logging.warn("Unregistered client %s", str(data))
+
 
 # Executed when a new websocket client connects. Currently no-op.
 @socketio.on("connect", namespace="/tile")
 def log_connection():
     logging.warn("client connected")
-
-# Called by the browser to register push notifications
-pushable_browsers = []
-
-@socketio.on("register", namespace="/rain_notify_browser")
-def register_browser_push(json):
-    global pushable_browsers
-    rand_uuid = str(uuid.uuid4())
-
-    pushable_browsers.append({"sid": request.sid, "uuid": rand_uuid})
-
-    logging.warn("registering browser push: %s" % str(json))
-
-    ret = save_location_to_backend({
-        "lat": json["lat"],
-        "lon": json["lon"],
-        "ahead": json["ahead"],
-        "accuracy": 1.0,
-        "intensity": json["intensity"],
-        "source": "browser",
-        "token": rand_uuid})
-    logging.warn(ret.data)
-    return ret
-
-# Called by the browser to register push notifications
-@socketio.on("unregister", namespace="/rain_notify_browser")
-def register_browser_push(json):
-    # XXX implement me
-    logging.warn("UNregistering browser push: %s" % str(json))
-
-@app.route("/internal/trigger_browser_notification", methods=["POST"])
-def trigger_browser_notification():
-    data = request.get_json()
-
-    for browser in pushable_browsers:
-        if data["token"] == browser["uuid"]:
-            # XXX we need some kind of feedback from socketio here.
-            # if the notification can't be delivered, it needs to be removed from the database
-            # (like in push.py)
-            socketio.emit("notify", {
-                "title": ("Rain expected in %d minutes!" % data["ahead"]),
-                "body": ("DWD reports that it might rain at your current location in about %d minutes." % data["ahead"])
-            }, room=browser["sid"])
-
-    return jsonify(success=True)
 
 numStrikes = 0
 failStrikes = 0
