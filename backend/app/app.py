@@ -344,10 +344,10 @@ def blitzortung_thread():
 
     def on_open(ws):
         ws.send(json.dumps({
-            "west": -20.0,
-            "east": 44.0,
-            "north": 71.5,
-            "south": 23.1}))
+            "west": 0.0,
+            "east": 30.0,
+            "north": 60.0,
+            "south": 30}))
 
     def stats_logging_cb():
         logging.warn("Processed %d strikes since last report (%d failed)"
