@@ -62,7 +62,7 @@ function lastUpdatedFn () {
 
   if (elem) {
     if (window.lastUpdatedServer) {
-      elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer, {locale: dfnLocale, addSuffix: true}) + ".";
+      elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer, {locale: dfnLocale, addSuffix: true});
     } else {
       elem.innerHTML = "<span style='color: #ff0000;'>connection error</span>";
     }
@@ -184,34 +184,6 @@ var mclight = document.querySelectorAll(".modal-content, .mc-light");
 var lightTiles = "https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png"; // 'undefined' will use the OSM class' default - OSM doesn't offer pbf (vector) tiles (?)
 var darkTiles = "https://cartodb-basemaps-{a-c}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png";
 
-// light view is default
-var viewMode = true;
-
-var toggleHTMLfixMe = () => {
-  toggleButton.innerHTML = viewMode ? "dark mode" : "light mode";
-
-  for (let index = 0; index < mclight.length; index++) {
-    const element = mclight[index];
-    if (element.classList.contains("bg-dark")) {
-      element.classList.remove("bg-dark", "text-white");
-    } else {
-      element.classList.add("bg-dark", "text-white");
-    }
-  }
-  if (navbar.classList.contains("navbar-light")) {
-    navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
-    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
-  } else {
-    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
-    navbar.classList.add("navbar-light", "bg-light");
-  }
-};
-
-if (!dd.isAuxPage() && localStorage.getItem("darkMode")) {
-  viewMode = false;
-  toggleHTMLfixMe();
-}
-
 var view = new View({
   center: center,
   zoom: zoom,
@@ -228,15 +200,13 @@ if (dd.isAuxPage()) {
   baseAttributions = "";
 }
 
-var darkAttributions = "";
-
 window.map = new Map({
   target: "map",
   layers: [
     new TileLayer({
       source: new OSM({
-        url: viewMode ? lightTiles : darkTiles,
-        attributions: viewMode ? baseAttributions : baseAttributions + darkAttributions
+        url: lightTiles,
+        attributions: baseAttributions
       })
     })
   ],
@@ -246,37 +216,6 @@ window.map = new Map({
   ]),
   view: view
 });
-
-var toggleViewMode = () => {
-  viewMode ? localStorage.setItem("darkMode", viewMode) : localStorage.removeItem("darkMode");
-  viewMode = !viewMode;
-  var newLayer = new TileLayer({
-    source: new OSM({
-      url: viewMode ? lightTiles : darkTiles,
-      attributions: viewMode ? baseAttributions : baseAttributions + darkAttributions
-    })
-  });
-  window.map.getLayers().setAt(0, newLayer);
-};
-
-function toggleIOSBar () {
-  if (DeviceDetect.isIos()) {
-    if (viewMode) {
-      window.webkit.messageHandlers["scriptHandler"].postMessage("lightmode");
-    } else {
-      window.webkit.messageHandlers["scriptHandler"].postMessage("darkmode");
-    }
-  }
-}
-
-if (toggleButton) {
-  toggleButton.onclick = () => {
-    toggleViewMode();
-    toggleHTMLfixMe();
-    toggleIOSBar();
-  };
-}
-
 //
 // Geolocation (showing the user's position)
 //
@@ -660,8 +599,8 @@ if (!dd.isAuxPage()) {
 
 $(document).ready(function () {
   if (DeviceDetect.getIosAPILevel() >= 2) {
-    $("#topMenu")[0].children[1].style.display = "none";
     $("#topMenu")[0].children[2].style.display = "none";
+    $("#topMenu")[0].children[3].style.display = "none";
     // XXX re-enable once the scrolling is enabled
   }
   if (window.location.href.indexOf("#about") !== -1) {
@@ -705,10 +644,11 @@ if (DeviceDetect.getIosAPILevel() >= 3) {
   };
 }
 if (DeviceDetect.getAndroidAPILevel() >= 2) {
-  $("#openSettings").css("display", "block");
-  $("#openSettings").onclick = () => {
-    Android.showSettings(); // eslint-disable-line no-undef
-  };
+  $("#showMenuBtn").css("display", "none");
+  $("#showMenuBtnAndroid").css("display", "inline");
+  $("#showMenuBtnAndroid").click(() => {
+    Android.showSettings();
+  });
 }
 
 var settings = new Settings({
@@ -734,14 +674,84 @@ var settings = new Settings({
     "type": "boolean",
     "default": false,
     "cb": null
+  },
+  "darkMode": {
+    "type": "boolean",
+    "default": false,
+    "cb": null
   }
 });
+
+if (settings.get("darkMode")) {
+  // XXX de-duplicate with cb
+  var newLayer = new TileLayer({
+    source: new OSM({
+      url: settings.get("darkMode") ? darkTiles : lightTiles,
+      attributions: baseAttributions
+    })
+  });
+  window.map.getLayers().setAt(0, newLayer);
+}
 
 window.injectSettings = (newSettings) => {
   for (var key in newSettings) {
     settings.set(key, newSettings[key]);
   }
 };
+
+var toggleViewMode = () => {
+  settings.set("darkMode", !settings.get("darkMode"));
+  var newLayer = new TileLayer({
+    source: new OSM({
+      url: settings.get("darkMode") ? darkTiles : lightTiles,
+      attributions: baseAttributions
+    })
+  });
+  window.map.getLayers().setAt(0, newLayer);
+};
+
+function toggleIOSBar () {
+  if (DeviceDetect.isIos()) {
+    if (settings.get("darkMode")) {
+      window.webkit.messageHandlers["scriptHandler"].postMessage("darkmode");
+    } else {
+      window.webkit.messageHandlers["scriptHandler"].postMessage("lightmode");
+    }
+  }
+}
+
+var toggleHTMLfixMe = () => {
+  toggleButton.innerHTML = settings.get("darkMode") ? "light mode" : "dark mode";
+
+  for (let index = 0; index < mclight.length; index++) {
+    const element = mclight[index];
+    if (element.classList.contains("bg-dark")) {
+      element.classList.remove("bg-dark", "text-white");
+    } else {
+      element.classList.add("bg-dark", "text-white");
+    }
+  }
+  if (navbar.classList.contains("navbar-light")) {
+    navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
+    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
+  } else {
+    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
+    navbar.classList.add("navbar-light", "bg-light");
+  }
+};
+
+if (!dd.isAuxPage() && settings.get("darkMode")) {
+  toggleHTMLfixMe();
+}
+
+if (toggleButton) {
+  toggleButton.onclick = () => {
+    toggleViewMode();
+    toggleHTMLfixMe();
+    toggleIOSBar();
+  };
+}
+
 
 // Register service worker
 if ("serviceWorker" in navigator) {
