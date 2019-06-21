@@ -636,7 +636,6 @@ $("#impressumModal").on("show.bs.modal", function () {
   window.history.pushState('impressm', 'meteocool Impressum', '/#impressum');
 });
 
-// show settings button for certain API levels only
 if (DeviceDetect.getIosAPILevel() >= 3) {
   $("#openSettings").css("display", "inline");
   $("#openSettings").onclick = () => {
@@ -678,19 +677,20 @@ var settings = new Settings({
   "darkMode": {
     "type": "boolean",
     "default": false,
-    "cb": null
+    "cb": (state) => {
+      var newLayer = new TileLayer({
+        source: new OSM({
+          url: state ? darkTiles : lightTiles,
+          attributions: baseAttributions
+        })
+      });
+      window.map.getLayers().setAt(0, newLayer);
+    }
   }
 });
 
 if (settings.get("darkMode")) {
-  // XXX de-duplicate with cb
-  var newLayer = new TileLayer({
-    source: new OSM({
-      url: settings.get("darkMode") ? darkTiles : lightTiles,
-      attributions: baseAttributions
-    })
-  });
-  window.map.getLayers().setAt(0, newLayer);
+  settings.cb("darkMode");
 }
 
 window.injectSettings = (newSettings) => {

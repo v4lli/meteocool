@@ -40,4 +40,13 @@ export class Settings {
       }
     }
   }
+
+  cb (key) {
+    if (typeof key !== "string") { return; }
+    if (this.settings[key]["cb"]) {
+      this.settings[key]["cb"](this.get(key));
+    }
+  }
 }
+
+/* vim: set ts=2 sw=2 expandtab: */
