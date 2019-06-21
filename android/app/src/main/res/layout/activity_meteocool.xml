@@ -21,12 +21,11 @@
 
     <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"
-            android:isScrollContainer="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:fitsSystemWindows="true">
-
+        <View style="@style/Divider"/>
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -34,10 +33,25 @@
 
             <include layout="@layout/nav_header_main"/>
 
+
+            <ListView android:id="@+id/lst_menu_items"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:headerDividersEnabled="false"
+                      android:dividerHeight="0dp"
+                      android:divider="@null"
+            android:entries="@array/drawer_menu_entries">
+            </ListView>
+
+
+
+
             <FrameLayout
                     android:id="@+id/settings"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content">
+                <View style="@style/Divider"/>
+            </FrameLayout>
         </LinearLayout>
 
 

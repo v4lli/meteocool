@@ -6,15 +6,30 @@
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="25dp"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:paddingTop="16dp">
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/ic_logo_round"
+            android:id="@+id/imageView"
+            android:layout_gravity="center_vertical|start"/>
 
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:text="meteocool"
             android:textSize="@dimen/font_size"
-            android:textColor="@color/cloudAccent"/>
+            android:paddingRight="16dp"
+            android:textColor="@color/cloudAccent"
+            android:gravity="center_vertical|start"/>
+    <TextView
+            android:id="@+id/app_version"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text=""
+            android:textSize="@dimen/font_size"
+            android:textColor="@color/cloudAccent"
+            android:gravity="center_vertical|end"/>
 
 </LinearLayout>

@@ -18,7 +18,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-            app:icon="@drawable/bell"
+            app:icon="@drawable/ic_notification"
         app:title="@string/notification_header">
 
         <SwitchPreferenceCompat
@@ -46,17 +46,22 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-            app:icon="@drawable/maps_and_location"
+            app:icon="@drawable/ic_map"
         app:title="@string/map_header">
 
         <SwitchPreferenceCompat
             app:key="map_zoom"
-            app:title="@string/zoom_title"
+            app:title="@string/map_zoom_title"
         />
 
         <SwitchPreferenceCompat
             app:key="map_rotate"
-            app:title="@string/rotate_title"
+            app:title="@string/map_rotate_title"
+        />
+
+        <SwitchPreferenceCompat
+                app:key="map_mode"
+                app:title="@string/map_mode_title"
         />
 
     </PreferenceCategory>

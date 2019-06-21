@@ -26,12 +26,16 @@
     <string name="gps_button_toast">Schlechtes GPS-Signal.</string>
     <string name="title_activity_settings">Einstellungen</string>
 
+
+    <string name="menu_documentation">Dokumentation</string>
+
+
     <!-- Preference Titles -->
     <string name="notification_header">Benachrichtigungen</string>
     <string name="map_header">Karte</string>
 
     <!-- Push Preferences -->
-    <string name="notification_push_title">Erhalte Push-Nachrichten</string>
+    <string name="notification_push_title">Push-Nachrichten</string>
     <string name="notification_push_level_title">Level der Benachrichtigung</string>
     <string name="level_drizzle">Nieseln</string>
     <string name="level_rain">Regen</string>
@@ -42,7 +46,8 @@
 
 
     <!-- Map Preferences -->
-    <string name="zoom_title">Zoom nach Start</string>
-    <string name="rotate_title">Rotation der Karte</string>
+    <string name="map_zoom_title">Zoom nach Start</string>
+    <string name="map_rotate_title">Rotation der Karte</string>
+    <string name="map_mode_title">Nachtmodus</string>
 
 </resources>

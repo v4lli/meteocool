@@ -23,14 +23,16 @@
 
     <string name="gps_button_toast">Bad GPS signal.</string>
 
-    <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="menu_documentation">Documentation</string>
+    <string name="menu_settings_on">Show settings</string>
 
     <!-- Preference Titles -->
     <string name="notification_header">Notifications</string>
     <string name="map_header">Map</string>
 
     <!-- Push Preferences -->
-    <string name="notification_push_title">Receive push notifications</string>
+    <string name="notification_push_title">Notifications</string>
     <string name="notification_push_level_title">Notification level</string>
     <string name="level_drizzle">Drizzle</string>
     <string name="level_rain">Rain</string>
@@ -41,7 +43,8 @@
 
 
     <!-- Map Preferences -->
-    <string name="zoom_title">Zoom after start</string>
-    <string name="rotate_title">Rotation of map</string>
+    <string name="map_zoom_title">Zoom after start</string>
+    <string name="map_rotate_title">Rotation of map</string>
+    <string name="map_mode_title">Dark mode</string>
 
 </resources>

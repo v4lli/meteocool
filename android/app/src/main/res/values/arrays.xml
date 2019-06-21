@@ -38,4 +38,15 @@
         <item>40</item>
         <item>45</item>
     </string-array>
+
+    <!-- Drawer Menu -->
+    <string-array name="drawer_menu_entries">
+        <item>@string/map_header</item>
+        <item>@string/menu_documentation</item>
+    </string-array>
+
+    <string-array name="drawer_menu_values">
+        <item>menu_map</item>
+        <item>menu_documentation</item>
+    </string-array>
 </resources>

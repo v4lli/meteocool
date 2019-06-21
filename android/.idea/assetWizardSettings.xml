@@ -62,11 +62,11 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="fcf6ff" />
-                                      <entry key="foregroundImage" value="C:\Users\jerem\AndroidStudioProjects\meteocool\android\app\src\main\res\drawable\android_chrome_512x512.png" />
-                                      <entry key="previewDensity" value="HIGH" />
-                                      <entry key="showGrid" value="true" />
-                                      <entry key="showSafeZone" value="false" />
+                                      <entry key="backgroundColor" value="fafafa" />
+                                      <entry key="backgroundLayerName" value="logo_background" />
+                                      <entry key="foregroundImage" value="$PROJECT_DIR$/app/src/main/res/drawable/android_chrome_512x512.png" />
+                                      <entry key="foregroundLayerName" value="logo_foreground" />
+                                      <entry key="outputName" value="ic_logo" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -137,7 +137,25 @@
         </entry>
         <entry key="vectorWizard">
           <value>
-            <PersistentState />
+            <PersistentState>
+              <option name="children">
+                <map>
+                  <entry key="vectorAssetStep">
+                    <value>
+                      <PersistentState>
+                        <option name="values">
+                          <map>
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_file" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/file.svg" />
+                          </map>
+                        </option>
+                      </PersistentState>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </PersistentState>
           </value>
         </entry>
       </map>

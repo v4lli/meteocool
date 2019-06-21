@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.webkit.WebView
+import android.widget.TextView
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -64,6 +65,8 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         }
 
         setContentView(R.layout.activity_meteocool)
+        val appVersion = findViewById<TextView>(R.id.app_version)
+        appVersion.text = "v " + applicationContext.packageManager.getPackageInfo(packageName, 0).versionName
         supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
         supportFragmentManager
             .beginTransaction()
