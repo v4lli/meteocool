@@ -689,6 +689,10 @@ var settings = new Settings({
   }
 });
 
+if (DeviceDetect.getAndroidAPILevel() >= 2) {
+  Android.requestSettings();
+}
+
 if (settings.get("darkMode")) {
   settings.cb("darkMode");
 }
