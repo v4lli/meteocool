@@ -13,7 +13,7 @@ import java.util.*
 class MapFragment : Fragment(){
 
     companion object {
-        private const val WEB_URL = "https://meteocool.com/?mobile=android"
+        private const val WEB_URL = "https://meteocool.com/?mobile=android2"
     }
 
     private var mWebView : WebView? = null

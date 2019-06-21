@@ -8,8 +8,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -53,6 +57,8 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         if (FirebaseApp.getApps(this).isNotEmpty()) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
@@ -67,13 +73,15 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         setContentView(R.layout.activity_meteocool)
         val appVersion = findViewById<TextView>(R.id.app_version)
         appVersion.text = "v " + applicationContext.packageManager.getPackageInfo(packageName, 0).versionName
-        supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, MapFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, MapFragment()).commit()
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.settings, SettingsFragment())
+            .replace(R.id.settings, SettingsFragment())
             .commit()
         cancelNotifications()
     }
+
+
 
     /**
      * Handles the Request Updates button and requests start of location updates.
@@ -96,7 +104,9 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
             requestLocationUpdates()
         }
         val mWebView : WebView = findViewById(R.id.webView)
-        mWebView.addJavascriptInterface(WebAppInterface(this, mWebView), "Android")
+        val webAppInterface = WebAppInterface(this, this, mWebView)
+        webAppInterface.injectSettings()
+        mWebView.addJavascriptInterface(webAppInterface, "Android")
 
         var token = FirebaseInstanceId.getInstance().token
         if (token == null) {
@@ -131,6 +141,15 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
         val text = "Exception while connecting to Google Play services"
         Log.w(TAG, text + ": " + connectionResult.errorMessage)
+    }
+
+    override fun onBackPressed() {
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
     }
 
 
@@ -171,6 +190,8 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         // delivered sooner than this interval.
         mLocationRequest!!.maxWaitTime = MAX_WAIT_TIME
     }
+
+
 
 
 
