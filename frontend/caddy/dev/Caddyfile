@@ -2,6 +2,17 @@
 	root /srv
 	log stdout
 
+    realip {
+        from 192.168.0.0/16
+    }
+
+    ratelimit * 2 3 second {
+        /tile
+        /post_location
+        /rain_notify_browser
+        /clear_notification
+    }
+
 	proxy /tile app:5000 {
 		websocket
 		transparent
@@ -36,6 +47,14 @@
 
 127.0.0.1:8040/pushpreview, localhost:8040/pushpreview {
 	root /pushpreview/
+
+    realip {
+        from 192.168.0.0/16
+    }
+
+    ratelimit * 2 3 second {
+        /pushpreview
+    }
 }
 
 127.0.0.1:8041, localhost:8041 {
