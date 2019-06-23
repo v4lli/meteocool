@@ -164,7 +164,7 @@ export class LayerManager {
       // play not yet in progress, remove main layer
       this.map.removeLayer(this.mainLayer);
       this.hook("scriptHandler", "playStarted");
-      if (this.enableIOSHooks) {
+      if (!this.enableIOSHooks) {
         $("#forecastTimeWrapper").css("display", "block");
       }
     } else {

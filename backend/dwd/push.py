@@ -75,21 +75,21 @@ def dbz_to_str_pure_de(dbz,lat,lon,lang):
     rain_snow = rain_or_snow(lat,lon,lang)
 
     if dbz > 65:
-        return "starker Hagel"
+        return "Starker Hagel"
     if dbz > 60:
         return "Hagel"
     if dbz > 55:
-        return "kleiner Hagel"
+        return "Kleiner Hagel"
     if dbz > 47:
-        return "extremer %s" % rain_snow
+        return "Extremer %s" % rain_snow
     if dbz > 40:
-        return "starker %s" % rain_snow
+        return "Starker %s" % rain_snow
     if dbz > 32:
-        return "stärkerer %s" % rain_snow
+        return "Stärkerer %s" % rain_snow
     if dbz > 25:
-        return "Regen" if rain_snow == "Regen" else "Schnee"
+        return rain_snow
     if dbz > 20:
-        return "leichter %s" % rain_snow
+        return "Leichter %s" % rain_snow
     if dbz > 15:
         return "Niesel" if rain_snow == "Regen" else "Schneeflöckchen"
     if dbz > 0:
@@ -97,7 +97,7 @@ def dbz_to_str_pure_de(dbz,lat,lon,lang):
         return "Dunst"
     if dbz > -10:
         # ???
-        return "leichter Dunst"
+        return "Leichter Dunst"
     if dbz > -31:
         # ???
         return "Nebel"
@@ -117,14 +117,16 @@ def rain_or_snow(lat,lon,lang):
         pass
 
     if lang == "de":
-        percip = "Schnee"
+        snow = "Schnee"
+        rain = "Regen"
     else:
-        percip = "Regen"
+        snow = "snow"
+        rain = "rain"
 
     if current_temperature and current_temperature <= 0:
-        return "snow"
+        return snow
     else:
-        return "rain"
+        return rain
 
 def dbz_to_str(dbz, lat, lon, lang, lower_case=False):
     intensity = None
@@ -156,7 +158,8 @@ def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10
 # XXX missing OSM and DWD copyright
 # XXX missing crop
 def generate_preview(lat, lon):
-    osm_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9).to_pil()
+    osm_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9,
+            tileserver="https://cartodb-basemaps-b.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png").to_pil()
     weather_map = smopy.Map((lat-0.5, lon-0.5, lat+0.5, lon+0.5), z=9,
             tileserver="http://a.tileserver.unimplemented.org/data/FX_015-latest/{z}/{x}/{y}.png").to_pil()
 
@@ -173,7 +176,6 @@ def generate_preview(lat, lon):
 if __name__ == "__main__":
     # programm parameters
     radar_files = sys.argv[1]
-    browser_notify_url = sys.argv[2]
 
     # Apple Push setup
     apns_config_file = '/etc/apns.json'
@@ -213,14 +215,8 @@ if __name__ == "__main__":
 
     # wradlib setup
     gridsize = 900
-    radolan_grid_ll = wrl.georef.get_radolan_grid(gridsize, gridsize, wgs84=True)
-    linearized_grid = []
-    for lon in radolan_grid_ll:
-        for lat in lon:
-            linearized_grid.append(lat)
 
-    # iterate through all db entries and push browser events to the app backend,
-    # ios push events to apple
+    # iterate through all db entries and push
     cursor = collection.find({})
     cnt = 0
     for document in cursor:
@@ -285,6 +281,9 @@ if __name__ == "__main__":
         data = forecast_maps[ahead]
         reported_intensity = rvp_to_dbz(forecast_maps[ahead][0][outx][outy])
 
+        if token == "34b62a22f70bec18457590b6c08b61612060bdca39f6941a917e0d75dd8b05cc" or token == "dafe95e4498deb188efb76dcf6927d9b3c3e265371e2b4d4f87d23fc0ef8cf79":
+            lang = "de"
+
         # also check timeframes BEFORE the configured ahead value
         if reported_intensity < intensity:
             timeframe = ahead - 5
@@ -300,18 +299,17 @@ if __name__ == "__main__":
         logging.warn("%d >? %d" % (reported_intensity, intensity))
         if reported_intensity >= intensity:
             logging.warn("%s: intensity %d > %d matches in %d min forecast (type=%s)" % (token, reported_intensity, intensity, ahead, source))
-            continue
 
             # fancy message generation
-            max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, xy, ahead, intensity)
+            max_intensity, peak_mins, total_mins = get_rain_peaks(forecast_maps, max_ahead, [outx, outy], ahead, intensity)
 
             if lang == "de":
                 message_dict = {
                     "title": "{} in {} Min!",
                     "body": {
-                        with_peak: "Bis hin zu {} in {} Min. Gesamtdauer ca %d Min.",
-                        without_peak: "Gesamtdauer ca. {} Minuten",
-                        no_duration: "Vielleicht nur ein paar Tropfen."
+                        "with_peak": "Bis hin zu {} in {} Min. Gesamtdauer ca. {} Min.",
+                        "without_peak": "Gesamtdauer ca. {} Minuten",
+                        "no_duration": "Vielleicht nur ein paar Tropfen."
                     }
                 }
             else:
@@ -319,9 +317,9 @@ if __name__ == "__main__":
                 message_dict = {
                     "title": "{} expected in {} min!",
                     "body": {
-                        with_peak: "Peaks with {} in {} minutes, lasting a total of at least {} min.",
-                        without_peak: "Duration estimated around {} min.",
-                        no_duration: "No duration estimate; possibly just a little shower."
+                        "with_peak": "Peaks with {} in {} min, lasting a total of at least {} min.",
+                        "without_peak": "Duration estimated around {} min.",
+                        "no_duration": "No duration estimate; possibly just a little shower."
                     }
                 }
 
@@ -332,20 +330,24 @@ if __name__ == "__main__":
                     lat, lon, lang, lower_case=True), peak_mins, total_mins)
             }
             if max_intensity == reported_intensity:
-                message_dict["body"] =  message_dict["body"]["without_peak"].format(total_mins)
-                    if total_mins == 5:
-                        message_dict["body"] =  message_dict["body"]["no_duration"]
+                message_dict_localized["body"] =  message_dict["body"]["without_peak"].format(total_mins)
+                if total_mins == 5:
+                    message_dict_localized["body"] =  message_dict["body"]["no_duration"]
 
-            if source == "browser":
-                requests.post(browser_notify_url, json={"token": token, "ahead": ahead})
-            elif source == "android":
+            if source == "android":
                 if fcm and not ios_onscreen:
                     result = fcm.notify_single_device(registration_id=token,
-                            message_title=message_dict["title"],
-                            message_body=message_dict["body"],
+                            message_title=message_dict_localized["title"],
+                            message_body=message_dict_localized["body"],
                             message_icon="rain")
                     collection.update({"_id": doc_id}, {"$set": {"ios_onscreen": True}})
                     logging.warn("%s: Delivered android push notification with result=%s" % (token, result))
+                    if "results" in result:
+                        if len(result["results"]) >= 1:
+                            if "error" in result["results"][0]:
+                                if result["results"][0]["error"] == "NotRegistered":
+                                    collection.remove(doc_id)
+                                    logging.warn("%s: removed unregistered client" % (token))
                 else:
                     if fcm:
                         logging.warn("%s: not re-pushing, old not acknowledged" % (token))
@@ -366,8 +368,8 @@ if __name__ == "__main__":
                             logging.warn("generated push preview at %s" % preview_url)
                             extra_dict["preview"] = preview_url
                         try:
-                            apns.send_message(token, message_dict, badge=0,
-                                    sound="pulse.aiff", extra=extra_dict, mutable_content=True, category="WeatherAlert")
+                            apns.send_message(token, {"title": message_dict_localized["title"], "body": message_dict_localized["body"]},
+                                badge=0, sound="pulse.aiff", extra=extra_dict, mutable_content=True, category="WeatherAlert")
                         except BadDeviceToken:
                             logging.warn("%s: sending iOS notification failed with BadDeviceToken, removing push client", token)
                             collection.remove(doc_id)
@@ -386,7 +388,6 @@ if __name__ == "__main__":
             else:
                 logging.warn("unknown source type %s" % source)
         else:
-            continue
             if ios_onscreen:
                 # rain has stopped and the notification is (possibly) still
                 # displayed on the device.
@@ -407,8 +408,14 @@ if __name__ == "__main__":
                 elif source == "android":
                     result = fcm.single_device_data_message(registration_id=token, data_message={"clear_all": True})
                     logging.warn("%s: Delivered android data push with result=%s" % (token, result))
+                    if "results" in result:
+                        if len(result["results"]) >= 1:
+                            if "error" in result["results"][0]:
+                                if result["results"][0]["error"] == "NotRegistered":
+                                    collection.remove(doc_id)
+                                    logging.warn("%s: removed unregistered client" % (token))
                     # XXX this needs to be removed as soon as jeremias fixes the android app :)
-                    collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
+                    #collection.update({"_id": doc_id}, { "$set": {"ios_onscreen": False} })
                 else:
                     logging.error("%s: Unsupported source" % token)
         cnt = cnt + 1
