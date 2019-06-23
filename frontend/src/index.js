@@ -323,43 +323,49 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
   map: document.map,
   style: function (feature) {
     var size = feature.get("features").length;
-    var style = styleCache[size];
+    var level = 0;
+    let now = new Date().getTime();
+    let MINS = 1000*60;
+    feature.get("features").forEach((feature) => {level += (now - feature.getId())/MINS;})
+    // cap to 30 levels
+    level = (Math.round(level/size) / 2) + 1;
+    if (level > 30) {
+      level = 30;
+    }
+    var textsize;
+    if (size > 12) {
+      textsize = 38;
+    } else if (size > 8) {
+      textsize = 35;
+    } else if (size > 3) {
+      textsize = 33;
+    } else if (size > 1) {
+      textsize = 26;
+    } else {
+      textsize = 24;
+    }
+    if (!(level in styleCache)) {
+      styleCache[level] = {};
+    }
+    var style = styleCache[level][textsize];
     if (!style) {
-      var textsize;
-      if (size > 12) {
-        textsize = 38;
-      } else if (size > 8) {
-        textsize = 35;
-      } else if (size > 3) {
-        textsize = 33;
-      } else if (size > 1) {
-        textsize = 26;
-      } else {
-        textsize = 24;
-      }
+      let opacity = Math.min(1 - (level / 30), 1);
+      //console.log("new size + level: " + textsize + ", " + level + ", opacity: " + opacity);
+
       style = new Style({
         text: new Text({
           text: "⚡️",
-          fill: new Fill({ color: "rgba(255, 255, 255, 1.0)" }),
+          fill: new Fill({ color: "rgba(255, 255, 255, " + opacity + ")" }),
           font: textsize + "px Calibri,sans-serif"
         })
       });
-      styleCache[size] = style;
+      styleCache[level][textsize] = style;
     }
     return style;
   }
 });
 vl.setZIndex(100);
 window.map.addLayer(vl);
-
-// timer every 10 sec
-// {
-//  vs.forEachFeature(function (f){
-//    // 1. get feature age from f.getId() (timestamp)
-//    // 2. calculate alpha value based on age
-//    // 3. update feature style
-//  }
-// }
 
 var haveZoomed = false;
 window.geolocation.on("change:position", () => {
@@ -376,9 +382,10 @@ window.geolocation.on("change:position", () => {
 //
 
 var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var websocketUrl = "https://meteocool.com/tile";
+//var websocketUrl = "https://meteocool.com/tile";
+var websocketUrl = "http://localhost:8040/tile";
 // if (process.env.NODE_ENV === "production") {
-tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+//tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 // }
 
 var reflectivityOpacity = 0.5;
@@ -435,6 +442,10 @@ socket.on("map_update", function (data) {
   if (DeviceDetect.getIosAPILevel() >= 2) {
     window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
   }
+});
+
+socket.emit('getStrikes', (data) => {
+  console.log(data);
 });
 
 window.isMonitoring = false;
@@ -771,5 +782,8 @@ if ("serviceWorker" in navigator) {
   });
   wb.register();
 }
+
+// purge old lightning strikes on restart
+setTimeout(() => {strikemgr.fadeStrikes();}, 2*60*1000);
 
 /* vim: set ts=2 sw=2 expandtab: */

@@ -22,10 +22,15 @@ from flask import Flask, request, jsonify
 from flask_socketio import SocketIO
 import geopy.distance
 
+numStrikes = 0
+failStrikes = 0
+strikeCache = []
+MAX_LIGHTNING_CACHE = 1337
+
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
 app = Flask(__name__)
-socketio = SocketIO(app, async_mode='threading')
+socketio = SocketIO(app, async_mode='threading', cookie=None)
 
 db_client = MongoClient("mongodb://mongo:27017/")
 # both will be created automatically when the first document is inserted
@@ -290,8 +295,11 @@ def unregister():
 def log_connection():
     logging.warn("client connected")
 
-numStrikes = 0
-failStrikes = 0
+# Executed when a new websocket client connects. Currently no-op.
+@socketio.on("getStrikes", namespace="/tile")
+def sendStrikes(param):
+    logging.warn("CACHE=%s" % strikeCache)
+    send(strikeCache, json=True)
 
 def blitzortung_thread():
     """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
@@ -305,11 +313,23 @@ def blitzortung_thread():
             transformed = transform(
                 Proj(init="epsg:4326"), Proj(init="epsg:3857"), data["lon"], data["lat"]
             )
-            socketio.emit(
-                "lightning",
-                {"lat": transformed[1], "lon": transformed[0]},
-                namespace="/tile",
-            )
+            alt = -1
+            pol = 0
+            try:
+                alt = data["alt"]
+                pol = data["pol"]
+            except KeyError:
+                pass
+            strikeData = {
+                    "lat": transformed[1],
+                    "lon": transformed[0],
+                    "alt": alt,
+                    "pol": pol,
+            }
+            socketio.emit("lightning", strikeData, namespace="/tile")
+            if len(strikeCache) > MAX_LIGHTNING_CACHE:
+                strikeCache.pop(0)
+            strikeCache.append(strikeData)
         else:
             failStrikes = failStrikes + 1
             # print("Invalid lightning: %s" % message)
@@ -344,10 +364,10 @@ def blitzortung_thread():
 
     def on_open(ws):
         ws.send(json.dumps({
-            "west": 0.0,
-            "east": 30.0,
-            "north": 60.0,
-            "south": 30}))
+            "west": 2.0,
+            "east": 18.0,
+            "north": 55.5,
+            "south": 45.3}))
 
     def stats_logging_cb():
         logging.warn("Processed %d strikes since last report (%d failed)"
