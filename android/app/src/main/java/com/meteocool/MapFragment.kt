@@ -48,8 +48,4 @@ class MapFragment() : Fragment(){
         mWebView.addJavascriptInterface(webAppInterface, "Android")
 
     }
-
-    override fun onAttach(activity: Activity) {
-        super.onAttach(activity)
-    }
 }

@@ -88,7 +88,6 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         val navAdapter = NavDrawerAdapter(this, R.layout.menu_item, drawerItems)
         drawerList.adapter = navAdapter
         drawerList.onItemClickListener = navAdapter
-
     }
 
 
@@ -115,10 +114,10 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         if(Validator.isLocationPermissionGranted(this)) {
             requestLocationUpdates()
         }
-        val mWebView : WebView = findViewById(R.id.webView)
-        val webAppInterface = WebAppInterface(this, this, mWebView)
-        webAppInterface.injectSettings()
-        mWebView.addJavascriptInterface(webAppInterface, "Android")
+//        val mWebView : WebView = findViewById(R.id.webView)
+//        val webAppInterface = WebAppInterface(this, this, mWebView)
+//        webAppInterface.injectSettings()
+//        mWebView.addJavascriptInterface(webAppInterface, "Android")
 
         var token = FirebaseInstanceId.getInstance().token
         if (token == null) {
