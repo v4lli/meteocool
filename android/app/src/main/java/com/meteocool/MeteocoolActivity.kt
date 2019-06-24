@@ -1,15 +1,14 @@
 package com.meteocool
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.preference.PreferenceManager
 import android.util.Log
 import android.webkit.WebView
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -52,7 +51,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         super.onCreate(savedInstanceState)
 
         if (FirebaseApp.getApps(this).isNotEmpty()) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         }
 
         if(Validator.isLocationPermissionGranted(this)) {
