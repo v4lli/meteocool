@@ -8,11 +8,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import android.widget.ListView
 import android.widget.TextView
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.common.ConnectionResult
@@ -31,6 +29,8 @@ import com.meteocool.location.WebAppInterface
 import com.meteocool.security.Validator
 import com.meteocool.settings.SettingsFragment
 import com.meteocool.utility.JSONClearPost
+import com.meteocool.utility.NavDrawerAdapter
+import com.meteocool.utility.NavDrawerItem
 import com.meteocool.utility.NetworkUtility
 
 
@@ -70,6 +70,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
             requestLocationUpdates()
         }
 
+
         setContentView(R.layout.activity_meteocool)
         val appVersion = findViewById<TextView>(R.id.app_version)
         appVersion.text = "v " + applicationContext.packageManager.getPackageInfo(packageName, 0).versionName
@@ -79,6 +80,15 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
             .replace(R.id.settings, SettingsFragment())
             .commit()
         cancelNotifications()
+
+        val drawerItems = listOf(NavDrawerItem(R.drawable.ic_map, getString(R.string.map_header)),
+            NavDrawerItem(R.drawable.ic_file, getString(R.string.menu_documentation)))
+
+        val drawerList : ListView = findViewById(R.id.drawer_menu)
+        val navAdapter = NavDrawerAdapter(this, R.layout.menu_item, drawerItems)
+        drawerList.adapter = navAdapter
+        drawerList.onItemClickListener = navAdapter
+
     }
 
 
@@ -97,6 +107,8 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         }
 
     }
+
+
 
     override fun onStart() {
         super.onStart()
@@ -127,6 +139,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     override fun onResume() {
         super.onResume()
         cancelNotifications()
+
     }
 
     override fun onConnected(p0: Bundle?) {
@@ -151,6 +164,8 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
             super.onBackPressed()
         }
     }
+
+
 
 
     private fun cancelNotifications(){

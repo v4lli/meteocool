@@ -1,24 +1,21 @@
 package com.meteocool
 
-import android.app.Activity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.meteocool.location.WebAppInterface
+import androidx.fragment.app.Fragment
 import java.util.*
 
-
-class MapFragment() : Fragment(){
+class DocumentationFragment : Fragment() {
 
     companion object {
-        private const val WEB_URL = "https://meteocool.com/?mobile=android2"
+        private const val WEB_URL = "https://meteocool.com/documentation.html"
     }
 
-    private var mWebView : WebView? = null
+    private var mWebView: WebView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
@@ -30,26 +27,13 @@ class MapFragment() : Fragment(){
         webSettings?.setGeolocationEnabled(true)
 
 
-        val locale = when(Locale.getDefault().displayLanguage.compareTo(Locale.GERMAN.displayLanguage)){
+        val locale = when (Locale.getDefault().displayLanguage.compareTo(Locale.GERMAN.displayLanguage)) {
             0 -> "&lang=de"
             else -> "&lang=en"
         }
-        mWebView?.loadUrl(WEB_URL +locale)
+        mWebView?.loadUrl(WEB_URL)
         // Force links and redirects to open in the WebView instead of in a browser
         mWebView?.webViewClient = WebViewClient()
         return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val mWebView : WebView = activity!!.findViewById(R.id.webView)
-        val webAppInterface = WebAppInterface(activity!!, activity!!, mWebView)
-        webAppInterface.injectSettings()
-        mWebView.addJavascriptInterface(webAppInterface, "Android")
-
-    }
-
-    override fun onAttach(activity: Activity) {
-        super.onAttach(activity)
     }
 }

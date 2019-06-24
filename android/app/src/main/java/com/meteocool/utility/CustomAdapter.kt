@@ -21,7 +21,7 @@ class CustomAdapter(val mContext : Context, val title : String, val imageId : In
     }
 
     override fun getCount(): Int {
-        return 0
+        return 1
     }
 
 }

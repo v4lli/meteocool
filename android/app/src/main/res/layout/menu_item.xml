@@ -6,7 +6,7 @@
         android:layout_height="fill_parent"
         android:padding="10dp">
 
-    <ImageView android:id="@+id/imgIcon"
+    <ImageView android:id="@+id/drawerImgID"
                android:layout_width="wrap_content"
                android:layout_height="fill_parent"
                android:gravity="center_vertical"
@@ -16,7 +16,7 @@
                android:layout_marginTop="5dp"
                android:layout_marginBottom="5dp" />
 
-    <TextView android:id="@+id/txtTitle"
+    <TextView android:id="@+id/drawerHeaderText"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:gravity="center_vertical"

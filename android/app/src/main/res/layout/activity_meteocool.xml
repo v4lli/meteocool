@@ -34,13 +34,12 @@
             <include layout="@layout/nav_header_main"/>
 
 
-            <ListView android:id="@+id/lst_menu_items"
+            <ListView android:id="@+id/drawer_menu"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:headerDividersEnabled="false"
                       android:dividerHeight="0dp"
-                      android:divider="@null"
-            android:entries="@array/drawer_menu_entries">
+                      android:divider="@null">
             </ListView>
 
 
