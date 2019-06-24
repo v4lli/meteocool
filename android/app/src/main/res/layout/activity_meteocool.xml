@@ -39,7 +39,9 @@
                       android:layout_height="wrap_content"
                       android:headerDividersEnabled="false"
                       android:dividerHeight="0dp"
-                      android:divider="@null">
+                      android:divider="@null"
+                      android:choiceMode="singleChoice"
+                      android:listSelector="@color/cloudAccent">
             </ListView>
 
 

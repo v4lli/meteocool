@@ -21,10 +21,13 @@ class NavDrawerAdapter(private val activity : AppCompatActivity, private val lay
 , AdapterView.OnItemClickListener{
 
 
+
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         super.getPosition(getItem(position))
+        view!!.isSelected = true
             when (getItem(position)!!.menuHeading) {
                 activity.getString(R.string.map_header) -> {
+
                     activity.supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, MapFragment())
                         .commit()
 
@@ -41,9 +44,11 @@ class NavDrawerAdapter(private val activity : AppCompatActivity, private val lay
         listItem = inflater.inflate(layoutResourceId, parent, false)
         val imageIcon = listItem.findViewById<ImageView>(R.id.drawerImgID)
         val menuHeader = listItem.findViewById<TextView>(R.id.drawerHeaderText)
+
+
         val folder = navDrawerItems[position]
         imageIcon.setImageResource(folder.imgID)
-        menuHeader.setText(folder.menuHeading)
+        menuHeader.text = folder.menuHeading
         return listItem
     }
 

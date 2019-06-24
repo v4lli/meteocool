@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.preference.PreferenceManager
 import android.util.Log
 import android.webkit.WebView
 import android.widget.ListView
@@ -24,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
 import com.meteocool.location.LocationUpdatesBroadcastReceiver
 import org.jetbrains.anko.doAsync
-import com.meteocool.location.WebAppInterface
 
 import com.meteocool.security.Validator
 import com.meteocool.settings.SettingsFragment
