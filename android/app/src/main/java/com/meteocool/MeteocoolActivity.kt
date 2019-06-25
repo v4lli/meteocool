@@ -7,9 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.preference.PreferenceManager
 import android.util.Log
-import android.webkit.WebView
 import android.widget.ListView
 import android.widget.TextView
 import androidx.core.view.GravityCompat
@@ -32,6 +30,7 @@ import com.meteocool.utility.JSONClearPost
 import com.meteocool.utility.NavDrawerAdapter
 import com.meteocool.utility.NavDrawerItem
 import com.meteocool.utility.NetworkUtility
+import kotlinx.android.synthetic.main.fragment_map.*
 
 
 class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{

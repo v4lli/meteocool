@@ -14,6 +14,7 @@ import com.meteocool.DocumentationFragment
 import com.meteocool.MapFragment
 import com.meteocool.R
 import com.meteocool.location.WebAppInterface
+import org.jetbrains.anko.defaultSharedPreferences
 
 
 class NavDrawerAdapter(private val activity : AppCompatActivity, private val layoutResourceId : Int, private val navDrawerItems: List<NavDrawerItem>)
@@ -25,15 +26,24 @@ class NavDrawerAdapter(private val activity : AppCompatActivity, private val lay
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         super.getPosition(getItem(position))
         view!!.isSelected = true
-            when (getItem(position)!!.menuHeading) {
+        val  mWebView = activity.findViewById(R.id.webView) as WebView
+        when (getItem(position)!!.menuHeading) {
                 activity.getString(R.string.map_header) -> {
-
-                    activity.supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, MapFragment())
-                        .commit()
+                    val lastState = activity.defaultSharedPreferences.getString("map_url", null)
+                    if(lastState != null){
+                        mWebView.loadUrl(lastState)
+                    }else {
+                        activity.supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainer, MapFragment())
+                            .commit()
+                    }
 
                 }
                 activity.getString(R.string.menu_documentation) -> {
-                    activity.supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, DocumentationFragment()).commit()
+                    activity.defaultSharedPreferences.edit()
+                        .putString("map_url", mWebView.url)
+                        .apply()
+                    mWebView.loadUrl(MapFragment.DOC_URL)
                 }
             }
     }
