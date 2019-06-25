@@ -16,7 +16,7 @@ import com.meteocool.security.Validator
 
 
 /** Instantiate the interface and set the comntext */
-class WebAppInterface(private val  activity: Activity, private val mContext: Context, private val mWebView: WebView) {
+class WebAppInterface(private val  activity: Activity, private val mWebView: WebView) {
 
     companion object{
         private val TAG = "WebAppInterface"
@@ -24,10 +24,10 @@ class WebAppInterface(private val  activity: Activity, private val mContext: Con
 
     @JavascriptInterface
     fun injectLocation() {
-        val preferenceManager = PreferenceManager.getDefaultSharedPreferences(mContext)
-        if(Validator.isLocationPermissionGranted(mContext)) {
+        val preferenceManager = PreferenceManager.getDefaultSharedPreferences(activity)
+        if(Validator.isLocationPermissionGranted(activity)) {
 
-            val lastLocation = LocationResultHelper.getSavedLocationResult(mContext)
+            val lastLocation = LocationResultHelper.getSavedLocationResult(activity)
 
             if(lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_LAT) >= 0.0) {
                 Log.d(TAG, "entered")
@@ -43,7 +43,7 @@ class WebAppInterface(private val  activity: Activity, private val mContext: Con
                     }
                 })
             }else{
-                Toast.makeText(mContext, R.string.gps_button_toast, Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, R.string.gps_button_toast, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -55,7 +55,7 @@ class WebAppInterface(private val  activity: Activity, private val mContext: Con
     }
 
     fun injectSettings(){
-        val preferenceManager = PreferenceManager.getDefaultSharedPreferences(mContext)
+        val preferenceManager = PreferenceManager.getDefaultSharedPreferences(activity)
         val settings : Gson = Gson().newBuilder().create()
         val myMap = mapOf<String, Boolean>(
                 Pair("darkMode",preferenceManager.getBoolean("map_mode", false)),

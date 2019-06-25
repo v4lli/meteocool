@@ -2,13 +2,19 @@ package com.meteocool
 
 import android.app.Activity
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
+import com.meteocool.location.LocationResultHelper
 import com.meteocool.location.WebAppInterface
+import com.meteocool.security.Validator
 import java.util.*
 
 
@@ -43,9 +49,8 @@ class MapFragment() : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mWebView : WebView = activity!!.findViewById(R.id.webView)
-        val webAppInterface = WebAppInterface(activity!!, activity!!, mWebView)
+        val webAppInterface = WebAppInterface(activity!!, mWebView)
         webAppInterface.injectSettings()
         mWebView.addJavascriptInterface(webAppInterface, "Android")
-
     }
 }
