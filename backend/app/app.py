@@ -298,7 +298,7 @@ def log_connection():
 
 # Executed when a new websocket client connects. Currently no-op.
 @socketio.on("getStrikes", namespace="/tile")
-def sendStrikes(param):
+def sendStrikes():
     logging.warn("CACHE=%s" % strikeCache)
     send(strikeCache, json=True)
 

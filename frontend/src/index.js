@@ -381,12 +381,12 @@ window.geolocation.on("change:position", () => {
 // actually display reflectivity radar data
 //
 
-var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var websocketUrl = "https://meteocool.com/tile";
-if (process.env.NODE_ENV === "production") {
-  tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-  websocketUrl = "http://localhost:8040/tile";
-}
+//if (process.env.NODE_ENV === "production") {
+//var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+//  websocketUrl = "http://localhost:8040/tile";
+//}
 
 var reflectivityOpacity = 0.5;
 
@@ -399,17 +399,6 @@ function manualTileUpdate () {
   if (elem) { elem.innerHTML = "..."; }
   window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
 }
-// for historic reason, this is the hook called by the apps when entering
-// foreground.
-window.manualTileUpdateFn = (p) => {
-  manualTileUpdate();
-  if (window.mcSettings["zoomOnForeground"]) {
-    if (window.userLocation) {
-      window.map.getView().animate({ center: window.userLocation, zoom: 10 });
-    }
-  }
-};
-manualTileUpdate();
 
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
@@ -661,6 +650,26 @@ if (DeviceDetect.getAndroidAPILevel() >= 2) {
   });
 }
 
+var toggleHTMLfixMe = () => {
+  toggleButton.innerHTML = settings.get("darkMode") ? "light mode" : "dark mode";
+
+  for (let index = 0; index < mclight.length; index++) {
+    const element = mclight[index];
+    if (element.classList.contains("bg-dark")) {
+      element.classList.remove("bg-dark", "text-white");
+    } else {
+      element.classList.add("bg-dark", "text-white");
+    }
+  }
+  if (navbar.classList.contains("navbar-light")) {
+    navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
+    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
+  } else {
+    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
+    navbar.classList.add("navbar-light", "bg-light");
+  }
+};
+
 var settings = new Settings({
   "mapRotation": {
     "type": "boolean",
@@ -696,9 +705,28 @@ var settings = new Settings({
         })
       });
       window.map.getLayers().setAt(0, newLayer);
+      toggleHTMLfixMe();
     }
   }
 });
+
+
+// for historic reason, this is the hook called by the apps when entering
+// foreground.
+window.manualTileUpdateFn = (p) => {
+  manualTileUpdate();
+  if (settings.get("zoomOnForeground")) {
+    if (window.userLocation) {
+      window.map.getView().animate({ center: window.userLocation, zoom: 10 });
+    } else {
+      if (DeviceDetect.getAndroidAPILevel() >= 2) {
+        Android.injectLocation(); // eslint-disable-line no-undef
+        window.setTimeout(() => {window.manualTileUpdateFn(true);}, 1000);
+      }
+    }
+  }
+};
+manualTileUpdate();
 
 if (DeviceDetect.getAndroidAPILevel() >= 2) {
   Android.requestSettings();
@@ -735,30 +763,6 @@ function toggleIOSBar () {
   }
 }
 
-var toggleHTMLfixMe = () => {
-  toggleButton.innerHTML = settings.get("darkMode") ? "light mode" : "dark mode";
-
-  for (let index = 0; index < mclight.length; index++) {
-    const element = mclight[index];
-    if (element.classList.contains("bg-dark")) {
-      element.classList.remove("bg-dark", "text-white");
-    } else {
-      element.classList.add("bg-dark", "text-white");
-    }
-  }
-  if (navbar.classList.contains("navbar-light")) {
-    navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
-    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
-  } else {
-    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
-    navbar.classList.add("navbar-light", "bg-light");
-  }
-};
-
-if (!dd.isAuxPage() && settings.get("darkMode")) {
-  toggleHTMLfixMe();
-}
-
 if (toggleButton) {
   toggleButton.onclick = () => {
     toggleViewMode();
@@ -766,7 +770,6 @@ if (toggleButton) {
     toggleIOSBar();
   };
 }
-
 
 // Register service worker
 if ("serviceWorker" in navigator) {
