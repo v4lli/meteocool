@@ -56,8 +56,6 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         if (FirebaseApp.getApps(this).isNotEmpty()) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
@@ -87,7 +85,10 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         val navAdapter = NavDrawerAdapter(this, R.layout.menu_item, drawerItems)
         drawerList.adapter = navAdapter
         drawerList.onItemClickListener = navAdapter
+       // drawerList.performItemClick(drawerList, 0, 0)
     }
+
+
 
 
 
@@ -110,6 +111,10 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
 
     override fun onStart() {
         super.onStart()
+        val drawerList : ListView = findViewById(R.id.drawer_menu)
+
+
+
         if(Validator.isLocationPermissionGranted(this)) {
             requestLocationUpdates()
         }

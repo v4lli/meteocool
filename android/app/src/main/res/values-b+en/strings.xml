@@ -25,7 +25,6 @@
 
     <string name="title_activity_settings">Settings</string>
     <string name="menu_documentation">Documentation</string>
-    <string name="menu_settings_on">Show settings</string>
 
     <!-- Preference Titles -->
     <string name="notification_header">Notifications</string>
@@ -33,7 +32,7 @@
 
     <!-- Push Preferences -->
     <string name="notification_push_title">Notifications</string>
-    <string name="notification_push_level_title">Notification level</string>
+    <string name="notification_push_level_title">Notification from…</string>
     <string name="level_drizzle">Drizzle</string>
     <string name="level_rain">Rain</string>
     <string name="level_heavy_rain">Heavy Rain</string>

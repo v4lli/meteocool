@@ -18,7 +18,7 @@ class MapFragment() : Fragment(){
         const val DOC_URL = "https://meteocool.com/documentation.html"
     }
 
-    private var mWebView : WebView? = null
+    var mWebView : WebView? = null
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -33,7 +33,6 @@ class MapFragment() : Fragment(){
         webSettings?.databaseEnabled = true
         webSettings?.setGeolocationEnabled(true)
 
-
         val locale = when(Locale.getDefault().displayLanguage.compareTo(Locale.GERMAN.displayLanguage)){
             0 -> "&lang=de"
             else -> "&lang=en"
@@ -46,9 +45,7 @@ class MapFragment() : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mWebView : WebView = activity!!.findViewById(R.id.webView)
-        val webAppInterface = WebAppInterface(activity!!, mWebView)
-        webAppInterface.injectSettings()
-        mWebView.addJavascriptInterface(webAppInterface, "Android")
+        val webAppInterface = WebAppInterface(activity!!)
+        mWebView!!.addJavascriptInterface(webAppInterface, "Android")
     }
 }

@@ -3,11 +3,12 @@ package com.meteocool.settings
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.webkit.WebView
 import androidx.preference.PreferenceFragmentCompat
 import com.meteocool.R
 import com.meteocool.location.WebAppInterface
 
-class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener  {
+class SettingsFragment() : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener  {
 
 
     companion object {
@@ -28,6 +29,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if(key ==  "map_mode" || key == "map_zoom" || key == "map_rotate"){
             Log.i(TAG, "Preference value $key was updated to ${sharedPreferences!!.getBoolean(key, false)} ")
+            val webAppInterface = WebAppInterface(activity!!)
+            webAppInterface.requestSettings()
         }
     }
 

@@ -16,11 +16,13 @@ import com.meteocool.security.Validator
 
 
 /** Instantiate the interface and set the comntext */
-class WebAppInterface(private val  activity: Activity, private val mWebView: WebView) {
+class WebAppInterface(private val  activity: Activity) {
 
     companion object{
         private val TAG = "WebAppInterface"
     }
+
+    private val webView = activity.findViewById<WebView>(R.id.webView)
 
     @JavascriptInterface
     fun injectLocation() {
@@ -35,9 +37,9 @@ class WebAppInterface(private val  activity: Activity, private val mWebView: Web
                 val lon = lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_LON)
                 val acc = lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_ACC)
                 val string = "window.injectLocation($lat , $lon , $acc , true);"
-                mWebView.post({
+                webView.post({
                     run  {
-                        mWebView.evaluateJavascript(string, { _ ->
+                        webView.evaluateJavascript(string, { _ ->
                             Log.d(TAG, string)
                         })
                     }
@@ -54,20 +56,21 @@ class WebAppInterface(private val  activity: Activity, private val mWebView: Web
         drawerLayout.openDrawer(GravityCompat.START)
     }
 
-    fun injectSettings(){
+    @JavascriptInterface
+    fun requestSettings(){
         val preferenceManager = PreferenceManager.getDefaultSharedPreferences(activity)
         val settings : Gson = Gson().newBuilder().create()
         val myMap = mapOf<String, Boolean>(
                 Pair("darkMode",preferenceManager.getBoolean("map_mode", false)),
-                Pair("zoomOnForeGround",preferenceManager.getBoolean("map_zoom", false)),
+                Pair("zoomOnForeground",preferenceManager.getBoolean("map_zoom", false)),
                 Pair("mapRotation",preferenceManager.getBoolean("map_rotate", false)))
 
         val string = "window.injectSettings(${settings.toJson(myMap)});"
-        Log.d(TAG, string)
-        mWebView.post({
+        webView.post({
             run  {
-                mWebView.evaluateJavascript(string, { _ ->
+                webView.evaluateJavascript(string, { foo ->
                     Log.d(TAG, string)
+                    Log.d(TAG, foo)
                 })
             }
         })

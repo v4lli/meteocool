@@ -36,10 +36,10 @@
 
     <!-- Push Preferences -->
     <string name="notification_push_title">Push-Nachrichten</string>
-    <string name="notification_push_level_title">Level der Benachrichtigung</string>
-    <string name="level_drizzle">Nieseln</string>
+    <string name="notification_push_level_title">Benachrichtigung ab…</string>
+    <string name="level_drizzle">Nieselregen</string>
     <string name="level_rain">Regen</string>
-    <string name="level_heavy_rain">Starker Regen</string>
+    <string name="level_heavy_rain">Starkem Regen</string>
     <string name="level_hail">Hagel</string>
 
     <string name="notification_time_title">Benachrichtigungszeit</string>

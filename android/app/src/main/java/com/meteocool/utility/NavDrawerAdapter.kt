@@ -5,10 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.meteocool.DocumentationFragment
 import com.meteocool.MapFragment
@@ -20,6 +17,7 @@ import org.jetbrains.anko.defaultSharedPreferences
 class NavDrawerAdapter(private val activity : AppCompatActivity, private val layoutResourceId : Int, private val navDrawerItems: List<NavDrawerItem>)
     : ArrayAdapter<NavDrawerItem>(activity.applicationContext, layoutResourceId, navDrawerItems)
 , AdapterView.OnItemClickListener{
+
 
 
 
@@ -37,7 +35,6 @@ class NavDrawerAdapter(private val activity : AppCompatActivity, private val lay
                             .replace(R.id.fragmentContainer, MapFragment())
                             .commit()
                     }
-
                 }
                 activity.getString(R.string.menu_documentation) -> {
                     activity.defaultSharedPreferences.edit()
@@ -48,6 +45,8 @@ class NavDrawerAdapter(private val activity : AppCompatActivity, private val lay
             }
     }
 
+
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var listItem = convertView
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -55,10 +54,10 @@ class NavDrawerAdapter(private val activity : AppCompatActivity, private val lay
         val imageIcon = listItem.findViewById<ImageView>(R.id.drawerImgID)
         val menuHeader = listItem.findViewById<TextView>(R.id.drawerHeaderText)
 
-
         val folder = navDrawerItems[position]
         imageIcon.setImageResource(folder.imgID)
         menuHeader.text = folder.menuHeading
+
         return listItem
     }
 
