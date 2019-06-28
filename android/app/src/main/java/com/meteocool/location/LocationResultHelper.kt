@@ -31,6 +31,10 @@ internal class LocationResultHelper(private val mContext: Context, private val m
         const val KEY_LOCATION_UPDATES_RESULT_LON = "location-update-result-longitude"
         const val KEY_LOCATION_UPDATES_RESULT_ACC = "location-update-result-accuracy"
 
+        var NOTIFICATION_TIME = 15
+        var NOTIFICATION_INTENSITY = 10
+
+
         /**
          * Fetches location results from [android.content.SharedPreferences].
          */

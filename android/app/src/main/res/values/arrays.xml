@@ -8,10 +8,10 @@
     </string-array>
 
     <string-array name="notification_intensity_values">
-        <item>level_drizzle</item>
-        <item>level_rain</item>
-        <item>level_heavy_rain</item>
-        <item>level_hail</item>
+        <item>18</item>
+        <item>25</item>
+        <item>40</item>
+        <item>53</item>
     </string-array>
 
     <!-- Reply Preference -->

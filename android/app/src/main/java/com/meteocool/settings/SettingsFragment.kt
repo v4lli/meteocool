@@ -6,6 +6,7 @@ import android.util.Log
 import android.webkit.WebView
 import androidx.preference.PreferenceFragmentCompat
 import com.meteocool.R
+import com.meteocool.location.LocationResultHelper
 import com.meteocool.location.WebAppInterface
 
 class SettingsFragment() : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener  {
@@ -27,10 +28,26 @@ class SettingsFragment() : PreferenceFragmentCompat(), SharedPreferences.OnShare
 
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if(key ==  "map_mode" || key == "map_zoom" || key == "map_rotate"){
-            Log.i(TAG, "Preference value $key was updated to ${sharedPreferences!!.getBoolean(key, false)} ")
-            val webAppInterface = WebAppInterface(activity!!)
-            webAppInterface.requestSettings()
+
+        when(key){
+            "map_mode", "map_zoom", "map_rotate" -> {
+                Log.i(TAG, "Preference value $key was updated to ${sharedPreferences!!.getBoolean(key, false)} ")
+                val webAppInterface = WebAppInterface(activity!!)
+                webAppInterface.requestSettings()
+            }
+            "notification" -> {
+                //TODO stop and enable location sending in background
+            }
+            "notification_intensity" ->{
+                val intensity = sharedPreferences!!.getString(key, "-1")!!.toInt()
+                Log.i(TAG, "Preference value $key was updated to $intensity")
+                LocationResultHelper.NOTIFICATION_INTENSITY = intensity
+            }
+            "notification_time" ->{
+                val timeAhead = sharedPreferences!!.getString(key, "-1")!!.toInt()
+                Log.i(TAG, "Preference value $key was updated to $timeAhead ")
+                LocationResultHelper.NOTIFICATION_TIME = timeAhead
+            }
         }
     }
 

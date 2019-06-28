@@ -1,6 +1,7 @@
 package com.meteocool
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -43,9 +44,14 @@ class MapFragment() : Fragment(){
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val webAppInterface = WebAppInterface(activity!!)
-        mWebView!!.addJavascriptInterface(webAppInterface, "Android")
+    override fun onResume() {
+        super.onResume()
+        val string = "window.manualTileUpdateFn(true);"
+        mWebView!!.post({
+            run  {
+                mWebView!!.evaluateJavascript(string, { foo ->
+                })
+            }
+        })
     }
 }

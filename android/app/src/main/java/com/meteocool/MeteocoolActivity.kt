@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.webkit.WebView
 import android.widget.ListView
 import android.widget.TextView
 import androidx.core.view.GravityCompat
@@ -22,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase
 
 import com.google.firebase.iid.FirebaseInstanceId
 import com.meteocool.location.LocationUpdatesBroadcastReceiver
+import com.meteocool.location.WebAppInterface
 import org.jetbrains.anko.doAsync
 
 import com.meteocool.security.Validator
@@ -98,8 +100,11 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     private fun requestLocationUpdates() {
         try {
             Log.i(TAG, "Starting location updates")
-            mFusedLocationClient!!.requestLocationUpdates(
-                mLocationRequest, pendingIntent)
+            if(mFusedLocationClient != null) {
+                mFusedLocationClient!!.requestLocationUpdates(
+                    mLocationRequest, pendingIntent
+                )
+            }
 
         } catch (e: SecurityException) {
             e.printStackTrace()
@@ -118,10 +123,8 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         if(Validator.isLocationPermissionGranted(this)) {
             requestLocationUpdates()
         }
-//        val mWebView : WebView = findViewById(R.id.webView)
-//        val webAppInterface = WebAppInterface(this, this, mWebView)
-//        webAppInterface.injectSettings()
-//        mWebView.addJavascriptInterface(webAppInterface, "Android")
+        val mWebView : WebView = findViewById(R.id.webView)
+        mWebView.addJavascriptInterface(WebAppInterface(this), "Android")
 
         var token = FirebaseInstanceId.getInstance().token
         if (token == null) {
@@ -142,6 +145,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     override fun onResume() {
         super.onResume()
         cancelNotifications()
+
 
     }
 

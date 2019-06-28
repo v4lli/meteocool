@@ -26,17 +26,19 @@ class WebAppInterface(private val  activity: Activity) {
 
     @JavascriptInterface
     fun injectLocation() {
+        Log.d(TAG, "injectLocation")
         val preferenceManager = PreferenceManager.getDefaultSharedPreferences(activity)
         if(Validator.isLocationPermissionGranted(activity)) {
-
+            Log.d(TAG, "entered")
             val lastLocation = LocationResultHelper.getSavedLocationResult(activity)
 
             if(lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_LAT) >= 0.0) {
-                Log.d(TAG, "entered")
+
                 val lat = lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_LAT)
                 val lon = lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_LON)
                 val acc = lastLocation.getValue(LocationResultHelper.KEY_LOCATION_UPDATES_RESULT_ACC)
                 val string = "window.injectLocation($lat , $lon , $acc , true);"
+                Log.d(TAG, string)
                 webView.post({
                     run  {
                         webView.evaluateJavascript(string, { _ ->
@@ -47,6 +49,8 @@ class WebAppInterface(private val  activity: Activity) {
             }else{
                 Toast.makeText(activity, R.string.gps_button_toast, Toast.LENGTH_SHORT).show()
             }
+        }else{
+            Log.d(TAG, "Permission not granted")
         }
     }
 
