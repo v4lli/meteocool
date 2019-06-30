@@ -66,10 +66,9 @@ Carthage/Checkouts
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
 
 Gemfile.lock
+fastlane/README.md
 fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
+fastlane/screenshots/
 
 # Code Injection
 #
