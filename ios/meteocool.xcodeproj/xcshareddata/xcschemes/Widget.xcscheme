@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "57C66BFC21CF25A7004EC825"
-               BuildableName = "NotificationService.appex"
-               BlueprintName = "NotificationService"
+               BlueprintIdentifier = "EA2B77DA2209A9DF00610ED7"
+               BuildableName = "Widget.appex"
+               BlueprintName = "Widget"
                ReferencedContainer = "container:meteocool.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
