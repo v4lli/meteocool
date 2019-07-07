@@ -43,9 +43,9 @@ var dd = new DeviceDetect();
 
 // german localization - since we have very few string, do this manually
 // instead of using another crappy library.
-var lang = "en";
+// var lang = "en";
 var dfnLocale = dateFnEnglish;
-if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.language.split('-')[0] == "de") {
+if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.language.split("-")[0] === "de") {
   $("#localizedLastUpdated").text("Aktualisiert");
   $("#updatedTime").text("nie!");
   $("#openSettings").text("Einstellungen");
@@ -53,7 +53,7 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
   $("#localizedDocumentation").text("Dokumentation");
   $("#localizedApps").text("Android & iPhone");
   $("#localizedAbout").text("Über meteocool");
-  lang = "de";
+  // lang = "de";
   dfnLocale = dateFnGerman;
 }
 
@@ -62,7 +62,7 @@ function lastUpdatedFn () {
 
   if (elem) {
     if (window.lastUpdatedServer) {
-      elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer, {locale: dfnLocale, addSuffix: true});
+      elem.innerHTML = distanceInWordsToNow(window.lastUpdatedServer, { locale: dfnLocale, addSuffix: true });
     } else {
       elem.innerHTML = "<span style='color: #ff0000;'>connection error</span>";
     }
@@ -325,10 +325,10 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
     var size = feature.get("features").length;
     var level = 0;
     let now = new Date().getTime();
-    let MINS = 1000*45;
-    feature.get("features").forEach((feature) => {level += (now - feature.getId())/MINS;})
+    let MINS = 1000 * 30;
+    feature.get("features").forEach((feature) => { level += (now - feature.getId()) / MINS; });
     // cap to 30 levels
-    level = (Math.round(level/size) / 2) + 1;
+    level = (Math.round(level / size) / 2) + 1;
     if (level > 30) {
       level = 30;
     }
@@ -350,7 +350,7 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
     var style = styleCache[level][textsize];
     if (!style) {
       let opacity = Math.min(1 - (level / 30), 1);
-      //console.log("new size + level: " + textsize + ", " + level + ", opacity: " + opacity);
+      // console.log("new size + level: " + textsize + ", " + level + ", opacity: " + opacity);
 
       style = new Style({
         text: new Text({
@@ -383,10 +383,10 @@ window.geolocation.on("change:position", () => {
 
 var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var websocketUrl = "http://localhost:8040/tile";
-//if (process.env.NODE_ENV === "production") {
-//var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-//var websocketUrl = "https://meteocool.com/tile";
-//}
+// if (process.env.NODE_ENV === "production") {
+// var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+// var websocketUrl = "https://meteocool.com/tile";
+// }
 
 var reflectivityOpacity = 0.5;
 
@@ -404,7 +404,7 @@ socket.on("bulkStrikes", (message) => {
   console.log("Got " + message.length + " strikes from cache");
   strikemgr.clearAll();
   message.forEach((elem) => {
-    strikemgr.addStrikeWithTime(elem["lon"], elem["lat"], Math.round(elem["time"]/1000/1000));
+    strikemgr.addStrikeWithTime(elem["lon"], elem["lat"], Math.round(elem["time"] / 1000 / 1000));
   });
 });
 
@@ -621,13 +621,13 @@ $("#appModal").on("show.bs.modal", function () {
     var img = $(this);
     img.attr("src", img.data("src"));
   });
-  window.history.pushState('appModal', 'meteocool Apps', '/#apps');
+  window.history.pushState("appModal", "meteocool Apps", "/#apps");
 });
 $("#about").on("show.bs.modal", function () {
-  window.history.pushState('about', 'meteocool About', '/#about');
+  window.history.pushState("about", "meteocool About", "/#about");
 });
 $("#impressumModal").on("show.bs.modal", function () {
-  window.history.pushState('impressm', 'meteocool Impressum', '/#impressum');
+  window.history.pushState("impressm", "meteocool Impressum", "/#impressum");
 });
 
 if (DeviceDetect.getIosAPILevel() >= 3) {
@@ -640,7 +640,7 @@ if (DeviceDetect.getAndroidAPILevel() >= 2) {
   $("#showMenuBtn").css("display", "none");
   $("#showMenuBtnAndroid").css("display", "inline");
   $("#showMenuBtnAndroid").click(() => {
-    Android.showSettings();
+    Android.showSettings(); // eslint-disable-line no-undef
   });
 }
 
@@ -717,14 +717,14 @@ manualTileUpdate();
 // foreground.
 window.manualTileUpdateFn = (p) => {
   manualTileUpdate();
-  window.sock.emit('getStrikes', null, (data) => {});
+  window.sock.emit("getStrikes", null, (data) => {});
   if (settings.get("zoomOnForeground")) {
     if (window.userLocation) {
       window.map.getView().animate({ center: window.userLocation, zoom: 10 });
     } else {
       if (DeviceDetect.getAndroidAPILevel() >= 2) {
         Android.injectLocation(); // eslint-disable-line no-undef
-        window.setTimeout(() => {window.manualTileUpdateFn(true);}, 1000);
+        window.setTimeout(() => { window.manualTileUpdateFn(true); }, 1000);
       }
     }
   }
@@ -732,7 +732,7 @@ window.manualTileUpdateFn = (p) => {
 };
 
 if (DeviceDetect.getAndroidAPILevel() >= 2) {
-  Android.requestSettings();
+  Android.requestSettings(); // eslint-disable-line no-undef
 }
 
 if (settings.get("darkMode")) {
@@ -790,6 +790,6 @@ if ("serviceWorker" in navigator) {
 }
 
 // purge old lightning strikes on restart
-setTimeout(() => {strikemgr.fadeStrikes();}, 2*60*1000);
+setTimeout(() => { strikemgr.fadeStrikes(); }, 2 * 60 * 1000);
 
 /* vim: set ts=2 sw=2 expandtab: */

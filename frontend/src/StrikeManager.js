@@ -1,6 +1,5 @@
 import Point from "ol/geom/Point";
 import { Feature } from "ol";
-import { Fill, Stroke, Style, Text, Circle } from "ol/style";
 
 export class StrikeManager {
   constructor (maxStrikes, vectorSource) {
@@ -25,21 +24,21 @@ export class StrikeManager {
   }
 
   // purge old strikes
-  fadeStrikes() {
+  fadeStrikes () {
     let now = new Date().getTime();
-    let MINS = 60*1000;
+    let MINS = 60 * 1000;
     this.strikes.forEach((id, idx) => {
-      if (id < now - 59*MINS) {
+      if (id < now - 30 * MINS) {
         this.vs.removeFeature(this.vs.getFeatureById(id));
-        this.strikes = this.strikes.slice(0, idx).concat(this.strikes.slice(idx + 1, this.strikes.length))
+        this.strikes = this.strikes.slice(0, idx).concat(this.strikes.slice(idx + 1, this.strikes.length));
       }
     });
     this.vs.refresh();
   }
 
-  clearAll() {
+  clearAll () {
     this.strikes = [];
-    this.vs.clear()
+    this.vs.clear();
   }
 };
 
