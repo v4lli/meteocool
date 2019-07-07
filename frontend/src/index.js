@@ -644,6 +644,26 @@ if (DeviceDetect.getAndroidAPILevel() >= 2) {
   });
 }
 
+var toggleHTMLfixMe = () => {
+  toggleButton.innerHTML = settings.get("darkMode") ? "light mode" : "dark mode";
+
+  for (let index = 0; index < mclight.length; index++) {
+    const element = mclight[index];
+    if (element.classList.contains("bg-dark")) {
+      element.classList.remove("bg-dark", "text-white");
+    } else {
+      element.classList.add("bg-dark", "text-white");
+    }
+  }
+  if (navbar.classList.contains("navbar-light")) {
+    navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
+    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
+  } else {
+    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
+    navbar.classList.add("navbar-light", "bg-light");
+  }
+};
+
 var settings = new Settings({
   "mapRotation": {
     "type": "boolean",
@@ -679,6 +699,7 @@ var settings = new Settings({
         })
       });
       window.map.getLayers().setAt(0, newLayer);
+      toggleHTMLfixMe();
     }
   }
 });
@@ -709,7 +730,6 @@ window.manualTileUpdateFn = (p) => {
   }
   console.log("manual tile update");
 };
-
 
 if (DeviceDetect.getAndroidAPILevel() >= 2) {
   Android.requestSettings();
@@ -746,30 +766,6 @@ function toggleIOSBar () {
   }
 }
 
-var toggleHTMLfixMe = () => {
-  toggleButton.innerHTML = settings.get("darkMode") ? "light mode" : "dark mode";
-
-  for (let index = 0; index < mclight.length; index++) {
-    const element = mclight[index];
-    if (element.classList.contains("bg-dark")) {
-      element.classList.remove("bg-dark", "text-white");
-    } else {
-      element.classList.add("bg-dark", "text-white");
-    }
-  }
-  if (navbar.classList.contains("navbar-light")) {
-    navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
-    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
-  } else {
-    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
-    navbar.classList.add("navbar-light", "bg-light");
-  }
-};
-
-if (!dd.isAuxPage() && settings.get("darkMode")) {
-  toggleHTMLfixMe();
-}
-
 if (toggleButton) {
   toggleButton.onclick = () => {
     toggleViewMode();
@@ -777,7 +773,6 @@ if (toggleButton) {
     toggleIOSBar();
   };
 }
-
 
 // Register service worker
 if ("serviceWorker" in navigator) {
