@@ -15,6 +15,9 @@
 		577666972130C6E300C25E00 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 577666952130C6E300C25E00 /* Main.storyboard */; };
 		577666992130C6E300C25E00 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 577666982130C6E300C25E00 /* Assets.xcassets */; };
 		5776669C2130C6E300C25E00 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5776669A2130C6E300C25E00 /* LaunchScreen.storyboard */; };
+		57A34CEA22C9701E00D9862D /* meteocoolUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A34CE922C9701E00D9862D /* meteocoolUITests.swift */; };
+		57A34CF422C9706A00D9862D /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A34CF322C9706A00D9862D /* SnapshotHelper.swift */; };
+		57A34CF822C9756F00D9862D /* SpringboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A34CF722C9756F00D9862D /* SpringboardHelper.swift */; };
 		57C66BE821CF2590004EC825 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57C66BE721CF2590004EC825 /* UserNotifications.framework */; };
 		57C66BEA21CF2590004EC825 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57C66BE921CF2590004EC825 /* UserNotificationsUI.framework */; };
 		57C66BED21CF2590004EC825 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C66BEC21CF2590004EC825 /* NotificationViewController.swift */; };
@@ -35,6 +38,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		57A34CEC22C9701E00D9862D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 577666862130C6E300C25E00 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5776668D2130C6E300C25E00;
+			remoteInfo = meteocool;
+		};
 		57C66BF221CF2590004EC825 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 577666862130C6E300C25E00 /* Project object */;
@@ -86,6 +96,11 @@
 		577666982130C6E300C25E00 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5776669B2130C6E300C25E00 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5776669D2130C6E300C25E00 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		57A34CE722C9701E00D9862D /* meteocoolUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = meteocoolUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		57A34CE922C9701E00D9862D /* meteocoolUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = meteocoolUITests.swift; sourceTree = "<group>"; };
+		57A34CEB22C9701E00D9862D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		57A34CF322C9706A00D9862D /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
+		57A34CF722C9756F00D9862D /* SpringboardHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpringboardHelper.swift; sourceTree = "<group>"; };
 		57C66BE521CF2590004EC825 /* NotificationContent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationContent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57C66BE721CF2590004EC825 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		57C66BE921CF2590004EC825 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
@@ -124,6 +139,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A71F9439226E3F8600978EB7 /* OnboardKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57A34CE422C9701E00D9862D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +195,7 @@
 				57C66BEB21CF2590004EC825 /* NotificationContent */,
 				57C66BFE21CF25A8004EC825 /* NotificationService */,
 				EA2B77DE2209A9DF00610ED7 /* Widget */,
+				57A34CE822C9701E00D9862D /* meteocoolUITests */,
 				57C66BE621CF2590004EC825 /* Frameworks */,
 				5776668F2130C6E300C25E00 /* Products */,
 			);
@@ -185,6 +208,7 @@
 				57C66BE521CF2590004EC825 /* NotificationContent.appex */,
 				57C66BFD21CF25A7004EC825 /* NotificationService.appex */,
 				EA2B77DB2209A9DF00610ED7 /* Widget.appex */,
+				57A34CE722C9701E00D9862D /* meteocoolUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -204,6 +228,17 @@
 				EAD69D2B22B3F7E5009F3138 /* Localizable.strings */,
 			);
 			path = meteocool;
+			sourceTree = "<group>";
+		};
+		57A34CE822C9701E00D9862D /* meteocoolUITests */ = {
+			isa = PBXGroup;
+			children = (
+				57A34CF322C9706A00D9862D /* SnapshotHelper.swift */,
+				57A34CF722C9756F00D9862D /* SpringboardHelper.swift */,
+				57A34CE922C9701E00D9862D /* meteocoolUITests.swift */,
+				57A34CEB22C9701E00D9862D /* Info.plist */,
+			);
+			path = meteocoolUITests;
 			sourceTree = "<group>";
 		};
 		57C66BE621CF2590004EC825 /* Frameworks */ = {
@@ -273,6 +308,24 @@
 			productName = meteocool;
 			productReference = 5776668E2130C6E300C25E00 /* meteocool.app */;
 			productType = "com.apple.product-type.application";
+		};
+		57A34CE622C9701E00D9862D /* meteocoolUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57A34CF022C9701E00D9862D /* Build configuration list for PBXNativeTarget "meteocoolUITests" */;
+			buildPhases = (
+				57A34CE322C9701E00D9862D /* Sources */,
+				57A34CE422C9701E00D9862D /* Frameworks */,
+				57A34CE522C9701E00D9862D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				57A34CED22C9701E00D9862D /* PBXTargetDependency */,
+			);
+			name = meteocoolUITests;
+			productName = meteocoolUITests;
+			productReference = 57A34CE722C9701E00D9862D /* meteocoolUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		57C66BE421CF2590004EC825 /* NotificationContent */ = {
 			isa = PBXNativeTarget;
@@ -350,6 +403,10 @@
 							};
 						};
 					};
+					57A34CE622C9701E00D9862D = {
+						CreatedOnToolsVersion = 10.2.1;
+						TestTargetID = 5776668D2130C6E300C25E00;
+					};
 					57C66BE421CF2590004EC825 = {
 						CreatedOnToolsVersion = 10.1;
 						LastSwiftMigration = 1020;
@@ -387,6 +444,7 @@
 				57C66BE421CF2590004EC825 /* NotificationContent */,
 				57C66BFC21CF25A7004EC825 /* NotificationService */,
 				EA2B77DA2209A9DF00610ED7 /* Widget */,
+				57A34CE622C9701E00D9862D /* meteocoolUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -400,6 +458,13 @@
 				EAD69D2922B3F7E5009F3138 /* Localizable.strings in Resources */,
 				577666992130C6E300C25E00 /* Assets.xcassets in Resources */,
 				577666972130C6E300C25E00 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57A34CE522C9701E00D9862D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,6 +531,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		57A34CE322C9701E00D9862D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57A34CEA22C9701E00D9862D /* meteocoolUITests.swift in Sources */,
+				57A34CF822C9756F00D9862D /* SpringboardHelper.swift in Sources */,
+				57A34CF422C9706A00D9862D /* SnapshotHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		57C66BE121CF2590004EC825 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -493,6 +568,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		57A34CED22C9701E00D9862D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5776668D2130C6E300C25E00 /* meteocool */;
+			targetProxy = 57A34CEC22C9701E00D9862D /* PBXContainerItemProxy */;
+		};
 		57C66BF321CF2590004EC825 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 57C66BE421CF2590004EC825 /* NotificationContent */;
@@ -729,6 +809,49 @@
 			};
 			name = Release;
 		};
+		57A34CEE22C9701E00D9862D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4L2672L4VX;
+				INFOPLIST_FILE = meteocoolUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocoolUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = meteocool;
+			};
+			name = Debug;
+		};
+		57A34CEF22C9701E00D9862D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4L2672L4VX;
+				INFOPLIST_FILE = meteocoolUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.frcy.app.meteocoolUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = meteocool;
+			};
+			name = Release;
+		};
 		57C66BF521CF2590004EC825 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -885,6 +1008,15 @@
 			buildConfigurations = (
 				577666A12130C6E300C25E00 /* Debug */,
 				577666A22130C6E300C25E00 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		57A34CF022C9701E00D9862D /* Build configuration list for PBXNativeTarget "meteocoolUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57A34CEE22C9701E00D9862D /* Debug */,
+				57A34CEF22C9701E00D9862D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -21,4 +21,14 @@ platform :ios do
     build_app(scheme: "meteocool")
     upload_to_testflight(skip_waiting_for_build_processing: true)
   end
+  lane :screenshots do
+    capture_screenshots(scheme: "meteocoolUITests",
+        clear_previous_screenshots: true,
+        clean: true,
+        concurrent_simulators: false,
+        erase_simulator: true,
+        reinstall_app: true
+        )
+    #upload_to_app_store(skip_binary_upload: true, skip_metadata: true)
+  end
 end
