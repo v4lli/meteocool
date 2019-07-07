@@ -295,12 +295,14 @@ def unregister():
 @socketio.on("connect", namespace="/tile")
 def log_connection():
     logging.warn("client connected")
+    logging.warn("sendStrikes because of connection")
+    socketio.emit("bulkStrikes", strikeCache, namespace="/tile")
 
 # Executed when a new websocket client connects. Currently no-op.
 @socketio.on("getStrikes", namespace="/tile")
-def sendStrikes(param):
-    logging.warn("CACHE=%s" % strikeCache)
-    send(strikeCache, json=True)
+def sendStrikes(p):
+    logging.warn("sendStrikes because of getStrikes")
+    socketio.emit("bulkStrikes", strikeCache, namespace="/tile")
 
 def blitzortung_thread():
     """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
@@ -309,6 +311,7 @@ def blitzortung_thread():
         # XXX does this need a lock in python?
         global numStrikes
         global failStrikes
+        global strikeCache
         if "lat" in data and "lon" in data:
             numStrikes = numStrikes + 1
             transformed = transform(
@@ -319,6 +322,7 @@ def blitzortung_thread():
             try:
                 alt = data["alt"]
                 pol = data["pol"]
+                time = data["time"]
             except KeyError:
                 pass
             strikeData = {
@@ -326,6 +330,7 @@ def blitzortung_thread():
                     "lon": transformed[0],
                     "alt": alt,
                     "pol": pol,
+                    "time": time
             }
             socketio.emit("lightning", strikeData, namespace="/tile")
             if len(strikeCache) > MAX_LIGHTNING_CACHE:
@@ -368,7 +373,7 @@ def blitzortung_thread():
             "west": 2.0,
             "east": 18.0,
             "north": 55.5,
-            "south": 45.3}))
+            "south": 46.5}))
 
     def stats_logging_cb():
         logging.warn("Processed %d strikes since last report (%d failed)"

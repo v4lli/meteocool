@@ -1,6 +1,6 @@
-// my sincere apologies to anyone reading this source code. I promise to
-// refactor this piece of crap some time soon(TM).
-
+/*
+ * This is basically a 1000 line config file for openlayers. :)
+ */
 import "./main.css";
 import "ol/ol.css";
 
@@ -325,7 +325,7 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
     var size = feature.get("features").length;
     var level = 0;
     let now = new Date().getTime();
-    let MINS = 1000*60;
+    let MINS = 1000*45;
     feature.get("features").forEach((feature) => {level += (now - feature.getId())/MINS;})
     // cap to 30 levels
     level = (Math.round(level/size) / 2) + 1;
@@ -382,48 +382,35 @@ window.geolocation.on("change:position", () => {
 //
 
 var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var websocketUrl = "https://meteocool.com/tile";
-if (process.env.NODE_ENV === "production") {
-  tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-  websocketUrl = "http://localhost:8040/tile";
-}
+var websocketUrl = "http://localhost:8040/tile";
+//if (process.env.NODE_ENV === "production") {
+//var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+//var websocketUrl = "https://meteocool.com/tile";
+//}
 
 var reflectivityOpacity = 0.5;
 
 window.lm = new LayerManager(window.map, tileUrl, null, 9, reflectivityOpacity, DeviceDetect.getIosAPILevel() >= 2);
-
-// manually download tileJSON using jquery, so we can extract the "version"
-// field and use it for the "last updated" feature.
-function manualTileUpdate () {
-  var elem = document.getElementById("updatedTime");
-  if (elem) { elem.innerHTML = "..."; }
-  window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
-}
-// for historic reason, this is the hook called by the apps when entering
-// foreground.
-window.manualTileUpdateFn = (p) => {
-  manualTileUpdate();
-  if (window.mcSettings["zoomOnForeground"]) {
-    if (window.userLocation) {
-      window.map.getView().animate({ center: window.userLocation, zoom: 10 });
-    }
-  }
-};
-manualTileUpdate();
-
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
 const socket = io.connect(websocketUrl);
+window.sock = socket;
+
+let strikemgr = new StrikeManager(1337, vs);
 
 socket.on("connect", () => console.log("websocket connected"));
 
-let strikemgr = new StrikeManager(1337, vs);
+socket.on("bulkStrikes", (message) => {
+  console.log("Got " + message.length + " strikes from cache");
+  strikemgr.clearAll();
+  message.forEach((elem) => {
+    strikemgr.addStrikeWithTime(elem["lon"], elem["lat"], Math.round(elem["time"]/1000/1000));
+  });
+});
 
 socket.on("lightning", function (data) {
   strikemgr.addStrike(data["lon"], data["lat"]);
 });
-
-window.sock = socket;
 
 // called when new cloud layers are available
 socket.on("map_update", function (data) {
@@ -442,10 +429,6 @@ socket.on("map_update", function (data) {
   if (DeviceDetect.getIosAPILevel() >= 2) {
     window.webkit.messageHandlers["timeHandler"].postMessage(data.version.toString());
   }
-});
-
-socket.emit('getStrikes', (data) => {
-  console.log(data);
 });
 
 window.isMonitoring = false;
@@ -699,6 +682,34 @@ var settings = new Settings({
     }
   }
 });
+
+// manually download tileJSON using jquery, so we can extract the "version"
+// field and use it for the "last updated" feature.
+function manualTileUpdate () {
+  var elem = document.getElementById("updatedTime");
+  if (elem) { elem.innerHTML = "..."; }
+  window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
+}
+manualTileUpdate();
+
+// for historic reason, this is the hook called by the apps when entering
+// foreground.
+window.manualTileUpdateFn = (p) => {
+  manualTileUpdate();
+  window.sock.emit('getStrikes', null, (data) => {});
+  if (settings.get("zoomOnForeground")) {
+    if (window.userLocation) {
+      window.map.getView().animate({ center: window.userLocation, zoom: 10 });
+    } else {
+      if (DeviceDetect.getAndroidAPILevel() >= 2) {
+        Android.injectLocation(); // eslint-disable-line no-undef
+        window.setTimeout(() => {window.manualTileUpdateFn(true);}, 1000);
+      }
+    }
+  }
+  console.log("manual tile update");
+};
+
 
 if (DeviceDetect.getAndroidAPILevel() >= 2) {
   Android.requestSettings();

@@ -10,8 +10,12 @@ export class StrikeManager {
   }
 
   addStrike (lon, lat) {
+    this.addStrikeWithTime(lon, lat, new Date().getTime());
+  }
+
+  addStrikeWithTime (lon, lat, time) {
     var lightning = new Feature(new Point([lon, lat]));
-    lightning.setId(new Date().getTime());
+    lightning.setId(time);
     this.strikes.push(lightning.getId());
     if (this.strikes.length > this.maxStrikes) {
       var toRemove = this.strikes.shift();
@@ -31,6 +35,11 @@ export class StrikeManager {
       }
     });
     this.vs.refresh();
+  }
+
+  clearAll() {
+    this.strikes = [];
+    this.vs.clear()
   }
 };
 
