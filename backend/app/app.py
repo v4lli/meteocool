@@ -26,7 +26,7 @@ import geopy.distance
 numStrikes = 0
 failStrikes = 0
 strikeCache = []
-MAX_LIGHTNING_CACHE = 1337
+MAX_LIGHTNING_CACHE = 1000
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
@@ -295,14 +295,12 @@ def unregister():
 @socketio.on("connect", namespace="/tile")
 def log_connection():
     logging.warn("client connected")
-    logging.warn("sendStrikes because of connection")
-    socketio.emit("bulkStrikes", strikeCache, namespace="/tile")
 
 # Executed when a new websocket client connects. Currently no-op.
 @socketio.on("getStrikes", namespace="/tile")
 def sendStrikes(p):
     logging.warn("sendStrikes because of getStrikes")
-    socketio.emit("bulkStrikes", strikeCache, namespace="/tile")
+    socketio.emit("bulkStrikes", strikeCache, namespace="/tile", room=request.sid)
 
 def blitzortung_thread():
     """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""

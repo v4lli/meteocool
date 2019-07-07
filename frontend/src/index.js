@@ -312,7 +312,7 @@ var vs = new VectorSource({
 });
 
 var clusters = new Cluster({
-  distance: 4,
+  distance: 8,
   map: document.map,
   source: vs
 });
@@ -349,7 +349,13 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
     }
     var style = styleCache[level][textsize];
     if (!style) {
-      let opacity = Math.min(1 - (level / 30), 1);
+      var opacity;
+      if (level < 2) {
+        opacity = 1;
+      } else {
+        // XXX oh god i'm so sorry
+        opacity = Math.max(Math.min(0.6*(1 - (level / 30)) - 0.4, 1), 0);
+      }
       // console.log("new size + level: " + textsize + ", " + level + ", opacity: " + opacity);
 
       style = new Style({
@@ -381,11 +387,11 @@ window.geolocation.on("change:position", () => {
 // actually display reflectivity radar data
 //
 
-var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var websocketUrl = "http://localhost:8040/tile";
+//var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+//var websocketUrl = "http://localhost:8040/tile";
 // if (process.env.NODE_ENV === "production") {
-// var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-// var websocketUrl = "https://meteocool.com/tile";
+var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+var websocketUrl = "https://meteocool.com/tile";
 // }
 
 var reflectivityOpacity = 0.5;
@@ -396,7 +402,7 @@ window.lm = new LayerManager(window.map, tileUrl, null, 9, reflectivityOpacity, 
 const socket = io.connect(websocketUrl);
 window.sock = socket;
 
-let strikemgr = new StrikeManager(1337, vs);
+let strikemgr = new StrikeManager(1000, vs);
 
 socket.on("connect", () => console.log("websocket connected"));
 
