@@ -40,8 +40,6 @@ information from the awesome blitzortung.org project.
 
 # Development
 
-![UML Component Diagram](/doc/meteocool_component.png?raw=true "Component diagram")
-
 Use docker-compose (see below) for the backend. Run ```make dev```
 to run the development build (the first one might take a while).
 
