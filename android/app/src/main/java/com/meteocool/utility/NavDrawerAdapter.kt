@@ -23,7 +23,6 @@ class NavDrawerAdapter(private val activity : AppCompatActivity, private val lay
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         super.getPosition(getItem(position))
-        view!!.isSelected = true
         val  mWebView = activity.findViewById(R.id.webView) as WebView
         when (getItem(position)!!.menuHeading) {
                 activity.getString(R.string.map_header) -> {
@@ -44,6 +43,8 @@ class NavDrawerAdapter(private val activity : AppCompatActivity, private val lay
                 }
             }
     }
+
+
 
 
 

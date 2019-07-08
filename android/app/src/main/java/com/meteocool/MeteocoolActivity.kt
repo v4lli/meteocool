@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import android.webkit.WebView
 import android.widget.ListView
@@ -22,6 +23,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 
 import com.google.firebase.iid.FirebaseInstanceId
+import com.meteocool.location.LocationResultHelper
 import com.meteocool.location.LocationUpdatesBroadcastReceiver
 import com.meteocool.location.WebAppInterface
 import org.jetbrains.anko.doAsync
@@ -32,10 +34,12 @@ import com.meteocool.utility.JSONClearPost
 import com.meteocool.utility.NavDrawerAdapter
 import com.meteocool.utility.NavDrawerItem
 import com.meteocool.utility.NetworkUtility
-import kotlinx.android.synthetic.main.fragment_map.*
+import org.jetbrains.anko.defaultSharedPreferences
 
 
-class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+
+
 
     private val pendingIntent: PendingIntent
         get() {
@@ -44,12 +48,12 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
             return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-    private var mLocationRequest: LocationRequest? = null
+    private var  requestingLocationUpdates = false
 
     /**
      * The entry point to Google Play Services.
      */
-    private var mFusedLocationClient: FusedLocationProviderClient? = null
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,12 +63,13 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         }
 
         if(Validator.isLocationPermissionGranted(this)) {
+            defaultSharedPreferences.edit().putBoolean("notification", true).apply()
             Log.d("Location", "Start Fused")
             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            createLocationRequest()
             requestLocationUpdates()
+        }else{
+            stopLocationRequests()
         }
-
 
         setContentView(R.layout.activity_meteocool)
         val appVersion = findViewById<TextView>(R.id.app_version)
@@ -83,24 +88,19 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         val navAdapter = NavDrawerAdapter(this, R.layout.menu_item, drawerItems)
         drawerList.adapter = navAdapter
         drawerList.onItemClickListener = navAdapter
-       // drawerList.performItemClick(drawerList, 0, 0)
+
     }
-
-
-
-
 
     /**
      * Handles the Request Updates button and requests start of location updates.
      */
-    private fun requestLocationUpdates() {
+   private fun requestLocationUpdates() {
         try {
-            Log.i(TAG, "Starting location updates")
-            if(mFusedLocationClient != null) {
-                mFusedLocationClient!!.requestLocationUpdates(
-                    mLocationRequest, pendingIntent
+                Log.i(TAG, "Starting location updates")
+                mFusedLocationClient.requestLocationUpdates(
+                    locationRequest, pendingIntent
                 )
-            }
+            requestingLocationUpdates = true
 
         } catch (e: SecurityException) {
             e.printStackTrace()
@@ -108,17 +108,17 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
 
     }
 
+    private fun stopLocationRequests(){
+            Log.i(TAG, "Stopping location updates")
+            mFusedLocationClient.removeLocationUpdates(pendingIntent)
+        requestingLocationUpdates = false
+    }
+
 
 
     override fun onStart() {
         super.onStart()
-        val drawerList : ListView = findViewById(R.id.drawer_menu)
 
-
-
-        if(Validator.isLocationPermissionGranted(this)) {
-            requestLocationUpdates()
-        }
         val mWebView : WebView = findViewById(R.id.webView)
         mWebView.addJavascriptInterface(WebAppInterface(this), "Android")
 
@@ -141,8 +141,12 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     override fun onResume() {
         super.onResume()
         cancelNotifications()
+        defaultSharedPreferences.registerOnSharedPreferenceChangeListener(this)
+    }
 
-
+    override fun onPause() {
+        super.onPause()
+        defaultSharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onConnected(p0: Bundle?) {
@@ -168,6 +172,34 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         }
     }
 
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        when(key){
+            "map_mode", "map_zoom", "map_rotate" -> {
+                Log.i(TAG, "Preference value $key was updated to ${sharedPreferences!!.getBoolean(key, false)} ")
+                val webAppInterface = WebAppInterface(this)
+                webAppInterface.requestSettings()
+            }
+            "notification" -> {
+                val isNotificationON = sharedPreferences!!.getBoolean(key, false)
+                Log.i(TAG, "Preference value $key was updated to $isNotificationON ")
+                if(isNotificationON){
+                    requestLocationUpdates()
+                }else{
+                    stopLocationRequests()
+                }
+            }
+            "notification_intensity" ->{
+                val intensity = sharedPreferences!!.getString(key, "-1")!!.toInt()
+                Log.i(TAG, "Preference value $key was updated to $intensity")
+                LocationResultHelper.NOTIFICATION_INTENSITY = intensity
+            }
+            "notification_time" ->{
+                val timeAhead = sharedPreferences!!.getString(key, "-1")!!.toInt()
+                Log.i(TAG, "Preference value $key was updated to $timeAhead ")
+                LocationResultHelper.NOTIFICATION_TIME = timeAhead
+            }
+        }
+    }
 
 
 
@@ -193,24 +225,15 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     }
 
 
-
-    private fun createLocationRequest() {
-        mLocationRequest = LocationRequest()
-
-        mLocationRequest!!.interval = UPDATE_INTERVAL
-
-        // Sets the fastest rate for active location updates. This interval is exact, and your
-        // application will never receive updates faster than this value.
-        mLocationRequest!!.fastestInterval = FASTEST_UPDATE_INTERVAL
-        mLocationRequest!!.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-
-        // Sets the maximum time when batched location updates are delivered. Updates may be
-        // delivered sooner than this interval.
-        mLocationRequest!!.maxWaitTime = MAX_WAIT_TIME
-    }
-
-
-
+    private val locationRequest : LocationRequest?
+        get(){
+           return  LocationRequest.create()?.apply {
+                interval = UPDATE_INTERVAL
+                fastestInterval = FASTEST_UPDATE_INTERVAL
+                priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+                maxWaitTime = MAX_WAIT_TIME
+            }
+        }
 
 
     companion object{
@@ -233,6 +256,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
          * delivered sooner than this interval.
          */
         private const val MAX_WAIT_TIME = UPDATE_INTERVAL
+
     }
 
 

@@ -44,9 +44,6 @@
                       android:listSelector="@color/cloudAccent">
             </ListView>
 
-
-
-
             <FrameLayout
                     android:id="@+id/settings"
                     android:layout_width="match_parent"

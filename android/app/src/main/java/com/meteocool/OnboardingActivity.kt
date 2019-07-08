@@ -9,6 +9,7 @@ import com.github.paolorotolo.appintro.AppIntro
 import com.github.paolorotolo.appintro.AppIntroFragment
 import com.github.paolorotolo.appintro.model.SliderPage
 import com.meteocool.security.Validator
+import org.jetbrains.anko.defaultSharedPreferences
 
 
 class OnboardingActivity : AppIntro() {

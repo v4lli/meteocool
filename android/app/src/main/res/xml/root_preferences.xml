@@ -30,7 +30,7 @@
                 app:title="@string/notification_push_level_title"
                 app:entries="@array/notification_intensity_entries"
                 app:entryValues="@array/notification_intensity_values"
-                app:defaultValue="level_drizzle"
+                app:defaultValue="18"
                 app:useSimpleSummaryProvider="true"
                 app:dependency="notification"/>
 
@@ -51,16 +51,19 @@
 
         <SwitchPreferenceCompat
             app:key="map_zoom"
+            app:defaultValue="true"
             app:title="@string/map_zoom_title"
         />
 
         <SwitchPreferenceCompat
             app:key="map_rotate"
+            app:defaultValue="true"
             app:title="@string/map_rotate_title"
         />
 
         <SwitchPreferenceCompat
                 app:key="map_mode"
+                app:defaultValue="false"
                 app:title="@string/map_mode_title"
         />
 
