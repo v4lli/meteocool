@@ -7,7 +7,7 @@
     <string name="default_notification_channel_id">meteocool</string>
 
     <string name="onboarding_title1">Servus!</string>
-    <string name="onboarding_title2">Sturmjäger/in oder Couchpotatoe?</string>
+    <string name="onboarding_title2">Sturmjäger/in oder Couchpotato?</string>
     <string name="onboarding_title3">Benachrichtigungen</string>
     <string name="onboarding_title4">Standort</string>
     <string name="onboarding_title5">Geh raus und genieß die Sonne!</string>
