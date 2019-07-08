@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.firebase.iid.FirebaseInstanceId
 import com.meteocool.utility.JSONPost
 import com.meteocool.utility.NetworkUtility
+import java.util.*
 
 class UploadLocation: AsyncTask<android.location.Location, Unit, Unit>(){
     override fun doInBackground(vararg params: android.location.Location?) {
@@ -29,7 +30,8 @@ class UploadLocation: AsyncTask<android.location.Location, Unit, Unit>(){
                 token,
                 "android",
                 LocationResultHelper.NOTIFICATION_TIME,
-                LocationResultHelper.NOTIFICATION_INTENSITY
+                LocationResultHelper.NOTIFICATION_INTENSITY,
+                Locale.getDefault().language
             ), NetworkUtility.POST_CLIENT_DATA_URL
         )
     }

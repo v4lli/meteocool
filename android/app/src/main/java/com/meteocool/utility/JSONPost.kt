@@ -10,4 +10,5 @@ data class JSONPost(val lat : Double,
                     val token : String,
                     val source : String,
                     val ahead : Int,
-                    val intensity : Int) : JSON()
+                    val intensity : Int,
+                    val lang : String) : JSON()
