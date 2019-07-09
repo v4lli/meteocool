@@ -12,6 +12,7 @@ import android.util.Log
 import android.webkit.WebView
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.common.ConnectionResult
@@ -19,8 +20,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.FirebaseApp
-import com.google.firebase.database.FirebaseDatabase
+import com.google.android.gms.tasks.OnCompleteListener
 
 import com.google.firebase.iid.FirebaseInstanceId
 import com.meteocool.location.LocationResultHelper
@@ -30,10 +30,7 @@ import org.jetbrains.anko.doAsync
 
 import com.meteocool.security.Validator
 import com.meteocool.settings.SettingsFragment
-import com.meteocool.utility.JSONClearPost
-import com.meteocool.utility.NavDrawerAdapter
-import com.meteocool.utility.NavDrawerItem
-import com.meteocool.utility.NetworkUtility
+import com.meteocool.utility.*
 import org.jetbrains.anko.defaultSharedPreferences
 
 
@@ -58,17 +55,29 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (FirebaseApp.getApps(this).isNotEmpty()) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        }
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
 
+                // Get new Instance ID token
+                val token = task.result?.token
+
+                Log.d(TAG, token)
+                Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+            })
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         if(Validator.isLocationPermissionGranted(this)) {
             defaultSharedPreferences.edit().putBoolean("notification", true).apply()
             Log.d("Location", "Start Fused")
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             requestLocationUpdates()
         }else{
-            stopLocationRequests()
+            if(requestingLocationUpdates) {
+                stopLocationRequests()
+            }
         }
 
         setContentView(R.layout.activity_meteocool)
@@ -110,7 +119,12 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
 
     private fun stopLocationRequests(){
             Log.i(TAG, "Stopping location updates")
+        val token = defaultSharedPreferences.getString("fb", "no token")!!
+        doAsync {
+            NetworkUtility.sendPostRequest(JSONUnregisterNotification(token), NetworkUtility.POST_UNREGISTER_TOKEN)
+        }
             mFusedLocationClient.removeLocationUpdates(pendingIntent)
+
         requestingLocationUpdates = false
     }
 
@@ -122,18 +136,14 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         val mWebView : WebView = findViewById(R.id.webView)
         mWebView.addJavascriptInterface(WebAppInterface(this), "Android")
 
-        var token = FirebaseInstanceId.getInstance().token
-        if (token == null) {
-            token = "no token"
-            return
-        }
+        val token = defaultSharedPreferences.getString("fb", "no token")!!
         doAsync {
             NetworkUtility.sendPostRequest(
                 JSONClearPost(
                     token,
                     "foreground"
                 ),
-                NetworkUtility.CLEAR_URL
+                NetworkUtility.POST_CLEAR_NOTIFICATION
             )
         }
     }
@@ -182,10 +192,12 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
             "notification" -> {
                 val isNotificationON = sharedPreferences!!.getBoolean(key, false)
                 Log.i(TAG, "Preference value $key was updated to $isNotificationON ")
-                if(isNotificationON){
+                if(isNotificationON && !requestingLocationUpdates){
                     requestLocationUpdates()
                 }else{
-                    stopLocationRequests()
+                    if(requestingLocationUpdates) {
+                        stopLocationRequests()
+                    }
                 }
             }
             "notification_intensity" ->{
@@ -207,18 +219,14 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if(notificationManager.activeNotifications.isNotEmpty()) {
             notificationManager.cancelAll()
-            var token = FirebaseInstanceId.getInstance().token
-            if (token == null) {
-                token = "no token"
-                return
-            }
+            val token = defaultSharedPreferences.getString("fb", "no token")!!
             doAsync {
                 NetworkUtility.sendPostRequest(
                     JSONClearPost(
                         token,
                         "background"
                     ),
-                    NetworkUtility.CLEAR_URL
+                    NetworkUtility.POST_CLEAR_NOTIFICATION
                 )
             }
         }
