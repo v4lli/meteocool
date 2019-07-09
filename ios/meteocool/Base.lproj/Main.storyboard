@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14810.11" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14766.13"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -59,6 +57,15 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="zi9-Ux-5qb">
+                                <rect key="frame" x="0.0" y="796" width="414" height="100"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <color key="textColor" xcode11CocoaTouchSystemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
@@ -68,7 +75,7 @@
                             <constraint firstItem="BTS-em-eiA" firstAttribute="centerX" secondItem="aOD-KT-ksP" secondAttribute="centerX" id="H0g-a1-ugA"/>
                             <constraint firstItem="BTS-em-eiA" firstAttribute="top" secondItem="eLq-EE-HwW" secondAttribute="top" constant="69" id="NF7-5V-BnW"/>
                             <constraint firstItem="aOD-KT-ksP" firstAttribute="leading" secondItem="eLq-EE-HwW" secondAttribute="leading" id="PZO-yj-6qD"/>
-                            <constraint firstItem="aOD-KT-ksP" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" id="X8a-Bx-Qhm"/>
+                            <constraint firstItem="aOD-KT-ksP" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" identifier="webViewHight" id="X8a-Bx-Qhm"/>
                             <constraint firstItem="aOD-KT-ksP" firstAttribute="trailing" secondItem="eLq-EE-HwW" secondAttribute="trailing" id="XWC-b0-Lf8"/>
                             <constraint firstItem="KcY-U7-JEH" firstAttribute="leading" secondItem="aOD-KT-ksP" secondAttribute="trailing" constant="-102" id="oDd-dR-YcU"/>
                         </constraints>
@@ -80,6 +87,7 @@
                         <outlet property="slider_button" destination="2rh-rK-OQM" id="2p1-dd-7wc"/>
                         <outlet property="slider_ring" destination="rrm-xV-iBd" id="mRg-B7-dgz"/>
                         <outlet property="time" destination="BTS-em-eiA" id="pyY-MS-MAP"/>
+                        <outlet property="warning" destination="zi9-Ux-5qb" id="fCp-DU-tuH"/>
                         <outlet property="webView" destination="aOD-KT-ksP" id="bnj-n4-EyD"/>
                     </connections>
                 </viewController>

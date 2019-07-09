@@ -14,8 +14,11 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     @IBOutlet weak var button: UIButton!
     @IBOutlet weak var time: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var warning: UITextView!
 
     var onboardingOnThisRun = false
+    var timing = 1
+    var warningText = ""
 
     enum DrawerStates {
         case CLOSED
@@ -244,13 +247,16 @@ window.downloadForecast(function() {
         super.loadView()
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
         webView?.configuration.userContentController.add(self, name: "timeHandler")
+
         self.view.addSubview(webView!)
         self.view.addSubview(slider_ring!)
         self.view.addSubview(slider_button!)
         self.view.addSubview(button!)
         self.view.addSubview(time!)
         self.view.addSubview(activityIndicator!)
+        self.view.addSubview(warning!)
 
+        warning.isHidden = true
         time.isHidden = true
         time.layer.masksToBounds = true
         time.layer.cornerRadius = 8.0
@@ -266,6 +272,65 @@ window.downloadForecast(function() {
         drawer_hide()
 
         print("Language: " + Locale.preferredLanguages[0].split(separator: "-")[0])
+        Timer.scheduledTimer(timeInterval: 60,
+                             target: self,
+                             selector: (#selector(ViewController.getWarning)),
+                             userInfo: nil,
+                             repeats: true)
+    }
+    
+    @objc func getWarning (){
+        if(timing == 1){
+            print("off")
+            warning.isHidden = true
+            for constraint in self.view.constraints {
+                if constraint.identifier == "webViewHight" {
+                    constraint.constant = 0
+                }
+            }
+        }
+        else if(timing == 3){
+            print("on")
+            warning.text = warningText
+            warning.isHidden = false
+         
+            for constraint in self.view.constraints {
+                if constraint.identifier == "webViewHight" {
+                    constraint.constant = -100
+                }
+            }
+        }
+        else if (timing == 5){
+            let tokenValue = SharedNotificationManager.getToken() ?? "anon"
+            
+            let warningRequest = [
+                "token": tokenValue,
+                ] as [String: Any]
+            
+            guard let request = NetworkHelper.createJSONPostRequest(dst: "get_warning", dictionary: warningRequest) else {
+                return
+            }
+            
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                guard let data = NetworkHelper.checkResponse(data: data, response: response, error: error) else {
+                    return
+                }
+                
+                if let json = ((try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]) as [String : Any]??) {
+                    if let errorMessage = json?["error"] as? String {
+                        NSLog("ERROR: \(errorMessage)")
+                    }
+                    if let warning = json?["warning"] as? String {
+                        print (warning)
+                    }
+                }
+            }
+            task.resume()
+            timing = 0
+        }
+        
+        print (timing)
+        timing = timing+1
     }
 
     override func viewDidLoad() {
