@@ -10,8 +10,9 @@ import java.net.URL
 class NetworkUtility{
 companion object {
 
-    val POST_CLIENT_DATA_URL = URL("https://meteocool.com/post_location")
-    val CLEAR_URL  = URL("https://meteocool.com/clear_notification")
+    val POST_CLIENT_DATA = URL("https://meteocool.com/post_location")
+    val POST_CLEAR_NOTIFICATION  = URL("https://meteocool.com/clear_notification")
+    val POST_UNREGISTER_TOKEN  = URL("https://meteocool.com/unregister")
 
     private fun buildJSONString(json : JSON) : String{
         val gsonBuilder = Gson().newBuilder().create()

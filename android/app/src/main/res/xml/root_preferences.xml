@@ -23,7 +23,8 @@
 
         <SwitchPreferenceCompat
             app:key="notification"
-            app:title="@string/notification_push_title"/>
+            app:title="@string/notification_push_title"
+            app:defaultValue="false"/>
 
         <ListPreference
                 app:key="notification_intensity"
@@ -51,7 +52,7 @@
 
         <SwitchPreferenceCompat
             app:key="map_zoom"
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:title="@string/map_zoom_title"
         />
 

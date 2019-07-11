@@ -27,10 +27,6 @@ class DocumentationFragment : Fragment() {
         webSettings?.setGeolocationEnabled(true)
 
 
-        val locale = when (Locale.getDefault().displayLanguage.compareTo(Locale.GERMAN.displayLanguage)) {
-            0 -> "&lang=de"
-            else -> "&lang=en"
-        }
         mWebView?.loadUrl(WEB_URL)
         // Force links and redirects to open in the WebView instead of in a browser
         mWebView?.webViewClient = WebViewClient()

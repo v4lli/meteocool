@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.meteocool.location.WebAppInterface
+import com.meteocool.security.Validator
 import java.util.*
 
 
@@ -46,12 +47,14 @@ class MapFragment() : Fragment(){
 
     override fun onResume() {
         super.onResume()
-        val string = "window.manualTileUpdateFn(true);"
-        mWebView!!.post({
-            run  {
-                mWebView!!.evaluateJavascript(string, { foo ->
-                })
-            }
-        })
+        if(Validator.isLocationPermissionGranted(activity!!.applicationContext)) {
+            val string = "window.manualTileUpdateFn(true);"
+            mWebView!!.post({
+                run {
+                    mWebView!!.evaluateJavascript(string, { foo ->
+                    })
+                }
+            })
+        }
     }
 }

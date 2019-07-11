@@ -69,7 +69,6 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         if(Validator.isLocationPermissionGranted(this)) {
-            defaultSharedPreferences.edit().putBoolean("notification", true).apply()
             Log.d("Location", "Start Fused")
             requestLocationUpdates()
         }else{
@@ -182,10 +181,21 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when(key){
-            "map_mode", "map_zoom", "map_rotate" -> {
+            "map_mode", "map_rotate" -> {
                 Log.i(TAG, "Preference value $key was updated to ${sharedPreferences!!.getBoolean(key, false)} ")
                 val webAppInterface = WebAppInterface(this)
                 webAppInterface.requestSettings()
+            }
+            "map_zoom" -> {
+                Log.i(TAG, "Preference value $key was updated to ${sharedPreferences!!.getBoolean(key, false)} ")
+                if(Validator.isLocationPermissionGranted(this)) {
+                    val webAppInterface = WebAppInterface(this)
+                    webAppInterface.requestSettings()
+                }else{
+                    val mapZoom = findPreference("kmormiles");
+                    Validator.checkAndroidPermissions(this, this)
+                    Toast.makeText(this,"Location permission not granted.", Toast.LENGTH_SHORT).show()
+                }
             }
             "notification" -> {
                 val isNotificationON = sharedPreferences!!.getBoolean(key, false)
