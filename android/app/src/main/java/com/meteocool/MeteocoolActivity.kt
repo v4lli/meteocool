@@ -36,8 +36,6 @@ import org.jetbrains.anko.defaultSharedPreferences
 
 class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-
-
     private val pendingIntent: PendingIntent
         get() {
             val intent = Intent(this, LocationUpdatesBroadcastReceiver::class.java)
@@ -82,7 +80,7 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
 
         setContentView(R.layout.activity_meteocool)
         val appVersion = findViewById<TextView>(R.id.app_version)
-        appVersion.text = "v " + applicationContext.packageManager.getPackageInfo(packageName, 0).versionName
+        appVersion.text = String.format("v %s", applicationContext.packageManager.getPackageInfo(packageName, 0).versionName)
         supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer, MapFragment()).commit()
         supportFragmentManager
             .beginTransaction()
@@ -212,8 +210,6 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
             }
         }
     }
-
-
 
     private fun cancelNotifications(){
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
