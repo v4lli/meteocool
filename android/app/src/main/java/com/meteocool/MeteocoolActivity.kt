@@ -37,8 +37,6 @@ import kotlinx.android.synthetic.main.fragment_map.*
 
 class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
-
-
     private val pendingIntent: PendingIntent
         get() {
             val intent = Intent(this, LocationUpdatesBroadcastReceiver::class.java)
@@ -52,8 +50,6 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
      * The entry point to Google Play Services.
      */
     private var mFusedLocationClient: FusedLocationProviderClient? = null
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
