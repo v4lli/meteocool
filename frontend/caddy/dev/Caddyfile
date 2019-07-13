@@ -29,6 +29,10 @@
 		transparent
 	}
 
+	proxy /unregister app:5000 {
+		transparent
+	}
+
 	#proxy /reflectivity dwd:5000 {
 	#	transparent
 	#}

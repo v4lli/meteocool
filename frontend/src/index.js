@@ -350,11 +350,11 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
     var style = styleCache[level][textsize];
     if (!style) {
       var opacity;
-      if (level < 2) {
+      if (level < 5) {
         opacity = 1;
       } else {
         // XXX oh god i'm so sorry
-        opacity = Math.max(Math.min(0.6*(1 - (level / 30)) - 0.4, 1), 0);
+        opacity = Math.max(Math.min(1 - (level / 30 * 0.8) - 0.2, 1), 0);
       }
       // console.log("new size + level: " + textsize + ", " + level + ", opacity: " + opacity);
 
@@ -710,21 +710,17 @@ var settings = new Settings({
   }
 });
 
-// manually download tileJSON using jquery, so we can extract the "version"
-// field and use it for the "last updated" feature.
-function manualTileUpdate () {
+// for historic reason, this is the hook called by the apps when entering
+// foreground..
+window.manualTileUpdateFn = (p) => {
+  // manually download tileJSON using jquery, so we can extract the "version"
+  // field and use it for the "last updated" feature.
   var elem = document.getElementById("updatedTime");
   if (elem) { elem.innerHTML = "..."; }
   window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
-}
-manualTileUpdate();
-
-// for historic reason, this is the hook called by the apps when entering
-// foreground.
-window.manualTileUpdateFn = (p) => {
-  manualTileUpdate();
   window.sock.emit("getStrikes", null, (data) => {});
   if (settings.get("zoomOnForeground")) {
+    console.log("zoom on foreground desired");
     if (window.userLocation) {
       window.map.getView().animate({ center: window.userLocation, zoom: 10 });
     } else {
@@ -736,6 +732,7 @@ window.manualTileUpdateFn = (p) => {
   }
   console.log("manual tile update");
 };
+window.manualTileUpdateFn();
 
 if (DeviceDetect.getAndroidAPILevel() >= 2) {
   Android.requestSettings(); // eslint-disable-line no-undef
@@ -796,6 +793,6 @@ if ("serviceWorker" in navigator) {
 }
 
 // purge old lightning strikes on restart
-setTimeout(() => { strikemgr.fadeStrikes(); }, 2 * 60 * 1000);
+setTimeout(() => { strikemgr.fadeStrikes(); }, 30 * 1000);
 
 /* vim: set ts=2 sw=2 expandtab: */

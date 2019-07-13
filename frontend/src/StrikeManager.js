@@ -12,13 +12,23 @@ export class StrikeManager {
     this.addStrikeWithTime(lon, lat, new Date().getTime());
   }
 
+  removeOne (id, idx) {
+    let remove = this.vs.getFeatureById(id);
+    if (remove) {
+      this.vs.removeFeature(remove);
+    }
+    if (idx != -1) {
+      this.strikes = this.strikes.slice(0, idx).concat(this.strikes.slice(idx + 1, this.strikes.length));
+    }
+  }
+
   addStrikeWithTime (lon, lat, time) {
     var lightning = new Feature(new Point([lon, lat]));
     lightning.setId(time);
     this.strikes.push(lightning.getId());
     if (this.strikes.length > this.maxStrikes) {
       var toRemove = this.strikes.shift();
-      this.vs.removeFeature(this.vs.getFeatureById(toRemove));
+      this.removeOne(toRemove, -1);
     }
     this.vs.addFeature(lightning);
   }
@@ -29,8 +39,7 @@ export class StrikeManager {
     let MINS = 60 * 1000;
     this.strikes.forEach((id, idx) => {
       if (id < now - 30 * MINS) {
-        this.vs.removeFeature(this.vs.getFeatureById(id));
-        this.strikes = this.strikes.slice(0, idx).concat(this.strikes.slice(idx + 1, this.strikes.length));
+        this.removeOne(id, idx)
       }
     });
     this.vs.refresh();
