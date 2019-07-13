@@ -56,10 +56,22 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
   $("#localizedApps").text("Android & iPhone");
   $("#localizedAbout").text("Über meteocool");
   $("#logotext").text("meteocool.de");
+  $("#switchLang").text("English");
+  $("#switchLang").attr("href", "/");
   // lang = "de";
   dfnLocale = dateFnGerman;
 } else {
   $("#logotext").text("meteocool.com");
+}
+
+// ghetto gettext
+function _ (text) {
+  switch(text) {
+    case "dark mode":
+      return "Dunkel"
+    case "light mode":
+      return "Hell"
+  }
 }
 
 function lastUpdatedFn () {
@@ -307,7 +319,6 @@ window.addEventListener("popstate", function (event) {
 new VectorLayer({
   source: new VectorSource({features: [accuracyFeature, positionFeature]}),
   map: map,
-  renderMode: 'image'
 });
 /* eslint-enable */
 
@@ -322,54 +333,54 @@ var clusters = new Cluster({
 });
 
 var styleCache = {};
+let STRIKE_MINS = 1000 * 30;
+
+let styleFactory = (age, size) => {
+  if (age < 5) {
+    age = 0;
+  }
+  if (!(age in styleCache)) {
+    styleCache[age] = {};
+  }
+  if (!styleCache[age][size]) {
+    // XXX oh god i'm so sorry
+    let opacity = Math.max(Math.min(1 - (age / 30 * 0.8) - 0.2, 1), 0);
+    console.log("new size + age: " + size + ", " + age + ", opacity: " + opacity);
+
+    styleCache[age][size] = new Style({
+      text: new Text({
+        text: "⚡️",
+        fill: new Fill({ color: "rgba(255, 255, 255, " + opacity + ")" }),
+        font: size + "px Calibri,sans-serif"
+      })
+    });
+  }
+  return styleCache[age][size];
+};
+
 var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
   source: clusters,
   map: document.map,
-  style: function (feature) {
-    var size = feature.get("features").length;
-    var age = 0;
+  style: (feature) => {
+    let size = feature.get("features").length;
     let now = new Date().getTime();
-    let MINS = 1000 * 30;
-    feature.get("features").forEach((feature) => { age += (now - feature.getId()) / MINS; });
-    // age max = 60, divide by 3 to reduce to 20 age levels max
-    age = (Math.round(age / size / 2.5)) + 1;
-    if (age > 30) {
-      age = 20;
-    }
-    var textsize;
-    if (size > 13) {
-      textsize = 40;
-    } else if (size > 9) {
-      textsize = 34;
-    } else if (size > 3) {
-      textsize = 29;
-    } else {
-      textsize = 24;
-    }
-    if (!(age in styleCache)) {
-      styleCache[age] = {};
-    }
-    var style = styleCache[age][textsize];
-    if (!style) {
-      var opacity;
-      if (age < 5) {
-        opacity = 1;
-      } else {
-        // XXX oh god i'm so sorry
-        opacity = Math.max(Math.min(1 - (age / 30 * 0.8) - 0.2, 1), 0);
+    var age = 0;
+    var textsize = 24;
+    if (size > 1) {
+      feature.get("features").forEach((feature) => { age += (now - feature.getId()) / STRIKE_MINS; });
+      // age max = 60, divide by 3 to reduce to 20 age levels max
+      age = Math.max(Math.round(age / size / 2.5) + 1, 20);
+      if (size > 13) {
+        textsize = 40;
+      } else if (size > 9) {
+        textsize = 34;
+      } else if (size > 3) {
+        textsize = 29;
       }
-      // console.log("new size + age: " + textsize + ", " + age + ", opacity: " + opacity);
-
-      style = new Style({
-        text: new Text({
-          text: "⚡️",
-          fill: new Fill({ color: "rgba(255, 255, 255, " + opacity + ");" }),
-          font: textsize + "px Calibri,sans-serif"
-        })
-      });
-      styleCache[age][textsize] = style;
+    } else {
+      age = (Math.round((now - feature.get("features")[0].getId())/ STRIKE_MINS / 2.5)) + 1;
     }
-    return style;
+    return styleFactory(age, textsize);
   }
 });
 vl.setZIndex(100);
@@ -453,7 +464,7 @@ if (!dd.isWidgetMode()) {
   var button = document.createElement("button");
   button.classList.add("locate-me-btn");
   button.title = "Locate Me";
-  button.innerHTML = "<img class=\"\" id=\"pulse\" src=\"./baseline_location_searching_white_48dp.png\">";
+  button.innerHTML = "<img class=\"\" alt=\"Locate me\"id=\"pulse\" src=\"./baseline_location_searching_white_48dp.png\">";
 
   if (DeviceDetect.getIosAPILevel() >= 2) {
     button.addEventListener("click", () => {
@@ -497,7 +508,7 @@ if (!dd.isWidgetMode()) {
   playButton.classList.add("play");
   playButton.title = "Play Forecast";
   // XXX set attributes via dom instead of innerHTML
-  playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
+  playButton.innerHTML = "<img src=\"./player-play.png\" alt=\"Play\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
   playButton.addEventListener("click", (e) => { window.lm.smartDownloadAndPlay(e); }, false);
   var playElement = document.createElement("div");
   playElement.className = "play ol-unselectable ol-control";
@@ -536,7 +547,7 @@ window.addEventListener("resize", function () {
     }
     setTimeout(function () { dimensions(); window.map.updateSize(); }, 100);
   });
-  if (DeviceDetect.isIos()) {
+  if (DeviceDetect.isApp()) {
     attribution.setCollapsible(true);
     attribution.setCollapsed(true);
   } else {
@@ -609,8 +620,8 @@ if (!dd.isAuxPage()) {
 
 $(document).ready(function () {
   if (DeviceDetect.getIosAPILevel() >= 2) {
-    $("#topMenu")[0].children[2].style.display = "none";
     $("#topMenu")[0].children[3].style.display = "none";
+    $("#topMenu")[0].children[4].style.display = "none";
     // XXX re-enable once the scrolling is enabled
   }
   if (window.location.href.indexOf("#about") !== -1) {
@@ -698,7 +709,7 @@ var settings = new Settings({
       window.map.getLayers().setAt(0, newLayer);
 
       // change menu bar and modal background color
-      toggleButton.innerHTML = state ? "light mode" : "dark mode";
+      toggleButton.innerHTML = state ? _("light mode") : _("dark mode");
       for (let index = 0; index < mclight.length; index++) {
         const element = mclight[index];
         if (element.classList.contains("bg-dark")) {

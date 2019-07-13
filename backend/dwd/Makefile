@@ -82,9 +82,16 @@ push:
 update:
 	mkdir -p tmp/
 	rm -f tmp/raa01-wx_10000-latest-dwd---bin
-	wget --no-verbose \
-		https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin \
-		-O /scratch/raa01-wx_10000-latest-dwd---bin
+	cd /scratch/ && wget --no-verbose -SN \
+		http://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin && \
+		md5s="$$(md5sum /scratch/raa01-wx_10000-latest-dwd---bin)" ; \
+		if ! [ "$$md5s" -e "$$(cat /scratch/raa01-wx_10000-latest-dwd---bin.md5" ]; then \
+			echo "$$md5s" > /scratch/raa01-wx_10000-latest-dwd---bin.md5 ; \
+			exit 0 ; \
+		else \
+			echo "No new data from dwd" ; \
+			exit 1 ; \
+		fi
 
 clean:
 	rm -rf tmp/
