@@ -334,16 +334,14 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
       age = 20;
     }
     var textsize;
-    if (size > 12) {
-      textsize = 39;
-    } else if (size > 8) {
+    if (size > 13) {
+      textsize = 40;
+    } else if (size > 9) {
       textsize = 34;
     } else if (size > 3) {
       textsize = 29;
-    } else if (size > 1) {
-      textsize = 23;
     } else {
-      textsize = 20;
+      textsize = 24;
     }
     if (!(age in styleCache)) {
       styleCache[age] = {};
@@ -659,26 +657,6 @@ if (DeviceDetect.getAndroidAPILevel() >= 2) {
   });
 }
 
-var toggleHTMLfixMe = () => {
-  toggleButton.innerHTML = settings.get("darkMode") ? "light mode" : "dark mode";
-
-  for (let index = 0; index < mclight.length; index++) {
-    const element = mclight[index];
-    if (element.classList.contains("bg-dark")) {
-      element.classList.remove("bg-dark", "text-white");
-    } else {
-      element.classList.add("bg-dark", "text-white");
-    }
-  }
-  if (navbar.classList.contains("navbar-light")) {
-    navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
-    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
-  } else {
-    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
-    navbar.classList.add("navbar-light", "bg-light");
-  }
-};
-
 var settings = new Settings({
   "mapRotation": {
     "type": "boolean",
@@ -707,6 +685,7 @@ var settings = new Settings({
     "type": "boolean",
     "default": false,
     "cb": (state) => {
+      // Switch to dark tilelayer
       var newLayer = new TileLayer({
         source: new OSM({
           url: state ? darkTiles : lightTiles,
@@ -714,7 +693,33 @@ var settings = new Settings({
         })
       });
       window.map.getLayers().setAt(0, newLayer);
-      toggleHTMLfixMe();
+
+      // change menu bar and modal background color
+      toggleButton.innerHTML = state ? "light mode" : "dark mode";
+      for (let index = 0; index < mclight.length; index++) {
+        const element = mclight[index];
+        if (element.classList.contains("bg-dark")) {
+          element.classList.remove("bg-dark", "text-white");
+        } else {
+          element.classList.add("bg-dark", "text-white");
+        }
+      }
+      if (navbar.classList.contains("navbar-light")) {
+        navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
+        navbar.classList.add("navbar-dark", "bg-dark", "text-white");
+      } else {
+        navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
+        navbar.classList.add("navbar-light", "bg-light");
+      }
+
+      // notify iOS app
+      if (DeviceDetect.isIos()) {
+        if (settings.get("darkMode")) {
+          window.webkit.messageHandlers["scriptHandler"].postMessage("darkmode");
+        } else {
+          window.webkit.messageHandlers["scriptHandler"].postMessage("lightmode");
+        }
+      }
     }
   }
 });
@@ -755,33 +760,9 @@ window.injectSettings = (newSettings) => {
   }
 };
 
-var toggleViewMode = () => {
-  settings.set("darkMode", !settings.get("darkMode"));
-  var newLayer = new TileLayer({
-    source: new OSM({
-      url: settings.get("darkMode") ? darkTiles : lightTiles,
-      attributions: baseAttributions
-    })
-  });
-  window.map.getLayers().setAt(0, newLayer);
-};
-
-function toggleIOSBar () {
-  if (DeviceDetect.isIos()) {
-    if (settings.get("darkMode")) {
-      window.webkit.messageHandlers["scriptHandler"].postMessage("darkmode");
-    } else {
-      window.webkit.messageHandlers["scriptHandler"].postMessage("lightmode");
-    }
-  }
-}
-
 if (toggleButton) {
-  toggleButton.onclick = () => {
-    toggleViewMode();
-    toggleHTMLfixMe();
-    toggleIOSBar();
-  };
+  toggleButton.onclick = () => settings.set("darkMode", !settings.get("darkMode"));
+  ;
 }
 
 // Register service worker
