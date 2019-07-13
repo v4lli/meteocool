@@ -55,8 +55,11 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
   $("#localizedDocumentation").text("Dokumentation");
   $("#localizedApps").text("Android & iPhone");
   $("#localizedAbout").text("Über meteocool");
+  $("#logotext").text("meteocool.de");
   // lang = "de";
   dfnLocale = dateFnGerman;
+} else {
+  $("#logotext").text("meteocool.com");
 }
 
 function lastUpdatedFn () {
@@ -192,7 +195,7 @@ var view = new View({
   minzoom: 5
 });
 
-var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\" target=\"_blank\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\" target=\"_blank\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">OSM</a> &#169; <a href=\"https://carto.com/attribution/\" target=\"_blank\">CARTO</a>";
+var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\" target=\"_blank\" rel=\"noopener\" rel=\"noreferrer\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\" target=\"_blank\" rel=\"noopener\" rel=\"noreferrer\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\" rel=\"noreferrer\">OSM</a> &#169; <a href=\"https://carto.com/attribution/\" target=\"_blank\" rel=\"noopener\" rel=\"noreferrer\">CARTO</a>";
 
 if (!dd.isWidgetMode()) {
   baseAttributions = baseAttributions + " | <a href=\"#\" onclick=\"$('#impressumModal').modal('show'); return false;\">Impressum</a>";
