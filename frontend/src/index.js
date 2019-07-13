@@ -9,8 +9,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import $ from "jquery";
 import CircleStyle from "ol/style/Circle";
-import {circular as circularPolygon} from 'ol/geom/Polygon.js';
-import {get as getProjection, getTransformFromProjections} from 'ol/proj.js';
+import { circular as circularPolygon } from "ol/geom/Polygon.js";
+import { get as getProjection, getTransformFromProjections, fromLonLat } from "ol/proj.js";
 import Control from "ol/control/Control";
 import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
@@ -29,7 +29,7 @@ import { Settings } from "./Settings.js";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import { Map, View, Geolocation, Feature } from "ol";
 import { defaults as defaultControls, OverviewMap } from "ol/control.js";
-import { fromLonLat } from "ol/proj.js";
+
 import { LayerManager } from "./LayerManager.js";
 import { StrikeManager } from "./StrikeManager.js";
 import { Workbox } from "workbox-window";
@@ -388,8 +388,8 @@ window.geolocation.on("change:position", () => {
 // actually display reflectivity radar data
 //
 
-//var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-//var websocketUrl = "http://localhost:8040/tile";
+// var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+// var websocketUrl = "http://localhost:8040/tile";
 // if (process.env.NODE_ENV === "production") {
 var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var websocketUrl = "https://meteocool.com/tile";
@@ -593,13 +593,13 @@ window.injectLocation = (lat, lon, accuracy, zoom = false) => {
   }
   if (accuracy > 0) {
     const accuracyPoly = circularPolygon([lon, lat], accuracy);
-    accuracyPoly.applyTransform(getTransformFromProjections(getProjection('EPSG:4326'), window.map.getView().getProjection()));
+    accuracyPoly.applyTransform(getTransformFromProjections(getProjection("EPSG:4326"), window.map.getView().getProjection()));
     accuracyFeature.setGeometry(accuracyPoly);
   }
   positionFeature.setGeometry(center ? new Point(center) : null);
 };
 
-window.setAfg = () => {accuracyFeature.setGeometry(window.afg);};
+window.setAfg = () => { accuracyFeature.setGeometry(window.afg); };
 
 // Keep URL parameters on "reload"
 if (!dd.isAuxPage()) {

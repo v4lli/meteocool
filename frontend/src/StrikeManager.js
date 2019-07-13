@@ -17,7 +17,7 @@ export class StrikeManager {
     if (remove) {
       this.vs.removeFeature(remove);
     }
-    if (idx != -1) {
+    if (idx !== -1) {
       this.strikes = this.strikes.slice(0, idx).concat(this.strikes.slice(idx + 1, this.strikes.length));
     }
   }
@@ -39,7 +39,7 @@ export class StrikeManager {
     let MINS = 60 * 1000;
     this.strikes.forEach((id, idx) => {
       if (id < now - 30 * MINS) {
-        this.removeOne(id, idx)
+        this.removeOne(id, idx);
       }
     });
     this.vs.refresh();
@@ -50,7 +50,7 @@ export class StrikeManager {
     this.vs.clear();
   }
 
-  debug() {
+  debug () {
     console.log(this.strikes);
     console.log(this.vs.getFeatures());
   }
