@@ -105,15 +105,21 @@ def dbz_to_str_pure_de(dbz,lat,lon,lang):
         return "Kein %s" % rain_snow
 
 dwdTemp = dwdTemperature()
-dwdTemp.get_stations()
+try:
+    dwdTemp.get_stations()
+except:
+    # XXX handle
+    pass
 
 def rain_or_snow(lat,lon,lang):
     current_temperature = None
     try:
         station_id = dwdTemp.find_next_station(lat, lon)
         current_temperature = dwdTemp.get_current_temperature(station_id)
-    except ConnectionRefusedError as e:
-        logging.error("DWD reports ConnectionRefusedError: %s" % e)
+    #except ConnectionRefusedError as e:
+    except:
+        #logging.error("DWD reports ConnectionRefusedError: %s" % e)
+        logging.error("DWD temperature error")
         pass
 
     if lang == "de":
@@ -137,13 +143,18 @@ def dbz_to_str(dbz, lat, lon, lang, lower_case=False):
 
     return "%s (%d dbZ)" % (intensity, dbz)
 
-def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10):
+def get_rain_peaks(forecast_maps, max_ahead, xy, user_ahead=0, user_intensity=10, debug=False):
     timeframe = user_ahead
     max_intensity = 0
     peak_mins = 0
 
+    if debug:
+        logging.warn("max_ahead=%d", max_ahead)
+
     while timeframe <= max_ahead:
         intensity = rvp_to_dbz(forecast_maps[timeframe][0][outx][outy])
+        if debug:
+            logging.warn("timeframe=%d max_ahead=%d intensity=%d" % (timeframe, max_ahead, intensity))
         if intensity > max_intensity:
             peak_mins = timeframe
             max_intensity = intensity
@@ -261,7 +272,7 @@ if __name__ == "__main__":
             m_diff = (datetime.datetime.utcnow()-last_updated).total_seconds() / 60
             # cool down by 0.35 km/h per minute
             interpolatedSpeed = max(travelmodeSpeed - m_diff*0.35, 0)
-            if interpolatedSpeed > 10:
+            if interpolatedSpeed > 30:
                 logging.warn("%s: not pushing for client because of too high interpolated speed %f (orig=%f)" % (token, interpolatedSpeed, travelmodeSpeed))
                 continue
             else:
@@ -281,8 +292,11 @@ if __name__ == "__main__":
         data = forecast_maps[ahead]
         reported_intensity = rvp_to_dbz(forecast_maps[ahead][0][outx][outy])
 
-        if token == "34b62a22f70bec18457590b6c08b61612060bdca39f6941a917e0d75dd8b05cc" or token == "dafe95e4498deb188efb76dcf6927d9b3c3e265371e2b4d4f87d23fc0ef8cf79":
+        debug = False
+        if token == "34b62a22f70bec18457590b6c08b61612060bdca39f6941a917e0d75dd8b05cc" or token == "dafe95e4498deb188efb76dcf6927d9b3c3e265371e2b4d4f87d23fc0ef8cf79" or token == "9081b779ae46cca7a785a5db631120cc007abc663056981bdc9534f9329c38d4":
+            ahead = 45
             lang = "de"
+            debug = True
 
         # also check timeframes BEFORE the configured ahead value
         if reported_intensity < intensity:
