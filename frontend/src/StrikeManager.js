@@ -49,6 +49,11 @@ export class StrikeManager {
     this.strikes = [];
     this.vs.clear();
   }
+
+  debug() {
+    console.log(this.strikes);
+    console.log(this.vs.getFeatures());
+  }
 };
 
 /* vim: set ts=2 sw=2 expandtab: */

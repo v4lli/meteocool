@@ -1,3 +1,4 @@
+# XXX some architectural issues, needs to be refactored.
 import eventlet
 eventlet.monkey_patch()
 
@@ -374,8 +375,17 @@ def blitzortung_thread():
             "south": 46.5}))
 
     def stats_logging_cb():
-        logging.warn("Processed %d strikes since last report (%d failed)"
-            % (getAndResetStrikes(), getAndResetFailStrikes()))
+        def strike_outdated(s):
+            if s["time"]/1000/1000/1000 < time.time() - 50*60:
+                return True
+            else:
+                return False
+        global strikeCache
+        oldlen = len(strikeCache)
+        strikeCache[:] = [s for s in strikeCache if not strike_outdated(s)]
+
+        logging.warn("Processed %d strikes since last report (%d failed). Removed %d from cache. New size: %d"
+            % (getAndResetStrikes(), getAndResetFailStrikes(), oldlen - len(strikeCache), len(strikeCache)))
         threading.Timer(5*60, stats_logging_cb).start()
 
     logging.warn("blitzortung thread init")

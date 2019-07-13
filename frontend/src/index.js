@@ -9,6 +9,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import $ from "jquery";
 import CircleStyle from "ol/style/Circle";
+import {circular as circularPolygon} from 'ol/geom/Polygon.js';
+import {get as getProjection, getTransformFromProjections} from 'ol/proj.js';
 import Control from "ol/control/Control";
 import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
@@ -257,8 +259,6 @@ window.geolocation.on("error", (error) => {
 var accuracyFeature = new Feature();
 window.geolocation.on("change:accuracyGeometry", () => {
   accuracyFeature.setGeometry(window.geolocation.getAccuracyGeometry());
-  // stop annoying the user after a short time
-  // setTimeout(function() {geolocation.on('change:accuracyGeometry', null);}, 1500);
 });
 
 var shouldUpdate = true;
@@ -296,14 +296,15 @@ window.addEventListener("popstate", function (event) {
   dimensions();
 });
 
-/* eslint-disable */
 /*
  * Need to disable this stylechecker warning because the VectorLayer constructor
  * us only used for its sideeffects, which isn't nice.
  */
+/* eslint-disable */
 new VectorLayer({
   source: new VectorSource({features: [accuracyFeature, positionFeature]}),
-  map: map
+  map: map,
+  renderMode: 'image'
 });
 /* eslint-enable */
 
@@ -323,49 +324,49 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
   map: document.map,
   style: function (feature) {
     var size = feature.get("features").length;
-    var level = 0;
+    var age = 0;
     let now = new Date().getTime();
     let MINS = 1000 * 30;
-    feature.get("features").forEach((feature) => { level += (now - feature.getId()) / MINS; });
-    // cap to 30 levels
-    level = (Math.round(level / size) / 2) + 1;
-    if (level > 30) {
-      level = 30;
+    feature.get("features").forEach((feature) => { age += (now - feature.getId()) / MINS; });
+    // age max = 60, divide by 3 to reduce to 20 age levels max
+    age = (Math.round(age / size / 2.5)) + 1;
+    if (age > 30) {
+      age = 20;
     }
     var textsize;
     if (size > 12) {
-      textsize = 38;
+      textsize = 39;
     } else if (size > 8) {
-      textsize = 35;
+      textsize = 34;
     } else if (size > 3) {
-      textsize = 33;
+      textsize = 29;
     } else if (size > 1) {
-      textsize = 26;
+      textsize = 23;
     } else {
-      textsize = 24;
+      textsize = 20;
     }
-    if (!(level in styleCache)) {
-      styleCache[level] = {};
+    if (!(age in styleCache)) {
+      styleCache[age] = {};
     }
-    var style = styleCache[level][textsize];
+    var style = styleCache[age][textsize];
     if (!style) {
       var opacity;
-      if (level < 5) {
+      if (age < 5) {
         opacity = 1;
       } else {
         // XXX oh god i'm so sorry
-        opacity = Math.max(Math.min(1 - (level / 30 * 0.8) - 0.2, 1), 0);
+        opacity = Math.max(Math.min(1 - (age / 30 * 0.8) - 0.2, 1), 0);
       }
-      // console.log("new size + level: " + textsize + ", " + level + ", opacity: " + opacity);
+      // console.log("new size + age: " + textsize + ", " + age + ", opacity: " + opacity);
 
       style = new Style({
         text: new Text({
           text: "⚡️",
-          fill: new Fill({ color: "rgba(255, 255, 255, " + opacity + ")" }),
+          fill: new Fill({ color: "rgba(255, 255, 255, " + opacity + ");" }),
           font: textsize + "px Calibri,sans-serif"
         })
       });
-      styleCache[level][textsize] = style;
+      styleCache[age][textsize] = style;
     }
     return style;
   }
@@ -403,6 +404,7 @@ const socket = io.connect(websocketUrl);
 window.sock = socket;
 
 let strikemgr = new StrikeManager(1000, vs);
+window.sm = strikemgr;
 
 socket.on("connect", () => console.log("websocket connected"));
 
@@ -582,15 +584,22 @@ window.showPlayButton = function () {
 };
 
 window.userLocation = null;
-window.injectLocation = function (lat, lon, accuracy, zoom = false) {
+window.injectLocation = (lat, lon, accuracy, zoom = false) => {
   var center = fromLonLat([lon, lat]);
   window.userLocation = center;
   if (zoom || !haveZoomed) {
     haveZoomed = true;
     window.map.getView().animate({ center: center, zoom: 9 });
   }
+  if (accuracy > 0) {
+    const accuracyPoly = circularPolygon([lon, lat], accuracy);
+    accuracyPoly.applyTransform(getTransformFromProjections(getProjection('EPSG:4326'), window.map.getView().getProjection()));
+    accuracyFeature.setGeometry(accuracyPoly);
+  }
   positionFeature.setGeometry(center ? new Point(center) : null);
 };
+
+window.setAfg = () => {accuracyFeature.setGeometry(window.afg);};
 
 // Keep URL parameters on "reload"
 if (!dd.isAuxPage()) {
@@ -720,7 +729,6 @@ window.manualTileUpdateFn = (p) => {
   window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
   window.sock.emit("getStrikes", null, (data) => {});
   if (settings.get("zoomOnForeground")) {
-    console.log("zoom on foreground desired");
     if (window.userLocation) {
       window.map.getView().animate({ center: window.userLocation, zoom: 10 });
     } else {
@@ -730,7 +738,6 @@ window.manualTileUpdateFn = (p) => {
       }
     }
   }
-  console.log("manual tile update");
 };
 window.manualTileUpdateFn();
 
