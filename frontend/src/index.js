@@ -334,7 +334,7 @@ var clusters = new Cluster({
 });
 
 var styleCache = {};
-let STRIKE_MINS = 1000 * 30;
+let STRIKE_MINS = 1000 * 60;
 
 let styleFactory = (age, size) => {
   if (age < 5) {

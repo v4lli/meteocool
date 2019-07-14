@@ -27,37 +27,21 @@ def dbz2color(dbz):
         return scale(0xFE, 0xFC, 0xFD, 10, dbz % (62), False, True)
     if dbz >= 47:
         return scale(0xFE, 0xFC, 0xFD, 15, dbz % (47))
-    if dbz >= 37:
-        return scale(0x98, 0x58, 0xC4, 10, dbz % (37))
+    if dbz >= 40:
+        # purple
+        return scale(0xF6, 0x28, 0xF6, 5, dbz % (40))
     if dbz >= 32:
-        return scale(0xF6, 0x28, 0xF6, 5, dbz % (32))
-    # if dbz >= 60:
-    #    return scale(0xB8, 0x07, 0x11, 5, dbz % (60))
-    # redundant color
-    # if dbz >= 55:
-    #    return scale(0xC9, 0x0B, 0x13, 5, dbz % (55))
-    if dbz >= 27:
         # red
-        return scale(117, 0, 0, 5, dbz % (27), False, True)
-    # if dbz >= 45:
-    #    return scale(0xFA, 0x93, 0x26, 5, dbz % (45))
-    # ugly color
-    # if dbz >= 40:
-    #    return scale(0xE3, 0xBB, 0x2A, 5, dbz % (40))
-    if dbz >= 23:
+        return scale(117, 0, 0, 5, dbz % (32), False, True)
+    if dbz >= 26:
         # yellow
-        return scale(87, 74, 0, 4, dbz % (23), threshold=0.5)
-    # also redundant
-    # if dbz >= 25:
-    #    return scale(0x1E, 0xC4, 0x22, 5, dbz % (25))
-    if dbz >= 18:
-        # return scale(0x2A, 0xFC, 0x30, 5, dbz % (20))
-        # the redundant color looks nicer though...
+        return scale(87, 74, 0, 4, dbz % (26), threshold=0.5)
+    if dbz >= 20:
         # green
-        return scale(0x1E, 0xC4, 0x22, 5, dbz % (18))
-    if dbz >= 12:
+        return scale(0x1E, 0xC4, 0x22, 5, dbz % (20))
+    if dbz >= 13:
         # blau
-        return scale(0x0E, 0x22, 0xEE, 6, dbz % 12, True)
+        return scale(0x0E, 0x22, 0xEE, 6, dbz % 13, True)
     if dbz >= 0:
         # grey
         return (0, 0, 0, int(105 / 12 * (dbz+1))%255)
