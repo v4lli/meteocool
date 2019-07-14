@@ -1,8 +1,9 @@
 #!/bin/sh
 . /etc/environment
-if ! [ -e "/tmp/.lock" ] ; then
-	touch /tmp/.lock
+if ! [ -e "/tmp/.dwdlock" ] ; then
+	date > /tmp/.dwdlock
 	cd /usr/src/app
 	make update api OUT=/data/
-	rm -f /tmp/.lock
+	wait
+	rm -f /tmp/.dwdlock
 fi
