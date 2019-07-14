@@ -58,6 +58,7 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
   $("#logoext").text(".de");
   $("#switchLang").text("English");
   $("#switchLang").attr("href", "/");
+  $("#localizedApps").attr("data-target", "#appModalDe");
   // lang = "de";
   dfnLocale = dateFnGerman;
 } else {
@@ -620,6 +621,7 @@ if (!dd.isAuxPage()) {
 
 $(document).ready(function () {
   if (DeviceDetect.getIosAPILevel() >= 2) {
+    $("#topMenu")[0].children[1].style.display = "none";
     $("#topMenu")[0].children[3].style.display = "none";
     $("#topMenu")[0].children[4].style.display = "none";
     // XXX re-enable once the scrolling is enabled
