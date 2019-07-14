@@ -67,11 +67,11 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
 
 // ghetto gettext
 function _ (text) {
-  switch(text) {
+  switch (text) {
     case "dark mode":
-      return "Dunkel"
+      return "Dunkel";
     case "light mode":
-      return "Hell"
+      return "Hell";
   }
 }
 
@@ -379,7 +379,7 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
         textsize = 29;
       }
     } else {
-      age = (Math.round((now - feature.get("features")[0].getId())/ STRIKE_MINS / 2.5)) + 1;
+      age = (Math.round((now - feature.get("features")[0].getId()) / STRIKE_MINS / 2.5)) + 1;
     }
     return styleFactory(age, textsize);
   }
