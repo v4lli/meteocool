@@ -55,13 +55,13 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
   $("#localizedDocumentation").text("Dokumentation");
   $("#localizedApps").text("Android & iPhone");
   $("#localizedAbout").text("Über meteocool");
-  $("#logotext").text("meteocool.de");
+  $("#logoext").text(".de");
   $("#switchLang").text("English");
   $("#switchLang").attr("href", "/");
   // lang = "de";
   dfnLocale = dateFnGerman;
 } else {
-  $("#logotext").text("meteocool.com");
+  $("#logoext").text(".com");
 }
 
 // ghetto gettext

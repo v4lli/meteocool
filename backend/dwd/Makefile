@@ -85,8 +85,8 @@ update:
 	cd /scratch/ && wget --no-verbose -SN \
 		http://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin && \
 		md5s="$$(md5sum /scratch/raa01-wx_10000-latest-dwd---bin)" ; \
-		if ! [ "$$md5s" = "$$(cat /scratch/raa01-wx_10000-latest-dwd---bin.md5" ]; then \
-			echo "$$md5s" > /scratch/raa01-wx_10000-latest-dwd---bin.md5 ; \
+		if ! [ "$$md5s" = "$$(cat /tmp/raa01-wx_10000-latest-dwd---bin.md5)" ]; then \
+			echo "$$md5s" > /tmp/raa01-wx_10000-latest-dwd---bin.md5 ; \
 			exit 0 ; \
 		else \
 			echo "No new data from dwd" ; \
