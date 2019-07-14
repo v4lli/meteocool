@@ -28,6 +28,7 @@ module.exports = {
       use: ['url-loader']
     }]
   },
+  mode: "production",
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({

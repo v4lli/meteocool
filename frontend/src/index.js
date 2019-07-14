@@ -55,13 +55,13 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
   $("#localizedDocumentation").text("Dokumentation");
   $("#localizedApps").text("Android & iPhone");
   $("#localizedAbout").text("Über meteocool");
-  $("#logotext").text("meteocool.de");
+  $("#logoext").text(".de");
   $("#switchLang").text("English");
   $("#switchLang").attr("href", "/");
   // lang = "de";
   dfnLocale = dateFnGerman;
 } else {
-  $("#logotext").text("meteocool.com");
+  $("#logoext").text(".com");
 }
 
 // ghetto gettext
@@ -345,7 +345,7 @@ let styleFactory = (age, size) => {
   if (!styleCache[age][size]) {
     // XXX oh god i'm so sorry
     let opacity = Math.max(Math.min(1 - (age / 30 * 0.8) - 0.2, 1), 0);
-    console.log("new size + age: " + size + ", " + age + ", opacity: " + opacity);
+    //console.log("new size + age: " + size + ", " + age + ", opacity: " + opacity);
 
     styleCache[age][size] = new Style({
       text: new Text({
