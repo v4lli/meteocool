@@ -55,14 +55,14 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
   $("#localizedDocumentation").text("Dokumentation");
   $("#localizedApps").text("Android & iPhone");
   $("#localizedAbout").text("Über meteocool");
-  $("#logoext").text(".de");
+  $("#logoext").html(".d&#8205;e");
   $("#switchLang").text("English");
   $("#switchLang").attr("href", "/");
   $("#localizedApps").attr("data-target", "#appModalDe");
   // lang = "de";
   dfnLocale = dateFnGerman;
 } else {
-  $("#logoext").text(".com");
+  $("#logoext").html(".c&#8205;om");
 }
 
 // ghetto gettext
@@ -368,9 +368,11 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
     var age = 0;
     var textsize = 24;
     if (size > 1) {
-      feature.get("features").forEach((feature) => { age += (now - feature.getId()) / STRIKE_MINS; });
+      feature.get("features").forEach((feature) => {
+        age += (now - feature.getId()) / STRIKE_MINS;
+      });
       // age max = 60, divide by 3 to reduce to 20 age levels max
-      age = Math.max(Math.round(age / size / 2.5) + 1, 20);
+      age = Math.min(Math.round(age / size / 2.5) + 1, 20);
       if (size > 13) {
         textsize = 40;
       } else if (size > 9) {
