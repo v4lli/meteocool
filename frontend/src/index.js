@@ -45,13 +45,13 @@ var dd = new DeviceDetect();
 
 // german localization - since we have very few string, do this manually
 // instead of using another crappy library.
-// var lang = "en";
+var lang = "en";
 var dfnLocale = dateFnEnglish;
 if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.language.split("-")[0] === "de") {
   $("#localizedLastUpdated").text("Aktualisiert");
   $("#updatedTime").text("nie!");
   $("#openSettings").text("Einstellungen");
-  $("#toggleMode").text("Dark Mode");
+  $("#toggleMode").text("Dunkel");
   $("#localizedDocumentation").text("Dokumentation");
   $("#localizedApps").text("Android & iPhone");
   $("#localizedAbout").text("Über meteocool");
@@ -59,7 +59,7 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
   $("#switchLang").text("English");
   $("#switchLang").attr("href", "/");
   $("#localizedApps").attr("data-target", "#appModalDe");
-  // lang = "de";
+  lang = "de";
   dfnLocale = dateFnGerman;
 } else {
   $("#logoext").html(".c&#8205;om");
@@ -67,11 +67,15 @@ if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.languag
 
 // ghetto gettext
 function _ (text) {
-  switch (text) {
-    case "dark mode":
-      return "Dunkel";
-    case "light mode":
-      return "Hell";
+  if (lang === "de") {
+    switch (text) {
+      case "dark mode":
+        return "Dunkel";
+      case "light mode":
+        return "Hell";
+    }
+  } else {
+    return text;
   }
 }
 
@@ -623,10 +627,15 @@ if (!dd.isAuxPage()) {
 
 $(document).ready(function () {
   if (DeviceDetect.getIosAPILevel() >= 2) {
-    $("#topMenu")[0].children[1].style.display = "none";
-    $("#topMenu")[0].children[3].style.display = "none";
-    $("#topMenu")[0].children[4].style.display = "none";
+    $("#topMenu")[0].children[0].style.display = "none"; // settings
+    $("#topMenu")[0].children[1].style.display = "none"; // language switcher
+    $("#topMenu")[0].children[3].style.display = "none"; // documentation
+    $("#topMenu")[0].children[4].style.display = "none"; // mobile apps modal
     // XXX re-enable once the scrolling is enabled
+  }
+  if (DeviceDetect.getAndroidAPILevel() == 1) {
+    $("#topMenu")[0].children[0].style.display = "none"; // settings
+    $("#topMenu")[0].children[1].style.display = "none"; // language switcher
   }
   if (window.location.href.indexOf("#about") !== -1) {
     $("#about").modal("show");
