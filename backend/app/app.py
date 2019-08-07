@@ -285,11 +285,6 @@ def unregister():
 def log_connection():
     logging.warn("client connected")
 
-@socketio.on("getStrikes", namespace="/tile")
-def sendStrikes(p):
-    logging.warn("sendStrikes because of getStrikes")
-    #socketio.emit("bulkStrikes", strikeCache, namespace="/tile", room=request.sid)
-
 if __name__ == "__main__":
     logging.warn("Starting meteocool backend app.py...")
     socketio.run(app, host="0.0.0.0")

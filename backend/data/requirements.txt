@@ -4,3 +4,6 @@ websocket-client==0.52.0
 pyproj==1.9.5.1
 requests
 kombu
+aiohttp
+cchardet
+aiodns

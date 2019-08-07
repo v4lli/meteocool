@@ -4,6 +4,8 @@ import random
 import threading
 import time
 
+from aiohttp import web
+
 import websocket
 from pyproj import Proj, transform
 from flask_socketio import SocketIO
@@ -127,9 +129,19 @@ class Blitzortung(SocketIOWrapper, threading.Thread):
             logging.warn("blitzortung-thread: Entering main loop")
             ws.run_forever()
 
+async def lightning_cache(data, request):
+    return web.json_response(data)
+
 if __name__ == "__main__":
     socketio = SocketIO(message_queue='amqp://mq')
     blitzortung = Blitzortung(socketio, 1000)
     blitzortung.start()
+
+    server = web.Application()
+    async def handle(request):
+        return await lightning_cache(blitzortung.strikeCache, request)
+    server.add_routes([web.get('/lightning_cache', handle)])
+    web.run_app(server, port=5000)
+
 
 # vim: set ts=4 sw=4 expandtab:
