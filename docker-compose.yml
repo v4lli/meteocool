@@ -41,6 +41,13 @@ services:
     depends_on:
       - mongo
       - web
+      - mq
+
+  mq:
+    image: rabbitmq:3-alpine
+    restart: unless-stopped
+    volumes:
+      - mqdata:/var/lib/rabbitmq
 
   dwd:
     build: backend/dwd
@@ -80,3 +87,4 @@ volumes:
   meteo_mongo_db:
   sslstore:
   pushpreview:
+  mqdata:

@@ -1,7 +1,7 @@
 #!/bin/sh
 set -x
 while true; do
-    echo Starting app.py
-    python3 app.py
+    echo Starting data.py
+    python3 data.py
     sleep 1
 done

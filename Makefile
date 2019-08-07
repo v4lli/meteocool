@@ -1,7 +1,7 @@
 .PHONY: dev devrestart
 
 dev:
-	docker-compose -f docker-compose-dev.yml build
+	docker-compose -f docker-compose-dev.yml build --parallel
 
 prod:
 	test -d private || git clone git@github.com:v4lli/meteocool-private.git private
