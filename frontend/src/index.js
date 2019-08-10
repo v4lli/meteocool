@@ -15,7 +15,7 @@ import Control from "ol/control/Control";
 import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
-import Overlay from 'ol/Overlay.js';
+import Overlay from "ol/Overlay.js";
 import TileLayer from "ol/layer/Tile.js";
 import Attribution from "ol/control/Attribution";
 import VectorLayer from "ol/layer/Vector";
@@ -243,26 +243,23 @@ window.map = new Map({
 
 window.popup = new Overlay({
   element: document.getElementById("popup"),
-  positioning: 'bottom-center',
+  positioning: "bottom-center",
   stopEvent: false,
   offset: [0, -13]
 });
 window.map.addOverlay(window.popup);
 
 // change mouse cursor when over marker
-window.map.on('pointermove', function(e) {
+window.map.on("pointermove", function (e) {
   if (e.dragging) {
-    try {
-      $("#popup").attr('data-content', "").data('bs.popover').setContent();
-      $("#popup").popover('dispose');
-    } catch { }
+    $("#popup").attr("data-content", "").data("bs.popover").setContent();
+    $("#popup").popover("dispose");
     return;
   }
   var pixel = window.map.getEventPixel(e.originalEvent);
   var hit = window.map.hasFeatureAtPixel(pixel);
-  window.map.getTarget().style.cursor = hit ? 'pointer' : '';
+  window.map.getTarget().style.cursor = hit ? "pointer" : "";
 });
-
 
 //
 // Geolocation (showing the user's position)
@@ -309,10 +306,8 @@ window.geolocation.on("change:accuracyGeometry", () => {
 
 var shouldUpdate = true;
 window.map.on("movestart", () => {
-  try {
-    $("#popup").attr('data-content', "").data('bs.popover').setContent();
-    $("#popup").popover('dispose');
-  } catch { }
+  $("#popup").attr("data-content", "").data("bs.popover").setContent();
+  $("#popup").popover("dispose");
 });
 window.map.on("moveend", () => {
   if (!shouldUpdate) {
@@ -759,16 +754,16 @@ $(document).ready(function () {
   }, "json");
 
   // display popup on click
-  window.map.on('click', function(evt) {
+  window.map.on("click", function (evt) {
     var feature = window.map.forEachFeatureAtPixel(evt.pixel,
-      function(feature) {
+      function (feature) {
         return feature;
       });
     if (feature) {
       var coordinates = feature.getGeometry().getCoordinates();
       window.popup.setPosition(coordinates);
       var intensityStr;
-      switch(feature.get("intensity")) {
+      switch (feature.get("intensity")) {
         case 4:
           intensityStr = "Extreme ";
           break;
@@ -785,28 +780,27 @@ $(document).ready(function () {
           intensityStr = "Unknown ";
           break;
       }
-      let spinner ='<div style="width: 100%; text-align: center;"><div class="spinner-border spinner-border-sm" role="status" style="color: grey; text-align: center;"><span class="sr-only">Loading...</span></div></div>';
+      let spinner = "<div style=\"width: 100%; text-align: center;\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" style=\"color: grey; text-align: center;\"><span class=\"sr-only\">Loading...</span></div></div>";
       $("#popup").popover({
-        placement: 'top',
+        placement: "top",
         html: true,
         title: "🌀 " + intensityStr + " Intensity Mesocyclone",
         content: spinner
       });
-      $("#popup").popover('show');
-      $("#popup").attr('data-content', spinner).data('bs.popover').setContent();
+      $("#popup").popover("show");
+      $("#popup").attr("data-content", spinner).data("bs.popover").setContent();
       window.popoverAjax =
-        $.get(baseUrl + "/mesocyclones/"  + feature.getId().toString(),
+        $.get(baseUrl + "/mesocyclones/" + feature.getId().toString(),
           (data) => {
-            var html = ""
+            var html = "";
             for (let [key, value] of Object.entries(data)) {
               html += "<b>" + key + "</b>: " + value + "<br />";
             }
-            $("#popup").attr('data-content', html).data('bs.popover').setContent();
-            return
+            $("#popup").attr("data-content", html).data("bs.popover").setContent();
           }, "json");
     } else {
-      $("#popup").attr('data-content', "").data('bs.popover').setContent();
-      $("#popup").popover('dispose');
+      $("#popup").attr("data-content", "").data("bs.popover").setContent();
+      $("#popup").popover("dispose");
     }
   });
 });
