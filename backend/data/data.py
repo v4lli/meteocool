@@ -98,7 +98,7 @@ class Blitzortung(SocketIOWrapper, threading.Thread):
             "west": 2.0,
             "east": 18.0,
             "north": 55.5,
-            "south": 26.5}))
+            "south": 46.5}))
 
     def stats_logging_cb(self, init=False):
         def strike_outdated(s):

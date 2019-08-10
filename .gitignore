@@ -186,3 +186,4 @@ venv.bak/
 
 private
 backend/app/hooks.py
+backend/dwd/push.py
