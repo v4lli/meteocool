@@ -15,6 +15,7 @@ prodrestart:
 devrestart:
 	docker-compose -f docker-compose-dev.yml down
 	docker-compose -f docker-compose-dev.yml up -d
+	docker logs -f $$(docker ps | grep meteocool_datasource | cut -d ' ' -f1)
 
 devstop:
 	docker-compose -f docker-compose-dev.yml down

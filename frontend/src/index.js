@@ -15,6 +15,7 @@ import Control from "ol/control/Control";
 import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
+import Overlay from 'ol/Overlay.js';
 import TileLayer from "ol/layer/Tile.js";
 import Attribution from "ol/control/Attribution";
 import VectorLayer from "ol/layer/Vector";
@@ -32,6 +33,7 @@ import { defaults as defaultControls, OverviewMap } from "ol/control.js";
 
 import { LayerManager } from "./LayerManager.js";
 import { StrikeManager } from "./StrikeManager.js";
+import { MesoCycloneManager } from "./MesoCycloneManager.js";
 import { Workbox } from "workbox-window";
 
 import logoBig from "../assets/android-chrome-512x512.png"; // eslint-disable-line no-unused-vars
@@ -223,7 +225,7 @@ if (dd.isAuxPage()) {
 }
 
 window.map = new Map({
-  target: "map",
+  target: document.getElementById("map"),
   layers: [
     new TileLayer({
       source: new OSM({
@@ -238,6 +240,30 @@ window.map = new Map({
   ]),
   view: view
 });
+
+window.popup = new Overlay({
+  element: document.getElementById("popup"),
+  positioning: 'bottom-center',
+  stopEvent: false,
+  offset: [0, -13]
+});
+window.map.addOverlay(window.popup);
+
+// change mouse cursor when over marker
+window.map.on('pointermove', function(e) {
+  if (e.dragging) {
+    try {
+      $("#popup").attr('data-content', "").data('bs.popover').setContent();
+      $("#popup").popover('dispose');
+    } catch { }
+    return;
+  }
+  var pixel = window.map.getEventPixel(e.originalEvent);
+  var hit = window.map.hasFeatureAtPixel(pixel);
+  window.map.getTarget().style.cursor = hit ? 'pointer' : '';
+});
+
+
 //
 // Geolocation (showing the user's position)
 //
@@ -282,6 +308,12 @@ window.geolocation.on("change:accuracyGeometry", () => {
 });
 
 var shouldUpdate = true;
+window.map.on("movestart", () => {
+  try {
+    $("#popup").attr('data-content', "").data('bs.popover').setContent();
+    $("#popup").popover('dispose');
+  } catch { }
+});
 window.map.on("moveend", () => {
   if (!shouldUpdate) {
     // do not update the URL when the view was changed in the 'popstate' handler
@@ -323,21 +355,28 @@ window.addEventListener("popstate", function (event) {
 /* eslint-disable */
 new VectorLayer({
   source: new VectorSource({features: [accuracyFeature, positionFeature]}),
-  map: map,
+  map: window.map,
 });
 /* eslint-enable */
 
-var vs = new VectorSource({
+// strikesource
+var ss = new VectorSource({
+  features: []
+});
+
+// mesocyclonesource
+var ms = new VectorSource({
   features: []
 });
 
 var clusters = new Cluster({
   distance: 8,
-  map: document.map,
-  source: vs
+  map: window.map,
+  source: ss
 });
 
 var styleCache = {};
+var mesoStyleCache = {};
 let STRIKE_MINS = 1000 * 60;
 
 let styleFactory = (age, size) => {
@@ -350,7 +389,7 @@ let styleFactory = (age, size) => {
   if (!styleCache[age][size]) {
     // XXX oh god i'm so sorry
     let opacity = Math.max(Math.min(1 - (age / 30 * 0.8) - 0.2, 1), 0);
-    //console.log("new size + age: " + size + ", " + age + ", opacity: " + opacity);
+    // console.log("new size + age: " + size + ", " + age + ", opacity: " + opacity);
 
     styleCache[age][size] = new Style({
       text: new Text({
@@ -363,9 +402,52 @@ let styleFactory = (age, size) => {
   return styleCache[age][size];
 };
 
+let mesoStyleFactory = (age, intensity) => {
+  if (age < 5) {
+    age = 0;
+  }
+  if (!(age in mesoStyleCache)) {
+    mesoStyleCache[age] = {};
+  }
+  if (!mesoStyleCache[age][intensity]) {
+    var opacity;
+    if (age > 5) {
+      opacity = 0.8;
+    } else if (age > 10) {
+      opacity = 0.6;
+    } else if (age > 30) {
+      opacity = 0.4;
+    } else if (age > 45) {
+      opacity = 0.2;
+    }
+
+    var size;
+    if (intensity > 4) {
+      size = 55;
+    } else if (intensity > 3) {
+      size = 46;
+    } else if (intensity > 2) {
+      size = 38;
+    } else if (intensity > 1) {
+      size = 30;
+    } else {
+      size = 22;
+    }
+
+    mesoStyleCache[age][intensity] = new Style({
+      text: new Text({
+        text: "🌀",
+        fill: new Fill({ color: "rgba(255, 255, 255, " + opacity + ")" }),
+        font: size + "px Calibri,sans-serif"
+      })
+    });
+  }
+  return mesoStyleCache[age][intensity];
+};
+
 var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
   source: clusters,
-  map: document.map,
+  map: window.map,
   style: (feature) => {
     let size = feature.get("features").length;
     let now = new Date().getTime();
@@ -393,6 +475,17 @@ var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
 vl.setZIndex(100);
 window.map.addLayer(vl);
 
+var mesoLayer = new VectorLayer({ // eslint-disable-line no-unused-vars
+  source: ms,
+  map: window.map,
+  style: (feature) => {
+    return mesoStyleFactory((new Date().getTime() - feature.getId()) / 1000 * 60,
+      feature.get("intensity"));
+  }
+});
+mesoLayer.setZIndex(101);
+window.map.addLayer(mesoLayer);
+
 var haveZoomed = false;
 window.geolocation.on("change:position", () => {
   var coordinates = window.geolocation.getPosition();
@@ -407,11 +500,11 @@ window.geolocation.on("change:position", () => {
 // actually display reflectivity radar data
 //
 
-//var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-//var websocketUrl = "http://localhost:8040/tile";
+var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+var baseUrl = "http://localhost:8040";
 // if (process.env.NODE_ENV === "production") {
-var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var websocketUrl = "https://meteocool.com/tile";
+// var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+// var websocketUrl = "https://meteocool.com/tile";
 // }
 
 var reflectivityOpacity = 0.5;
@@ -419,17 +512,22 @@ var reflectivityOpacity = 0.5;
 window.lm = new LayerManager(window.map, tileUrl, null, 9, reflectivityOpacity, DeviceDetect.getIosAPILevel() >= 2);
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
-const socket = io.connect(websocketUrl);
+const socket = io.connect(baseUrl + "/tile");
 window.sock = socket;
 
-let strikemgr = new StrikeManager(1000, vs);
+let strikemgr = new StrikeManager(1000, ss);
 window.sm = strikemgr;
+
+let mesocyclonemgr = new MesoCycloneManager(100, ms);
+window.mcm = mesocyclonemgr;
 
 socket.on("connect", () => console.log("websocket connected"));
 
-socket.on("lightning", function (data) {
+socket.on("lightning", (data) => {
   strikemgr.addStrike(data["lon"], data["lat"]);
 });
+
+socket.on("mesocyclone", (data) => mesocyclonemgr.addCyclone(data));
 
 // called when new cloud layers are available
 socket.on("map_update", function (data) {
@@ -625,7 +723,7 @@ $(document).ready(function () {
     $("#topMenu")[0].children[4].style.display = "none"; // mobile apps modal
     // XXX re-enable once the scrolling is enabled
   }
-  if (DeviceDetect.getAndroidAPILevel() == 1) {
+  if (DeviceDetect.getAndroidAPILevel() === 1) {
     $("#topMenu")[0].children[0].style.display = "none"; // settings
     $("#topMenu")[0].children[1].style.display = "none"; // language switcher
   }
@@ -645,13 +743,72 @@ $(document).ready(function () {
     window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
     window.webkit.messageHandlers["scriptHandler"].postMessage("drawerShow");
   }
-  $.get("/lightning_cache", function(data) {
+  $.get(baseUrl + "/lightning_cache", (data) => {
     console.log("Got " + data.length + " strikes from cache");
     strikemgr.clearAll();
+    // XXX differential download: send timestamp of newest strike to backend
+    // to only retrieve the difference.
     data.forEach((elem) => {
       strikemgr.addStrikeWithTime(elem["lon"], elem["lat"], Math.round(elem["time"] / 1000 / 1000));
     });
   }, "json");
+  $.get(baseUrl + "/mesocyclones/all/", (data) => {
+    console.log("Got " + data.length + " cyclones from cache");
+    mesocyclonemgr.clearAll();
+    data.forEach((elem) => mesocyclonemgr.addCyclone(elem));
+  }, "json");
+
+  // display popup on click
+  window.map.on('click', function(evt) {
+    var feature = window.map.forEachFeatureAtPixel(evt.pixel,
+      function(feature) {
+        return feature;
+      });
+    if (feature) {
+      var coordinates = feature.getGeometry().getCoordinates();
+      window.popup.setPosition(coordinates);
+      var intensityStr;
+      switch(feature.get("intensity")) {
+        case 4:
+          intensityStr = "Extreme ";
+          break;
+        case 3:
+          intensityStr = "High ";
+          break;
+        case 2:
+          intensityStr = "Mid ";
+          break;
+        case 1:
+          intensityStr = "Low ";
+          break;
+        default:
+          intensityStr = "Unknown ";
+          break;
+      }
+      let spinner ='<div style="width: 100%; text-align: center;"><div class="spinner-border spinner-border-sm" role="status" style="color: grey; text-align: center;"><span class="sr-only">Loading...</span></div></div>';
+      $("#popup").popover({
+        placement: 'top',
+        html: true,
+        title: "🌀 " + intensityStr + " Intensity Mesocyclone",
+        content: spinner
+      });
+      $("#popup").popover('show');
+      $("#popup").attr('data-content', spinner).data('bs.popover').setContent();
+      window.popoverAjax =
+        $.get(baseUrl + "/mesocyclones/"  + feature.getId().toString(),
+          (data) => {
+            var html = ""
+            for (let [key, value] of Object.entries(data)) {
+              html += "<b>" + key + "</b>: " + value + "<br />";
+            }
+            $("#popup").attr('data-content', html).data('bs.popover').setContent();
+            return
+          }, "json");
+    } else {
+      $("#popup").attr('data-content', "").data('bs.popover').setContent();
+      $("#popup").popover('dispose');
+    }
+  });
 });
 
 // lazy load images in modal

@@ -3,20 +3,20 @@ import logging
 import random
 import threading
 import time
+from datetime import timezone
+import datetime
+from xml.etree import ElementTree
+from xml.etree.ElementTree import ParseError
 
+import asyncio
 from aiohttp import web
 
 import websocket
 from pyproj import Proj, transform
 from flask_socketio import SocketIO
+import requests
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
-
-# Executed when a new websocket client connects. Currently no-op.
-#@socketio.on("getStrikes", namespace="/tile")
-#def sendStrikes(p):
-#    logging.warn("sendStrikes because of getStrikes")
-#    socketio.emit("bulkStrikes", strikeCache, namespace="/tile", room=request.sid)
 
 class SocketIOWrapper:
     def __init__(self, socketio):
@@ -53,24 +53,26 @@ class Blitzortung(SocketIOWrapper, threading.Thread):
             alt = -1
             pol = 0
             try:
-                alt = data["alt"]
-                pol = data["pol"]
                 time = data["time"]
+                pol = data["pol"]
+                alt = data["alt"]
             except KeyError:
                 pass
+
+            if pol != 0:
+                logging.warn("Seen non-zero polarity")
 
             strikeData = {
                "lat": transformed[1],
                "lon": transformed[0],
-               "alt": alt,
-               "pol": pol,
                "time": time
             }
+
+            self.broadcast("lightning", strikeData)
 
             if len(self.strikeCache) >= self.max_lightning_cache:
                 self.strikeCache.pop(0)
             self.strikeCache.append(strikeData)
-            logging.warn("lightning")
         else:
             self.failStrikes += 1
 
@@ -109,8 +111,9 @@ class Blitzortung(SocketIOWrapper, threading.Thread):
             oldlen = len(self.strikeCache)
             self.strikeCache[:] = [s for s in self.strikeCache if not strike_outdated(s)]
             logging.warn("Processed %d strikes since last report (%d failed). Removed %d from cache. New size: %d"
-                % (self.getAndResetStrikes(), self.getAndResetFailStrikes(), oldlen - len(self.strikeCache), len(self.strikeCache)))
-        threading.Timer(1*60, self.stats_logging_cb).start()
+                % (self.getAndResetStrikes(), self.getAndResetFailStrikes(),
+                    oldlen - len(self.strikeCache), len(self.strikeCache)))
+        threading.Timer(5*60, self.stats_logging_cb).start()
 
     def run(self):
         logging.warn("blitzortung thread init")
@@ -129,18 +132,134 @@ class Blitzortung(SocketIOWrapper, threading.Thread):
             logging.warn("blitzortung-thread: Entering main loop")
             ws.run_forever()
 
-async def lightning_cache(data, request):
+# https://www.dwd.de/DE/leistungen/radarprodukte/dokumentation_mcd.pdf?__blob=publicationFile&v=2
+class DwdMesocyclones(SocketIOWrapper, threading.Thread):
+    def __init__(self, socketio):
+        SocketIOWrapper.__init__(self, socketio)
+        threading.Thread.__init__(self)
+        self.cache = []
+        self.attributes = {}
+        self.lastFileTime = None
+
+    def run(self):
+        apiURL = "http://opendata.dwd.de/weather/radar/mesocyclones/meso_20190809_1805.xml"
+        #apiURL = "http://opendata.dwd.de/weather/radar/mesocyclones/meso_latest.xml"
+
+        logging.warn("dwd mesocyclone thread init with url=%s" % apiURL)
+        while True:
+            if self.lastFileTime:
+                time.sleep(60)
+
+            r = requests.head(apiURL)
+            fileTime = datetime.datetime.strptime(r.headers['last-modified'], "%a, %d %b %Y %X GMT")
+
+            if not self.lastFileTime or self.lastFileTime < fileTime:
+                logging.warn("downloading new meso file")
+                self.lastFileTime = fileTime
+            else:
+                logging.warn("meso xml already seen")
+                continue
+
+            # avoid DoSing dwd server when unreachable
+            time.sleep(1)
+
+            tree = None
+            try:
+                tree = ElementTree.fromstring(requests.get(apiURL).content)
+            except ParseError as e:
+                logging.error("xml parse error: %s" % e)
+                tree = []
+
+            eventId = 0
+            for child in tree:
+                if child.tag != "event":
+                    continue
+
+                coords = child.findall("location/area/ellipse/moving-point")[0]
+                if not coords:
+                    continue
+                lat = None
+                lon = None
+                try:
+                    lat = float(coords.find("latitude").text)
+                    lon = float(coords.find("longitude").text)
+                except ValueError:
+                    continue
+
+                mesotime = datetime.datetime.strptime(child.findall("time")[0].text, "%Y-%m-%dT%H:%M:%S")
+
+                diameter_child = child.findall("location/area/ellipse/major_axis")[0]
+                diameter = None
+                try:
+                    diameter = float(diameter_child.text)
+                except ValueError:
+                    continue
+
+                intensity = None
+                intensity_child = child.findall("nowcast-parameters/meso_intensity")[0]
+                try:
+                    intensity = int(intensity_child.text)
+                except ValueError:
+                    continue
+
+                transformed = transform(Proj(init="epsg:4326"),
+                        Proj(init="epsg:3857"), lon, lat)
+                mesocyclone = {
+                        "lat": transformed[1],
+                        "lon": transformed[0],
+                        "diameter": diameter,
+                        "time": mesotime.replace(tzinfo=timezone.utc).timestamp()*1000 + eventId,
+                        "intensity": intensity
+                }
+
+                attribs = {}
+                for param in child.findall("nowcast-parameters")[0]:
+                    if param.tag == "elevations" or param.tag == "meso_intensity":
+                        continue
+                    tag = param.tag.replace("mesocyclone_", "")
+                    try:
+                        attribs[tag] = "%.2f" % float(param.text)
+                    except ValueError:
+                        continue
+                    if "units" in param.attrib:
+                        attribs[tag] += (" %s" % param.attrib["units"])
+
+                logging.info(mesocyclone)
+                logging.info(attribs)
+                self.broadcast("mesocyclone", mesocyclone)
+                self.cache.append(mesocyclone)
+                self.attributes[mesocyclone["time"]] = attribs
+                eventId += 1
+
+
+async def cache_server(data, request):
     return web.json_response(data)
 
 if __name__ == "__main__":
     socketio = SocketIO(message_queue='amqp://mq')
     blitzortung = Blitzortung(socketio, 1000)
+    meso = DwdMesocyclones(socketio)
+
     blitzortung.start()
+    meso.start()
 
     server = web.Application()
-    async def handle(request):
-        return await lightning_cache(blitzortung.strikeCache, request)
-    server.add_routes([web.get('/lightning_cache', handle)])
+    async def lightning_cache(request):
+        return await cache_server(blitzortung.strikeCache, request)
+    server.add_routes([web.get('/lightning_cache', lightning_cache)])
+    async def mesocyclone_cache(request):
+        return await cache_server(meso.cache, request)
+    server.add_routes([web.get('/mesocyclones/all/', mesocyclone_cache)])
+    async def mesocyclone_one(request):
+        await asyncio.sleep(100)
+        attribs = None
+        try:
+            ts = int(request.match_info.get('id', 0))
+            attribs = meso.attributes[ts]
+        except ValueError:
+            return web.json_response({'error': 'invalid id'})
+        return web.json_response(attribs)
+    server.add_routes([web.get('/mesocyclones/{id}', mesocyclone_one)])
     web.run_app(server, port=5000)
 
 

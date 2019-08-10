@@ -37,6 +37,10 @@
 		transparent
 	}
 
+	proxy /mesocyclones/ datasource:5000 {
+		transparent
+	}
+
 	#proxy /reflectivity dwd:5000 {
 	#	transparent
 	#}
