@@ -252,7 +252,10 @@ window.map.addOverlay(window.popup);
 // change mouse cursor when over marker
 window.map.on("pointermove", function (e) {
   if (e.dragging) {
-    $("#popup").attr("data-content", "").data("bs.popover").setContent();
+    let popover = $("#popup").attr("data-content", "").data("bs.popover");
+    if (popover) {
+      popover.setContent();
+    }
     $("#popup").popover("dispose");
     return;
   }
@@ -306,7 +309,10 @@ window.geolocation.on("change:accuracyGeometry", () => {
 
 var shouldUpdate = true;
 window.map.on("movestart", () => {
-  $("#popup").attr("data-content", "").data("bs.popover").setContent();
+  let modal = $("#popup").attr("data-content", "").data("bs.popover");
+  if (modal) {
+    modal.setContent();
+  }
   $("#popup").popover("dispose");
 });
 window.map.on("moveend", () => {
@@ -406,14 +412,21 @@ let mesoStyleFactory = (age, intensity) => {
   }
   if (!mesoStyleCache[age][intensity]) {
     var opacity;
+    console.log(age);
     if (age > 5) {
       opacity = 0.8;
-    } else if (age > 10) {
+    }
+    if (age > 10) {
       opacity = 0.6;
-    } else if (age > 30) {
+    }
+    if (age > 20) {
       opacity = 0.4;
-    } else if (age > 45) {
+    }
+    if (age > 40) {
       opacity = 0.2;
+    }
+    if (age > 50) {
+      opacity = 0.1;
     }
 
     var size;
@@ -780,7 +793,7 @@ $(document).ready(function () {
           intensityStr = "Unknown ";
           break;
       }
-      let spinner = "<div style=\"width: 100%; text-align: center;\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" style=\"color: grey; text-align: center;\"><span class=\"sr-only\">Loading...</span></div></div>";
+      let spinner = "<div style=\"text-align: center;\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" style=\"color: grey; text-align: center;\"><span class=\"sr-only\">Loading...</span></div></div>";
       $("#popup").popover({
         placement: "top",
         html: true,
@@ -788,7 +801,10 @@ $(document).ready(function () {
         content: spinner
       });
       $("#popup").popover("show");
-      $("#popup").attr("data-content", spinner).data("bs.popover").setContent();
+      let popup = $("#popup").attr("data-content", spinner).data("bs.popover");
+      if (popup) {
+        popup.setContent();
+      }
       window.popoverAjax =
         $.get(baseUrl + "/mesocyclones/" + feature.getId().toString(),
           (data) => {
@@ -799,7 +815,6 @@ $(document).ready(function () {
             $("#popup").attr("data-content", html).data("bs.popover").setContent();
           }, "json");
     } else {
-      $("#popup").attr("data-content", "").data("bs.popover").setContent();
       $("#popup").popover("dispose");
     }
   });

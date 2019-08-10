@@ -141,14 +141,32 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
         self.attributes = {}
         self.lastFileTime = None
 
+    def cleanup(self):
+        def cyclone_outdated(s):
+            if s["time"]/1000 < time.time() - 50*60:
+                return True
+            else:
+                return False
+        logging.warn("old len %d" % len(self.cache))
+        current = []
+        for c in self.cache:
+            if cyclone_outdated(c):
+                del self.attributes[c["time"]]
+            else:
+                current.append(c)
+        self.cache = current
+        logging.warn("new len %d" % len(self.cache))
+
     def run(self):
-        apiURL = "http://opendata.dwd.de/weather/radar/mesocyclones/meso_20190809_1805.xml"
-        #apiURL = "http://opendata.dwd.de/weather/radar/mesocyclones/meso_latest.xml"
+        #apiURL = "http://opendata.dwd.de/weather/radar/mesocyclones/meso_20190809_1805.xml"
+        apiURL = "http://opendata.dwd.de/weather/radar/mesocyclones/meso_latest.xml"
 
         logging.warn("dwd mesocyclone thread init with url=%s" % apiURL)
         while True:
             if self.lastFileTime:
                 time.sleep(60)
+
+            self.cleanup()
 
             r = requests.head(apiURL)
             fileTime = datetime.datetime.strptime(r.headers['last-modified'], "%a, %d %b %Y %X GMT")
@@ -251,7 +269,6 @@ if __name__ == "__main__":
         return await cache_server(meso.cache, request)
     server.add_routes([web.get('/mesocyclones/all/', mesocyclone_cache)])
     async def mesocyclone_one(request):
-        await asyncio.sleep(100)
         attribs = None
         try:
             ts = int(request.match_info.get('id', 0))
