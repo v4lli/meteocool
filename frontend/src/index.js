@@ -412,7 +412,6 @@ let mesoStyleFactory = (age, intensity) => {
   }
   if (!mesoStyleCache[age][intensity]) {
     var opacity;
-    console.log(age);
     if (age > 5) {
       opacity = 0.8;
     }
@@ -487,7 +486,7 @@ var mesoLayer = new VectorLayer({ // eslint-disable-line no-unused-vars
   source: ms,
   map: window.map,
   style: (feature) => {
-    return mesoStyleFactory((new Date().getTime() - feature.getId()) / 1000 * 60,
+    return mesoStyleFactory((new Date().getTime() - feature.getId()) /1000/1000 - 10,
       feature.get("intensity"));
   }
 });
@@ -508,11 +507,11 @@ window.geolocation.on("change:position", () => {
 // actually display reflectivity radar data
 //
 
-var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var baseUrl = "http://localhost:8040";
+//var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+//var baseUrl = "http://localhost:8040";
 // if (process.env.NODE_ENV === "production") {
-// var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-// var websocketUrl = "https://meteocool.com/tile";
+var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+var baseUrl = "https://meteocool.com";
 // }
 
 var reflectivityOpacity = 0.5;

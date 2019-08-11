@@ -12,7 +12,9 @@
 
 	proxy /socket.io app:5000 {
 		websocket
-		transparent
+		proxy_header Host {host}
+		proxy_header X-Real-IP {remote}
+		proxy_header X-Forwarded-For {remote}
 	}
 
 	proxy /post_location app:5000 {

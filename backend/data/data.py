@@ -143,18 +143,23 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
 
     def cleanup(self):
         def cyclone_outdated(s):
-            if s["time"]/1000 < time.time() - 50*60:
+            if s["time"]/1000 < time.time() - 60*60*1000:
                 return True
             else:
                 return False
         logging.warn("old len %d" % len(self.cache))
         current = []
-        for c in self.cache:
-            if cyclone_outdated(c):
-                del self.attributes[c["time"]]
-            else:
-                current.append(c)
-        self.cache = current
+
+        try:
+            for c in self.cache:
+                if cyclone_outdated(c):
+                    del self.attributes[c["time"]]
+                else:
+                    current.append(c)
+            self.cache = current
+        except KeyError as e:
+            logging.error("key error %s" % e)
+            pass
         logging.warn("new len %d" % len(self.cache))
 
     def run(self):
@@ -226,7 +231,7 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
                         "lat": transformed[1],
                         "lon": transformed[0],
                         "diameter": diameter,
-                        "time": mesotime.replace(tzinfo=timezone.utc).timestamp()*1000 + eventId,
+                        "time": int(mesotime.replace(tzinfo=timezone.utc).timestamp()*1000 + eventId),
                         "intensity": intensity
                 }
 
