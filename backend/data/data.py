@@ -143,7 +143,8 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
 
     def cleanup(self):
         def cyclone_outdated(s):
-            if s["time"]/1000 < time.time() - 60*60*1000:
+            logging.error("%f <? %f" % (s["time"]/1000, time.time() - 60*60))
+            if s["time"]/1000 < time.time() - 60*60:
                 return True
             else:
                 return False
@@ -163,7 +164,7 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
         logging.warn("new len %d" % len(self.cache))
 
     def run(self):
-        #apiURL = "http://opendata.dwd.de/weather/radar/mesocyclones/meso_20190809_1805.xml"
+        #apiURL = "http://opendata.dwd.de/weather/radar/mesocyclones/meso_20190812_2005.xml"
         apiURL = "http://opendata.dwd.de/weather/radar/mesocyclones/meso_latest.xml"
 
         logging.warn("dwd mesocyclone thread init with url=%s" % apiURL)
@@ -186,6 +187,7 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
             # avoid DoSing dwd server when unreachable
             time.sleep(1)
 
+            this_timestep = []
             tree = None
             try:
                 tree = ElementTree.fromstring(requests.get(apiURL).content)
@@ -247,12 +249,11 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
                     if "units" in param.attrib:
                         attribs[tag] += (" %s" % param.attrib["units"])
 
-                logging.info(mesocyclone)
-                logging.info(attribs)
-                self.broadcast("mesocyclone", mesocyclone)
+                this_timestep.append(mesocyclone)
                 self.cache.append(mesocyclone)
                 self.attributes[mesocyclone["time"]] = attribs
                 eventId += 1
+            self.broadcast("mesocyclones", this_timestep)
 
 
 async def cache_server(data, request):

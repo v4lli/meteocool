@@ -259,9 +259,11 @@ window.map.on("pointermove", function (e) {
     $("#popup").popover("dispose");
     return;
   }
-  var pixel = window.map.getEventPixel(e.originalEvent);
-  var hit = window.map.hasFeatureAtPixel(pixel);
-  window.map.getTarget().style.cursor = hit ? "pointer" : "";
+  let evtPx = window.map.getEventPixel(e.originalEvent);
+  let hit = window.map.hasFeatureAtPixel(evtPx);
+  if (hit) {
+    window.map.getTarget().style.cursor = window.map.getFeaturesAtPixel(evtPx)[0].get("intensity") ? "pointer" : "";
+  }
 });
 
 //
@@ -534,7 +536,10 @@ socket.on("lightning", (data) => {
   strikemgr.addStrike(data["lon"], data["lat"]);
 });
 
-socket.on("mesocyclone", (data) => mesocyclonemgr.addCyclone(data));
+socket.on("mesocyclones", (data) => {
+  mesocyclonemgr.clearAll();
+  data.forEach((elem) => mesocyclonemgr.addCyclone(elem));
+});
 
 // called when new cloud layers are available
 socket.on("map_update", function (data) {
@@ -772,15 +777,24 @@ $(document).ready(function () {
         return feature;
       });
     if (feature) {
+      let intensityOrd = feature.get("intensity");
+      if (!intensityOrd)
+        return; // for other features, like lightning
       var coordinates = feature.getGeometry().getCoordinates();
       window.popup.setPosition(coordinates);
       var intensityStr;
       switch (feature.get("intensity")) {
-        case 4:
+        case 6:
+          intensityStr = "Tornado ";
+          break;
+        case 5:
           intensityStr = "Extreme ";
           break;
+        case 4:
+          intensityStr = "Higher ";
+          break;
         case 3:
-          intensityStr = "High ";
+          intensityStr = "Strong ";
           break;
         case 2:
           intensityStr = "Mid ";

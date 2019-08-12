@@ -1,4 +1,4 @@
-127.0.0.1:8040, localhost:8040 {
+127.0.0.1:8040 localhost:8040 {
 	root /srv
 	log stdout
 
@@ -10,12 +10,12 @@
 		try_interval 500ms
 	}
 
-	proxy /socket.io app:5000 {
-		websocket
-		proxy_header Host {host}
-		proxy_header X-Real-IP {remote}
-		proxy_header X-Forwarded-For {remote}
-	}
+    proxy /socket.io app:5000 {
+        websocket
+        header_upstream Host {host}
+        header_upstream X-Real-IP {remote}
+        header_upstream X-Forwarded-For {remote}
+    }
 
 	proxy /post_location app:5000 {
 		transparent
@@ -42,17 +42,13 @@
 	proxy /mesocyclones/ datasource:5000 {
 		transparent
 	}
-
-	#proxy /reflectivity dwd:5000 {
-	#	transparent
-	#}
 }
 
-127.0.0.1:8040/pushpreview, localhost:8040/pushpreview {
+127.0.0.1:8040/pushpreview localhost:8040/pushpreview {
 	root /pushpreview/
 }
 
-127.0.0.1:8041, localhost:8041 {
+127.0.0.1:8041 localhost:8041 {
 	proxy / tileserver:80 {
 		transparent
 		header_upstream X-Forwarded-Proto https
