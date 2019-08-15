@@ -275,11 +275,9 @@ window.downloadForecast(function() {
         webView.scrollView.isScrollEnabled = true
         webView.scrollView.bounces = false
 
-        webView.dataDetectorTypes = UIDataDetectorTypeNone;
-
         toggleLightMode()
 
-        if let url = URL(string: "https://meteocool.com/?mobile=ios2") {
+        if let url = URL(string: "https://meteocool.com/?mobile=ios3") {
             let request = URLRequest(url: url)
             webView.load(request)
         }

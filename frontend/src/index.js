@@ -27,7 +27,7 @@ import io from "socket.io-client";
 import { Cluster } from "ol/source.js";
 import { DeviceDetect } from "./DeviceDetect.js";
 import { Settings } from "./Settings.js";
-import { Fill, Stroke, Style, Text } from "ol/style";
+import { Fill, Stroke, Style, Icon } from "ol/style";
 import { Map, View, Geolocation, Feature } from "ol";
 import { defaults as defaultControls, OverviewMap } from "ol/control.js";
 
@@ -36,7 +36,8 @@ import { StrikeManager } from "./StrikeManager.js";
 import { MesoCycloneManager } from "./MesoCycloneManager.js";
 import { Workbox } from "workbox-window";
 
-import logoBig from "../assets/android-chrome-512x512.png"; // eslint-disable-line no-unused-vars
+import lightningstrike from "../assets/lightning.png"; // eslint-disable-line no-unused-vars
+import mesocyclone from "../assets/mesocyclone.png"; // eslint-disable-line no-unused-vars
 
 const safeAreaInsets = require("safe-area-insets");
 
@@ -395,10 +396,10 @@ let styleFactory = (age, size) => {
     // console.log("new size + age: " + size + ", " + age + ", opacity: " + opacity);
 
     styleCache[age][size] = new Style({
-      text: new Text({
-        text: "⚡️",
-        fill: new Fill({ color: "rgba(255, 255, 255, " + opacity + ")" }),
-        font: size + "px Calibri,sans-serif"
+      image: new Icon({
+        src: lightningstrike,
+        opacity: opacity,
+        scale: 0.2 * (size / 40)
       })
     });
   }
@@ -444,10 +445,10 @@ let mesoStyleFactory = (age, intensity) => {
     }
 
     mesoStyleCache[age][intensity] = new Style({
-      text: new Text({
-        text: "🌀",
-        fill: new Fill({ color: "rgba(255, 255, 255, " + opacity + ")" }),
-        font: size + "px Calibri,sans-serif"
+      image: new Icon({
+        src: mesocyclone,
+        opacity: opacity,
+        scale: 0.2 * (size / 40)
       })
     });
   }
@@ -488,7 +489,7 @@ var mesoLayer = new VectorLayer({ // eslint-disable-line no-unused-vars
   source: ms,
   map: window.map,
   style: (feature) => {
-    return mesoStyleFactory((new Date().getTime() - feature.getId()) /1000/1000 - 10,
+    return mesoStyleFactory((new Date().getTime() - feature.getId()) / 1000 / 1000 - 10,
       feature.get("intensity"));
   }
 });
@@ -509,8 +510,8 @@ window.geolocation.on("change:position", () => {
 // actually display reflectivity radar data
 //
 
-//var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-//var baseUrl = "http://localhost:8040";
+// var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+// var baseUrl = "http://localhost:8040";
 // if (process.env.NODE_ENV === "production") {
 var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var baseUrl = "https://meteocool.com";
@@ -789,8 +790,7 @@ $(document).ready(function () {
       });
     if (feature) {
       let intensityOrd = feature.get("intensity");
-      if (!intensityOrd)
-        return; // for other features, like lightning
+      if (!intensityOrd) { return; } // for other features, like lightning
       var coordinates = feature.getGeometry().getCoordinates();
       window.popup.setPosition(coordinates);
       var intensityStr;
