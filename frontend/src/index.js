@@ -728,13 +728,24 @@ if (!dd.isAuxPage()) {
 }
 
 $(document).ready(function () {
-  if (DeviceDetect.getIosAPILevel() >= 2) {
-    $("#topMenu")[0].children[0].style.display = "none"; // settings
+  let ios_level = DeviceDetect.getIosAPILevel();
+  if (ios_level >= 1) {
+    if (ios_level < 3) {
+      $("#topMenu")[0].children[0].style.display = "none"; // settings
+    }
     $("#topMenu")[0].children[1].style.display = "none"; // language switcher
     $("#topMenu")[0].children[3].style.display = "none"; // documentation
     $("#topMenu")[0].children[4].style.display = "none"; // mobile apps modal
-    // XXX re-enable once the scrolling is enabled
   }
+
+  if (ios_level >= 3) {
+    alert("ios 3");
+    $("#openSettings").css("display", "inline");
+    $("#openSettings").onclick = () => {
+      window.webkit.messageHandlers["settingsHandler"].postMessage("show");
+    };
+  }
+
   if (DeviceDetect.getAndroidAPILevel() === 1) {
     $("#topMenu")[0].children[0].style.display = "none"; // settings
     $("#topMenu")[0].children[1].style.display = "none"; // language switcher
@@ -848,12 +859,6 @@ $("#impressumModal").on("show.bs.modal", function () {
   window.history.pushState("impressm", "meteocool Impressum", "/#impressum");
 });
 
-if (DeviceDetect.getIosAPILevel() >= 3) {
-  $("#openSettings").css("display", "inline");
-  $("#openSettings").onclick = () => {
-    window.webkit.messageHandlers["settingsHandler"].postMessage("show");
-  };
-}
 if (DeviceDetect.getAndroidAPILevel() >= 2) {
   $("#showMenuBtn").css("display", "none");
   $("#showMenuBtnAndroid").css("display", "inline");

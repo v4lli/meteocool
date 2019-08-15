@@ -188,12 +188,19 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
             time.sleep(1)
 
             this_timestep = []
-            tree = None
+            tree = []
             try:
                 tree = ElementTree.fromstring(requests.get(apiURL).content)
             except ParseError as e:
                 logging.error("xml parse error: %s" % e)
-                tree = []
+            except requests.exceptions.HTTPError as errh:
+                logging.error ("Http Error:", errh)
+            except requests.exceptions.ConnectionError as errc:
+                logging.error ("Error Connecting:", errc)
+            except requests.exceptions.Timeout as errt:
+                logging.error ("Timeout Error:", errt)
+            except requests.exceptions.RequestException as err:
+                logging.error ("OOps: Something Else", err)
 
             eventId = 0
             for child in tree:
