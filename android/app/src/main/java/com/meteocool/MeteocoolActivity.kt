@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Network
 import android.util.Log
 import android.webkit.WebView
 import android.widget.ListView
@@ -25,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 import com.meteocool.location.LocationResultHelper
 import com.meteocool.location.LocationUpdatesBroadcastReceiver
+import com.meteocool.location.UploadLocation
 import com.meteocool.location.WebAppInterface
 import org.jetbrains.anko.doAsync
 
@@ -192,7 +194,6 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
                     val webAppInterface = WebAppInterface(this)
                     webAppInterface.requestSettings()
                 }else{
-                    val mapZoom = findPreference("kmormiles");
                     Validator.checkAndroidPermissions(this, this)
                     Toast.makeText(this,"Location permission not granted.", Toast.LENGTH_SHORT).show()
                 }
@@ -208,15 +209,14 @@ class MeteocoolActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbac
                     }
                 }
             }
-            "notification_intensity" ->{
+            "notification_intensity"->{
                 val intensity = sharedPreferences!!.getString(key, "-1")!!.toInt()
                 Log.i(TAG, "Preference value $key was updated to $intensity")
-                LocationResultHelper.NOTIFICATION_INTENSITY = intensity
+                UploadLocation().execute()
             }
-            "notification_time" ->{
-                val timeAhead = sharedPreferences!!.getString(key, "-1")!!.toInt()
-                Log.i(TAG, "Preference value $key was updated to $timeAhead ")
-                LocationResultHelper.NOTIFICATION_TIME = timeAhead
+            "notification_time"->{
+                val time = sharedPreferences!!.getString(key, "-1")!!.toInt()
+                Log.i(TAG, "Preference value $key was updated to $time")
             }
         }
     }

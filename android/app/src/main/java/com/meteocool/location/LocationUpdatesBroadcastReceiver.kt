@@ -3,7 +3,7 @@ package com.meteocool.location
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.location.Location
+import android.preference.PreferenceManager
 import android.util.Log
 import com.google.android.gms.location.LocationResult
 import com.meteocool.location.LocationResultHelper.Companion.getDistanceToLastLocation
@@ -27,7 +27,9 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver(){
                        if(isDistanceBiggerThan500F){
                             Log.i(TAG, "$isDistanceBiggerThan500F")
                             Log.i(TAG, "$location is better than $lastLocation")
-                            UploadLocation().execute(location)
+                            val preferenceManager = PreferenceManager.getDefaultSharedPreferences(context)
+                           val token = preferenceManager.getString("fb", "no token")
+                           UploadLocation().execute(location, token)
                         }else{
                             Log.i(TAG, "$location is not better than $lastLocation")
                         }

@@ -2,12 +2,19 @@ package com.meteocool.location
 
 import android.location.Location
 import android.os.AsyncTask
+import android.preference.PreferenceManager
 import android.util.Log
 import com.google.firebase.iid.FirebaseInstanceId
 import com.meteocool.utility.JSONPost
 import com.meteocool.utility.NetworkUtility
 import java.util.*
 
+/**
+ * Upload location.
+ * Handover parameters in following order:
+ * 1. location
+ * 2. client token
+ */
 class UploadLocation: AsyncTask<Any, Unit, Unit>(){
     override fun doInBackground(vararg params: Any?) {
         Log.d("Async", "location: $params[0].toString(), token: $params[1]")
@@ -19,6 +26,7 @@ class UploadLocation: AsyncTask<Any, Unit, Unit>(){
         }
 
         val token =  params[1].toString()
+
 
         NetworkUtility.sendPostRequest(
             JSONPost(

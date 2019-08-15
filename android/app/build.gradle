@@ -16,8 +16,8 @@ android {
         applicationId "com.meteocool"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 5
-        versionName "1.5"
+        versionCode 20
+        versionName "2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -57,8 +57,8 @@ dependencies {
     implementation 'com.github.AppIntro:AppIntro:4.2.3'
 
     // Fused Location Client
-    implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.firebase:firebase-database:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.firebase:firebase-database:18.0.1'
 
     // Settings
     implementation 'androidx.preference:preference:1.1.0-rc01'

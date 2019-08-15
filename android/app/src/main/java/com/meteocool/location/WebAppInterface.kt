@@ -5,6 +5,7 @@ import android.content.Context
 import android.preference.PreferenceManager
 import android.util.Log
 import android.webkit.JavascriptInterface
+import android.webkit.ValueCallback
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.core.view.GravityCompat
@@ -53,6 +54,8 @@ class WebAppInterface(private val  activity: Activity) {
             Log.d(TAG, "Permission not granted")
         }
     }
+
+
 
     @JavascriptInterface
     fun showSettings(){

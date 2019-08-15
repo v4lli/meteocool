@@ -19,6 +19,7 @@ internal class LocationResultHelper(private val mContext: Context, private val m
             .edit()
             .putFloat(KEY_LOCATION_UPDATES_RESULT_LAT, mLocation.latitude.toFloat())
             .putFloat(KEY_LOCATION_UPDATES_RESULT_LON,  mLocation.longitude.toFloat())
+            .putFloat(KEY_LOCATION_UPDATES_RESULT_ALT,  mLocation.altitude.toFloat())
             .putFloat(KEY_LOCATION_UPDATES_RESULT_ACC, mLocation.accuracy)
             .apply()
     }
@@ -29,6 +30,7 @@ internal class LocationResultHelper(private val mContext: Context, private val m
 
         const val KEY_LOCATION_UPDATES_RESULT_LAT = "location-update-result-latitude"
         const val KEY_LOCATION_UPDATES_RESULT_LON = "location-update-result-longitude"
+        const val KEY_LOCATION_UPDATES_RESULT_ALT = "location-update-result-altitude"
         const val KEY_LOCATION_UPDATES_RESULT_ACC = "location-update-result-accuracy"
 
         var NOTIFICATION_TIME = 15
@@ -39,9 +41,10 @@ internal class LocationResultHelper(private val mContext: Context, private val m
          * Fetches location results from [android.content.SharedPreferences].
          */
         fun getSavedLocationResult(context: Context): Map<String, Float> {
-            return mapOf(Pair(KEY_LOCATION_UPDATES_RESULT_LAT, PreferenceManager.getDefaultSharedPreferences(context)
-                .getFloat(KEY_LOCATION_UPDATES_RESULT_LAT, -1.0f)),
+            return mapOf(
+                Pair(KEY_LOCATION_UPDATES_RESULT_LAT, PreferenceManager.getDefaultSharedPreferences(context).getFloat(KEY_LOCATION_UPDATES_RESULT_LAT, -1.0f)),
                 Pair(KEY_LOCATION_UPDATES_RESULT_LON, PreferenceManager.getDefaultSharedPreferences(context).getFloat(KEY_LOCATION_UPDATES_RESULT_LON, -1.0f)),
+                Pair(KEY_LOCATION_UPDATES_RESULT_ALT, PreferenceManager.getDefaultSharedPreferences(context).getFloat(KEY_LOCATION_UPDATES_RESULT_ALT, -1.0f)),
                 Pair(KEY_LOCATION_UPDATES_RESULT_ACC, PreferenceManager.getDefaultSharedPreferences(context).getFloat(KEY_LOCATION_UPDATES_RESULT_ACC, -1.0f)))
         }
 
