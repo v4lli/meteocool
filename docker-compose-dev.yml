@@ -7,13 +7,12 @@ services:
   mongo:
     image: mongo
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:27017:27017"
     volumes:
       - meteo_mongo_db:/data/db
 
   web:
     build: frontend/
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "80"]
     ports:
@@ -23,6 +22,8 @@ services:
       - TZ="Europe/Berlin"
     volumes:
       - ${PWD}/frontend/caddy/dev/Caddyfile:/etc/Caddyfile
+      - pushpreview:/pushpreview
+      - sslstore:/root/.caddy
 
   app:
     build: backend/app
@@ -34,6 +35,26 @@ services:
       - DB_CONN="mongodb://mongo:27017/"
     depends_on:
       - mongo
+      - web
+      - mq
+
+  datasource:
+    build: backend/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "5000"]
+    environment:
+      - TZ="Europe/Berlin"
+    depends_on:
+      - mq
+
+  mq:
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    volumes:
+      - mqdata:/var/lib/rabbitmq
+    ports:
+      - "15672:15672"
 
   dwd:
     build: backend/dwd
@@ -43,6 +64,10 @@ services:
       - DB_CONN="mongodb://mongo:27017/"
     volumes:
       - dwd:/data
+      - pushpreview:/pushpreview
+    tmpfs:
+      - /scratch
+      - /forecast
     depends_on:
       - app
       - mongo
@@ -56,17 +81,13 @@ services:
       - TZ="Europe/Berlin"
     volumes:
       - dwd:/data
-      - ${PWD}/tileserver-gl-meteocool/config-dev:/etc/ts
+      - ${PWD}/tileserver-gl-meteocool/config:/etc/ts
     depends_on:
-      - dwd
-
-        #elk:
-        #  image: diecktator/elk:latest
-        #  ports:
-        #    - 11111:5601
-        #    - 11112:5044
-  #          - 11113:9200
+      - web
 
 volumes:
   dwd:
   meteo_mongo_db:
+  sslstore:
+  mqdata:
+  pushpreview:

@@ -4,9 +4,6 @@ eventlet.monkey_patch()
 import datetime
 import json
 import logging
-import random
-import threading
-import uuid
 import time
 
 hooksEnabled = None
@@ -16,22 +13,15 @@ try:
 except ImportError:
     hooksEnabled = False
 
-import websocket
 from pymongo import MongoClient
-from pyproj import Proj, transform
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO
 import geopy.distance
 
-numStrikes = 0
-failStrikes = 0
-strikeCache = []
-MAX_LIGHTNING_CACHE = 1000
-
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
 app = Flask(__name__)
-socketio = SocketIO(app, async_mode='threading', cookie=None)
+socketio = SocketIO(app, async_mode='eventlet', cookie=None, message_queue="amqp://mq")
 
 db_client = MongoClient("mongodb://mongo:27017/")
 # both will be created automatically when the first document is inserted
@@ -290,115 +280,10 @@ def unregister():
     db.collection.remove(obj["_id"])
     logging.warn("Unregistered client %s", str(data))
 
-
 # Executed when a new websocket client connects. Currently no-op.
 @socketio.on("connect", namespace="/tile")
 def log_connection():
     logging.warn("client connected")
-
-# Executed when a new websocket client connects. Currently no-op.
-@socketio.on("getStrikes", namespace="/tile")
-def sendStrikes(p):
-    logging.warn("sendStrikes because of getStrikes")
-    socketio.emit("bulkStrikes", strikeCache, namespace="/tile", room=request.sid)
-
-def blitzortung_thread():
-    """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
-
-    def broadcast_lightning(data):
-        # XXX does this need a lock in python?
-        global numStrikes
-        global failStrikes
-        global strikeCache
-        if "lat" in data and "lon" in data:
-            numStrikes = numStrikes + 1
-            transformed = transform(
-                Proj(init="epsg:4326"), Proj(init="epsg:3857"), data["lon"], data["lat"]
-            )
-            alt = -1
-            pol = 0
-            try:
-                alt = data["alt"]
-                pol = data["pol"]
-                time = data["time"]
-            except KeyError:
-                pass
-            strikeData = {
-                    "lat": transformed[1],
-                    "lon": transformed[0],
-                    "alt": alt,
-                    "pol": pol,
-                    "time": time
-            }
-            socketio.emit("lightning", strikeData, namespace="/tile")
-            if len(strikeCache) > MAX_LIGHTNING_CACHE:
-                strikeCache.pop(0)
-            strikeCache.append(strikeData)
-        else:
-            failStrikes = failStrikes + 1
-            # print("Invalid lightning: %s" % message)
-
-    def on_message(ws, message):
-        data = json.loads(message)
-        if "timeout" in data:
-            logging.warn("Got timeout event from upstream, closing")
-            ws.close()
-
-        socketio.start_background_task(broadcast_lightning, data)
-
-    def getAndResetStrikes():
-        global numStrikes
-        result = numStrikes
-        numStrikes = 0
-        return result
-
-    def getAndResetFailStrikes():
-        global failStrikes
-        result = failStrikes
-        failStrikes = 0
-        return result
-
-    def on_error(ws, error):
-        print("error:")
-        print(error)
-        ws.close()
-
-    def on_close(ws):
-        print("### closed ###")
-
-    def on_open(ws):
-        ws.send(json.dumps({
-            "west": 2.0,
-            "east": 18.0,
-            "north": 55.5,
-            "south": 46.5}))
-
-    def stats_logging_cb():
-        logging.warn("Processed %d strikes since last report (%d failed)"
-            % (getAndResetStrikes(), getAndResetFailStrikes()))
-        threading.Timer(5*60, stats_logging_cb).start()
-
-    logging.warn("blitzortung thread init")
-    websocket.enableTrace(True)
-    stats_logging_cb()
-
-    while True:
-        # XXX error handling
-        tgtServer = "ws://ws.blitzortung.org:80%d/" % (random.randint(50, 90))
-        logging.warn("blitzortung-thread: Connecting to %s..." % tgtServer)
-        time.sleep(3)
-        ws = websocket.WebSocketApp(
-            tgtServer,
-            on_message=on_message,
-            on_error=on_error,
-            on_open=on_open,
-            on_close=on_close,
-        )
-        logging.warn("blitzortung-thread: Entering main loop")
-        ws.run_forever()
-
-
-eventlet.spawn(blitzortung_thread)
 
 if __name__ == "__main__":
     logging.warn("Starting meteocool backend app.py...")

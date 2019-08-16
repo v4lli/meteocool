@@ -19,7 +19,7 @@ mbtiles:
 	# process forecasts concurrently
 	nice -n 15 make -C . push &
 	# convert to mbtiles
-	/usr/local/bin/gdal2mbtiles --version "$$(date +%s)" --min-resolution=6 \
+	/usr/local/bin/gdal2mbtiles --version "$$(stat --printf '%Y' /scratch/raa01-wx_10000-latest-dwd---bin)" --min-resolution=6 \
 		--max-resolution=10 /scratch/raa01-wx_10000-latest-dwd-final.tif \
 		/scratch/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles
 	mv -f /scratch/tmp/raa01-wx_10000-latest-dwd-wgs84_transformed.mbtiles \
@@ -28,7 +28,7 @@ mbtiles:
 
 tag: update
 	mkdir -p ~/meteocool_tags/
-	wget --no-verbose \
+	wget --no-verbose -NS \
 		https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin \
 		-O ~/meteocool_tags/dwd-wx-composit-$$(date +%s).bin
 	ls -l ~/meteocool_tags/
@@ -82,9 +82,16 @@ push:
 update:
 	mkdir -p tmp/
 	rm -f tmp/raa01-wx_10000-latest-dwd---bin
-	wget --no-verbose \
-		https://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin \
-		-O /scratch/raa01-wx_10000-latest-dwd---bin
+	cd /scratch/ && wget --no-verbose -SN \
+		http://opendata.dwd.de/weather/radar/composit/wx/raa01-wx_10000-latest-dwd---bin && \
+		md5s="$$(md5sum /scratch/raa01-wx_10000-latest-dwd---bin)" ; \
+		if ! [ "$$md5s" = "$$(cat /tmp/raa01-wx_10000-latest-dwd---bin.md5)" ]; then \
+			echo "$$md5s" > /tmp/raa01-wx_10000-latest-dwd---bin.md5 ; \
+			exit 0 ; \
+		else \
+			echo "No new data from dwd" ; \
+			exit 1 ; \
+		fi
 
 clean:
 	rm -rf tmp/

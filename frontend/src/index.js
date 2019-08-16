@@ -9,10 +9,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import $ from "jquery";
 import CircleStyle from "ol/style/Circle";
+import { circular as circularPolygon } from "ol/geom/Polygon.js";
+import { get as getProjection, getTransformFromProjections, fromLonLat } from "ol/proj.js";
 import Control from "ol/control/Control";
 import OSM from "ol/source/OSM";
 import Point from "ol/geom/Point";
 import TileJSON from "ol/source/TileJSON.js";
+import Overlay from "ol/Overlay.js";
 import TileLayer from "ol/layer/Tile.js";
 import Attribution from "ol/control/Attribution";
 import VectorLayer from "ol/layer/Vector";
@@ -24,15 +27,17 @@ import io from "socket.io-client";
 import { Cluster } from "ol/source.js";
 import { DeviceDetect } from "./DeviceDetect.js";
 import { Settings } from "./Settings.js";
-import { Fill, Stroke, Style, Text } from "ol/style";
+import { Fill, Stroke, Style, Icon } from "ol/style";
 import { Map, View, Geolocation, Feature } from "ol";
 import { defaults as defaultControls, OverviewMap } from "ol/control.js";
-import { fromLonLat } from "ol/proj.js";
+
 import { LayerManager } from "./LayerManager.js";
 import { StrikeManager } from "./StrikeManager.js";
+import { MesoCycloneManager } from "./MesoCycloneManager.js";
 import { Workbox } from "workbox-window";
 
-import logoBig from "../assets/android-chrome-512x512.png"; // eslint-disable-line no-unused-vars
+import lightningstrike from "../assets/lightning.png"; // eslint-disable-line no-unused-vars
+import mesocyclone from "../assets/mesocyclone.png"; // eslint-disable-line no-unused-vars
 
 const safeAreaInsets = require("safe-area-insets");
 
@@ -43,18 +48,38 @@ var dd = new DeviceDetect();
 
 // german localization - since we have very few string, do this manually
 // instead of using another crappy library.
-// var lang = "en";
+var lang = "en";
 var dfnLocale = dateFnEnglish;
 if (window.location.search.indexOf("lang=de") !== -1 || window.navigator.language.split("-")[0] === "de") {
   $("#localizedLastUpdated").text("Aktualisiert");
   $("#updatedTime").text("nie!");
   $("#openSettings").text("Einstellungen");
-  $("#toggleMode").text("Dark Mode");
+  $("#toggleMode").text("Dunkel");
   $("#localizedDocumentation").text("Dokumentation");
   $("#localizedApps").text("Android & iPhone");
   $("#localizedAbout").text("Über meteocool");
-  // lang = "de";
+  $("#logoext").html(".d&#8205;e");
+  $("#switchLang").text("English");
+  $("#switchLang").attr("href", "/");
+  $("#localizedApps").attr("data-target", "#appModalDe");
+  lang = "de";
   dfnLocale = dateFnGerman;
+} else {
+  $("#logoext").html(".c&#8205;om");
+}
+
+// ghetto gettext
+function _ (text) {
+  if (lang === "de") {
+    switch (text) {
+      case "dark mode":
+        return "Dunkel";
+      case "light mode":
+        return "Hell";
+    }
+  } else {
+    return text;
+  }
 }
 
 function lastUpdatedFn () {
@@ -190,7 +215,7 @@ var view = new View({
   minzoom: 5
 });
 
-var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\" target=\"_blank\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\" target=\"_blank\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">OSM</a> &#169; <a href=\"https://carto.com/attribution/\" target=\"_blank\">CARTO</a>";
+var baseAttributions = "&#169; <a href=\"https://www.dwd.de/DE/service/copyright/copyright_artikel.html\" target=\"_blank\" rel=\"noopener\" rel=\"noreferrer\">DWD</a> &#169; <a href=\"http://en.blitzortung.org/contact.php\" target=\"_blank\" rel=\"noopener\" rel=\"noreferrer\">blitzortung.org</a> &#169; <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\" rel=\"noreferrer\">OSM</a> &#169; <a href=\"https://carto.com/attribution/\" target=\"_blank\" rel=\"noopener\" rel=\"noreferrer\">CARTO</a>";
 
 if (!dd.isWidgetMode()) {
   baseAttributions = baseAttributions + " | <a href=\"#\" onclick=\"$('#impressumModal').modal('show'); return false;\">Impressum</a>";
@@ -201,7 +226,7 @@ if (dd.isAuxPage()) {
 }
 
 window.map = new Map({
-  target: "map",
+  target: document.getElementById("map"),
   layers: [
     new TileLayer({
       source: new OSM({
@@ -216,6 +241,32 @@ window.map = new Map({
   ]),
   view: view
 });
+
+window.popup = new Overlay({
+  element: document.getElementById("popup"),
+  positioning: "bottom-center",
+  stopEvent: false,
+  offset: [0, -13]
+});
+window.map.addOverlay(window.popup);
+
+// change mouse cursor when over marker
+window.map.on("pointermove", function (e) {
+  if (e.dragging) {
+    let popover = $("#popup").attr("data-content", "").data("bs.popover");
+    if (popover) {
+      popover.setContent();
+    }
+    $("#popup").popover("dispose");
+    return;
+  }
+  let evtPx = window.map.getEventPixel(e.originalEvent);
+  let hit = window.map.hasFeatureAtPixel(evtPx);
+  if (hit) {
+    window.map.getTarget().style.cursor = window.map.getFeaturesAtPixel(evtPx)[0].get("intensity") ? "pointer" : "";
+  }
+});
+
 //
 // Geolocation (showing the user's position)
 //
@@ -257,11 +308,16 @@ window.geolocation.on("error", (error) => {
 var accuracyFeature = new Feature();
 window.geolocation.on("change:accuracyGeometry", () => {
   accuracyFeature.setGeometry(window.geolocation.getAccuracyGeometry());
-  // stop annoying the user after a short time
-  // setTimeout(function() {geolocation.on('change:accuracyGeometry', null);}, 1500);
 });
 
 var shouldUpdate = true;
+window.map.on("movestart", () => {
+  let modal = $("#popup").attr("data-content", "").data("bs.popover");
+  if (modal) {
+    modal.setContent();
+  }
+  $("#popup").popover("dispose");
+});
 window.map.on("moveend", () => {
   if (!shouldUpdate) {
     // do not update the URL when the view was changed in the 'popstate' handler
@@ -296,82 +352,149 @@ window.addEventListener("popstate", function (event) {
   dimensions();
 });
 
-/* eslint-disable */
 /*
  * Need to disable this stylechecker warning because the VectorLayer constructor
  * us only used for its sideeffects, which isn't nice.
  */
+/* eslint-disable */
 new VectorLayer({
   source: new VectorSource({features: [accuracyFeature, positionFeature]}),
-  map: map
+  map: window.map,
 });
 /* eslint-enable */
 
-var vs = new VectorSource({
+// strikesource
+var ss = new VectorSource({
+  features: []
+});
+
+// mesocyclonesource
+var ms = new VectorSource({
   features: []
 });
 
 var clusters = new Cluster({
   distance: 8,
-  map: document.map,
-  source: vs
+  map: window.map,
+  source: ss
 });
 
 var styleCache = {};
+var mesoStyleCache = {};
+let STRIKE_MINS = 1000 * 60;
+
+let styleFactory = (age, size) => {
+  if (age < 5) {
+    age = 0;
+  }
+  if (!(age in styleCache)) {
+    styleCache[age] = {};
+  }
+  if (!styleCache[age][size]) {
+    // XXX oh god i'm so sorry
+    let opacity = Math.max(Math.min(1 - (age / 30 * 0.8) - 0.2, 1), 0);
+    // console.log("new size + age: " + size + ", " + age + ", opacity: " + opacity);
+
+    styleCache[age][size] = new Style({
+      image: new Icon({
+        src: lightningstrike,
+        opacity: opacity,
+        scale: 0.2 * (size / 40)
+      })
+    });
+  }
+  return styleCache[age][size];
+};
+
+let mesoStyleFactory = (age, intensity) => {
+  if (age < 5) {
+    age = 0;
+  }
+  if (!(age in mesoStyleCache)) {
+    mesoStyleCache[age] = {};
+  }
+  if (!mesoStyleCache[age][intensity]) {
+    var opacity;
+    if (age > 5) {
+      opacity = 0.8;
+    }
+    if (age > 10) {
+      opacity = 0.6;
+    }
+    if (age > 20) {
+      opacity = 0.4;
+    }
+    if (age > 40) {
+      opacity = 0.2;
+    }
+    if (age > 50) {
+      opacity = 0.1;
+    }
+
+    var size;
+    if (intensity > 4) {
+      size = 55;
+    } else if (intensity > 3) {
+      size = 46;
+    } else if (intensity > 2) {
+      size = 38;
+    } else if (intensity > 1) {
+      size = 30;
+    } else {
+      size = 22;
+    }
+
+    mesoStyleCache[age][intensity] = new Style({
+      image: new Icon({
+        src: mesocyclone,
+        opacity: opacity,
+        scale: 0.2 * (size / 40)
+      })
+    });
+  }
+  return mesoStyleCache[age][intensity];
+};
+
 var vl = new VectorLayer({ // eslint-disable-line no-unused-vars
   source: clusters,
-  map: document.map,
-  style: function (feature) {
-    var size = feature.get("features").length;
-    var level = 0;
+  map: window.map,
+  style: (feature) => {
+    let size = feature.get("features").length;
     let now = new Date().getTime();
-    let MINS = 1000 * 30;
-    feature.get("features").forEach((feature) => { level += (now - feature.getId()) / MINS; });
-    // cap to 30 levels
-    level = (Math.round(level / size) / 2) + 1;
-    if (level > 30) {
-      level = 30;
-    }
-    var textsize;
-    if (size > 12) {
-      textsize = 38;
-    } else if (size > 8) {
-      textsize = 35;
-    } else if (size > 3) {
-      textsize = 33;
-    } else if (size > 1) {
-      textsize = 26;
-    } else {
-      textsize = 24;
-    }
-    if (!(level in styleCache)) {
-      styleCache[level] = {};
-    }
-    var style = styleCache[level][textsize];
-    if (!style) {
-      var opacity;
-      if (level < 2) {
-        opacity = 1;
-      } else {
-        // XXX oh god i'm so sorry
-        opacity = Math.max(Math.min(0.6*(1 - (level / 30)) - 0.4, 1), 0);
-      }
-      // console.log("new size + level: " + textsize + ", " + level + ", opacity: " + opacity);
-
-      style = new Style({
-        text: new Text({
-          text: "⚡️",
-          fill: new Fill({ color: "rgba(255, 255, 255, " + opacity + ")" }),
-          font: textsize + "px Calibri,sans-serif"
-        })
+    var age = 0;
+    var textsize = 24;
+    if (size > 1) {
+      feature.get("features").forEach((feature) => {
+        age += (now - feature.getId()) / STRIKE_MINS;
       });
-      styleCache[level][textsize] = style;
+      // age max = 60, divide by 3 to reduce to 20 age levels max
+      age = Math.min(Math.round(age / size / 2.5) + 1, 20);
+      if (size > 13) {
+        textsize = 40;
+      } else if (size > 9) {
+        textsize = 34;
+      } else if (size > 3) {
+        textsize = 29;
+      }
+    } else {
+      age = (Math.round((now - feature.get("features")[0].getId()) / STRIKE_MINS / 2.5)) + 1;
     }
-    return style;
+    return styleFactory(age, textsize);
   }
 });
 vl.setZIndex(100);
 window.map.addLayer(vl);
+
+var mesoLayer = new VectorLayer({ // eslint-disable-line no-unused-vars
+  source: ms,
+  map: window.map,
+  style: (feature) => {
+    return mesoStyleFactory((new Date().getTime() - feature.getId()) / 1000 / 1000 - 10,
+      feature.get("intensity"));
+  }
+});
+mesoLayer.setZIndex(101);
+window.map.addLayer(mesoLayer);
 
 var haveZoomed = false;
 window.geolocation.on("change:position", () => {
@@ -387,11 +510,11 @@ window.geolocation.on("change:position", () => {
 // actually display reflectivity radar data
 //
 
-//var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-//var websocketUrl = "http://localhost:8040/tile";
+// var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+// var baseUrl = "http://localhost:8040";
 // if (process.env.NODE_ENV === "production") {
 var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-var websocketUrl = "https://meteocool.com/tile";
+var baseUrl = "https://meteocool.com";
 // }
 
 var reflectivityOpacity = 0.5;
@@ -399,23 +522,24 @@ var reflectivityOpacity = 0.5;
 window.lm = new LayerManager(window.map, tileUrl, null, 9, reflectivityOpacity, DeviceDetect.getIosAPILevel() >= 2);
 // we can now later call removeLayer(currentLayer), then update it with the new
 // tilesource and then call addLayer again.
-const socket = io.connect(websocketUrl);
+const socket = io.connect(baseUrl + "/tile");
 window.sock = socket;
 
-let strikemgr = new StrikeManager(1000, vs);
+let strikemgr = new StrikeManager(1000, ss);
+window.sm = strikemgr;
+
+let mesocyclonemgr = new MesoCycloneManager(100, ms);
+window.mcm = mesocyclonemgr;
 
 socket.on("connect", () => console.log("websocket connected"));
 
-socket.on("bulkStrikes", (message) => {
-  console.log("Got " + message.length + " strikes from cache");
-  strikemgr.clearAll();
-  message.forEach((elem) => {
-    strikemgr.addStrikeWithTime(elem["lon"], elem["lat"], Math.round(elem["time"] / 1000 / 1000));
-  });
+socket.on("lightning", (data) => {
+  strikemgr.addStrike(data["lon"], data["lat"]);
 });
 
-socket.on("lightning", function (data) {
-  strikemgr.addStrike(data["lon"], data["lat"]);
+socket.on("mesocyclones", (data) => {
+  mesocyclonemgr.clearAll();
+  data.forEach((elem) => mesocyclonemgr.addCyclone(elem));
 });
 
 // called when new cloud layers are available
@@ -450,7 +574,7 @@ if (!dd.isWidgetMode()) {
   var button = document.createElement("button");
   button.classList.add("locate-me-btn");
   button.title = "Locate Me";
-  button.innerHTML = "<img class=\"\" id=\"pulse\" src=\"./baseline_location_searching_white_48dp.png\">";
+  button.innerHTML = "<img class=\"\" alt=\"Locate me\"id=\"pulse\" src=\"./baseline_location_searching_white_48dp.png\">";
 
   if (DeviceDetect.getIosAPILevel() >= 2) {
     button.addEventListener("click", () => {
@@ -494,7 +618,7 @@ if (!dd.isWidgetMode()) {
   playButton.classList.add("play");
   playButton.title = "Play Forecast";
   // XXX set attributes via dom instead of innerHTML
-  playButton.innerHTML = "<img src=\"./player-play.png\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
+  playButton.innerHTML = "<img src=\"./player-play.png\" alt=\"Play\" id=\"nowcastIcon\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" id=\"nowcastLoading\" style=\"display: none;\"><span class=\"sr-only\">Loading...</span></div>";
   playButton.addEventListener("click", (e) => { window.lm.smartDownloadAndPlay(e); }, false);
   var playElement = document.createElement("div");
   playElement.className = "play ol-unselectable ol-control";
@@ -533,7 +657,7 @@ window.addEventListener("resize", function () {
     }
     setTimeout(function () { dimensions(); window.map.updateSize(); }, 100);
   });
-  if (DeviceDetect.isIos()) {
+  if (DeviceDetect.isApp()) {
     attribution.setCollapsible(true);
     attribution.setCollapsed(true);
   } else {
@@ -582,15 +706,22 @@ window.showPlayButton = function () {
 };
 
 window.userLocation = null;
-window.injectLocation = function (lat, lon, accuracy, zoom = false) {
+window.injectLocation = (lat, lon, accuracy, zoom = false) => {
   var center = fromLonLat([lon, lat]);
   window.userLocation = center;
   if (zoom || !haveZoomed) {
     haveZoomed = true;
     window.map.getView().animate({ center: center, zoom: 9 });
   }
+  if (accuracy > 0) {
+    const accuracyPoly = circularPolygon([lon, lat], accuracy);
+    accuracyPoly.applyTransform(getTransformFromProjections(getProjection("EPSG:4326"), window.map.getView().getProjection()));
+    accuracyFeature.setGeometry(accuracyPoly);
+  }
   positionFeature.setGeometry(center ? new Point(center) : null);
 };
+
+window.setAfg = () => { accuracyFeature.setGeometry(window.afg); };
 
 // Keep URL parameters on "reload"
 if (!dd.isAuxPage()) {
@@ -599,9 +730,15 @@ if (!dd.isAuxPage()) {
 
 $(document).ready(function () {
   if (DeviceDetect.getIosAPILevel() >= 2) {
-    $("#topMenu")[0].children[2].style.display = "none";
-    $("#topMenu")[0].children[3].style.display = "none";
+    $("#topMenu")[0].children[0].style.display = "none"; // settings
+    $("#topMenu")[0].children[1].style.display = "none"; // language switcher
+    $("#topMenu")[0].children[3].style.display = "none"; // documentation
+    $("#topMenu")[0].children[4].style.display = "none"; // mobile apps modal
     // XXX re-enable once the scrolling is enabled
+  }
+  if (DeviceDetect.getAndroidAPILevel() === 1) {
+    $("#topMenu")[0].children[0].style.display = "none"; // settings
+    $("#topMenu")[0].children[1].style.display = "none"; // language switcher
   }
   if (window.location.href.indexOf("#about") !== -1) {
     $("#about").modal("show");
@@ -619,6 +756,81 @@ $(document).ready(function () {
     window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
     window.webkit.messageHandlers["scriptHandler"].postMessage("drawerShow");
   }
+  $.get(baseUrl + "/lightning_cache", (data) => {
+    console.log("Got " + data.length + " strikes from cache");
+    strikemgr.clearAll();
+    // XXX differential download: send timestamp of newest strike to backend
+    // to only retrieve the difference.
+    data.forEach((elem) => {
+      strikemgr.addStrikeWithTime(elem["lon"], elem["lat"], Math.round(elem["time"] / 1000 / 1000));
+    });
+  }, "json");
+  $.get(baseUrl + "/mesocyclones/all/", (data) => {
+    console.log("Got " + data.length + " cyclones from cache");
+    mesocyclonemgr.clearAll();
+    data.forEach((elem) => mesocyclonemgr.addCyclone(elem));
+  }, "json");
+
+  // display popup on click
+  window.map.on("click", function (evt) {
+    var feature = window.map.forEachFeatureAtPixel(evt.pixel,
+      function (feature) {
+        return feature;
+      });
+    if (feature) {
+      let intensityOrd = feature.get("intensity");
+      if (!intensityOrd) { return; } // for other features, like lightning
+      var coordinates = feature.getGeometry().getCoordinates();
+      window.popup.setPosition(coordinates);
+      var intensityStr;
+      switch (feature.get("intensity")) {
+        case 6:
+          intensityStr = "Tornado ";
+          break;
+        case 5:
+          intensityStr = "Extreme ";
+          break;
+        case 4:
+          intensityStr = "Higher ";
+          break;
+        case 3:
+          intensityStr = "Strong ";
+          break;
+        case 2:
+          intensityStr = "Mid ";
+          break;
+        case 1:
+          intensityStr = "Low ";
+          break;
+        default:
+          intensityStr = "Unknown ";
+          break;
+      }
+      let spinner = "<div style=\"text-align: center;\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" style=\"color: grey; text-align: center;\"><span class=\"sr-only\">Loading...</span></div></div>";
+      $("#popup").popover({
+        placement: "top",
+        html: true,
+        title: "🌀 " + intensityStr + " Intensity Mesocyclone",
+        content: spinner
+      });
+      $("#popup").popover("show");
+      let popup = $("#popup").attr("data-content", spinner).data("bs.popover");
+      if (popup) {
+        popup.setContent();
+      }
+      window.popoverAjax =
+        $.get(baseUrl + "/mesocyclones/" + feature.getId().toString(),
+          (data) => {
+            var html = "";
+            for (let [key, value] of Object.entries(data)) {
+              html += "<b>" + key + "</b>: " + value + "<br />";
+            }
+            $("#popup").attr("data-content", html).data("bs.popover").setContent();
+          }, "json");
+    } else {
+      $("#popup").popover("dispose");
+    }
+  });
 });
 
 // lazy load images in modal
@@ -650,26 +862,6 @@ if (DeviceDetect.getAndroidAPILevel() >= 2) {
   });
 }
 
-var toggleHTMLfixMe = () => {
-  toggleButton.innerHTML = settings.get("darkMode") ? "light mode" : "dark mode";
-
-  for (let index = 0; index < mclight.length; index++) {
-    const element = mclight[index];
-    if (element.classList.contains("bg-dark")) {
-      element.classList.remove("bg-dark", "text-white");
-    } else {
-      element.classList.add("bg-dark", "text-white");
-    }
-  }
-  if (navbar.classList.contains("navbar-light")) {
-    navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
-    navbar.classList.add("navbar-dark", "bg-dark", "text-white");
-  } else {
-    navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
-    navbar.classList.add("navbar-light", "bg-light");
-  }
-};
-
 var settings = new Settings({
   "mapRotation": {
     "type": "boolean",
@@ -698,6 +890,7 @@ var settings = new Settings({
     "type": "boolean",
     "default": false,
     "cb": (state) => {
+      // Switch to dark tilelayer
       var newLayer = new TileLayer({
         source: new OSM({
           url: state ? darkTiles : lightTiles,
@@ -705,24 +898,45 @@ var settings = new Settings({
         })
       });
       window.map.getLayers().setAt(0, newLayer);
-      toggleHTMLfixMe();
+
+      // change menu bar and modal background color
+      toggleButton.innerHTML = state ? _("light mode") : _("dark mode");
+      for (let index = 0; index < mclight.length; index++) {
+        const element = mclight[index];
+        if (element.classList.contains("bg-dark")) {
+          element.classList.remove("bg-dark", "text-white");
+        } else {
+          element.classList.add("bg-dark", "text-white");
+        }
+      }
+      if (navbar.classList.contains("navbar-light")) {
+        navbar.classList.remove("navbar-light", "bg-light", "bg-dark", "text-white");
+        navbar.classList.add("navbar-dark", "bg-dark", "text-white");
+      } else {
+        navbar.classList.remove("navbar-dark", "bg-dark", "text-white");
+        navbar.classList.add("navbar-light", "bg-light");
+      }
+
+      // notify iOS app
+      if (DeviceDetect.isIos()) {
+        if (settings.get("darkMode")) {
+          window.webkit.messageHandlers["scriptHandler"].postMessage("darkmode");
+        } else {
+          window.webkit.messageHandlers["scriptHandler"].postMessage("lightmode");
+        }
+      }
     }
   }
 });
 
-// manually download tileJSON using jquery, so we can extract the "version"
-// field and use it for the "last updated" feature.
-function manualTileUpdate () {
+// for historic reason, this is the hook called by the apps when entering
+// foreground..
+window.manualTileUpdateFn = (p) => {
+  // manually download tileJSON using jquery, so we can extract the "version"
+  // field and use it for the "last updated" feature.
   var elem = document.getElementById("updatedTime");
   if (elem) { elem.innerHTML = "..."; }
   window.lm.downloadMainTiles((data) => updateTimestamp(new Date(data.version * 1000)));
-}
-manualTileUpdate();
-
-// for historic reason, this is the hook called by the apps when entering
-// foreground.
-window.manualTileUpdateFn = (p) => {
-  manualTileUpdate();
   window.sock.emit("getStrikes", null, (data) => {});
   if (settings.get("zoomOnForeground")) {
     if (window.userLocation) {
@@ -734,8 +948,8 @@ window.manualTileUpdateFn = (p) => {
       }
     }
   }
-  console.log("manual tile update");
 };
+window.manualTileUpdateFn();
 
 if (DeviceDetect.getAndroidAPILevel() >= 2) {
   Android.requestSettings(); // eslint-disable-line no-undef
@@ -751,33 +965,9 @@ window.injectSettings = (newSettings) => {
   }
 };
 
-var toggleViewMode = () => {
-  settings.set("darkMode", !settings.get("darkMode"));
-  var newLayer = new TileLayer({
-    source: new OSM({
-      url: settings.get("darkMode") ? darkTiles : lightTiles,
-      attributions: baseAttributions
-    })
-  });
-  window.map.getLayers().setAt(0, newLayer);
-};
-
-function toggleIOSBar () {
-  if (DeviceDetect.isIos()) {
-    if (settings.get("darkMode")) {
-      window.webkit.messageHandlers["scriptHandler"].postMessage("darkmode");
-    } else {
-      window.webkit.messageHandlers["scriptHandler"].postMessage("lightmode");
-    }
-  }
-}
-
 if (toggleButton) {
-  toggleButton.onclick = () => {
-    toggleViewMode();
-    toggleHTMLfixMe();
-    toggleIOSBar();
-  };
+  toggleButton.onclick = () => settings.set("darkMode", !settings.get("darkMode"));
+  ;
 }
 
 // Register service worker
@@ -796,6 +986,6 @@ if ("serviceWorker" in navigator) {
 }
 
 // purge old lightning strikes on restart
-setTimeout(() => { strikemgr.fadeStrikes(); }, 2 * 60 * 1000);
+setTimeout(() => { strikemgr.fadeStrikes(); }, 30 * 1000);
 
 /* vim: set ts=2 sw=2 expandtab: */
