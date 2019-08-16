@@ -284,6 +284,8 @@ window.downloadForecast(function() {
 
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         SharedLocationUpdater.addObserver(observer: self)
+
+        //Setting page
     }
 
     override func viewDidAppear(_ animated: Bool) {

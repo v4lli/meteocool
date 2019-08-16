@@ -34,6 +34,8 @@
 		EA2B77E02209A9DF00610ED7 /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */; };
 		EA2B77E32209A9DF00610ED7 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA2B77E12209A9DF00610ED7 /* MainInterface.storyboard */; };
 		EA2B77E72209A9DF00610ED7 /* Widget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = EA2B77DB2209A9DF00610ED7 /* Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EA7D90E723068C8700CC0C5E /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EA7D90E623068C8700CC0C5E /* Settings.bundle */; };
+		EA7D90E92306937900CC0C5E /* SettingsBundleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7D90E82306937900CC0C5E /* SettingsBundleHelper.swift */; };
 		EAD69D2922B3F7E5009F3138 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = EAD69D2B22B3F7E5009F3138 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
@@ -121,6 +123,8 @@
 		EA2B77DF2209A9DF00610ED7 /* TodayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewController.swift; sourceTree = "<group>"; };
 		EA2B77E22209A9DF00610ED7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		EA2B77E42209A9DF00610ED7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EA7D90E623068C8700CC0C5E /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		EA7D90E82306937900CC0C5E /* SettingsBundleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsBundleHelper.swift; sourceTree = "<group>"; };
 		EAD69D1C22B3F6FF009F3138 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		EAD69D1E22B3F704009F3138 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		EAD69D2022B3F707009F3138 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainInterface.strings; sourceTree = "<group>"; };
@@ -221,11 +225,13 @@
 				57589ACD216ADAEB00CDEBB7 /* lib */,
 				577666912130C6E300C25E00 /* AppDelegate.swift */,
 				577666932130C6E300C25E00 /* ViewController.swift */,
+				EA7D90E623068C8700CC0C5E /* Settings.bundle */,
 				577666952130C6E300C25E00 /* Main.storyboard */,
 				577666982130C6E300C25E00 /* Assets.xcassets */,
 				5776669A2130C6E300C25E00 /* LaunchScreen.storyboard */,
 				5776669D2130C6E300C25E00 /* Info.plist */,
 				EAD69D2B22B3F7E5009F3138 /* Localizable.strings */,
+				EA7D90E82306937900CC0C5E /* SettingsBundleHelper.swift */,
 			);
 			path = meteocool;
 			sourceTree = "<group>";
@@ -456,6 +462,7 @@
 			files = (
 				5776669C2130C6E300C25E00 /* LaunchScreen.storyboard in Resources */,
 				EAD69D2922B3F7E5009F3138 /* Localizable.strings in Resources */,
+				EA7D90E723068C8700CC0C5E /* Settings.bundle in Resources */,
 				577666992130C6E300C25E00 /* Assets.xcassets in Resources */,
 				577666972130C6E300C25E00 /* Main.storyboard in Resources */,
 			);
@@ -521,6 +528,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA7D90E92306937900CC0C5E /* SettingsBundleHelper.swift in Sources */,
 				A7F5B2132214D77C005EB78C /* PressureManager.swift in Sources */,
 				577666942130C6E300C25E00 /* ViewController.swift in Sources */,
 				5705D3992186A16C00CC5A60 /* NotificationManager.swift in Sources */,
