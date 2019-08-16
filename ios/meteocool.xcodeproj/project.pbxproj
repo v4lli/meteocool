@@ -36,6 +36,7 @@
 		EA2B77E72209A9DF00610ED7 /* Widget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = EA2B77DB2209A9DF00610ED7 /* Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EA7D90E723068C8700CC0C5E /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EA7D90E623068C8700CC0C5E /* Settings.bundle */; };
 		EA7D90E92306937900CC0C5E /* SettingsBundleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7D90E82306937900CC0C5E /* SettingsBundleHelper.swift */; };
+		EA7D90EB2306AC8D00CC0C5E /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA7D90EA2306AC8D00CC0C5E /* SettingsTableViewController.swift */; };
 		EAD69D2922B3F7E5009F3138 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = EAD69D2B22B3F7E5009F3138 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
@@ -125,6 +126,7 @@
 		EA2B77E42209A9DF00610ED7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EA7D90E623068C8700CC0C5E /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		EA7D90E82306937900CC0C5E /* SettingsBundleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsBundleHelper.swift; sourceTree = "<group>"; };
+		EA7D90EA2306AC8D00CC0C5E /* SettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		EAD69D1C22B3F6FF009F3138 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		EAD69D1E22B3F704009F3138 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		EAD69D2022B3F707009F3138 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainInterface.strings; sourceTree = "<group>"; };
@@ -225,12 +227,13 @@
 				57589ACD216ADAEB00CDEBB7 /* lib */,
 				577666912130C6E300C25E00 /* AppDelegate.swift */,
 				577666932130C6E300C25E00 /* ViewController.swift */,
-				EA7D90E623068C8700CC0C5E /* Settings.bundle */,
+				EA7D90EA2306AC8D00CC0C5E /* SettingsTableViewController.swift */,
 				577666952130C6E300C25E00 /* Main.storyboard */,
 				577666982130C6E300C25E00 /* Assets.xcassets */,
 				5776669A2130C6E300C25E00 /* LaunchScreen.storyboard */,
 				5776669D2130C6E300C25E00 /* Info.plist */,
 				EAD69D2B22B3F7E5009F3138 /* Localizable.strings */,
+				EA7D90E623068C8700CC0C5E /* Settings.bundle */,
 				EA7D90E82306937900CC0C5E /* SettingsBundleHelper.swift */,
 			);
 			path = meteocool;
@@ -536,6 +539,7 @@
 				57589AD1216ADB5C00CDEBB7 /* NetworkHelper.swift in Sources */,
 				A7661F4B2217265700834E1D /* CustomeGestureRecognizer.swift in Sources */,
 				577666922130C6E300C25E00 /* AppDelegate.swift in Sources */,
+				EA7D90EB2306AC8D00CC0C5E /* SettingsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
