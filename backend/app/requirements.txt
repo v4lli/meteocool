@@ -1,9 +1,9 @@
-Flask==1.0.2
-Flask-SocketIO==3.1.1
-eventlet==0.24.1
-websocket-client==0.52.0
-pymongo==3.7.1
-pyproj==1.9.5.1
+Flask
+Flask-SocketIO
+eventlet
+websocket-client
+pymongo
+pyproj==1.9.6
 geopy
 requests
 kombu
