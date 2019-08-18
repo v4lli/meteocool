@@ -489,7 +489,7 @@ var mesoLayer = new VectorLayer({ // eslint-disable-line no-unused-vars
   source: ms,
   map: window.map,
   style: (feature) => {
-    return mesoStyleFactory((new Date().getTime() - feature.getId()) / 1000 / 1000 - 10,
+    return mesoStyleFactory((new Date().getTime() - feature.getId()) / 1000 / 1000,
       feature.get("intensity"));
   }
 });
