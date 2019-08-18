@@ -5,6 +5,7 @@ import datetime
 import json
 import logging
 import time
+import getopt
 
 hooksEnabled = None
 try:
@@ -20,14 +21,14 @@ import geopy.distance
 
 logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(message)s')
 
-app = Flask(__name__)
-socketio = SocketIO(app, async_mode='eventlet', cookie=None, message_queue="amqp://mq")
-
 db_client = MongoClient("mongodb://mongo:27017/")
 # both will be created automatically when the first document is inserted
 db = db_client["meteocool"]
 collection = db["collection"]
 pressure = db["pressure"]
+
+app = Flask(__name__)
+socketio = SocketIO(app, async_mode='eventlet', cookie=None, message_queue="amqp://mq")
 
 # Background thread started by the internal API endpoint, triggered
 # by the dwd backend container. newTileJson needs to be a valid

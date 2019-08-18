@@ -1,21 +1,15 @@
 version: '3.5'
 
 services:
-  app:
-    environment:
-      - RECORDING="true"
-    volumes:
-      - recording:/recording
-
   datasource:
     environment:
-      - RECORDING="true"
+      - RECORDING=true
     volumes:
       - recording:/recording
 
   dwd:
     environment:
-      - RECORDING="true"
+      - RECORDING=true
     volumes:
       - recording:/recording
 

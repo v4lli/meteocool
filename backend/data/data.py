@@ -3,6 +3,7 @@ import logging
 import random
 import threading
 import time
+import argparse
 from datetime import timezone
 import datetime
 from xml.etree import ElementTree
@@ -21,6 +22,7 @@ logging.basicConfig(level=logging.WARN, format='%(asctime)s %(levelname)s %(mess
 class SocketIOWrapper:
     def __init__(self, socketio):
         self.socketio = socketio
+        self.buffer = {}
 
     def broadcast(self, event, data):
         self.socketio.emit(event, data, namespace="/tile")
@@ -28,11 +30,31 @@ class SocketIOWrapper:
     def reply(self, sid, event, data):
         self.socketio.emit(event, data, namespace="/tile", room=sid)
 
-class Blitzortung(SocketIOWrapper, threading.Thread):
+class Recorder:
+    def __init__(self, enabled, tape_name=''):
+        self.enabled = enabled
+        self.tape_name = tape_name
+
+    def record_item(self, category, item):
+        if not self.enabled:
+            return
+
+        row = (int(round(time.time() * 1000)), item)
+
+        if category in self.buffer:
+            self.buffer[category].append(row)
+        else:
+            self.buffer[category] = [row]
+        # Can be optimized to flush/rewrit only sometimes XXX
+        with open('/recording/' + self.tape_name + '_data.json', 'w') as outfile:
+            json.dump(self.buffer, outfile)
+
+class Blitzortung(SocketIOWrapper, threading.Thread, Recorder):
     """i connect to blitzortung.org and forward ligtnings to clients in my namespace"""
-    def __init__(self, socketio, lightning_cache_max):
+    def __init__(self, socketio, lightning_cache_max, recording=False):
         SocketIOWrapper.__init__(self, socketio)
         threading.Thread.__init__(self)
+        Recorder.__init__(self, recording, "lightning")
         self.max_lightning_cache = lightning_cache_max
         self.numStrikes = 0
         self.failStrikes = 0
@@ -69,6 +91,7 @@ class Blitzortung(SocketIOWrapper, threading.Thread):
             }
 
             self.broadcast("lightning", strikeData)
+            self.record_item("lightning", strikeData)
 
             if len(self.strikeCache) >= self.max_lightning_cache:
                 self.strikeCache.pop(0)
@@ -133,10 +156,12 @@ class Blitzortung(SocketIOWrapper, threading.Thread):
             ws.run_forever()
 
 # https://www.dwd.de/DE/leistungen/radarprodukte/dokumentation_mcd.pdf?__blob=publicationFile&v=2
-class DwdMesocyclones(SocketIOWrapper, threading.Thread):
-    def __init__(self, socketio):
+class DwdMesocyclones(SocketIOWrapper, threading.Thread, Recorder):
+    def __init__(self, socketio, recording=False):
         SocketIOWrapper.__init__(self, socketio)
         threading.Thread.__init__(self)
+        threading.Thread.__init__(self)
+        Recorder.__init__(self, recording, "mesocyclones")
         self.cache = []
         self.attributes = {}
         self.lastFileTime = None
@@ -258,6 +283,7 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
 
                 this_timestep.append(mesocyclone)
                 self.attributes[mesocyclone["time"]] = attribs
+                self.record_item("mesocyclone", (mesocyclone, attribs))
                 eventId += 1
             # XXX currently discards old ones
             self.cache = this_timestep
@@ -268,9 +294,13 @@ async def cache_server(data, request):
     return web.json_response(data)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-r', dest='recording', action='store_true')
+    args = parser.parse_args()
+
     socketio = SocketIO(message_queue='amqp://mq')
-    blitzortung = Blitzortung(socketio, 1000)
-    meso = DwdMesocyclones(socketio)
+    blitzortung = Blitzortung(socketio, 1000, recording=args.recording)
+    meso = DwdMesocyclones(socketio, recording=args.recording)
 
     blitzortung.start()
     meso.start()

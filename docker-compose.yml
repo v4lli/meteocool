@@ -1,8 +1,5 @@
 version: '3.5'
 
-# XXX TODO:
-# - set time to localtime/host time inside the containers.
-
 services:
   mongo:
     image: mongo
@@ -24,11 +21,6 @@ services:
       - ${PWD}/frontend/caddy/dev/Caddyfile:/etc/Caddyfile
       - pushpreview:/pushpreview
       - sslstore:/root/.caddy
-        #    logging:
-        #      driver: syslog
-        #      options:
-        #        syslog-address: "udp://logs7.papertrailapp.com:44195"
-        #        tag: "{{.Name}}/{{.ID}}"
 
   app:
     build: backend/app
@@ -65,13 +57,9 @@ services:
     environment:
       - TZ="Europe/Berlin"
       - DB_CONN="mongodb://mongo:27017/"
-    env_file:
-      - /etc/meteocool_env
     volumes:
       - dwd:/data
       - pushpreview:/pushpreview
-      - /etc/meteocool/apns.json:/etc/apns.json
-      - /etc/meteocool/authkey.p8:/etc/authkey.p8
     tmpfs:
       - /scratch
       - /forecast
