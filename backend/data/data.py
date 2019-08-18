@@ -173,19 +173,18 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread, Recorder):
                 return True
             else:
                 return False
+
         logging.warn("old len %d" % len(self.cache))
         current = []
-
-        try:
-            for c in self.cache:
-                if cyclone_outdated(c):
+        for c in self.cache:
+            if cyclone_outdated(c):
+                try:
                     del self.attributes[c["time"]]
-                else:
-                    current.append(c)
-            self.cache = current
-        except KeyError as e:
-            logging.error("key error %s" % e)
-            pass
+                except KeyError as e:
+                    logging.error("key error %s" % e)
+            else:
+                current.append(c)
+        self.cache = current
         logging.warn("new len %d" % len(self.cache))
 
     def run(self):
