@@ -1,6 +1,9 @@
 version: '3.5'
 
 services:
+  web:
+    volumes:
+      - ${PWD}/frontend/caddy/dev/Caddyfile:/etc/Caddyfile
 
   mq:
     ports:

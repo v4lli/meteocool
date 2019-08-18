@@ -2,8 +2,6 @@
     root /srv
     log stdout
 
-    cors
-
     proxy /tile app:5000 {
         websocket
         transparent

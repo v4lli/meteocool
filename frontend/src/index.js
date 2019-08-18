@@ -407,6 +407,7 @@ let styleFactory = (age, size) => {
 };
 
 let mesoStyleFactory = (age, intensity) => {
+  //console.log("age: " + age);
   if (age < 5) {
     age = 0;
   }
@@ -510,8 +511,8 @@ window.geolocation.on("change:position", () => {
 // actually display reflectivity radar data
 //
 
-// var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-// var baseUrl = "http://localhost:8040";
+//var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+//var baseUrl = "http://localhost:8040";
 // if (process.env.NODE_ENV === "production") {
 var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var baseUrl = "https://meteocool.com";
@@ -534,6 +535,7 @@ window.mcm = mesocyclonemgr;
 socket.on("connect", () => console.log("websocket connected"));
 
 socket.on("lightning", (data) => {
+  console.log("new lightning: " + data);
   strikemgr.addStrike(data["lon"], data["lat"]);
 });
 
@@ -729,9 +731,9 @@ if (!dd.isAuxPage()) {
 }
 
 $(document).ready(function () {
-  let ios_level = DeviceDetect.getIosAPILevel();
-  if (ios_level >= 1) {
-    if (ios_level < 3) {
+  let iosLevel = DeviceDetect.getIosAPILevel();
+  if (iosLevel >= 1) {
+    if (iosLevel < 3) {
       $("#topMenu")[0].children[0].style.display = "none"; // settings
     }
     $("#topMenu")[0].children[1].style.display = "none"; // language switcher
@@ -739,7 +741,7 @@ $(document).ready(function () {
     $("#topMenu")[0].children[4].style.display = "none"; // mobile apps modal
   }
 
-  if (ios_level >= 3) {
+  if (iosLevel >= 3) {
     alert("ios 3");
     $("#openSettings").css("display", "inline");
     $("#openSettings").onclick = () => {
@@ -760,10 +762,10 @@ $(document).ready(function () {
   if (window.location.href.indexOf("#impressum") !== -1) {
     $("#impressumModal").modal("show");
   }
-  if (DeviceDetect.getIosAPILevel() >= 2 && (window.location.href.indexOf("documentation.html") !== -1)) {
+  if (iosLevel >= 2 && (window.location.href.indexOf("documentation.html") !== -1)) {
     window.webkit.messageHandlers["scriptHandler"].postMessage("enableScrolling");
     window.webkit.messageHandlers["scriptHandler"].postMessage("drawerHide");
-  } else if (DeviceDetect.getIosAPILevel() >= 2) {
+  } else if (iosLevel >= 2) {
     window.webkit.messageHandlers["scriptHandler"].postMessage("disableScrolling");
     window.webkit.messageHandlers["scriptHandler"].postMessage("drawerShow");
   }
@@ -814,7 +816,7 @@ $(document).ready(function () {
           intensityStr = "Low ";
           break;
         default:
-          intensityStr = "Unknown ";
+          intensityStr = "Unknown (" + feature.get("intensity").toString() + ")";
           break;
       }
       let spinner = "<div style=\"text-align: center;\"><div class=\"spinner-border spinner-border-sm\" role=\"status\" style=\"color: grey; text-align: center;\"><span class=\"sr-only\">Loading...</span></div></div>";
@@ -832,9 +834,10 @@ $(document).ready(function () {
       window.popoverAjax =
         $.get(baseUrl + "/mesocyclones/" + feature.getId().toString(),
           (data) => {
-            var html = "";
+            var html = "<b>Detected:</b> " + new Date(feature.getId()) + "<br />";
+            html += "<b>Intensity:</b> " + feature.get("intensity") + "/6<br />";
             for (let [key, value] of Object.entries(data)) {
-              html += "<b>" + key + "</b>: " + value + "<br />";
+              html += "<b>" + key + ":</b> " + value + "<br />";
             }
             $("#popup").attr("data-content", html).data("bs.popover").setContent();
           }, "json");
