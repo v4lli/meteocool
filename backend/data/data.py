@@ -256,9 +256,10 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread):
                         attribs[tag] += (" %s" % param.attrib["units"])
 
                 this_timestep.append(mesocyclone)
-                self.cache.append(mesocyclone)
                 self.attributes[mesocyclone["time"]] = attribs
                 eventId += 1
+            # XXX currently discards old ones
+            self.cache = this_timestep
             self.broadcast("mesocyclones", this_timestep)
 
 
