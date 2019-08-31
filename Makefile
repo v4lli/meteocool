@@ -3,7 +3,7 @@
 BASE_CMD := docker-compose -f docker-compose.yml
 DEV_CMD := $(BASE_CMD) -f docker-compose-dev.yml
 PROD_CMD := $(BASE_CMD) -f docker-compose-prod.yml
-RECORD_CMD := $(BASE_CMD) -f docker-compose-record.yml
+RECORD_CMD := $(PROD_CMD) -f docker-compose-record.yml
 
 dev:
 	$(DEV_CMD) build --parallel
@@ -31,9 +31,9 @@ prodstop:
 
 
 record recording:
-	$(RECORD_CMD) build --parallel
+	$(RECORD_CMD) build
 	$(RECORD_CMD) down
-	$(RECORD_CMD) up
+	$(RECORD_CMD) up -d
 
 snapshot:
 	docker exec -it $$(docker ps | grep meteocool_datasource | cut -d ' ' -f1) /usr/src/app/api_snapshot.sh
