@@ -12,4 +12,4 @@ jobs:
     - name: python-lint
       uses: CyberZHG/github-action-python-lint@0.0.2
       with:
-        args: backend/app/
+        args: /github/workspace/backend/app/
