@@ -1,2 +1,4 @@
 0-59/1 * * * * sh /usr/src/app/run-once.sh > /proc/1/fd/1 2>/proc/1/fd/2
 @reboot sh /usr/src/app/run-once.sh > /proc/1/fd/1 2>/proc/1/fd/2
+@daily sh /usr/src/app/run-once.sh > /proc/1/fd/1 2>/proc/1/fd/2
+5 4 * * * /usr/src/app/pushpreview_cleanup.sh > /proc/1/fd/1 2>/proc/1/fd/2

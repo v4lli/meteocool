@@ -368,7 +368,7 @@ hr {
 }
 
 .popover-body {
-	height: 200px;
+	height: 210px;
 	overflow-y: auto;
 	white-space: pre-wrap;
 }
