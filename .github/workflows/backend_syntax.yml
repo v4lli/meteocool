@@ -1,0 +1,14 @@
+
+name: Python Syntax Check
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: python-lint
+      uses: CyberZHG/github-action-python-lint@0.0.2
+      args: backend/app/
