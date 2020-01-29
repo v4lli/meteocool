@@ -14,6 +14,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     @IBOutlet weak var button: UIButton!
     @IBOutlet weak var time: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var settings: UIButton!
 
     var onboardingOnThisRun = false
 
@@ -250,6 +251,7 @@ window.downloadForecast(function() {
         self.view.addSubview(button!)
         self.view.addSubview(time!)
         self.view.addSubview(activityIndicator!)
+        self.view.addSubview(settings!)
 
         time.isHidden = true
         time.layer.masksToBounds = true
