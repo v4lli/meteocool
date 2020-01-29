@@ -96,8 +96,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
 }
 
-extension UIApplication {
+/*extension UIApplication {
     var statusBarView: UIView? {
         return value(forKey: "statusBar") as? UIView
     }
-}
+}*/
