@@ -46,10 +46,12 @@
 }
 
 127.0.0.1:8040/pushpreview localhost:8040/pushpreview meteocool.com/pushpreview meteocool.com:8040/pushpreview {
+	tls off
 	root /pushpreview/
 }
 
 127.0.0.1:8041 localhost:8041 {
+	tls off
 	proxy / tileserver:80 {
 		transparent
 		header_upstream X-Forwarded-Proto https
