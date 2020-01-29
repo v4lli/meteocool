@@ -731,6 +731,79 @@ if (!dd.isAuxPage()) {
 }
 
 $(document).ready(function () {
+if (window.location.search.indexOf("drivenow") !== -1) {
+  $.get(baseUrl + "/drivenow/",
+    (data) => {
+      var carsource = new VectorSource({
+        features: []
+      });
+      var carsource_empty = new VectorSource({
+        features: []
+      });
+      data.forEach(car => ((car.fuelLevel <= 0.25) ? carsource_empty.addFeature(new Feature(new Point(fromLonLat([car.lng, car.lat])))) : carsource.addFeature(new Feature(new Point(fromLonLat([car.lng, car.lat]))))));
+      var carlayer = new VectorLayer({ // eslint-disable-line no-unused-vars
+        source: carsource,
+        map: window.map,
+        style: f => {
+          return new Style({
+            image: new CircleStyle({
+              radius: 8,
+              fill: new Fill({
+                color: "#ff0000",
+              }),
+              stroke: new Stroke({
+                color: "#fff",
+                width: 2.5
+              })
+            })
+          });
+        }
+      });
+      var carlayer2 = new VectorLayer({ // eslint-disable-line no-unused-vars
+        source: carsource_empty,
+        map: window.map,
+        style: f => {
+          return new Style({
+            image: new CircleStyle({
+              radius: 8,
+              fill: new Fill({
+                color: "#00ff00",
+              }),
+              stroke: new Stroke({
+                color: "#fff",
+                width: 2.5
+              })
+            })
+          });
+        }
+      });
+    }, "json");
+  $.get(baseUrl + "/ladenetz/",
+    (data) => {
+      var ladesource = new VectorSource({
+        features: []
+      });
+      data.forEach(station => ladesource.addFeature(new Feature(new Point(fromLonLat([station.lon, station.lat])))));
+      var ladelayer = new VectorLayer({ // eslint-disable-line no-unused-vars
+        source: ladesource,
+        map: window.map,
+        style: f => {
+          return new Style({
+            image: new CircleStyle({
+              radius: 8,
+              fill: new Fill({
+                color: "#0000ff",
+              }),
+              stroke: new Stroke({
+                color: "#fff",
+                width: 2.5
+              })
+            })
+          });
+        }
+      });
+    }, "json");
+}
   let iosLevel = DeviceDetect.getIosAPILevel();
   if (iosLevel >= 1) {
     if (iosLevel < 3) {
@@ -995,5 +1068,6 @@ if ("serviceWorker" in navigator) {
 
 // purge old lightning strikes on restart
 setTimeout(() => { strikemgr.fadeStrikes(); }, 30 * 1000);
+
 
 /* vim: set ts=2 sw=2 expandtab: */

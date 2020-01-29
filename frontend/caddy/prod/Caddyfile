@@ -43,6 +43,14 @@
 	proxy /mesocyclones/ datasource:5000 {
 		transparent
 	}
+
+	proxy /drivenow/ datasource:5000 {
+		transparent
+	}
+
+	proxy /ladenetz/ datasource:5000 {
+		transparent
+	}
 }
 
 127.0.0.1:8040/pushpreview localhost:8040/pushpreview meteocool.com/pushpreview meteocool.com:8040/pushpreview {

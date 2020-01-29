@@ -292,6 +292,26 @@ class DwdMesocyclones(SocketIOWrapper, threading.Thread, Recorder):
 async def cache_server(data, request):
     return web.json_response(data)
 
+async def dn(request):
+    ret = requests.get("https://multimobil-core.mvg.de/v12/service/v12/networkState/networkState?DRIVE_NOW=0")
+    resp = []
+    for car in ret.json()["addedCars"]:
+        if car["fuelLevel"] <= 0.28 and car["fuelType"] == "ELEKTRO":
+            resp.append(car)
+    return web.json_response(resp)
+
+async def ln(request):
+    ret = requests.get("https://multimobil-core.mvg.de/v12/service/v12/networkState/networkState?LADENETZ=0")
+    resp = []
+    for station in ret.json()["addedStations"]:
+        free = 0
+        for c in station["chargePoints"]:
+            if c["status"] == "AVAILABLE":
+                free += 1
+        if station["alwaysOpened"] and free > 0:
+            resp.append({"lat": station["latitude"], "lon": station["longitude"], "free": free})
+    return web.json_response(resp)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', dest='recording', action='store_true')
@@ -311,6 +331,8 @@ if __name__ == "__main__":
     async def mesocyclone_cache(request):
         return await cache_server(meso.cache, request)
     server.add_routes([web.get('/mesocyclones/all/', mesocyclone_cache)])
+    server.add_routes([web.get('/drivenow/', dn)])
+    server.add_routes([web.get('/ladenetz/', ln)])
     async def mesocyclone_one(request):
         attribs = None
         try:

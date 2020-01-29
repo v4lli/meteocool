@@ -12,3 +12,4 @@ pillow
 six
 matplotlib
 pyfcm
+geopy
