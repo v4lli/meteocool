@@ -1,8 +1,7 @@
-127.0.0.1:8040 localhost:8040 {
+127.0.0.1:8040 localhost:8040 meteocool.com meteocool.com:8040 {
 	root /srv
 	log stdout
 	tls off
-	cors
 
 	proxy /tile app:5000 {
 		websocket
@@ -46,7 +45,7 @@
 	}
 }
 
-127.0.0.1:8040/pushpreview localhost:8040/pushpreview {
+127.0.0.1:8040/pushpreview localhost:8040/pushpreview meteocool.com/pushpreview meteocool.com:8040/pushpreview {
 	root /pushpreview/
 }
 
