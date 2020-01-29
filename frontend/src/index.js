@@ -407,7 +407,7 @@ let styleFactory = (age, size) => {
 };
 
 let mesoStyleFactory = (age, intensity) => {
-  //console.log("age: " + age);
+  // console.log("age: " + age);
   if (age < 5) {
     age = 0;
   }
@@ -511,8 +511,8 @@ window.geolocation.on("change:position", () => {
 // actually display reflectivity radar data
 //
 
-//var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
-//var baseUrl = "http://localhost:8040";
+// var tileUrl = "http://localhost:8041/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
+// var baseUrl = "http://localhost:8040";
 // if (process.env.NODE_ENV === "production") {
 var tileUrl = "https://a.tileserver.unimplemented.org/data/raa01-wx_10000-latest-dwd-wgs84_transformed.json";
 var baseUrl = "https://meteocool.com";
