@@ -138,10 +138,13 @@ export class LayerManager {
   stopPlay () {
     this.currentForecastNo = -1;
     this.playPaused = false;
-    document.getElementById("nowcastIcon").src = "./player-play.png";
-    document.getElementById("nowcastIcon").style.display = "";
-    $("#forecastTimeWrapper").css("display", "none");
-    this.hook("scriptHandler", "playFinished");
+    let elem = document.getElementById("nowcastIcon");
+    if (elem) {
+      elem.src = "./player-play.png";
+      elem.style.display = "";
+      $("#forecastTimeWrapper").css("display", "none");
+      this.hook("scriptHandler", "playFinished");
+    }
   }
 
   playForecast (e) {
