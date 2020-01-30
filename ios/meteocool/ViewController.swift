@@ -12,6 +12,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     @IBOutlet weak var slider_ring: UIImageView!
     @IBOutlet weak var slider_button: UIImageView!
     @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var settings: UIButton!
     @IBOutlet weak var time: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
@@ -250,6 +251,7 @@ window.downloadForecast(function() {
         self.view.addSubview(button!)
         self.view.addSubview(time!)
         self.view.addSubview(activityIndicator!)
+        self.view.addSubview(settings!)
 
         time.isHidden = true
         time.layer.masksToBounds = true
