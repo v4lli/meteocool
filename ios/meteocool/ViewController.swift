@@ -4,6 +4,8 @@ import WebKit
 import CoreLocation
 import OnboardKit
 
+var viewController: ViewController? = nil
+
 class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, LocationObserver{
     let buttonsize = 19.0 as CGFloat
     let lightmode = UIColor(red: 0xf8/255.0, green: 0xf9/255.0, blue: 0xfa/255.0, alpha: 1.0)
@@ -202,7 +204,8 @@ window.downloadForecast(function() {
             description: NSLocalizedString("Based on this data, do you want us to notify you ahead of rain at your location?\n\nWe put a lot of effort into making the notifications non-intrusive. They disappear as soon as it stops raining.", comment: "Notifications description"),
             advanceButtonTitle: NSLocalizedString("Later", comment:"Later"),
             actionButtonTitle: NSLocalizedString("Enable Notifications", comment:"Notifications actionButtonTitle"),
-            action: { [weak self] completion in SharedNotificationManager.registerForPushNotifications(completion) }
+            action: { [weak self] completion in SharedNotificationManager.registerForPushNotifications(completion)
+            }
         )
 
         let pageFour = OnboardPage(
@@ -243,6 +246,7 @@ window.downloadForecast(function() {
 
     override func loadView() {
         super.loadView()
+        viewController = self
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
         webView?.configuration.userContentController.add(self, name: "timeHandler")
         self.view.addSubview(webView!)
@@ -277,6 +281,30 @@ window.downloadForecast(function() {
         webView.scrollView.isScrollEnabled = true
         webView.scrollView.bounces = false
 
+        //Settings
+        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "pushNotification") == nil){
+            //TODO Conneciton to the main setting page
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "pushNotification")
+        }
+        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "mapRotation") == nil){
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(false, forKey: "mapRotation")
+        }
+        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "autoZoom") == nil){
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "autoZoom")
+        }
+        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "lightnings") == nil){
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "lightnings")
+        }
+        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "shelters") == nil){
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(false, forKey: "shelters")
+        }
+        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "withDBZ") == nil){
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(false, forKey: "withDBZ")
+        }
+        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "mesocyclone") == nil){
+            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(false, forKey: "mesocyclone")
+        }
+        
         //toggleLightMode()
 
         if let url = URL(string: "https://meteocool.com/?mobile=ios3") {
