@@ -282,28 +282,37 @@ window.downloadForecast(function() {
         webView.scrollView.bounces = false
 
         //Settings
-        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "pushNotification") == nil){
+        let userDefaults = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")
+        if (userDefaults?.value(forKey: "pushNotification") == nil){
             //TODO Conneciton to the main setting page
-            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "pushNotification")
+            userDefaults?.setValue(true, forKey: "pushNotification")
         }
-        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "mapRotation") == nil){
-            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(false, forKey: "mapRotation")
+        if (userDefaults?.value(forKey: "mapRotation") == nil){
+            userDefaults?.setValue(false, forKey: "mapRotation")
         }
-        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "autoZoom") == nil){
-            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "autoZoom")
+        if (userDefaults?.value(forKey: "autoZoom") == nil){
+            userDefaults?.setValue(true, forKey: "autoZoom")
         }
-        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "lightnings") == nil){
-            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(true, forKey: "lightnings")
+        if (userDefaults?.value(forKey: "lightning") == nil){
+            userDefaults?.setValue(true, forKey: "lightning")
         }
-        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "shelters") == nil){
-            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(false, forKey: "shelters")
+        if (userDefaults?.value(forKey: "shelters") == nil){
+            userDefaults?.setValue(false, forKey: "shelters")
         }
-        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "withDBZ") == nil){
-            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(false, forKey: "withDBZ")
+        if (userDefaults?.value(forKey: "withDBZ") == nil){
+            userDefaults?.setValue(false, forKey: "withDBZ")
         }
-        if (UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.value(forKey: "mesocyclone") == nil){
-            UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")?.setValue(false, forKey: "mesocyclone")
+        if (userDefaults?.value(forKey: "mesocyclones") == nil){
+            userDefaults?.setValue(false, forKey: "mesocyclones")
         }
+        
+        webView.evaluateJavaScript("window.injectSettings({\"mapRotation\": \(userDefaults?.value(forKey: "mapRotation") )});")
+        webView.evaluateJavaScript("window.injectSettings({\"zoomOnForeground\": \(userDefaults?.value(forKey: "autoZoom") )});")
+        webView.evaluateJavaScript("window.injectSettings({\"darkMode\": \(userDefaults?.value(forKey: "darkMode") )});")
+        webView.evaluateJavaScript("window.injectSettings({\"layerLightning\": \(userDefaults?.value(forKey: "lightning") )});")
+        webView.evaluateJavaScript("window.injectSettings({\"layerMesocyclones\": \(userDefaults?.value(forKey: "mesocyclones") )});")
+        //webView.evaluateJavaScript("window.injectSettings({\"layerShelters\": \(userDefaults?.value(forKey: "shelters")});")
+        
         
         //toggleLightMode()
 
