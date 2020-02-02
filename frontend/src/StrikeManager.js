@@ -6,10 +6,11 @@ export class StrikeManager {
     this.maxStrikes = maxStrikes;
     this.vs = vectorSource;
     this.strikes = [];
+    this.enabled = true;
   }
 
   addStrike (lon, lat) {
-    this.addStrikeWithTime(lon, lat, new Date().getTime());
+    return this.addStrikeWithTime(lon, lat, new Date().getTime());
   }
 
   removeOne (id, idx) {
@@ -23,6 +24,8 @@ export class StrikeManager {
   }
 
   addStrikeWithTime (lon, lat, time) {
+    if (!this.enabled)
+      return false;
     var lightning = new Feature(new Point([lon, lat]));
     lightning.setId(time);
     this.strikes.push(lightning.getId());
@@ -30,7 +33,7 @@ export class StrikeManager {
       var toRemove = this.strikes.shift();
       this.removeOne(toRemove, -1);
     }
-    this.vs.addFeature(lightning);
+    return this.vs.addFeature(lightning);
   }
 
   // purge old strikes
@@ -53,6 +56,12 @@ export class StrikeManager {
   debug () {
     console.log(this.strikes);
     console.log(this.vs.getFeatures());
+  }
+
+  enable(state) {
+    if (!state)
+      this.clearAll();
+    this.enabled = state;
   }
 };
 

@@ -6,6 +6,7 @@ export class MesoCycloneManager {
     this.maxCyclones = maxCyclones;
     this.vs = vectorSource;
     this.cyclones = [];
+    this.enabled = true;
   }
 
   removeOne (id, idx) {
@@ -27,7 +28,7 @@ export class MesoCycloneManager {
       var toRemove = this.cyclones.shift();
       this.removeOne(toRemove, -1);
     }
-    this.vs.addFeature(cyclone);
+    return this.vs.addFeature(cyclone);
   }
 
   // purge old cyclones
@@ -45,6 +46,12 @@ export class MesoCycloneManager {
   clearAll () {
     this.cyclones = [];
     this.vs.clear();
+  }
+
+  enable(state) {
+    if (!state)
+      this.clearAll();
+    this.enabled = state;
   }
 };
 

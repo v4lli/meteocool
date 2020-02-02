@@ -535,7 +535,6 @@ window.mcm = mesocyclonemgr;
 socket.on("connect", () => console.log("websocket connected"));
 
 socket.on("lightning", (data) => {
-  console.log("new lightning: " + data);
   strikemgr.addStrike(data["lon"], data["lat"]);
 });
 
@@ -889,10 +888,30 @@ var settings = new Settings({
     "default": false,
     "cb": null
   },
+  "zoomOnForeground": {
+    "type": "boolean",
+    "default": false,
+    "cb": null
+  },
   "proMode": {
     "type": "boolean",
     "default": false,
     "cb": null
+  },
+  "layerLightning": {
+    "type": "boolean",
+    "default": true,
+    "cb": (state) => {
+      // XXX also disable the socket.io endpoint
+      strikemgr.enable(state);
+    }
+  },
+  "layerMesocyclones": {
+    "type": "boolean",
+    "default": true,
+    "cb": (state) => {
+      mesocyclonemgr.enable(state);
+    }
   },
   "darkMode": {
     "type": "boolean",
