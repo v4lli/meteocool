@@ -287,6 +287,17 @@ window.downloadForecast(function() {
             //TODO Conneciton to the main setting page
             userDefaults?.setValue(true, forKey: "pushNotification")
         }
+        if (userDefaults?.value(forKey: "intensityValue") == nil){
+            userDefaults?.setValue(0, forKey: "intensityValue")
+            // 0 -> any
+            // 1 -> light
+            // 2 -> normal
+            // 3 -> heavy
+        }
+        if (userDefaults?.value(forKey: "timeBeforeValue") == nil){
+            userDefaults?.setValue(2, forKey: "timeBeforeValue")
+            //Value +1 *5 for minutes
+        }
         if (userDefaults?.value(forKey: "mapRotation") == nil){
             userDefaults?.setValue(false, forKey: "mapRotation")
         }

@@ -12,6 +12,17 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var settingsBar:UINavigationBar!
     @IBOutlet weak var settingsTable:UITableView!
     
+    //userDefaults
+    let userDefaults = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")
+    
+    private var header = ["Push Notification","Map View","Layers","About"]
+    private var footer = ["If you want, we can notify you ahead of rain or snow at your current location.","Customise the appearance and behaviour of the main map.","Enable or disable informational layers on the main map.",""]
+    private var dataPushNotification = ["Push Notification", "Deactivate for ...","Push Notification with dbZ" , "Threshold","Time before"]
+    private var dataMapView = ["Map Rotation","Auto Zoom","Darkmode"]
+    private var dataLayers = ["Lightning ⚡️","Mesocyclones 🌀","Shelters ☂️"]
+    private var dataAbout = ["Link","Push Token","Version Nr"]
+    private var intensity = ["Drizzle","Light rain","Rain","Hail"]
+    
     //General View Things
     override func loadView() {
         super.loadView()
@@ -30,15 +41,6 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     @IBAction func doneSettings(_ sender: Any){
         self.dismiss(animated: true,completion:nil)
     }
-    
-    //userDefaults
-    let userDefaults = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")
-    
-    private var header = ["Push Notification","Map View","Layers","About"]
-    private var dataPushNotification = ["Push Notification", "Deactivate for ...","Push Notification with dbZ" , "Intensity \n test","Time before"]
-    private var dataMapView = ["Map Rotation","Auto Zoom","Darkmode"]
-    private var dataLayers = ["Lightning ⚡️","Mesocyclones 🌀","Shelters ☂️"]
-    private var dataAbout = ["Link","Push Token","Version Nr"]
 
     //Nuber of Selections
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -71,6 +73,14 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return header[section]
     }
+    
+    //Selection Footer
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if(section == 0 && (userDefaults?.bool(forKey: "pushNotification"))!){
+            return "Push Notification with dbZ:\nFor advanced users, include meteorological details in the notification text (like dbZ values). \nThreshold:\nOnly send a notification if incoming precipitation is expected to be at least this intense. \nTime before:\nChange the amount of time before you want to be notified about precipitation."
+        }
+        return footer[section]
+    }
 
     //Table Content
     func tableView(_ tableView: UITableView,cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -81,12 +91,17 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         let textCell = tableView.dequeueReusableCell(withIdentifier:"textCell")
         let stepperSliderCell = tableView.dequeueReusableCell(withIdentifier: "stepperSliderCell")
         
-        //here is programatically switch make to the table view
+        // Switch
         let switchView = UISwitch(frame: .zero)
         switchView.onTintColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1.0)
         
-        let intensityStepperSliderView = StepSlider.init(frame: CGRect(x: 5.0,y: 70.0,width: tableView.frame.width-10,height: 44.0))
-        intensityStepperSliderView.maxCount = 4
+        // StepperSlider
+        let stepperSliderView = StepSlider.init(frame: CGRect(x: 10.0,y: 50.0,width: tableView.frame.width-20,height: 50.0))
+        stepperSliderView.sliderCircleColor = UIColor(red: 233/255, green: 233/255, blue: 235/255, alpha: 1.0)
+        stepperSliderView.labelColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
+        let stepperSliderCellInfoLabel = UILabel.init(frame: CGRect(x: 15.0,y: 5.0,width: tableView.frame.width-10,height: 44.0))
+        let stepperSliderCellValueLabel = UILabel.init(frame: CGRect(x: tableView.frame.width-100,y: 5.0,width: 100-15,height: 44.0))
+        stepperSliderCellValueLabel.textAlignment = .right
         
         returnCell = textCell!
         switch indexPath.section{
@@ -101,8 +116,28 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 returnCell = switcherCell!
                 switchView.setOn((userDefaults?.bool(forKey: "withDBZ"))!, animated: false)
             case 3: //Intensity
-                stepperSliderCell!.addSubview(intensityStepperSliderView)
-                stepperSliderCell?.textLabel?.text = dataPushNotification[indexPath.row]
+                stepperSliderCell!.addSubview(stepperSliderView)
+                stepperSliderView.maxCount = 4
+                stepperSliderView.index = UInt.init(bitPattern: (userDefaults?.integer(forKey: "intensityValue"))!)
+                
+                stepperSliderCellInfoLabel.text = dataPushNotification[indexPath.row]
+                stepperSliderCell!.addSubview(stepperSliderCellInfoLabel)
+                
+                stepperSliderCellValueLabel.text = intensity[(userDefaults?.integer(forKey: "intensityValue"))!]
+                stepperSliderCell!.addSubview(stepperSliderCellValueLabel)
+                
+                returnCell = stepperSliderCell!
+            case 4: //Time before
+                stepperSliderCell!.addSubview(stepperSliderView)
+                stepperSliderView.maxCount = 9
+                stepperSliderView.index = UInt.init(bitPattern: (userDefaults?.integer(forKey: "timeBeforeValue"))!)
+                
+                stepperSliderCellInfoLabel.text = dataPushNotification[indexPath.row]
+                stepperSliderCell!.addSubview(stepperSliderCellInfoLabel)
+                
+                stepperSliderCellValueLabel.text = String(((userDefaults?.integer(forKey: "timeBeforeValue"))!+1)*5) + " min"
+                stepperSliderCell!.addSubview(stepperSliderCellValueLabel)
+                
                 returnCell = stepperSliderCell!
             default:
                 textCell?.textLabel?.text = dataPushNotification[indexPath.row]
@@ -155,9 +190,13 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         switchView.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged) //Change here!!!
         switcherCell!.accessoryView = switchView
         
+        //SliderChange
+        stepperSliderView.addTarget(self, action: #selector(sliderChanged(_:)), for: .valueChanged)
+        
         return returnCell
     }
     
+    //Cell Height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if(indexPath.section == 0 && (indexPath.row == 3 || indexPath.row == 4)){
             return 100
@@ -170,7 +209,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         //Push Notification
         case 0:
             userDefaults?.setValue(sender.isOn, forKey: "pushNotification")
-            loadView()
+            settingsTable.reloadData()
         case 2:
             userDefaults?.setValue(sender.isOn, forKey: "withDBZ")
         //Map View
@@ -196,5 +235,22 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         default:
             print("This not happen")
         }
+    }
+    
+    @objc func sliderChanged(_ sender: StepSlider!){
+        switch sender.maxCount {
+        case 4: //Intensity
+            userDefaults?.setValue(sender.index, forKey: "intensityValue")
+            // 0 -> any
+            // 1 -> light
+            // 2 -> normal
+            // 3 -> heavy
+        case 9: //Time before
+            userDefaults?.setValue(sender.index, forKey: "timeBeforeValue")
+            //Value +1 *5 for minutes
+        default:
+            print ("Not happen")
+        }
+        settingsTable.reloadData()
     }
 }

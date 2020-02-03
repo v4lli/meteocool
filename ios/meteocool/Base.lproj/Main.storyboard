@@ -106,6 +106,9 @@
                         <subviews>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Dd-sJ-2hh">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="56" id="1mp-f2-0tK"/>
+                                </constraints>
                                 <items>
                                     <navigationItem title="Settings" id="oAo-u7-TF2">
                                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="rUg-70-bJo">
