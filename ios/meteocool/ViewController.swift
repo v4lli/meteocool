@@ -317,6 +317,7 @@ window.downloadForecast(function() {
             userDefaults?.setValue(false, forKey: "mesocyclones")
         }
         
+        
         webView.evaluateJavaScript("window.injectSettings({\"mapRotation\": \(userDefaults?.value(forKey: "mapRotation") )});")
         webView.evaluateJavaScript("window.injectSettings({\"zoomOnForeground\": \(userDefaults?.value(forKey: "autoZoom") )});")
         webView.evaluateJavaScript("window.injectSettings({\"darkMode\": \(userDefaults?.value(forKey: "darkMode") )});")

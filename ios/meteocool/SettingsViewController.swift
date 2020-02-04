@@ -15,10 +15,9 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     //userDefaults
     let userDefaults = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")
     
-    private var header = ["Push Notification","Sleep Mode","Map View","Layers","About"]
+    private var header = ["Map View","Layers","Push Notification","About"]
     private var footer = ["If you want, we can notify you ahead of rain or snow at your current location.","","Customise the appearance and behaviour of the main map.","Enable or disable informational layers on the main map.","Version Nr"]
     private var dataPushNotification = ["Push Notification","Push Notification with dbZ" , "Threshold","Time before"]
-    private var sleepMode = ["Deactivate for ..."]
     private var dataMapView = ["Map Rotation","Auto Zoom","Darkmode"]
     private var dataLayers = ["Lightning ⚡️","Mesocyclones 🌀","Shelters ☂️"]
     private var dataAbout = ["Link","Push Token"]
@@ -51,7 +50,11 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     // Number of Rows
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section{
-        case 0:
+        case 0: //Map View
+            return dataMapView.count
+        case 1: //Layer
+            return dataLayers.count
+        case 2: //Notification
             let pushNotification = userDefaults?.bool(forKey: "pushNotification")
             if pushNotification!{
                 return dataPushNotification.count
@@ -59,13 +62,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             else {
                 return 1
             }
-        case 1:
-            return 1
-        case 2:
-            return dataMapView.count
-        case 3:
-            return dataLayers.count
-        case 4:
+        case 3: //About
             return dataAbout.count
         default:
             return 0
@@ -79,7 +76,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     
     //Selection Footer
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if(section == 0 && (userDefaults?.bool(forKey: "pushNotification"))!){
+        if(section == 2 && (userDefaults?.bool(forKey: "pushNotification"))!){
             return "Push Notification with dbZ:\nFor advanced users, include meteorological details in the notification text (like dbZ values). \nThreshold:\nOnly send a notification if incoming precipitation is expected to be at least this intense. \nTime before:\nChange the amount of time before you want to be notified about precipitation."
         }
         return footer[section]
@@ -108,7 +105,41 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         
         returnCell = textCell!
         switch indexPath.section{
-        case 0: //Push Notification
+        case 0: //Map View
+            switch indexPath.row {
+            case 0: //Map Rotation
+                switcherCell?.textLabel?.text = dataMapView[indexPath.row]
+                returnCell = switcherCell!
+                switchView.setOn((userDefaults?.bool(forKey: "mapRotation"))!, animated: false)
+            case 1: //Auto Zoom
+                switcherCell?.textLabel?.text = dataMapView[indexPath.row]
+                returnCell = switcherCell!
+                switchView.setOn((userDefaults?.bool(forKey: "autoZoom"))!, animated: false)
+            case 2: //DarkMode
+                switcherCell?.textLabel?.text = dataMapView[indexPath.row]
+                returnCell = switcherCell!
+                switchView.setOn((userDefaults?.bool(forKey: "darkMode"))!, animated: false)
+            default:
+                returnCell = textCell!
+            }
+        case 1: //Layers
+            switch indexPath.row{
+            case 0: //Lightning
+                switcherCell?.textLabel?.text = dataLayers[indexPath.row]
+                returnCell = switcherCell!
+                switchView.setOn((userDefaults?.bool(forKey: "lightning"))!, animated: false)
+            case 1: //Mesocyclones
+                switcherCell?.textLabel?.text = dataLayers[indexPath.row]
+                returnCell = switcherCell!
+                switchView.setOn((userDefaults?.bool(forKey: "mesocyclones"))!, animated: false)
+            case 2: //Shelters
+                switcherCell?.textLabel?.text = dataLayers[indexPath.row]
+                returnCell = switcherCell!
+                switchView.setOn((userDefaults?.bool(forKey: "shelters"))!, animated: false)
+            default:
+                returnCell = textCell!
+            }
+        case 2: //Push Notification
             switch indexPath.row {
             case 0: //Notificatino On/Off
                 switcherCell?.textLabel?.text = dataPushNotification[indexPath.row]
@@ -120,7 +151,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 switchView.setOn((userDefaults?.bool(forKey: "withDBZ"))!, animated: false)
             case 2: //Intensity
                 stepperSliderCell!.addSubview(stepperSliderView)
-                stepperSliderView.maxCount = 4
+                stepperSliderView.maxCount = UInt(intensity.count)
                 stepperSliderView.index = UInt.init(bitPattern: (userDefaults?.integer(forKey: "intensityValue"))!)
                 
                 stepperSliderCellInfoLabel.text = dataPushNotification[indexPath.row]
@@ -146,44 +177,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 textCell?.textLabel?.text = dataPushNotification[indexPath.row]
                 returnCell = textCell!
             }
-        case 1: //Sleep Mode
-            textCell?.textLabel?.text = sleepMode[indexPath.row]
-            returnCell = textCell!
-        case 2: //Map View
-            switch indexPath.row {
-            case 0: //Map Rotation
-                switcherCell?.textLabel?.text = dataMapView[indexPath.row]
-                returnCell = switcherCell!
-                switchView.setOn((userDefaults?.bool(forKey: "mapRotation"))!, animated: false)
-            case 1: //Auto Zoom
-                switcherCell?.textLabel?.text = dataMapView[indexPath.row]
-                returnCell = switcherCell!
-                switchView.setOn((userDefaults?.bool(forKey: "autoZoom"))!, animated: false)
-            case 2: //DarkMode
-                switcherCell?.textLabel?.text = dataMapView[indexPath.row]
-                returnCell = switcherCell!
-                switchView.setOn((userDefaults?.bool(forKey: "darkMode"))!, animated: false)
-            default:
-                returnCell = textCell!
-            }
-        case 3: //Layers
-            switch indexPath.row{
-            case 0: //Lightning
-                switcherCell?.textLabel?.text = dataLayers[indexPath.row]
-                returnCell = switcherCell!
-                switchView.setOn((userDefaults?.bool(forKey: "lightning"))!, animated: false)
-            case 1: //Mesocyclones
-                switcherCell?.textLabel?.text = dataLayers[indexPath.row]
-                returnCell = switcherCell!
-                switchView.setOn((userDefaults?.bool(forKey: "mesocyclones"))!, animated: false)
-            case 2: //Shelters
-                switcherCell?.textLabel?.text = dataLayers[indexPath.row]
-                returnCell = switcherCell!
-                switchView.setOn((userDefaults?.bool(forKey: "shelters"))!, animated: false)
-            default:
-                returnCell = textCell!
-            }
-        case 4: //About
+        case 3: //About
             textCell?.textLabel?.text = dataAbout[indexPath.row]
             returnCell = textCell!
         default:
@@ -204,7 +198,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     
     //Cell Height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if(indexPath.section == 0 && (indexPath.row == 2 || indexPath.row == 3)){
+        if(indexPath.section == 2 && (indexPath.row == 2 || indexPath.row == 3)){
             return 100
         }
         return tableView.rowHeight
@@ -212,32 +206,32 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     
     @objc func switchChanged(_ sender : UISwitch!){
         switch sender.tag {
-        //Push Notification
-        case 0:
-            userDefaults?.setValue(sender.isOn, forKey: "pushNotification")
-            settingsTable.reloadData()
-        case 2:
-            userDefaults?.setValue(sender.isOn, forKey: "withDBZ")
         //Map View
-        case 10:
+        case 0:
             userDefaults?.setValue(sender.isOn, forKey: "mapRotation")
             viewController?.webView.evaluateJavaScript("window.injectSettings({\"mapRotation\": \(sender.isOn)});")
-        case 11:
+        case 1:
             userDefaults?.setValue(sender.isOn, forKey: "autoZoom")
             viewController?.webView.evaluateJavaScript("window.injectSettings({\"zoomOnForeground\": \(sender.isOn)});")
-        case 12:
+        case 2:
             userDefaults?.setValue(sender.isOn, forKey: "darkMode")
             viewController?.webView.evaluateJavaScript("window.injectSettings({\"darkMode\": \(sender.isOn)});")
         //Layers
-        case 20:
+        case 10:
             userDefaults?.setValue(sender.isOn, forKey: "lightning")
             viewController?.webView.evaluateJavaScript("window.injectSettings({\"layerLightning\": \(sender.isOn)});")
-        case 21:
+        case 11:
             userDefaults?.setValue(sender.isOn, forKey: "mesocyclones")
             viewController?.webView.evaluateJavaScript("window.injectSettings({\"layerMesocyclones\": \(sender.isOn)});")
-        case 22:
+        case 12:
             userDefaults?.setValue(sender.isOn, forKey: "shelters")
             //viewController?.webView.evaluateJavaScript("window.injectSettings({\"layerShelters\": \(sender.isOn)});")
+        //Push Notification
+        case 20:
+            userDefaults?.setValue(sender.isOn, forKey: "pushNotification")
+            settingsTable.reloadData()
+        case 22:
+            userDefaults?.setValue(sender.isOn, forKey: "withDBZ")
         default:
             print("This not happen")
         }
