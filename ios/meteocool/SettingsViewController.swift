@@ -15,12 +15,13 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     //userDefaults
     let userDefaults = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")
     
-    private var header = ["Push Notification","Map View","Layers","About"]
-    private var footer = ["If you want, we can notify you ahead of rain or snow at your current location.","Customise the appearance and behaviour of the main map.","Enable or disable informational layers on the main map.",""]
-    private var dataPushNotification = ["Push Notification", "Deactivate for ...","Push Notification with dbZ" , "Threshold","Time before"]
+    private var header = ["Push Notification","Sleep Mode","Map View","Layers","About"]
+    private var footer = ["If you want, we can notify you ahead of rain or snow at your current location.","","Customise the appearance and behaviour of the main map.","Enable or disable informational layers on the main map.","Version Nr"]
+    private var dataPushNotification = ["Push Notification","Push Notification with dbZ" , "Threshold","Time before"]
+    private var sleepMode = ["Deactivate for ..."]
     private var dataMapView = ["Map Rotation","Auto Zoom","Darkmode"]
     private var dataLayers = ["Lightning ⚡️","Mesocyclones 🌀","Shelters ☂️"]
-    private var dataAbout = ["Link","Push Token","Version Nr"]
+    private var dataAbout = ["Link","Push Token"]
     private var intensity = ["Drizzle","Light rain","Rain","Hail"]
     
     //General View Things
@@ -59,10 +60,12 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 return 1
             }
         case 1:
-            return dataMapView.count
+            return 1
         case 2:
-            return dataLayers.count
+            return dataMapView.count
         case 3:
+            return dataLayers.count
+        case 4:
             return dataAbout.count
         default:
             return 0
@@ -111,11 +114,11 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 switcherCell?.textLabel?.text = dataPushNotification[indexPath.row]
                 returnCell = switcherCell!
                 switchView.setOn((userDefaults?.bool(forKey: "pushNotification"))!, animated: false)
-            case 2: //with dbZ
+            case 1: //with dbZ
                 switcherCell?.textLabel?.text = dataPushNotification[indexPath.row]
                 returnCell = switcherCell!
                 switchView.setOn((userDefaults?.bool(forKey: "withDBZ"))!, animated: false)
-            case 3: //Intensity
+            case 2: //Intensity
                 stepperSliderCell!.addSubview(stepperSliderView)
                 stepperSliderView.maxCount = 4
                 stepperSliderView.index = UInt.init(bitPattern: (userDefaults?.integer(forKey: "intensityValue"))!)
@@ -127,7 +130,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 stepperSliderCell!.addSubview(stepperSliderCellValueLabel)
                 
                 returnCell = stepperSliderCell!
-            case 4: //Time before
+            case 3: //Time before
                 stepperSliderCell!.addSubview(stepperSliderView)
                 stepperSliderView.maxCount = 9
                 stepperSliderView.index = UInt.init(bitPattern: (userDefaults?.integer(forKey: "timeBeforeValue"))!)
@@ -143,7 +146,10 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 textCell?.textLabel?.text = dataPushNotification[indexPath.row]
                 returnCell = textCell!
             }
-        case 1: //Map View
+        case 1: //Sleep Mode
+            textCell?.textLabel?.text = sleepMode[indexPath.row]
+            returnCell = textCell!
+        case 2: //Map View
             switch indexPath.row {
             case 0: //Map Rotation
                 switcherCell?.textLabel?.text = dataMapView[indexPath.row]
@@ -160,7 +166,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             default:
                 returnCell = textCell!
             }
-        case 2: //Layers
+        case 3: //Layers
             switch indexPath.row{
             case 0: //Lightning
                 switcherCell?.textLabel?.text = dataLayers[indexPath.row]
@@ -177,7 +183,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             default:
                 returnCell = textCell!
             }
-        case 3: //About
+        case 4: //About
             textCell?.textLabel?.text = dataAbout[indexPath.row]
             returnCell = textCell!
         default:
@@ -198,7 +204,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     
     //Cell Height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if(indexPath.section == 0 && (indexPath.row == 3 || indexPath.row == 4)){
+        if(indexPath.section == 0 && (indexPath.row == 2 || indexPath.row == 3)){
             return 100
         }
         return tableView.rowHeight
