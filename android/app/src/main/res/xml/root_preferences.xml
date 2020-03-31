@@ -1,0 +1,76 @@
+<!--
+  ~ Copyright 2018 The app Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+            app:icon="@drawable/ic_notification"
+        app:title="@string/notification_header">
+
+        <SwitchPreferenceCompat
+            app:key="notification"
+            app:title="@string/notification_push_title"
+            app:defaultValue="false"/>
+
+        <ListPreference
+                app:key="notification_intensity"
+                app:title="@string/notification_push_level_title"
+                app:entries="@array/notification_intensity_entries"
+                app:entryValues="@array/notification_intensity_values"
+                app:defaultValue="18"
+                app:useSimpleSummaryProvider="true"
+                app:dependency="notification"/>
+
+        <ListPreference
+                app:key="notification_time"
+                app:title="@string/notification_time_title"
+                app:entries="@array/notification_time_entries"
+                app:entryValues="@array/notification_time_values"
+                app:defaultValue="15"
+                app:useSimpleSummaryProvider="true"
+                app:dependency="notification"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            app:icon="@drawable/ic_map"
+        app:title="@string/map_header">
+
+        <SwitchPreferenceCompat
+            app:key="map_zoom"
+            app:defaultValue="false"
+            app:title="@string/map_zoom_title"
+        />
+
+        <SwitchPreferenceCompat
+            app:key="map_rotate"
+            app:defaultValue="true"
+            app:title="@string/map_rotate_title"
+        />
+
+        <SwitchPreferenceCompat
+                app:key="map_mode"
+                app:defaultValue="false"
+                app:title="@string/map_mode_title"
+        />
+
+    </PreferenceCategory>
+
+
+
+
+</androidx.preference.PreferenceScreen>

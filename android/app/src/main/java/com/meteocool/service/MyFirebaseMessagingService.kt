@@ -8,9 +8,15 @@ import android.content.Context
 import com.google.firebase.iid.FirebaseInstanceId
 import com.meteocool.utility.JSONClearPost
 import com.meteocool.utility.NetworkUtility
+import org.jetbrains.anko.defaultSharedPreferences
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
+
+    override fun onNewToken(p0: String) {
+        super.onNewToken(p0)
+        defaultSharedPreferences.edit().putString("fb", p0).apply()
+    }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
 
@@ -27,13 +33,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun cancelNotification() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancelAll()
-        var token =  FirebaseInstanceId.getInstance().token
-        if(token==null) {token = "no token"}
+        val token =  defaultSharedPreferences.getString("fb", "no token")!!
         NetworkUtility.sendPostRequest(
             JSONClearPost(
                 token,
                 "background"
-            ), NetworkUtility.CLEAR_URL
+            ), NetworkUtility.POST_CLEAR_NOTIFICATION
         )
     }
 

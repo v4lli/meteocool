@@ -1,81 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools" package="com.meteocool">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.meteocool">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
-    <!-- Needed only if your app targets Android 5.0 (API level 21) or higher. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED"/> <!-- Needed only if your app targets Android 5.0 (API level 21) or higher. -->
     <uses-feature android:name="android.hardware.location"/>
+
 
     <application
         android:allowBackup="true"
-        android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing"
-                   android:value="false"/>
 
-       <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
-       <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="false"/>
+        <meta-data
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="true"/>
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false"/>
 
-        <activity android:name=".SplashActivity" android:theme="@style/SplashTheme">
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity android:name=".MeteocoolActivity">
-
             <tools:validation testUrl="http://meteocool.com"/>
+
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+
                 <data
-                    android:scheme="http"
                     android:host="meteocool.com"
-                />
+                    android:scheme="http"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".OnboardingActivity"
             android:enabled="true"
             android:exported="false">
         </activity>
 
-
         <service
             android:name=".service.MyFirebaseMessagingService"
-            android:exported="true">
+            android:exported="false">
+            <meta-data
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@drawable/icon_83" />
+            <meta-data
+                android:name="com.google.firebase.messaging.default_notification_color"
+                android:resource="@color/cloudAccent" />
+
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
-        <service android:name=".service.MyFirebaseInstanceIDService">
+        <receiver
+            android:name=".location.LocationUpdatesBroadcastReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
-
-        <receiver android:name="com.meteocool.location.LocationUpdatesBroadcastReceiver"
-                  android:exported="true">
-            <intent-filter>
-                <action android:name="com.meteocool.location.LocationUpdatesBroadcastReceiver.ACTION_PROCESS_UPDATES" />
+                <action android:name="com.meteocool.location.LocationUpdatesBroadcastReceiver.ACTION_PROCESS_UPDATES"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-
-
-
     </application>
 
 </manifest>

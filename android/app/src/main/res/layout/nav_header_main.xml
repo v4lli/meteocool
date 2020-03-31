@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/ic_logo_round"
+            android:id="@+id/imageView"
+            android:layout_gravity="center_vertical|start"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="meteocool"
+            android:textSize="@dimen/font_size"
+            android:paddingRight="16dp"
+            android:textColor="@color/cloudAccent"
+            android:gravity="center_vertical|start"/>
+    <TextView
+            android:id="@+id/app_version"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text=""
+            android:textSize="@dimen/font_size"
+            android:textColor="@color/cloudAccent"
+            android:gravity="center_vertical|end"/>
+
+</LinearLayout>

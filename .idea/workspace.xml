@@ -7,7 +7,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0d8f4605-b51f-4adf-92fc-b6583a1dfd3a" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/settings/MySettingsFragment.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/settings/SettingsActivity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/res/layout/settings_activity.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/res/values/arrays.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/res/xml/preferences.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/res/xml/root_preferences.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/release/app-release.apk" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/release/app-release.apk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/release/app.aab" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/release/app.aab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/release/output.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/release/output.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/androidTest/java/com/meteocool/ExampleInstrumentedTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/androidTest/java/com/meteocool/ExampleInstrumentedTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/MapFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/MapFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/MeteocoolActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/MeteocoolActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/OnboardingActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/OnboardingActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/SplashActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/SplashActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/security/Validator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/meteocool/security/Validator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values-b+en/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/values-b+en/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/gradle.properties" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,6 +49,18 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="meteocool" type="1abcf292:AndroidViewProjectNode" />
+              <item name="meteocool" type="e9137016:NonAndroidModuleNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -51,8 +83,6 @@
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -106,9 +136,9 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="34" width="2560" height="1406" extended-state="6" />
+    <frame x="-6" y="34" width="1381" height="885" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2529833" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25245655" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Captures" order="2" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="3" />

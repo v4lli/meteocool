@@ -7,7 +7,7 @@
     <string name="default_notification_channel_id">meteocool</string>
 
     <string name="onboarding_title1">Servus!</string>
-    <string name="onboarding_title2">Sturmjäger/in oder Couchpotatoe?</string>
+    <string name="onboarding_title2">Sturmjäger/in oder Couchpotato?</string>
     <string name="onboarding_title3">Benachrichtigungen</string>
     <string name="onboarding_title4">Standort</string>
     <string name="onboarding_title5">Geh raus und genieß die Sonne!</string>
@@ -24,5 +24,30 @@
     <string name="onboarding_description5">Erzähle es deinen Bekannten und gib uns Feedback!</string>
 
     <string name="gps_button_toast">Schlechtes GPS-Signal.</string>
+    <string name="title_activity_settings">Einstellungen</string>
+
+
+    <string name="menu_documentation">Dokumentation</string>
+
+
+    <!-- Preference Titles -->
+    <string name="notification_header">Benachrichtigungen</string>
+    <string name="map_header">Karte</string>
+
+    <!-- Push Preferences -->
+    <string name="notification_push_title">Push-Nachrichten</string>
+    <string name="notification_push_level_title">Benachrichtigung ab…</string>
+    <string name="level_drizzle">Nieselregen</string>
+    <string name="level_rain">Regen</string>
+    <string name="level_heavy_rain">Starkem Regen</string>
+    <string name="level_hail">Hagel</string>
+
+    <string name="notification_time_title">Benachrichtigungszeit</string>
+
+
+    <!-- Map Preferences -->
+    <string name="map_zoom_title">Zoom nach Start</string>
+    <string name="map_rotate_title">Rotation der Karte</string>
+    <string name="map_mode_title">Nachtmodus</string>
 
 </resources>
