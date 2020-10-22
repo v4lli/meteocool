@@ -4,6 +4,8 @@ import WebKit
 import CoreLocation
 import OnboardKit
 
+var viewController: ViewController? = nil
+
 class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, LocationObserver{
     let buttonsize = 19.0 as CGFloat
     let lightmode = UIColor(red: 0xf8/255.0, green: 0xf9/255.0, blue: 0xfa/255.0, alpha: 1.0)
@@ -12,6 +14,7 @@ class ViewController: UIViewController, WKUIDelegate, WKScriptMessageHandler, Lo
     @IBOutlet weak var slider_ring: UIImageView!
     @IBOutlet weak var slider_button: UIImageView!
     @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var settings: UIButton!
     @IBOutlet weak var time: UILabel!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
@@ -108,16 +111,16 @@ window.downloadForecast(function() {
         slider_button.frame.origin = CGPoint(x: x_coordiante, y: y_coordinate)
     }
 
-    func toggleDarkMode() {
+    /*func toggleDarkMode() {
         // #343a40 = darkmode titelbar color
         let darkmode = UIColor(red: 0x34/255.0, green: 0x3a/255.0, blue: 0x40/255.0, alpha: 1.0)
         UIApplication.shared.statusBarView?.backgroundColor = darkmode
-    }
+    }*/
 
-    func toggleLightMode() {
+    /*func toggleLightMode() {
         // #f8f9fa = non-darkmode titelbar color
         UIApplication.shared.statusBarView?.backgroundColor = lightmode
-    }
+    }*/
 
     func notify(location: CLLocation) {
         webView.evaluateJavaScript("window.injectLocation(\(location.coordinate.latitude), \(location.coordinate.longitude), \(location.horizontalAccuracy));")
@@ -133,12 +136,12 @@ window.downloadForecast(function() {
             self.currentdate = NSDate(timeIntervalSince1970: Double(action)!) as Date
         }
 
-        if action == "darkmode" {
+        /*if action == "darkmode" {
             toggleDarkMode()
         }
         if action == "lightmode" {
             toggleLightMode()
-        }
+        }*/
 
         if action == "startMonitoringLocationExplicit" {
             SharedLocationUpdater.requestLocation(observer: self, explicit: true)
@@ -201,7 +204,8 @@ window.downloadForecast(function() {
             description: NSLocalizedString("Based on this data, do you want us to notify you ahead of rain at your location?\n\nWe put a lot of effort into making the notifications non-intrusive. They disappear as soon as it stops raining.", comment: "Notifications description"),
             advanceButtonTitle: NSLocalizedString("Later", comment:"Later"),
             actionButtonTitle: NSLocalizedString("Enable Notifications", comment:"Notifications actionButtonTitle"),
-            action: { [weak self] completion in SharedNotificationManager.registerForPushNotifications(completion) }
+            action: { [weak self] completion in SharedNotificationManager.registerForPushNotifications(completion)
+            }
         )
 
         let pageFour = OnboardPage(
@@ -242,6 +246,7 @@ window.downloadForecast(function() {
 
     override func loadView() {
         super.loadView()
+        viewController = self
         webView?.configuration.userContentController.add(self, name: "scriptHandler")
         webView?.configuration.userContentController.add(self, name: "timeHandler")
         self.view.addSubview(webView!)
@@ -250,6 +255,7 @@ window.downloadForecast(function() {
         self.view.addSubview(button!)
         self.view.addSubview(time!)
         self.view.addSubview(activityIndicator!)
+        self.view.addSubview(settings!)
 
         time.isHidden = true
         time.layer.masksToBounds = true
@@ -275,7 +281,52 @@ window.downloadForecast(function() {
         webView.scrollView.isScrollEnabled = true
         webView.scrollView.bounces = false
 
-        toggleLightMode()
+        //Settings
+        let userDefaults = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")
+        if (userDefaults?.value(forKey: "pushNotification") == nil){
+            //TODO Conneciton to the main setting page
+            userDefaults?.setValue(true, forKey: "pushNotification")
+        }
+        if (userDefaults?.value(forKey: "intensityValue") == nil){
+            userDefaults?.setValue(0, forKey: "intensityValue")
+            // 0 -> any
+            // 1 -> light
+            // 2 -> normal
+            // 3 -> heavy
+        }
+        if (userDefaults?.value(forKey: "timeBeforeValue") == nil){
+            userDefaults?.setValue(2, forKey: "timeBeforeValue")
+            //Value +1 *5 for minutes
+        }
+        if (userDefaults?.value(forKey: "mapRotation") == nil){
+            userDefaults?.setValue(false, forKey: "mapRotation")
+        }
+        if (userDefaults?.value(forKey: "autoZoom") == nil){
+            userDefaults?.setValue(true, forKey: "autoZoom")
+        }
+        if (userDefaults?.value(forKey: "lightning") == nil){
+            userDefaults?.setValue(true, forKey: "lightning")
+        }
+        if (userDefaults?.value(forKey: "shelters") == nil){
+            userDefaults?.setValue(false, forKey: "shelters")
+        }
+        if (userDefaults?.value(forKey: "withDBZ") == nil){
+            userDefaults?.setValue(false, forKey: "withDBZ")
+        }
+        if (userDefaults?.value(forKey: "mesocyclones") == nil){
+            userDefaults?.setValue(false, forKey: "mesocyclones")
+        }
+        
+        
+        webView.evaluateJavaScript("window.injectSettings({\"mapRotation\": \(userDefaults?.value(forKey: "mapRotation") )});")
+        webView.evaluateJavaScript("window.injectSettings({\"zoomOnForeground\": \(userDefaults?.value(forKey: "autoZoom") )});")
+        webView.evaluateJavaScript("window.injectSettings({\"darkMode\": \(userDefaults?.value(forKey: "darkMode") )});")
+        webView.evaluateJavaScript("window.injectSettings({\"layerLightning\": \(userDefaults?.value(forKey: "lightning") )});")
+        webView.evaluateJavaScript("window.injectSettings({\"layerMesocyclones\": \(userDefaults?.value(forKey: "mesocyclones") )});")
+        //webView.evaluateJavaScript("window.injectSettings({\"layerShelters\": \(userDefaults?.value(forKey: "shelters")});")
+        
+        
+        //toggleLightMode()
 
         if let url = URL(string: "https://meteocool.com/?mobile=ios3") {
             let request = URLRequest(url: url)

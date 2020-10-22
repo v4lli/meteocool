@@ -245,10 +245,10 @@ class LocationUpdater: NSObject, CLLocationManagerDelegate {
     func postLocation(location: CLLocation, pressure: Float) {
         let tokenValue = SharedNotificationManager.getToken() ?? "anon"
 
-        var lang = "en"
-        if let bundle_lang = Bundle.main.preferredLocalizations.first {
+        let lang = Locale.preferredLanguages[0].split(separator: "-")[0]
+        /*if let bundle_lang = Bundle.main.preferredLocalizations.first {
             lang = bundle_lang
-        }
+        }*/
 
         let locationDict = [
             "lat": location.coordinate.latitude as Double,
