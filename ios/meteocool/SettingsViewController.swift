@@ -15,13 +15,44 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     //userDefaults
     let userDefaults = UserDefaults.init(suiteName: "group.org.frcy.app.meteocool")
     
-    private var header = ["Map View","Layers","Push Notification","About"]
-    private var footer = ["If you want, we can notify you ahead of rain or snow at your current location.","","Customise the appearance and behaviour of the main map.","Enable or disable informational layers on the main map.","Version Nr"]
-    private var dataPushNotification = ["Push Notification","Push Notification with dbZ" , "Threshold","Time before"]
-    private var dataMapView = ["Map Rotation","Auto Zoom","Darkmode"]
-    private var dataLayers = ["Lightning ⚡️","Mesocyclones 🌀","Shelters ☂️"]
-    private var dataAbout = ["Link","Push Token"]
-    private var intensity = ["Drizzle","Light rain","Rain","Hail"]
+    private var header = [
+        NSLocalizedString("Map View", comment: "header"),
+        NSLocalizedString("Layers", comment: "header"),
+        NSLocalizedString("Push Notification", comment: "header"),
+        NSLocalizedString("About", comment: "header")
+    ]
+    private var footer = [
+        NSLocalizedString("Customise the appearance and behaviour of the main map.", comment: "footer"),
+        NSLocalizedString("Enable or disable informational layers on the main map.", comment: "footer"),
+        NSLocalizedString("If you want, we can notify you ahead of rain or snow at your current location.", comment: "footer"),
+        NSLocalizedString("Version Nr", comment: "footer")
+    ]
+    private var dataPushNotification = [
+        NSLocalizedString("Push Notification", comment: "dataPushNotification"),
+        NSLocalizedString("Push Notification with dBZ", comment: "dataPushNotification"),
+        NSLocalizedString("Threshold", comment: "dataPushNotification"),
+        NSLocalizedString("Time before", comment: "dataPushNotification")
+    ]
+    private var dataMapView = [
+        NSLocalizedString("Map Rotation", comment: "dataMapView"),
+        NSLocalizedString("Auto Zoom after Start", comment: "dataMapView"),
+        NSLocalizedString("Darkmode", comment: "dataMapView")
+    ]
+    private var dataLayers = [
+        NSLocalizedString("⚡️ Lightning", comment: "dataLayers"),
+        NSLocalizedString("🌀 Mesocyclones", comment: "dataLayers"),
+        NSLocalizedString("☂️ Shelters", comment: "dataLayers")
+    ]
+    private var dataAbout = [
+        NSLocalizedString("Link", comment: "dataAbout"),
+        NSLocalizedString("Push Token", comment: "dataAbout")
+    ]
+    private var intensity = [
+        NSLocalizedString("Drizzle", comment: "intensity"),
+        NSLocalizedString("Light rain", comment: "intensity"),
+        NSLocalizedString("Rain", comment: "intensity"),
+        NSLocalizedString("Hail", comment: "intensity")
+    ]
     
     //General View Things
     override func loadView() {
@@ -77,7 +108,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     //Selection Footer
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if(section == 2 && (userDefaults?.bool(forKey: "pushNotification"))!){
-            return "Push Notification with dbZ:\nFor advanced users, include meteorological details in the notification text (like dbZ values). \nThreshold:\nOnly send a notification if incoming precipitation is expected to be at least this intense. \nTime before:\nChange the amount of time before you want to be notified about precipitation."
+            return NSLocalizedString("Push Notification with dBZ:\nFor advanced users, include meteorological details in the notification text (like dBZ values). \n\nThreshold:\nOnly send a notification if incoming precipitation is expected to be at least this intense. \n\nTime before:\nChange the amount of time before you want to be notified about precipitation.",comment: "selection Footer")
         }
         return footer[section]
     }
@@ -99,8 +130,8 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         let stepperSliderView = StepSlider.init(frame: CGRect(x: 10.0,y: 50.0,width: tableView.frame.width-20,height: 50.0))
         stepperSliderView.sliderCircleColor = UIColor(red: 233/255, green: 233/255, blue: 235/255, alpha: 1.0)
         stepperSliderView.labelColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
-        let stepperSliderCellInfoLabel = UILabel.init(frame: CGRect(x: 15.0,y: 5.0,width: tableView.frame.width-10,height: 44.0))
-        let stepperSliderCellValueLabel = UILabel.init(frame: CGRect(x: tableView.frame.width-100,y: 5.0,width: 100-15,height: 44.0))
+        let stepperSliderCellInfoLabel = UILabel.init(frame: CGRect(x: 15.0,y: 5.0,width: tableView.frame.width/2-15.0,height: 44.0))
+        let stepperSliderCellValueLabel = UILabel.init(frame: CGRect(x: tableView.frame.width/2-15.0,y: 5.0,width: tableView.frame.width/2-15.0,height: 44.0))
         stepperSliderCellValueLabel.textAlignment = .right
         
         returnCell = textCell!
@@ -149,7 +180,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 switcherCell?.textLabel?.text = dataPushNotification[indexPath.row]
                 returnCell = switcherCell!
                 switchView.setOn((userDefaults?.bool(forKey: "withDBZ"))!, animated: false)
-            case 2: //Intensity
+            case 2: //Intensity, Threshold
                 stepperSliderCell!.addSubview(stepperSliderView)
                 stepperSliderView.maxCount = UInt(intensity.count)
                 stepperSliderView.index = UInt.init(bitPattern: (userDefaults?.integer(forKey: "intensityValue"))!)
