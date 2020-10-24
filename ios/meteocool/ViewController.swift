@@ -318,17 +318,17 @@ window.downloadForecast(function() {
         }
         
         
-        webView.evaluateJavaScript("window.injectSettings({\"mapRotation\": \(userDefaults?.value(forKey: "mapRotation") )});")
-        webView.evaluateJavaScript("window.injectSettings({\"zoomOnForeground\": \(userDefaults?.value(forKey: "autoZoom") )});")
-        webView.evaluateJavaScript("window.injectSettings({\"darkMode\": \(userDefaults?.value(forKey: "darkMode") )});")
-        webView.evaluateJavaScript("window.injectSettings({\"layerLightning\": \(userDefaults?.value(forKey: "lightning") )});")
-        webView.evaluateJavaScript("window.injectSettings({\"layerMesocyclones\": \(userDefaults?.value(forKey: "mesocyclones") )});")
+        webView.evaluateJavaScript("window.injectSettings({\"mapRotation\": \(String(describing: userDefaults?.value(forKey: "mapRotation")) )});")
+        webView.evaluateJavaScript("window.injectSettings({\"zoomOnForeground\": \(String(describing: userDefaults?.value(forKey: "autoZoom")) )});")
+        webView.evaluateJavaScript("window.injectSettings({\"darkMode\": \(String(describing: userDefaults?.value(forKey: "darkMode")) )});")
+        webView.evaluateJavaScript("window.injectSettings({\"layerLightning\": \(String(describing: userDefaults?.value(forKey: "lightning")) )});")
+        webView.evaluateJavaScript("window.injectSettings({\"layerMesocyclones\": \(String(describing: userDefaults?.value(forKey: "mesocyclones")) )});")
         //webView.evaluateJavaScript("window.injectSettings({\"layerShelters\": \(userDefaults?.value(forKey: "shelters")});")
         
         
         //toggleLightMode()
 
-        if let url = URL(string: "https://meteocool.com/?mobile=ios3") {
+        if let url = URL(string: "https://app.ng.meteocool.com/") {
             let request = URLRequest(url: url)
             webView.load(request)
         }

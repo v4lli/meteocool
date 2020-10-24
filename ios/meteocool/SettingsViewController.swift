@@ -29,7 +29,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     ]
     private var dataPushNotification = [
         NSLocalizedString("Push Notification", comment: "dataPushNotification"),
-        NSLocalizedString("Push Notification with dBZ", comment: "dataPushNotification"),
+        NSLocalizedString("Show Meteorological Details", comment: "dataPushNotification"),
         NSLocalizedString("Threshold", comment: "dataPushNotification"),
         NSLocalizedString("Time before", comment: "dataPushNotification")
     ]
@@ -108,7 +108,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     //Selection Footer
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if(section == 2 && (userDefaults?.bool(forKey: "pushNotification"))!){
-            return NSLocalizedString("Push Notification with dBZ:\nFor advanced users, include meteorological details in the notification text (like dBZ values). \n\nThreshold:\nOnly send a notification if incoming precipitation is expected to be at least this intense. \n\nTime before:\nChange the amount of time before you want to be notified about precipitation.",comment: "selection Footer")
+            return NSLocalizedString("Show Meteorological Details:\nFor advanced users, include meteorological details in the notification text (like dBZ values). \n\nThreshold:\nOnly send a notification if incoming precipitation is expected to be at least this intense. \n\nTime before:\nChange the amount of time before you want to be notified about precipitation.",comment: "selection Footer")
         }
         return footer[section]
     }
