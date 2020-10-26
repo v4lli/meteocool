@@ -146,7 +146,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         let textValueLabel = UILabel.init(frame: CGRect(x: tableView.frame.width/2-15.0,y: 0,width: tableView.frame.width/2-10.0,height: 44.0))
         textValueLabel.textAlignment = .right
         textValueLabel.textColor = UIColor.gray
-        
+        let linkArrow = UIImageView.init(frame: CGRect(x: tableView.frame.width-30.0,y: 44.0/2-15/2,width:15.0,height: 15.0))
         returnCell = textCell!
         switch indexPath.section{
         case 0: //Map View
@@ -233,6 +233,12 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             default: //Feedack and About
                 textCell?.addSubview(textInfoLabel)
                 textInfoLabel.text = dataAboutLable[indexPath.row]
+                textCell?.addSubview(linkArrow)
+                if #available(iOS 13.0, *) {
+                    linkArrow.image = UIImage.init(systemName: "chevron.right")
+                } else {
+                    // Fallback on earlier versions
+                }
                 returnCell = textCell!
             }
         default:
@@ -260,6 +266,8 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
+        
         if (indexPath.section == 3 && indexPath.row == 0){
             if let url = URL(string: "https://github.com/v4lli/meteocool") {
                 UIApplication.shared.open(url)
