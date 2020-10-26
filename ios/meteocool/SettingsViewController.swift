@@ -36,16 +36,23 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     private var dataMapView = [
         NSLocalizedString("Map Rotation", comment: "dataMapView"),
         NSLocalizedString("Auto Zoom after Start", comment: "dataMapView"),
-        NSLocalizedString("Darkmode", comment: "dataMapView")
+        NSLocalizedString("Darkmode", comment: "dataMapView"),
+        //NSLocalizedString("Look", comment: "dataMapView")
     ]
     private var dataLayers = [
         NSLocalizedString("⚡️ Lightning", comment: "dataLayers"),
         NSLocalizedString("🌀 Mesocyclones", comment: "dataLayers"),
         NSLocalizedString("☂️ Shelters", comment: "dataLayers")
     ]
-    private var dataAbout = [
-        NSLocalizedString("Link", comment: "dataAbout"),
-        NSLocalizedString("Push Token", comment: "dataAbout")
+    private var dataAboutLable = [
+        NSLocalizedString("Github", comment: "dataAboutLable"),
+        NSLocalizedString("Twitter", comment: "dataAboutLable"),
+        NSLocalizedString("Feedback", comment: "dataAboutLable"),
+        NSLocalizedString("Push Token", comment: "dataAboutLable")
+    ]
+    private var dataAboutValue = [
+        "","","",
+        NSLocalizedString("Push Token", comment: "dataAboutValue")
     ]
     private var intensity = [
         NSLocalizedString("Drizzle", comment: "intensity"),
@@ -94,7 +101,7 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 return 1
             }
         case 3: //About
-            return dataAbout.count
+            return dataAboutLable.count
         default:
             return 0
         }
@@ -118,8 +125,8 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         var returnCell : UITableViewCell
         
         // kind of cells
-        let switcherCell = tableView.dequeueReusableCell(withIdentifier:"switcherCell")
-        let textCell = tableView.dequeueReusableCell(withIdentifier:"textCell")
+        let switcherCell = tableView.dequeueReusableCell(withIdentifier: "switcherCell")
+        let textCell = tableView.dequeueReusableCell(withIdentifier: "textCell")
         let stepperSliderCell = tableView.dequeueReusableCell(withIdentifier: "stepperSliderCell")
         
         // Switch
@@ -127,12 +134,18 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
         switchView.onTintColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1.0)
         
         // StepperSlider
-        let stepperSliderView = StepSlider.init(frame: CGRect(x: 10.0,y: 50.0,width: tableView.frame.width-20,height: 50.0))
+        let stepperSliderView = StepSlider.init(frame: CGRect(x: 15.0,y: 50.0,width: tableView.frame.width-30,height: 50.0))
         stepperSliderView.sliderCircleColor = UIColor(red: 233/255, green: 233/255, blue: 235/255, alpha: 1.0)
         stepperSliderView.labelColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
-        let stepperSliderCellInfoLabel = UILabel.init(frame: CGRect(x: 15.0,y: 5.0,width: tableView.frame.width/2-15.0,height: 44.0))
-        let stepperSliderCellValueLabel = UILabel.init(frame: CGRect(x: tableView.frame.width/2-15.0,y: 5.0,width: tableView.frame.width/2-15.0,height: 44.0))
+        let stepperSliderCellInfoLabel = UILabel.init(frame: CGRect(x: 20.0,y: 5.0,width: tableView.frame.width/2-15.0,height: 44.0))
+        let stepperSliderCellValueLabel = UILabel.init(frame: CGRect(x: tableView.frame.width/2-15.0,y: 5.0,width: tableView.frame.width/2-10.0,height: 44.0))
         stepperSliderCellValueLabel.textAlignment = .right
+        
+        // Text
+        let textInfoLabel = UILabel.init(frame: CGRect(x: 20.0,y: 0,width: tableView.frame.width/2-15.0,height: 44.0))
+        let textValueLabel = UILabel.init(frame: CGRect(x: tableView.frame.width/2-15.0,y: 0,width: tableView.frame.width/2-10.0,height: 44.0))
+        textValueLabel.textAlignment = .right
+        textValueLabel.textColor = UIColor.gray
         
         returnCell = textCell!
         switch indexPath.section{
@@ -209,8 +222,19 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
                 returnCell = textCell!
             }
         case 3: //About
-            textCell?.textLabel?.text = dataAbout[indexPath.row]
-            returnCell = textCell!
+            switch indexPath.row {
+            case 3: //Push Token
+                textCell?.addSubview(textInfoLabel)
+                textInfoLabel.text = dataAboutLable[indexPath.row]
+                textCell?.addSubview(textValueLabel)
+                textValueLabel.text = dataAboutValue[indexPath.row]
+                returnCell = textCell!
+            
+            default: //Feedack and About
+                textCell?.addSubview(textInfoLabel)
+                textInfoLabel.text = dataAboutLable[indexPath.row]
+                returnCell = textCell!
+            }
         default:
             returnCell = textCell!
         }
@@ -233,6 +257,25 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
             return 100
         }
         return tableView.rowHeight
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if (indexPath.section == 3 && indexPath.row == 0){
+            if let url = URL(string: "https://github.com/v4lli/meteocool") {
+                UIApplication.shared.open(url)
+            }
+        }
+        if (indexPath.section == 3 && indexPath.row == 1){
+            if let url = URL(string: "https://twitter.com/meteocool_de") {
+                UIApplication.shared.open(url)
+            }
+        }
+        if (indexPath.section == 3 && indexPath.row == 2){ //Feedback
+            let mailAdress = "support@meteocool.com"
+            if let url = URL(string: "mailto:\(mailAdress)") {
+                UIApplication.shared.open(url)
+            }
+        }
     }
     
     @objc func switchChanged(_ sender : UISwitch!){
