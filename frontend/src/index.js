@@ -181,7 +181,9 @@ if (window.location.hash !== "") {
         parseFloat(parts[2]),
         parseFloat(parts[1])
       ]);
-      document.getElementById("navbar").style.display = "none";
+      if (parts[3] !== 1) {
+        document.getElementById("navbar").style.display = "none";
+      }
       positionFeature.setGeometry(center ? new Point(center) : null);
     }
   } else if (window.location.hash.includes("#map")) {
