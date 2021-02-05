@@ -17,7 +17,7 @@
   "dependencies": {
     "bootstrap": "^4.2",
     "date-fns": "^1.29.0",
-    "jquery": "^3.4.0",
+    "jquery": "^3.5.0",
     "ol": "^5.1.3",
     "popper.js": "^1.14.4",
     "rbush": "^2.0.2",
